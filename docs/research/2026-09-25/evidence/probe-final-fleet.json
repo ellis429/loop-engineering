@@ -1,0 +1,69 @@
+{
+  "run_id": "run_95da348b16c4",
+  "counts": {
+    "retained": 1,
+    "released": 2
+  },
+  "workers": [
+    {
+      "dispatch_id": "ctx_29e2843ea918",
+      "task_id": "task_e6fca3e90785",
+      "state": "abandoned",
+      "dispatch_status": "failed",
+      "terminal_state": "retained",
+      "liveness": {
+        "verdict": "unverifiable",
+        "reason": "missing_status"
+      },
+      "next_action": {
+        "kind": "none",
+        "argv": []
+      }
+    },
+    {
+      "dispatch_id": "ctx_0a6cb777abe9",
+      "task_id": "task_e6fca3e90785",
+      "state": "failed",
+      "dispatch_status": "failed",
+      "terminal_state": "released",
+      "liveness": {
+        "verdict": "exited",
+        "source": "resource_release"
+      },
+      "next_action": {
+        "kind": "none",
+        "argv": []
+      }
+    },
+    {
+      "dispatch_id": "ctx_6f0f35db294f",
+      "task_id": "task_e3f33b44e673",
+      "state": "succeeded",
+      "dispatch_status": "completed",
+      "terminal_state": "released",
+      "liveness": {
+        "verdict": "exited",
+        "source": "resource_release"
+      },
+      "next_action": {
+        "kind": "none",
+        "argv": []
+      }
+    },
+    {
+      "dispatch_id": "ctx_a872c8b4fcd3",
+      "task_id": "task_e3f33b44e673",
+      "state": "failed",
+      "dispatch_status": "failed",
+      "terminal_state": null,
+      "liveness": {
+        "verdict": "unverifiable",
+        "reason": "missing_status"
+      },
+      "next_action": {
+        "kind": "none",
+        "argv": []
+      }
+    }
+  ]
+}

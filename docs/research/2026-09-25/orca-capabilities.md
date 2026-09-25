@@ -1,6 +1,6 @@
 # Orca capability research — 2026-09-25
 
-Scope: read-only research of the installed Orca and first-party documentation. No Run/Task/Dispatch creation, agent prompt, account change, app restart, worktree mutation, settings change, or external message was performed. No credentials or transcript contents were printed. This note is research, not an approved design.
+Scope: initial read-only research of the installed Orca and first-party documentation. This initial phase created no Run/Task/Dispatch and performed no mutations. Subsequent authorized runtime probes and their exact outcomes are recorded separately in [runtime-probe.md](runtime-probe.md); the untested labels below describe the initial phase. This note is research, not an approved design.
 
 ## Recommendation for the first grill
 

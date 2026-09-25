@@ -1,0 +1,27 @@
+{
+  "run_id": "run_95da348b16c4",
+  "claude": {
+    "dispatch_id": "ctx_6f0f35db294f",
+    "release_state": "released",
+    "process_action": "closed_agent_terminal",
+    "archive": "captured",
+    "completion_delivery_id": "delivery_1162648513b1",
+    "completion_acknowledged": true
+  },
+  "codex": {
+    "dispatch_id": "ctx_29e2843ea918",
+    "stop_state": "stop_unknown",
+    "stop_reason": "external terminal",
+    "fence_state": "abandoned",
+    "operator_created_terminal": "term_6367a3ba-d15e-495a-bd24-6af711081aa8",
+    "close_receipt_id": "d87890a9-abf4-4a55-8176-11c899e661cc",
+    "pty_killed": true,
+    "native_worker_done_accepted": false
+  },
+  "preserved_artifacts": [
+    "claude-probe-result.json",
+    "codex-probe-result.json"
+  ],
+  "original_probe_files_removed_after_byte_comparison": true,
+  "unused_detached_worktree_removed_without_force": true
+}

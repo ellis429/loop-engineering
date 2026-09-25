@@ -127,7 +127,7 @@ OAuth token 可以讀 checks，但不能建立/更新 check-runs；[GitHub Check
 
 下一輪已提出但待回答：feature 開工前的 design+plan 人工確認、blocking 標準、時間/修正/基礎設施重試上限。後續尚需 TDD 細節、publication/finding authority 以及 demo target。
 
-## 可行方案比較（研究結論，待 grill 選擇）
+## 可行方案比較（比較時的建議；後續已選小型 controller + Orca workers）
 
 | 方案 | 優點 | 代價／不適用處 | MVP 建議 |
 | --- | --- | --- | --- |
@@ -149,7 +149,7 @@ Orca 原生 Run 不自行排程：小控制器只擁有 feature policy，Orca �
 4. 驗證 reviewer 在獨立 detached copy 的 source 沒變動，測試產物不污染 implementation branch。
 5. 在已選 issue/PR 發布實際 review 與摘要，讀回 marker/result digest/head/URL；失敗則只重試 outbox。
 
-這些 spike 尚未執行；不以文件支援代替實際能力證據。
+以上是原始 spike 清單；後續已開始 Run/Task/Dispatch 的真實 probe，具體完成程度與缺口見 [runtime-probe.md](runtime-probe.md)。尚未執行的項目不以文件支援代替實際能力證據。
 
 ## 下一輪待決定（依第一輪答案調整）
 
@@ -162,7 +162,7 @@ Orca 原生 Run 不自行排程：小控制器只擁有 feature policy，Orca �
 
 ## 驗證缺口
 
-- 真實 Orca dispatch/result/resume/idempotency、controller caller identity 和 app lifecycle 尚需 spike。
+- 真實 Orca dispatch/result 已開始驗證，詳見 [runtime probe](runtime-probe.md)；resume/idempotency、專用 controller caller identity 和 app lifecycle 仍需 spike。
 - GitHub 寫入與 read-after-write 尚未實測。
 - 未選 issue、未批准 design、未實作 controller、未跑假 adapter 驗收、未跑真實 E2E。
 

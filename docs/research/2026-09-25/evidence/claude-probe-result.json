@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "probe_id": "orca-delivery-claude-20260925",
+  "provider": "claude",
+  "run_id": "run_95da348b16c4",
+  "task_id": "task_e3f33b44e673",
+  "dispatch_id": "ctx_6f0f35db294f",
+  "status": "succeeded",
+  "cwd": "/Users/johnson.chiang/workspace/gigaxfer",
+  "observed_head": "4e9cba4cd143cbc2e583b1fda41ba885970025c0",
+  "runtime_version": "2.1.282 (Claude Code)",
+  "readme_sha256": "8db160071022a342f9a7fc03a64a5b0f1f99212391349133921606d8277ee8b0",
+  "summary": "Read README.md, resolved git HEAD via git rev-parse, and confirmed claude --version inside the assigned worktree /Users/johnson.chiang/workspace/gigaxfer. No tracked files were modified; only this artifact was written.",
+  "blocked_reason": null
+}

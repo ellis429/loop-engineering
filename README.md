@@ -1,6 +1,6 @@
 # Orca Delivery
 
-以 Orca 為入口，協調 Claude Code 實作與独立 Codex review，將選定的 feature issue 推進到具備證據的 PR Pass。
+以 Orca 為入口，協調 Claude Code 實作與獨立 Codex review，將選定的 feature issue 推進到具備證據的 PR Pass。
 
 目前階段：Research / Grill。已建立獨立 repo 與 OpenSpec，尚未實作控制器，尚無真實端到端交付證據。
 
@@ -11,6 +11,7 @@
 - [領域詞彙](CONTEXT.md)
 - [環境查核與 baseline evidence](docs/research/2026-09-25/research.md)
 - [Orca 控制介面](docs/research/2026-09-25/orca-capabilities.md)
+- [真實 agent 派工 probe 與能力缺口](docs/research/2026-09-25/runtime-probe.md)
 - [Skills 契約與版本查核](docs/research/2026-09-25/skills.md)
 - [Feature 交接欄位草案](docs/research/2026-09-25/feature-handoff-contract.md)
 

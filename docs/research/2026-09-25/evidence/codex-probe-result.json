@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "probe_id": "orca-delivery-codex-20260925",
+  "provider": "codex",
+  "run_id": null,
+  "task_id": "task_e6fca3e90785",
+  "dispatch_id": "ctx_29e2843ea918",
+  "status": "blocked",
+  "cwd": "/Users/johnson.chiang/workspace/gigaxfer",
+  "observed_head": "4e9cba4cd143cbc2e583b1fda41ba885970025c0",
+  "runtime_version": "codex-cli 0.153.4",
+  "readme_sha256": "8db160071022a342f9a7fc03a64a5b0f1f99212391349133921606d8277ee8b0",
+  "summary": "Read README.md, observed Git HEAD and Codex version, and computed the README SHA-256 from its bytes. Orca mailbox access failed with runtime_unavailable and the live preamble did not supply a run_id. Probe completion is blocked pending available Orca runtime and actual run_id.",
+  "blocked_reason": "orca orchestration check exited 1 with runtime_unavailable: Could not connect to the running Orca app. The live preamble supplied task_id and dispatch_id but no run_id, and ORCA_RUN_ID was unset; run_id is null rather than invented."
+}
