@@ -1,6 +1,6 @@
 # Design foundation
 
-狀態：設計準備稿，依 D01–D13 的已確認需求整理；不是已批准的 design 或 implementation plan。Q-TDD / Q-PUBLISH / Q-DEMO 尚待回答，故尚未建立帶有這些未決政策的 OpenSpec change。後續正式 artifacts 會吸收本稿，以 OpenSpec 為權威。
+狀態：完整 delivery loop 的設計準備稿；不是已批准的 design 或 implementation plan。持久化已依 D14 改為 JSON/YAML；D15/D16 選定先做 [gigaxfer pre-PR gating 實驗](../../experiments/pr-gating.md)。後續正式 artifacts 會吸收本稿，以 OpenSpec 為權威。
 
 ## 責任與最小實作方向
 
@@ -76,4 +76,4 @@ Worker timeout 不等於 worker dead。外部實況 unknown 時保留執行權�
 
 ## 待本輪決定後完成
 
-Q-TDD 決定 G1 capture 與 N/A 契約；Q-PUBLISH 決定 finding authority / publication / human adjudication；Q-DEMO 決定遠端 repo 和真實 feature 的範圍。答案齊全後產出正式 OpenSpec proposal/specs/design/tasks、traceability matrix、workflow 設定範例與 skill 契約，再提交 D11 的一次開工前確認。
+先依 D15/D16 完成 PR gating 接入的具體 design/plan，確認 Q-TARGET 與 Q-PUBLISH；已有實作的 G1 先查核原始證據，不以接入前未受 controller 追蹤為理由放行。一般化 Q-TDD 方法/N/A 政策留待完整流程定案。正式 artifacts 與執行計畫仍提交 D11 的一次具體開工前確認。

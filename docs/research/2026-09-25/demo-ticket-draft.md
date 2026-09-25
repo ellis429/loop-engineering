@@ -1,6 +1,6 @@
 # Draft feature ticket: CLI 查詢 delivery run 狀態
 
-狀態：供 Q-DEMO 選擇的具體草稿；尚未建立 GitHub repo 或 issue。若選用，正式 feature spec 會進 OpenSpec，issue 引用固定版本。
+狀態：已被 D15/D16 取代，僅保留歷史提案；使用者選擇另一個 gigaxfer session 的現有 feature，在 pre-PR 驗證 gating loop。本草稿未發布，沒有建立 GitHub repo 或 issue，亦不作為目前實驗的待辦。現行方案見 [PR gating experiment](../../experiments/pr-gating.md)。
 
 ## Problem
 
@@ -40,4 +40,4 @@
 
 建議 repo：`yschiang/orca-delivery`，private。唯讀查詢目前沒有取得此 repo（`gh repo view` 回無法 resolve），尚未建立或設定 remote。建議 issue title：`Feature: inspect delivery run status, gates, and blocked decisions`。
 
-只有使用者選定 Q-DEMO 後才建立 repo/issue。正式發文前會用最終設計更新本文及 OpenSpec 引用，不以尚不存在的版本連結代替 spec。
+此發布提案未被選用；目前不建立這個 repo／issue。

@@ -6,6 +6,7 @@
 
 ## 文件
 
+- [第一段實驗：gigaxfer pre-PR gating loop](docs/experiments/pr-gating.md)
 - [Loop Engineering：完整流程與實現藍圖](docs/loop-engineering.md)
 - [JSON／YAML 檔案狀態與恢復設計](docs/file-state.md)
 - [需求意圖與已確認邊界](docs/project-intent.md)

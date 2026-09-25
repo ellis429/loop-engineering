@@ -56,4 +56,4 @@ Project spec 定義共用契約，feature spec 定義該交付的範圍與驗收
 
 ## Open decisions
 
-TDD 粒度／例外、finding authority／發布呈現與真實 demo target 尚待本輪 grill；timeout 等詳細預設會隨 design 提交。見 [decisions](decisions.md)。
+真實實驗已改用 gigaxfer 另一個既有 session 的 feature，先在 pre-PR 接入 PR gating loop；初始研究/設計/實作由原 session 完成。這是完整交付目標的第一段實驗，不代表已驗證 issue → design → implementation 的自動派工。具體 feature/session、finding authority／發布呈現仍待確認。一般化 TDD 方法／例外和 timeout 等詳細政策隨後完成。見 [decisions](decisions.md) 與 [實驗交接](experiments/pr-gating.md)。

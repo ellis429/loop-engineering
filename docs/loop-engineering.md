@@ -2,6 +2,8 @@
 
 日期：2026-09-26。用途：回答「這整套流程怎麼實現」，並供正式 OpenSpec design 承接。這是基於已確認需求的設計草案，尚未批准開工；不是已完成的軟體。Orca Delivery 是目前實作專案，使用「Loop Engineering」說明整套方法，不推定使用者已要求更改 repo 名称。
 
+目前先做 D16 的 [PR gating 實驗](experiments/pr-gating.md)：等另一個既有 gigaxfer session 完成 feature 到 pre-PR，再接入驗證、review/CI、修正與覆核。以下仍是完整 delivery loop 藍圖；完整自動設計與初始實作不屬於第一段實驗。
+
 ## 交付機制
 
 Loop Engineering 把目標、執行、可驗證證據、判斷與修正連成可恢復的交付循環。人負責需求及关键取捨；agent 負責研究、設計、程式與審查；controller 負責現在在哪一步、證據是否適用、下一步由誰做、何時停止。
@@ -152,6 +154,6 @@ MVP 終點是 PR Pass / Ready for human acceptance。Merge、close issue、relea
 
 現況：本機 repo、研究、決策紀錄、Orca 真實 bounded probes 已完成；controller、四個 wrappers 與真實 feature E2E 尚未完成。Claude 的完整 native result/completion/release 已驗證。Codex 的 sandbox utility 已能在允許特定 socket 時唯讀查詢 Orca；真實 worker lifecycle 及 reviewer 工具隔離未驗證。新 repo 登錄存在，但 Orca workspace/ref discovery 仍有缺口。
 
-尚待使用者選定的三項維持不變：TDD 方法/例外、finding 發布與權威来源、真實 demo repo/issue。本藍圖沒有把這三項提案當作已確認政策。
+最新決策 D15/D16 已選 gigaxfer 既有 feature 的 pre-PR 接入；具体 issue/session 待確認，先驗證 PR gating loop。Finding 發布與權威來源仍待確認；一般化 TDD 方法/例外留待完整交付流程定案，實驗仍核對真實 G1 證據。
 
 相關文件：[決策紀錄](decisions.md)、[設計準備稿](research/2026-09-25/design-foundation.md)、[整合缺口](research/2026-09-25/integration-gaps.md)、[demo ticket 草稿](research/2026-09-25/demo-ticket-draft.md)。

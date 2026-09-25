@@ -22,6 +22,8 @@
 | D12 | 違反 spec/AC、可證明的正確性/安全缺陷、必要驗證缺失皆 blocking；風格/命名偏好不 blocking；severity 用於排優先順序 | 同上 |
 | D13 | Run 主動執行時間上限 4h、最多 3 輪 correction；每個 infra 操作額外重試 2 次；實作序列、review+CI 並行；到限保存狀態轉 Blocked | 同上 |
 | D14 | MVP 採人可閱讀的 JSON／YAML 檔案保存設定與狀態，取代 SQLite 提案；持久化、恢復與去重要求維持 | 使用者「我建議用 json 或是 yaml, 讓人也看得懂」 |
+| D15 | 真實實驗使用另一個既有 gigaxfer session 正在開發的 feature；不採建立新 private orca-delivery repo／status feature 的 demo 提案 | 使用者「我想用另一個 session gigaxfer 來實驗」及後續說明 |
+| D16 | 先驗證 PR gating loop，從該 feature 到 pre-PR 時接入 G1 → PR → 獨立 review/CI → fix/re-review → PR Pass／Blocked；既有 session 繼續初始實作 | 使用者「等等他做到 pre-pr 的時候試試看」、「我們可以先驗證 pr gating loop」 |
 
 ## 已提出，待回答
 
@@ -29,11 +31,11 @@
 | --- | --- | --- |
 | Q-TDD | 沿用 Superpowers TDD；每個行為變更追溯到 task、Red 測試與歷史 snapshot，最新整合 head 有 Green/回歸；純文件/註解可附理由和檢查申請 N/A，由 reviewer 確認；設定依實際行為判定 | 保留可稽核流程，避免形式化無效 Red；agent 不可自行豁免 |
 | Q-PUBLISH | 結構化 finding registry 為權威；PR 完整 review、issue 可行動摘要與連結；GitHub 可討論，解除阻擋需 reviewer 證據或 Orca 入口的明確人工裁決 | 避免 GitHub 和本機各自改狀態；需持久化發布 outbox 與 read-after-write |
-| Q-DEMO | 建立 private GitHub `orca-delivery` repo 與「CLI 查詢 run 狀態、三 gates 與 Blocked 原因」feature issue；基礎完成後，用固定版本控制器交付這個獨立 feature PR | 避開 gigaxfer 在途工作；demo 真正新增可用功能，執行中的 controller 版本固定 |
+| Q-TARGET | 已選 gigaxfer 的既有 session；確認是否為 P03 / issue #12 / p03-ingest，再固定 pre-PR 交接版本和 session identity | P03 仍在修改且依賴 open PR #11；目前只是查核到的候選，不能自行當成使用者選定 |
 
 ## 下一個決策前緣
 
-等待本輪 Q-TDD / Q-PUBLISH / Q-DEMO；收到答案後完成具體 spec、design 與可派工 tasks，交付一次開工前 review。
+優先完成 D16 的 PR gating 實驗，交接清單見 [PR gating experiment](experiments/pr-gating.md)。目前向使用者確認 Q-TARGET 與本次 Q-PUBLISH。既有 feature 的 TDD 方法不在接入時重寫；先核對其實際證據，缺少就明確阻擋。一般化 TDD 方法與非行為例外 Q-TDD 留待完整 delivery loop 定案，不藉縮小實驗跳過 G1。
 
 ## 可由設計自行處理的實作細節
 
