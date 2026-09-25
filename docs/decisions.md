@@ -21,6 +21,7 @@
 | D11 | 每個 feature 的 design+plan 開工前由使用者確認一次；後續 scope/spec/AC 變更、設計缺陷或阻擋爭議回到人 | 使用者「ok'」接受上一輪三項建議 |
 | D12 | 違反 spec/AC、可證明的正確性/安全缺陷、必要驗證缺失皆 blocking；風格/命名偏好不 blocking；severity 用於排優先順序 | 同上 |
 | D13 | Run 主動執行時間上限 4h、最多 3 輪 correction；每個 infra 操作額外重試 2 次；實作序列、review+CI 並行；到限保存狀態轉 Blocked | 同上 |
+| D14 | MVP 採人可閱讀的 JSON／YAML 檔案保存設定與狀態，取代 SQLite 提案；持久化、恢復與去重要求維持 | 使用者「我建議用 json 或是 yaml, 讓人也看得懂」 |
 
 ## 已提出，待回答
 
@@ -36,6 +37,6 @@
 
 ## 可由設計自行處理的實作細節
 
-持久化引擎、語言、檔案安排與內部介面由設計比較後提出，需滿足已確認的行為、恢復及證據契約。技術建議不提前寫成使用者已指定的偏好。
+持久化採 D14 的人可讀檔案。格式分工建議：YAML 保存 workflow/gate 設定，排版過的 JSON 保存 run/assignment/result，JSONL 保存事件歷史；具體寫入與恢復設計見 [檔案狀態設計](file-state.md)。語言、檔案安排與內部介面仍由設計提出，需滿足已確認的行為、恢復及證據契約。
 
 Design 草案會明列 worker/review/CI 45/30/30min 的 timeout 預設、只接受 required check 的 success（skipped/neutral 預設拒絕）、active time 計算及 budget resume 行為，隨具體 design 一併確認。現階段成本只記錄可得用量，不宣稱精確美元硬上限。

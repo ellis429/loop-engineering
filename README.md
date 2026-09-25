@@ -7,6 +7,7 @@
 ## 文件
 
 - [Loop Engineering：完整流程與實現藍圖](docs/loop-engineering.md)
+- [JSON／YAML 檔案狀態與恢復設計](docs/file-state.md)
 - [需求意圖與已確認邊界](docs/project-intent.md)
 - [決策狀態](docs/decisions.md)
 - [領域詞彙](CONTEXT.md)

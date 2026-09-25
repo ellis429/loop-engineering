@@ -28,6 +28,7 @@ Project spec 定義共用契約，feature spec 定義該交付的範圍與驗收
 12. MVP 使用既有 Orca 與 GitHub，不建立新 dashboard；交付終點 PR Pass，不包含 merge、close issue、release 或 deploy。
 13. 每個 feature 在 design+plan 完成後開工前由使用者確認一次；後续 scope/spec/AC 變更、設計缺陷或阻擋爭議回到使用者。
 14. 違反 spec/AC、可證明的正確性/安全缺陷、必要驗證缺失屬 blocking；風格偏好不阻擋。實作依序，review 與 CI 並行；每個 run 主動執行最多 4 小時、最多 3 輪 correction、每項 infra 操作最多額外重試 2 次，到限轉 Blocked。
+15. 設定與執行狀態採人可閱讀的 JSON／YAML 檔案；不用 SQLite 作為 MVP 的持久化實作，仍需維持恢復、版本判定與去重語意。
 
 ## Environment and chosen integration
 

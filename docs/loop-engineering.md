@@ -61,7 +61,7 @@ Upstream 的 project/feature 定義由人與 lead agent 協作。MVP controller 
 | Git / GitHub / CI adapters | 操作 worktrees、issue/PR、check-runs/statuses、發布結果 | 真實 SHA、checks、URLs、API receipts，不替 agent 判需求 |
 | Skills | 定義各角色如何工作與結果格式 | 可重用方法與薄封裝；沒有整體 Pass 或重試政策的決定權 |
 
-技術選型建議是本機 Python CLI + SQLite + evidence files。單一前景 process 在專用 Orca terminal 運作，以原生 Run/Task/Dispatch 追蹤 workers，透過 CLI/API 操作 GitHub；不新增 dashboard 或另一個 scheduler。語言和資料布局屬實作提案，最終 design 會固定版本與安裝命令。
+持久化已改採使用者指定的人可讀檔案。建議 YAML 保存 workflow/gate 設定，排版過的 JSON 保存 run、assignment 與 result，JSONL 保存事件歷史，測試 logs 與 review 報告保留可直接閱讀的檔案。Controller 仍建議用本機 Python CLI，在專用 Orca terminal 以單一前景 process 運作。以原生 Run/Task/Dispatch 追蹤 workers，透過 CLI/API 操作 GitHub；不新增 dashboard 或另一個 scheduler。詳細布局及一致性提案見 [檔案狀態設計](file-state.md)。
 
 ## Controller 的核心循環
 
@@ -79,7 +79,7 @@ Upstream 的 project/feature 定義由人與 lead agent 協作。MVP controller 
 收到通知或到 reconcile 時間後，再讀實況
 ```
 
-先保存 operation intent 再呼叫外部服務，可知道 crash 前曾經打算做什麼；外部執行結果未知時，先查原 request/task/dispatch，不能直接再派同一工作。SQLite transaction 保證本機結果匯入與状态更新的一致性；外部 API 的 ambiguous outcome 仍需 reconcile，不宣稱跨 GitHub/Orca 的全域 transaction。
+先保存 operation intent 再呼叫外部服務，可知道 crash 前曾經打算做什麼；外部執行結果未知時，先查原 request/task/dispatch，不能直接再派同一工作。MVP 將同一 run 的 tasks、gates、findings 與待執行操作放在一份 `run.json`，由唯一 controller 在鎖內原子替換整份檔案，避免必須同時修改多份權威狀態。事件紀錄與大份 evidence 分開保存，其寫入順序和 crash recovery 見檔案狀態設計；外部 API 的 ambiguous outcome 仍需 reconcile。
 
 通知僅縮短等待時間。即使通知遺失，controller 也能從 result files、native dispatch 和 GitHub 讀回結果；重複事件則對照 attempt/result IDs 去重。
 

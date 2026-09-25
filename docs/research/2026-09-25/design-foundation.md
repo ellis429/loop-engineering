@@ -6,7 +6,7 @@
 
 已選擇一個 lead agent、一個持久化 controller，以及 Orca supervised workers。Lead agent 協助需求與 finding 判斷；controller 擁有排程、版本驗證、狀態轉移、重試與發布。Orca Run/Task/Dispatch 只承擔執行身分與生命週期。
 
-建議採 Python CLI、SQLite 與不可覆寫的 evidence files；本機 Python 3.10.10、SQLite 3.39.4、uv 0.11.24 已查核，正式最低 Python 版本會在 design 選定。這個選擇可用標準程式庫涵蓋本機 transaction、process/argv、雜湊與檔案鎖，不需要另一套 workflow engine。Runtime adapters 應位於窄介面後，state machine 不直接讀自由文字終端輸出。
+2026-09-26 依 D14 修訂：建議採 Python CLI、人可讀 JSON／YAML 與不可覆寫的 evidence files，移除 SQLite 提案。本機 Python 3.10.10、uv 0.11.24 已查核，正式最低 Python 版本會在 design 選定。狀態一致性使用單一 writer、檔案鎖與原子 snapshot 替換，詳見 [檔案狀態設計](../../file-state.md)。Runtime adapters 應位於窄介面後，state machine 不直接讀自由文字終端輸出。
 
 測試邊界是對使用者有意義的行為：restart 不重派、舊版本不放行、部分結果保留、未解決阻擋不消失、發文失敗只重試發文。不要用驗證私有函式呼叫次數取代上述可觀察結果。
 
@@ -48,7 +48,7 @@ Result 至少包含對應 IDs、schema version、execution status、實際 cwd /
 
 Controller 先保存 assignment 和 operation intent，再發出外部呼叫；回來保存 request ID 與 receipt。重啟遇到 `outcome_unknown` 必須查詢原 operation/native dispatch，禁止直接新派 editor。API 若不支援 caller-selected idempotency key，不能聲稱 exactly-once；需保存 operation marker、reconcile 或保守 Blocked。
 
-Result 先寫完整檔案後以 atomic rename 發布，再通知；controller 讀取固定路徑、驗證 schema/ID/version/digest、檢查實際 evidence，才在 transaction 匯入一次。同一 attempt 重送不同內容是衝突，不能 last-write-wins。
+Result 先寫完整檔案後以 atomic rename 發布，再通知；controller 讀取固定路徑、驗證 schema/ID/version/digest、檢查實際 evidence，才在鎖內將 result ID、相關 findings 和待執行操作一併寫入新的 `run.json` snapshot。同一 attempt 重送不同內容是衝突，不能 last-write-wins。
 
 ## Finding 與修正
 
@@ -68,7 +68,7 @@ Pass 前重新取得 PR 的 head/base 與當前版本資訊，確認沒有變動
 
 ## 恢復與資源
 
-SQLite transaction 保存現況與待執行操作；单一 controller lock 防止兩個 loop 同時控制一個 run。結果檔案與 receipts 保留，通知只做 wakeup。定期 reconcile 查 result、Orca task/dispatch、PR revision 和 CI，處理遺失通知及 crash windows。
+一份原子替換的 `run.json` 保存現況與待執行操作；單一 controller lock 防止兩個 loop 同時控制一個 run。JSONL 事件紀錄與結果檔案、receipts 保留，通知只做 wakeup。定期 reconcile 查 result、Orca task/dispatch、PR revision 和 CI，處理遺失通知及 crash windows。狀態檔仍需 schema、revision 與完整性檢查，讀取失敗不能假設為空白新 run。
 
 Worker timeout 不等於 worker dead。外部實況 unknown 時保留執行權與 worktree，不派競爭 editor；只有原生已失敗/停止的證據才允許 replacement。Resource cleanup 根據 ownership：原生建立的 terminal 用 native release；controller 自建且已解除 dispatch authority 的 terminal 才由自己關閉。
 
