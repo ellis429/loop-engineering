@@ -6,12 +6,14 @@
 
 ## 文件
 
+- [Loop Engineering：完整流程與實現藍圖](docs/loop-engineering.md)
 - [需求意圖與已確認邊界](docs/project-intent.md)
 - [決策狀態](docs/decisions.md)
 - [領域詞彙](CONTEXT.md)
 - [環境查核與 baseline evidence](docs/research/2026-09-25/research.md)
 - [Orca 控制介面](docs/research/2026-09-25/orca-capabilities.md)
 - [真實 agent 派工 probe 與能力缺口](docs/research/2026-09-25/runtime-probe.md)
+- [Codex sandbox / Orca IPC 與 workspace 整合查核](docs/research/2026-09-25/integration-gaps.md)
 - [Skills 契約與版本查核](docs/research/2026-09-25/skills.md)
 - [Feature 交接欄位草案](docs/research/2026-09-25/feature-handoff-contract.md)
 
