@@ -26,6 +26,8 @@ Project spec 定義共用契約，feature spec 定義該交付的範圍與驗收
 10. 並行修改使用隔離 worktrees，依賴工作依序整合；review 與 CI 針對最終整合 PR。Reviewer 不修改被審查 branch。
 11. Skills 不擁有 feature gate 或外層 dispatch loop。沿用現有方法並以薄封裝統一契約，保留已安裝版本的呼叫限制。
 12. MVP 使用既有 Orca 與 GitHub，不建立新 dashboard；交付終點 PR Pass，不包含 merge、close issue、release 或 deploy。
+13. 每個 feature 在 design+plan 完成後開工前由使用者確認一次；後续 scope/spec/AC 變更、設計缺陷或阻擋爭議回到使用者。
+14. 違反 spec/AC、可證明的正確性/安全缺陷、必要驗證缺失屬 blocking；風格偏好不阻擋。實作依序，review 與 CI 並行；每個 run 主動執行最多 4 小時、最多 3 輪 correction、每項 infra 操作最多額外重試 2 次，到限轉 Blocked。
 
 ## Environment and chosen integration
 
@@ -53,4 +55,4 @@ Project spec 定義共用契約，feature spec 定義該交付的範圍與驗收
 
 ## Open decisions
 
-人工確認點、blocking 標準、具體執行上限、TDD 粒度／例外、finding authority／發布呈現與真實 demo target 尚待逐輪 grill，見 [decisions](decisions.md)。
+TDD 粒度／例外、finding authority／發布呈現與真實 demo target 尚待本輪 grill；timeout 等詳細預設會隨 design 提交。見 [decisions](decisions.md)。

@@ -16,21 +16,24 @@
 | D08 | Orca lead agent + 單一本機小型持久化 controller + Orca workers；先從專用 Orca terminal 啟動與 resume | 同上 |
 | D09 | Review findings 需 reviewer 驗證或明確人工裁決才能解除；通知不能作為成功證據 | 初始 handoff |
 | D10 | 真實驗收含 finding → fix → re-review，mock 與真實證據明確區分 | 初始 handoff |
+| D11 | 每個 feature 的 design+plan 開工前由使用者確認一次；後續 scope/spec/AC 變更、設計缺陷或阻擋爭議回到人 | 使用者「ok'」接受上一輪三項建議 |
+| D12 | 違反 spec/AC、可證明的正確性/安全缺陷、必要驗證缺失皆 blocking；風格/命名偏好不 blocking；severity 用於排優先順序 | 同上 |
+| D13 | Run 主動執行時間上限 4h、最多 3 輪 correction；每個 infra 操作額外重試 2 次；實作序列、review+CI 並行；到限保存狀態轉 Blocked | 同上 |
 
 ## 已提出，待回答
 
 | ID | 建議 | 主要取捨 |
 | --- | --- | --- |
-| Q-HUMAN | 每個 feature design+plan 開工前確認一次；之後 scope/spec/AC 變更、設計缺陷或阻擋爭議回到人 | 增加一次人工等待，避免方向錯誤一路實作 |
-| Q-BLOCKING | 違反 spec/AC、可證明的正確性/安全缺陷、必要驗證缺失皆 blocking；偏好性建議不 blocking；severity 排優先順序 | 需可讀取依據；不以固定 severity 門檻掩蓋違反 AC |
-| Q-LIMITS | Run 主動執行 4h、最多 3 輪 correction；每個 infra 操作額外重試 2 次；實作序列、review+CI 並行；worker/review/CI 45/30/30min | 到限保存狀態轉 Blocked；成本先記錄可得用量，不假稱精確美元硬上限 |
+| Q-TDD | 沿用 Superpowers TDD；每個行為變更追溯到 task、Red 測試與歷史 snapshot，最新整合 head 有 Green/回歸；純文件/註解可附理由和檢查申請 N/A，由 reviewer 確認；設定依實際行為判定 | 保留可稽核流程，避免形式化無效 Red；agent 不可自行豁免 |
+| Q-PUBLISH | 結構化 finding registry 為權威；PR 完整 review、issue 可行動摘要與連結；GitHub 可討論，解除阻擋需 reviewer 證據或 Orca 入口的明確人工裁決 | 避免 GitHub 和本機各自改狀態；需持久化發布 outbox 與 read-after-write |
+| Q-DEMO | 建立 private GitHub `orca-delivery` repo 與「CLI 查詢 run 狀態、三 gates 與 Blocked 原因」feature issue；基礎完成後，用固定版本控制器交付這個獨立 feature PR | 避開 gigaxfer 在途工作；demo 真正新增可用功能，執行中的 controller 版本固定 |
 
 ## 下一個決策前緣
 
-- TDD 方法、行為/任務的證據粒度、非行為變更的 exemption 與相應驗證。
-- Review 詳情與 issue 摘要的發布方式、finding 的權威來源及人工裁決入口。
-- 第一個真實 demo repo/feature issue，及是否已有適用 CI。現有 gigaxfer issues 僅作候選，不擅自接管進行中的 worktrees。
+等待本輪 Q-TDD / Q-PUBLISH / Q-DEMO；收到答案後完成具體 spec、design 與可派工 tasks，交付一次開工前 review。
 
 ## 可由設計自行處理的實作細節
 
 持久化引擎、語言、檔案安排與內部介面由設計比較後提出，需滿足已確認的行為、恢復及證據契約。技術建議不提前寫成使用者已指定的偏好。
+
+Design 草案會明列 worker/review/CI 45/30/30min 的 timeout 預設、只接受 required check 的 success（skipped/neutral 預設拒絕）、active time 計算及 budget resume 行為，隨具體 design 一併確認。現階段成本只記錄可得用量，不宣稱精確美元硬上限。
