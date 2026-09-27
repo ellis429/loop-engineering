@@ -1,0 +1,90 @@
+{
+  "root": "/private/tmp/orca-spec-comparison-20260926/openspec",
+  "excludes": "output-manifest.json itself",
+  "files": [
+    {
+      "path": "author-notes.md",
+      "sha256": "1053c6a304549a959285c6d05c718170c857b24f44516098c258978d790cd1f3"
+    },
+    {
+      "path": "coverage-notes.md",
+      "sha256": "ff119395cc9895861954e2cb149ed32ac72842ccb1e805c2a1f0b9e6bde1dc57"
+    },
+    {
+      "path": "openspec/changes/implement-delivery-loop/.openspec.yaml",
+      "sha256": "062e545e250441aa0692c22d7a65e07334f1c0f2e706c0e297f36065b6a0699c"
+    },
+    {
+      "path": "openspec/changes/implement-delivery-loop/proposal.md",
+      "sha256": "aeda1968199d092263a378ff3e74e7f96809bd48873a445f9faf6d89c691e919"
+    },
+    {
+      "path": "openspec/changes/implement-delivery-loop/specs/delivery-gates/spec.md",
+      "sha256": "3444f8bdab9ac35a90cc1052970af07770888b782c878113bde121b7b02f9eec"
+    },
+    {
+      "path": "openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+      "sha256": "cf3ff6b03e3a9680798102e04141ecafc915dbaf034092001bf32ec31e5ce839"
+    },
+    {
+      "path": "openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md",
+      "sha256": "cb08d5c3effc1cb23645b0eaa5417df5e9b59b6d471de7d6e290899304032ab2"
+    },
+    {
+      "path": "openspec/changes/implement-delivery-loop/specs/finding-resolution/spec.md",
+      "sha256": "77ee22798e8f787691c8e2da8e071c2cefae397ad9addd7025fccbe4eefe36fa"
+    },
+    {
+      "path": "openspec/config.yaml",
+      "sha256": "f5ef09c9d93abd150569276fabfefd7056c7a2f8b6b407eb9af61d69a01ec467"
+    },
+    {
+      "path": "tool-records/cli-version.txt",
+      "sha256": "ca0bc79c4cde0ad64e1ec9df2882425197b5ba85704a4ac6bd67f8f99936eb25"
+    },
+    {
+      "path": "tool-records/draft-audit.json",
+      "sha256": "3dd8d303016905c073e34d6fa3b471570b5e298bc2372035e34e39b8701c99d1"
+    },
+    {
+      "path": "tool-records/instructions-design.json",
+      "sha256": "3db19342d9886ccc4dc9471091893ecceefdffd9c9656c00ace2a238888f8842"
+    },
+    {
+      "path": "tool-records/instructions-proposal.json",
+      "sha256": "6b48c45cc462d4cf8d618d5636b8db2b6c4302e10b294c160c446d29b35451a0"
+    },
+    {
+      "path": "tool-records/instructions-specs.json",
+      "sha256": "d5012d2fe54c44c9691a3e463ccf40f8a79dd1d5babe7995471151d6a31c7f8d"
+    },
+    {
+      "path": "tool-records/instructions-tasks.json",
+      "sha256": "dab8524e6f246b2f85fa85a79e9e58ee3b7be7495f4006a8fbf1048f2e54eeee"
+    },
+    {
+      "path": "tool-records/spec-inventory.txt",
+      "sha256": "438a3e95e2c0f67a2b647bdceae03d17eaed4f12c4da476a2065e13086199149"
+    },
+    {
+      "path": "tool-records/status-after-proposal.json",
+      "sha256": "d0a67eb1f225d887a2bf3dbc2a01362f5dfa66b089954ed08df3a1a5f8410b02"
+    },
+    {
+      "path": "tool-records/status-after-specs.json",
+      "sha256": "4f4a334f90b16780c7949d5f950e48ad5eaa795826d1c3c6339710e179e69c30"
+    },
+    {
+      "path": "tool-records/status-final.json",
+      "sha256": "4f4a334f90b16780c7949d5f950e48ad5eaa795826d1c3c6339710e179e69c30"
+    },
+    {
+      "path": "tool-records/status-initial.json",
+      "sha256": "538d168720dbf1bcf381e0920657a7c4515cb622b82ae0cea503184bdf7bd546"
+    },
+    {
+      "path": "tool-records/validation.json",
+      "sha256": "62ab32745c8147dc463d3c91e6a81415de66c05661f044c0a03f0071399fec9f"
+    }
+  ]
+}

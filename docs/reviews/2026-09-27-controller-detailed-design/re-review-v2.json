@@ -1,0 +1,276 @@
+{
+  "schema_version": 1,
+  "review_id": "controller-design-02-gpt-rereview-v2",
+  "prior_review": "review/review.json",
+  "review_kind": "fixed-snapshot design re-review; not product G2",
+  "verdict": "changes_required",
+  "original_findings": [
+    {
+      "id": "DR-01",
+      "status": "verified",
+      "locations": "design.md:311–361；tasks.md:72–73、121–123；validation.md:74–75、112",
+      "reason": "OS launcher 成為實際拒寫邊界；verified 需負例通過及相符 dispatch receipt；未通過時 implementer 不派工、G2 unknown。原先 clone/env/事後比較可升格的反例已排除。",
+      "remaining_validation": "OpenCode、keychain、Linux 等仍需實測；本結論只驗設計 fail-closed，不表示 runtime 已 verified。"
+    },
+    {
+      "id": "DR-02",
+      "status": "verified",
+      "locations": "design.md:154–162；tasks.md:77–80；validation.md:79",
+      "reason": "VersionSet 明確不含時間，採用內容與 observation 分離；相同 body 重讀與 restart 不改 key，測法已涵蓋。",
+      "remaining_validation": null
+    },
+    {
+      "id": "DR-03",
+      "status": "verified",
+      "locations": "design.md:164–183；tasks.md:77–82、100–103；validation.md:64、80",
+      "reason": "不可變 evidence 與當前 assessment 已分離；首次 PR binding 有 R-unaffected，新 base 有 R-base 重驗及新 assessment，原先保留舊 G1 key 而不能 Pass 的反例已解除。",
+      "remaining_validation": "新增 assessment 沿用規則的安全性缺口另記 DR-10，未把原缺陷與新缺陷混為一項。"
+    },
+    {
+      "id": "DR-04",
+      "status": "still_open",
+      "locations": "design.md:191–197；tasks.md:31–39；validation.md:69–70",
+      "reason": "temp index 已解 untracked 新測試遺失，但 copy worker index 保留已 stage 的排除/scope 外內容；後續 pathspec 排除不會移除既有 index entry，仍不符合本修正承諾的 snapshot 範圍。",
+      "remaining_validation": "見 findings 的具體反例與修正要求；不得以現有 tmp probe 宣告整個 snapshot 程序已符合。"
+    },
+    {
+      "id": "DR-05",
+      "status": "verified",
+      "locations": "design.md:296–309；tasks.md:91–98；validation.md:71、92",
+      "reason": "選定 per-attempt clone＋controller 唯一 writer＋CAS fast-forward，列 integration operation、T0/A 對應及 ref 查回；原先兩種 branch 模型矛盾與中斷後無整合判準已解除。",
+      "remaining_validation": "真 git crash 測試尚未執行。"
+    },
+    {
+      "id": "DR-06",
+      "status": "verified",
+      "locations": "design.md:279–294；tasks.md:53–60；validation.md:91、105",
+      "reason": "新增跨 clone 可查的 host authority locator 與 runs lineage；另一 clone 被拒、遺失 state Blocked、feature 預算累計，排除原 repo-local registry 繞過。",
+      "remaining_validation": "只涵蓋聲明支援的單一主機。"
+    },
+    {
+      "id": "DR-07",
+      "status": "verified",
+      "locations": "design.md:369–379；tasks.md:61–70、119–120；validation.md:94、100–102",
+      "reason": "session 與 prompt 分段持久化；session marker 不再等於 prompt accepted，messages 查回及未知 prompt 的停止/fencing 路徑已具體化，故障矩陣核對外部呼叫次數。",
+      "remaining_validation": "OpenCode 列表與訊息能力尚待 preflight；缺能力時仍 Blocked。"
+    },
+    {
+      "id": "DR-08",
+      "status": "verified",
+      "locations": "design.md:222–226；tasks.md:111–114；validation.md:78",
+      "reason": "候選 M 發現、fetch/parents 映射、依 head/merge policy 查相應 SHA 均已定義；測法含 H 無 check、M 有 check 與舊 base M。",
+      "remaining_validation": "GH 實測尚未執行。"
+    },
+    {
+      "id": "DR-09",
+      "status": "verified",
+      "locations": "design.md:253–271；tasks.md:41–50；validation.md:97",
+      "reason": "blob 檔案/目錄同步與 snapshot 提交屏障已定義，缺引用 Blocked；process kill、呼叫順序及 power-loss 驗證範圍分開，原先只 link 即供 snapshot 引用的缺口已補。",
+      "remaining_validation": "平台能力與主機斷電未驗證，不視為已證明持久性。"
+    }
+  ],
+  "findings": [
+    {
+      "id": "DR-04",
+      "severity": "P1",
+      "blocking": true,
+      "status": "still_open",
+      "classification": "original finding, incomplete snapshot repair",
+      "title": "temp index 的初始內容可繞過 scope/exclude 篩選",
+      "locations": [
+        {
+          "file": "reviewed-v2/design.md",
+          "lines": [
+            193,
+            197
+          ]
+        },
+        {
+          "file": "reviewed-v2/tasks.md",
+          "lines": [
+            31,
+            39
+          ]
+        }
+      ],
+      "basis": [
+        "GAT-02 / AC-G04：source snapshot 與實際 evidence 可核對",
+        "DUR-03 / AC-D05：scope 不符的成果不可採為 evidence",
+        "DUR-09：credentials 不寫入交接",
+        "v2 design.md:194、196 自身的 exclude／scope 承諾"
+      ],
+      "scenario": "worker index 已有 staged outside.txt，或已 stage 的 .env（即使之後加入 ignore/exclude）。第193行完整複製 index；第194行只對 scope.paths 且非 exclude 的檔案執行 add，並不移除已存在的 outside.txt/.env entry。因此 write-tree/commit-tree 仍會保存它們。第196行 scope_violation 在 commit 已建立後才檢查，不能使『scope 外檔案不進 snapshot』成立；在 scope 內但被 exclude 的 staged 檔案，也不一定觸發 scope_violation。現有 probe 的 untracked .env 成功排除不能覆蓋此反例。",
+      "required_change": "明定基準 tree 與允許 overlay，不能直接信任整份 worker index 作最終候選；在 write-tree/commit-tree 前驗證候選 tree 的差異及 excluded entry，拒絕或清除不應保存的 staged 新增／修改，並保留 baseline 外部程式所需內容。明定 snapshot.exclude 對 baseline 已 tracked 檔案的處理。補 staged out-of-scope、staged excluded/ignored、mixed staged/unstaged 的真 git 反例，確認不建立含禁止新增內容的 snapshot，worker index/worktree 不變。",
+      "validation_gap": "task 1.2 與 AC-G07 只列一般 scope_violation/.env 排除，沒有驗證由初始 index 帶入且 pathspec 不更新的 entries。"
+    },
+    {
+      "id": "DR-10",
+      "severity": "P1",
+      "blocking": true,
+      "status": "confirmed",
+      "classification": "new defect in revised gate-assessment derivation",
+      "title": "R-reuse 與不完整依賴集合可使新契約直接取得舊 G2 clean",
+      "locations": [
+        {
+          "file": "reviewed-v2/design.md",
+          "lines": [
+            168,
+            185
+          ]
+        },
+        {
+          "file": "reviewed-v2/tasks.md",
+          "lines": [
+            77,
+            82
+          ]
+        },
+        {
+          "file": "reviewed-v2/validation.md",
+          "lines": [
+            80,
+            80
+          ]
+        }
+      ],
+      "basis": [
+        "GAT-07 / AC-G17：spec/design/AC 改變須要求 Reviewer 讀新契約，plan/skill/policy 變更須評估適用性",
+        "GAT-05 / AC-G11：目前版本的適用獨立 review 才能使 G2 通過",
+        "D01、D11、D19、D38"
+      ],
+      "scenario": "H 已在 spec S1 得 G2 clean。S2 新增一條 AC，而 adopt_binding decision 附 reuse:{gate:g2,reason:...}；第178行允許直接推導 G2 passed 到新 key，未要求獨立 Reviewer 讀 S2，三 gates 便可在同 key Pass。另一條相同根因路徑是已採用 skill digest 或 controller_version 改變：G2 dependency 沒有 skill/controller，G1 也沒有 controller，R-unaffected 因交集為空直接沿用；第185行『不派該 assignment』不能使既有 assessment 失效。這不是一般人工 closure 指定 finding 的政策。",
+      "required_change": "明定每種 gate 的可沿用邊界：spec/design/AC 改變不可僅憑一般 reuse decision 把舊 G2 verdict 變成新契約的 clean；須有 Reviewer 對新契約的適用 assessment/review。補齊 skill/controller 版本的影響評估規則與理由，不能因 dependency table 漏欄位默認 unaffected；若保留人工例外，必須明確沿既有政策裁決且不可偽裝成未執行的 G2。測法加入 S1 clean→S2新增AC＋reuse、skill/controller更新→不得無評估直接Pass。",
+      "validation_gap": "目前 AC-G17 只驗 candidate＋awaiting_approval；沒有驗採用新 binding 後不可略過新契約 review，task 2.1 也未覆蓋遺漏的 version dependencies。"
+    }
+  ],
+  "summary": {
+    "verified": 8,
+    "still_open": 1,
+    "new_blocking": 1,
+    "blocking_ids": [
+      "DR-04",
+      "DR-10"
+    ]
+  },
+  "limits": [
+    "只聚焦 v2 對 DR-01–DR-09 的修正與相鄰改動，沒有重新做全 repo 審查。",
+    "verified 表示原設計反例已解除，不代表產品實作、測試、runtime 或 gates 已驗收。",
+    "finding-responses 的 tmp probe 僅作設計佐證；本輪未執行產品測試或新 probe。",
+    "未讀模型上游 attestation；不是本次文件覆核前置。",
+    "D11、GitHub 目標與切片等使用者決策維持待決，不列為設計錯誤。"
+  ],
+  "bound_files": [
+    {
+      "path": "inputs/docs/decisions.md",
+      "sha256": "3322dd015d8d511e3331a1cf597a26ff0e855deaa377eb1fcc40046bc8665eb9"
+    },
+    {
+      "path": "inputs/docs/delivery-harness-overview.md",
+      "sha256": "972945a242eed56428dd6d62b8acde33f9386b4b0adb556988f9478df009c60b"
+    },
+    {
+      "path": "inputs/docs/file-state.md",
+      "sha256": "e065a0d736049e0c87960287211a5f7c014d5ca731f17758703cbed262e179f0"
+    },
+    {
+      "path": "inputs/docs/handoffs/2026-09-27-controller-design.md",
+      "sha256": "f4e115e4914990a7afbfcd335fa9a9b51e6e5b4ba8c70aabf7c86d5579767f0a"
+    },
+    {
+      "path": "inputs/docs/project-intent.md",
+      "sha256": "b6ad2b7ef30def7b5c07dac6254bb8a9ad7c03e042312f2ec1ccf8e00fc5ac37"
+    },
+    {
+      "path": "inputs/docs/research/2026-09-27/controller-bootstrap.md",
+      "sha256": "576225f6dd9592d844d46d4f3344c70c09566c13079572f6a6b77fc11d306f67"
+    },
+    {
+      "path": "inputs/docs/research/2026-09-27/opencode-setup.md",
+      "sha256": "12885903b9e611b086934f189e3ff35b95a0e3922f83c82873dc17dc2e1eb35e"
+    },
+    {
+      "path": "inputs/docs/research/2026-09-27/planning-preflight.md",
+      "sha256": "8c6f81b5db7dfc324df599845be3fb4ce170c994f8fff6176f0c4024f6ec905f"
+    },
+    {
+      "path": "inputs/docs/workflow-contracts.md",
+      "sha256": "e2dc4c900f734eb243751c3adda338a013823a4b994d047e6edf0cebf3c1c6a0"
+    },
+    {
+      "path": "inputs/docs/workflow-design.md",
+      "sha256": "95a61ad4591152132eb31ccb0af61c30dce281bf35b55e0ed0a27e88b8a89777"
+    },
+    {
+      "path": "inputs/openspec/changes/implement-delivery-loop/proposal.md",
+      "sha256": "f8341121771303f35f63d2bd00534c1c95c458680d06007a0d9fc5017d16727c"
+    },
+    {
+      "path": "inputs/openspec/changes/implement-delivery-loop/specs/delivery-gates/spec.md",
+      "sha256": "64951e366865cfb10042c2c997288b4129b76751f67231118f562af44801f566"
+    },
+    {
+      "path": "inputs/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+      "sha256": "cf33d466f69a928d41183bc5d1cc36c53f5b80c7f4f11e42d4070ee21962050c"
+    },
+    {
+      "path": "inputs/openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md",
+      "sha256": "e1ac3e9fc830e4234e5197fd7325791da52a31cf70324283b359123637024c1c"
+    },
+    {
+      "path": "inputs/openspec/changes/implement-delivery-loop/specs/finding-resolution/spec.md",
+      "sha256": "f5b11ef6c0edb41a8725ad9104f8fcab9d660ee5fc10b8d3be2eb8ffba551601"
+    },
+    {
+      "path": "reviewed-v1/design.md",
+      "sha256": "b26fc0430579f7ab893b739b78118baaddf02c755ed2cb868d955834b490b0c8"
+    },
+    {
+      "path": "reviewed-v1/result.json",
+      "sha256": "8b96a3af96d02d8459c83cd340f45ab3ee1b475bd58c3a2e4906e4fef6876dce"
+    },
+    {
+      "path": "reviewed-v1/tasks.md",
+      "sha256": "7ce4ce9599813ab3dc655adc67d45ab698c9d0d74aa0774419eeb7a67e09888e"
+    },
+    {
+      "path": "reviewed-v1/validation.md",
+      "sha256": "5dd4abd55a38714a91fbab8a8b0bd1fe3905c3a701af627141faf289831a5f88"
+    },
+    {
+      "path": "reviewed-v2/design.md",
+      "sha256": "760ef3ae2a6b06d77ddf85c2c0be56fec47dccd96699b80f11134ef9ad4e7649"
+    },
+    {
+      "path": "reviewed-v2/finding-responses.json",
+      "sha256": "a6f49bb7d8f5f578254e07e96849a31b80cf487a678ae4142640117152ddf9ae"
+    },
+    {
+      "path": "reviewed-v2/result.json",
+      "sha256": "faaf558453d598a20711234a56c764a572690045702248b1134a2175172fa41a"
+    },
+    {
+      "path": "reviewed-v2/tasks.md",
+      "sha256": "886302a98e940c1272acd904d0c219c865f23bcb7e4ffd1ba220664c2ef90b3e"
+    },
+    {
+      "path": "reviewed-v2/validation.md",
+      "sha256": "ee8c3fe7c4ccb920487fedfb1a37d8938eee857a2887739467464b902814e0dd"
+    }
+  ],
+  "prior_review_hashes": {
+    "review/review.json": "24fc31a39bd7aeec53474f4b65606332547831708cb7640a136c8029a9b617f6",
+    "review/review.md": "7dc6a24ca45f3148c0b41e3599f77f15379d65ed0b81e1b36524aa8577684041"
+  },
+  "declared_v2_hashes_match": true,
+  "created_at": "2026-09-27T04:08:19.023555+00:00",
+  "supplementary_evidence": [
+    {
+      "path": "review/staged-exclude-probe.json",
+      "sha256": "0cb586331a70d8ae48958e7c142daab74cf2533d487b82557bfad34cf46e1b66",
+      "producer": "coordinator",
+      "finding_id": "DR-04",
+      "kind": "tmp git probe; fake data only; not product gate evidence",
+      "observation": "已 stage 的 .env.fake 在 copy index 及 exclude pathspec 後仍存在於 snapshot tree；由協作者重現，reviewer 未自行重跑。"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "requested_version": "v1.18.32",
+  "installed_path": "/Users/johnson.chiang/.opencode/bin/opencode",
+  "path_entry": "/Users/johnson.chiang/.local/bin/opencode",
+  "archive_sha256": "fa643f93401c13508d8d513780e54ce9cc01203d501114be9b88d62408b8101f",
+  "binary_sha256": "a3c45d4e1d6620b436851f1ef6b25c71befcf06a382e279a1eb1c2196424395e",
+  "version_exit": 0,
+  "version_stdout": "1.18.32",
+  "shell_config_modified": false
+}

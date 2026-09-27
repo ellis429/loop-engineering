@@ -1,0 +1,107 @@
+{
+  "runtime": "opencode",
+  "version": "1.18.32",
+  "model_inference_performed": false,
+  "product_gates_evaluated": false,
+  "health": {
+    "healthy": true,
+    "version": "1.18.32"
+  },
+  "auth_methods": {
+    "anthropic": [],
+    "openai": [
+      {
+        "type": "oauth",
+        "label": "ChatGPT Pro/Plus (browser)"
+      },
+      {
+        "type": "oauth",
+        "label": "ChatGPT Pro/Plus (headless)"
+      },
+      {
+        "type": "api",
+        "label": "Manually enter API Key"
+      }
+    ]
+  },
+  "connected_providers": [
+    "google-vertex",
+    "opencode",
+    "google-vertex-anthropic"
+  ],
+  "catalog_models": {
+    "anthropic": [
+      "claude-opus-5",
+      "claude-opus-5-fast"
+    ],
+    "openai": [
+      "gpt-6-astra",
+      "gpt-6-astra-fast",
+      "gpt-6-astra-pro",
+      "gpt-5.3-codex-spark",
+      "gpt-5.3-codex"
+    ]
+  },
+  "session_id": "ses_f1f2f602dffeQCB5zw09xuKcBx",
+  "workspace": "/private/tmp/orca-controller-bootstrap-20260927/opencode-probe-workspace",
+  "created_and_read_back": true,
+  "session_read_after_server_restart": true,
+  "status": "passed_for_no_inference_capabilities",
+  "temporary_servers_stopped": true,
+  "http_receipts": [
+    {
+      "method": "GET",
+      "path": "/global/health",
+      "status": 200,
+      "body_sha256": "791c081e09a6ec66b491329b40fcea8091f94dff70c8c40b728f157c21af7f71"
+    },
+    {
+      "method": "GET",
+      "path": "/doc",
+      "status": 200,
+      "body_sha256": "46db986090aae41846cd6dbe16225a1d883f0bbcb4c48814008d3f6ce140aa5c"
+    },
+    {
+      "method": "GET",
+      "path": "/provider/auth",
+      "status": 200,
+      "body_sha256": "031bb925dbbd814de422c53224490677b878141dd0440e8d0eb4f29ae0427142"
+    },
+    {
+      "method": "GET",
+      "path": "/provider",
+      "status": 200,
+      "body_sha256": "6cf3515fb006c8fe0533b6bab800276c04a227a7400977559b2f5557e54e1e88"
+    },
+    {
+      "method": "POST",
+      "path": "/session",
+      "status": 200,
+      "body_sha256": "14d72f7ec1bbc754c38a59a378d76c670ec28fbcf59ba851264e6182eecdad2b"
+    },
+    {
+      "method": "GET",
+      "path": "/session/ses_f1f2f602dffeQCB5zw09xuKcBx",
+      "status": 200,
+      "body_sha256": "14d72f7ec1bbc754c38a59a378d76c670ec28fbcf59ba851264e6182eecdad2b"
+    },
+    {
+      "method": "GET",
+      "path": "/session/ses_f1f2f602dffeQCB5zw09xuKcBx/message",
+      "status": 200,
+      "body_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "method": "GET",
+      "path": "/global/health",
+      "status": 200,
+      "body_sha256": "791c081e09a6ec66b491329b40fcea8091f94dff70c8c40b728f157c21af7f71"
+    },
+    {
+      "method": "GET",
+      "path": "/session/ses_f1f2f602dffeQCB5zw09xuKcBx",
+      "status": 200,
+      "body_sha256": "14d72f7ec1bbc754c38a59a378d76c670ec28fbcf59ba851264e6182eecdad2b"
+    }
+  ]
+}

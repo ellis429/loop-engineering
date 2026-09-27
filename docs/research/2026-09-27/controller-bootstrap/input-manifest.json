@@ -1,0 +1,66 @@
+[
+  {
+    "path": "docs/decisions.md",
+    "sha256": "baf825bc8fc662604e807034d1390c837d808f5d0ac9e9dda29d2a6940c657a5"
+  },
+  {
+    "path": "docs/workflow-design.md",
+    "sha256": "2024822be644a7400244bc0dd686dc5e154caa7fdf1cd566a5b8dbbd6bfb9057"
+  },
+  {
+    "path": "docs/workflow-contracts.md",
+    "sha256": "c94bbdb199ae4ed605eeed64e532a70932fe9ca29f4c4304b3bbefad10ff7c1b"
+  },
+  {
+    "path": "docs/file-state.md",
+    "sha256": "e065a0d736049e0c87960287211a5f7c014d5ca731f17758703cbed262e179f0"
+  },
+  {
+    "path": "docs/project-intent.md",
+    "sha256": "2ea8e25f79b2c2cb2ef4732ea4d89cc19139e3422aa7b44902d8adf4655cb799"
+  },
+  {
+    "path": "docs/delivery-harness-overview.md",
+    "sha256": "dd40d7949b58b41eadc771601953593c26279c2998e6282ab28ec58d844b246c"
+  },
+  {
+    "path": "docs/handoffs/2026-09-27-controller-design.md",
+    "sha256": "24b754b2c381bad55036eb7a4bfd4c76f8213578653910550111842d2f29fb6b"
+  },
+  {
+    "path": "docs/reviews/2026-09-27-design-review.md",
+    "sha256": "d1b1338eeecf81653f3a29308e024a11d31f7b66324bd2f2a49545ec3ac7c3b5"
+  },
+  {
+    "path": "docs/research/2026-09-27/planning-preflight.md",
+    "sha256": "8c6f81b5db7dfc324df599845be3fb4ce170c994f8fff6176f0c4024f6ec905f"
+  },
+  {
+    "path": "docs/research/2026-09-26/agent-messaging-and-opencode.md",
+    "sha256": "88e87093adc5c76d62592c6202810472a7ee1826cdf47d8ea12eab61e037a33f"
+  },
+  {
+    "path": "openspec/config.yaml",
+    "sha256": "7f06227db1180864ab2436d0e485965148e53c1713902ac4eb58dc0f4dade12b"
+  },
+  {
+    "path": "openspec/changes/implement-delivery-loop/proposal.md",
+    "sha256": "33da8e6d54e33f45e0362c1218360040e92d37e802a2508ff6c5da078cc8ce57"
+  },
+  {
+    "path": "openspec/changes/implement-delivery-loop/specs/delivery-gates/spec.md",
+    "sha256": "5d4b73a4a02ac90c3c5367f1a169d728ea02bf8fe32cefc731ce331996d9af7e"
+  },
+  {
+    "path": "openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+    "sha256": "cf33d466f69a928d41183bc5d1cc36c53f5b80c7f4f11e42d4070ee21962050c"
+  },
+  {
+    "path": "openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md",
+    "sha256": "10057357b069d221933804bb097e87d80cf6cf7127826e4a7e885423e9c99cfe"
+  },
+  {
+    "path": "openspec/changes/implement-delivery-loop/specs/finding-resolution/spec.md",
+    "sha256": "f5b11ef6c0edb41a8725ad9104f8fcab9d660ee5fc10b8d3be2eb8ffba551601"
+  }
+]

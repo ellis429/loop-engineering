@@ -1,0 +1,211 @@
+--- before/README.md
++++ after/README.md
+@@ -48,4 +48,4 @@
+ 
+ PR Pass 必須同時滿足：G1 實作與 TDD 證據、G2 獨立 review 無未解決阻擋項、G3 必要 CI 檢查成功。結論綁定目前 PR head、review base 與適用規格版本。
+ 
+-MVP 的執行方式已確認為 Orca workers + 單一本機持久化控制器，從專用 Orca terminal 啟動。停止於 Ready for human acceptance；merge、close issue、release、deploy 不在預設範圍。
++依 D08／D37，推薦透過 Orca 使用單一本機持久化 controller；Orca 保持選配，公司 OpenCode 接法可直接啟動／resume controller，經 runtime adapter 執行工作。停止於 Ready for human acceptance；merge、close issue、release、deploy 不在預設範圍。
+--- before/docs/project-intent.md
++++ after/docs/project-intent.md
+@@ -8,7 +8,7 @@
+ 
+ ## Outcome
+ 
+-使用者從 Orca 選擇含有或引用 feature spec 的 GitHub issue。系統協助研究與設計、產生可派工 plan、執行 TDD、整合 PR、獨立審查並查核 CI，再以 review/fix loop 推進到 PR Pass，或帶證據轉交人裁決。
++使用者透過推薦的 Orca 入口或公司 OpenCode 入口，選擇含有或引用 feature spec 的 GitHub issue。系統協助研究與設計、產生可派工 plan、執行 TDD、整合 PR、獨立審查並查核 CI，再以 review/fix loop 推進到 PR Pass，或帶證據轉交人裁決。
+ 
+ Project spec 定義共用契約，feature spec 定義該交付的範圍與驗收。Feature ticket 可直接承擔 feature spec；每個可獨立驗收 feature 對應一個 PR，tasks 為派工單位。
+ 
+@@ -26,19 +26,19 @@
+ 6. Findings 保留穩定 identity、來源、severity/blocking、位置、依據、預期行為、狀態、fix commit 與覆核證據。實作者無權自行解除 reviewer 阻擋。
+ 7. 先保存結果，再發布與通知。Reconcile 可在通知遺失後找回成果；重複事件不重複派工／發文。GitHub 發布失敗只重試發布。
+ 8. 正常情況收齊同版本 review / CI 後合併成一個修正批次；stuck work 有 timeout 與有界 recovery。
+-9. 狀態持久化，重啟後核對外部實況再接續；Orca 不可查詢時不能推論 worker 已停止並派出競爭實作者。
++9. 狀態持久化，重啟後核對外部實況再接續；runtime／接入服務不可查詢時不能推論 worker 已停止並派出競爭實作者。
+ 10. 並行修改使用隔離 worktrees，依賴工作依序整合；review 與 CI 針對最終整合 PR。Reviewer 不修改被審查 branch。
+ 11. Skills 不擁有 feature gate 或外層 dispatch loop。沿用現有方法並以薄封裝統一契約，保留已安裝版本的呼叫限制。
+-12. MVP 使用既有 Orca 與 GitHub，不建立新 dashboard；交付終點 PR Pass，不包含 merge、close issue、release 或 deploy。
++12. MVP 使用既有 agent 入口及 GitHub，不建立新 dashboard；Orca 是推薦選配，公司可直接接 OpenCode；交付終點 PR Pass，不包含 merge、close issue、release 或 deploy。
+ 13. 每個 feature 在 design+plan 完成後開工前由使用者確認一次；後續 scope/spec/AC 變更、設計缺陷或阻擋爭議回到使用者。
+ 14. 違反 spec/AC、可證明的正確性/安全缺陷、必要驗證缺失屬 blocking；風格偏好不阻擋。實作依序，review 與 CI 並行；每個 run 主動執行最多 4 小時、最多 3 輪 correction、每項 infra 操作最多額外重試 2 次，到限轉 Blocked。
+ 15. 設定與執行狀態採人可閱讀的 JSON／YAML 檔案；不用 SQLite 作為 MVP 的持久化實作，仍需維持恢復、版本判定與去重語意。
+ 
+ ## Environment and chosen integration
+ 
+-獨立 repo，既有規劃文件使用 OpenSpec，authoring／planning 組合依 D31／Q-METHOD 重新評估；Orca lead agent 協助判斷，單一持久化 controller 決定狀態與派工，Orca supervised workers 執行 tasks。控制器先從專用 Orca terminal 啟動。
++獨立 repo，既有規劃文件使用 OpenSpec，authoring／planning 組合依 D31／Q-METHOD 重新評估。單一持久化 controller 決定狀態與派工，agent 承接語意工作。D08／D37 的推薦接法使用 Orca 入口與 supervised workers；公司無 Orca 時由 OpenCode API／CLI adapter 直接接入，啟動／resume、worktree 及結果回收不依賴 Orca。兩種接法共用契約；具體 G2 runtime/model 政策仍待定。
+ 
+-本機已查核 Stably Orca 1.4.209、Claude Code 2.1.282、Codex CLI 0.153.4、GitHub CLI 權限與 skills。細節與未驗證能力見 [research](research/2026-09-25/research.md)。
++2026-09-25 的查核為歷史快照，見 [research](research/2026-09-25/research.md)；2026-09-27 的本機版本與限制見 [planning preflight](research/2026-09-27/planning-preflight.md)。公司 OpenCode 版本、模型與工具尚未查核，本機結果不代替公司實測。
+ 
+ ## Acceptance scenarios
+ 
+--- before/docs/loop-engineering.md
++++ after/docs/loop-engineering.md
+@@ -73,14 +73,14 @@
+ 
+ | 元件 | 具體責任 | 接收與產出 |
+ | --- | --- | --- |
+-| Orca 入口與 Project Lead Agent | 與人研究、SA／domain／grill、高層設計、roadmap／milestones 與 feature 規格；收集裁決並協助驗收 | Issue、規格、roadmap、人工決策；feature 詳細設計與交付交由 Implementer Agent |
++| Agent 入口（推薦 Orca，可直接 OpenCode）與 Project Lead Agent | 與人研究、SA／domain／grill、高層設計、roadmap／milestones 與 feature 規格；收集裁決並協助驗收 | Issue、規格、roadmap、人工決策；feature 詳細設計與交付交由 Implementer Agent |
+ | Delivery controller | 單一狀態機、任務依賴、版本判斷、gates、重試、恢復 | Assignment → result/evidence → 下一個 action |
+-| Implementer Agent 與 implementation subagents | 實作研究、詳細設計與最終 plan／tasks；依批准範圍協調 Claude Code workers 在指定 worktree TDD 實作、整合或修正 | Code、tests、commits、Red/Green/refactor 證據、阻擋問題 |
++| Implementer Agent 與 implementation subagents | 實作研究、詳細設計與最終 plan／tasks；依批准範圍經 controller 派發核准 runtime 的 workers，在指定 worktree TDD 實作、整合或修正 | Code、tests、commits、Red/Green/refactor 證據、阻擋問題 |
+ | Reviewer Agent（獨立 Codex） | 讀 spec/design、完整整合 diff 與必要 codebase，覆核舊 finding 並查新問題 | Finding 清單、review evidence、clean/changes_required/blocked |
+ | Git / GitHub / CI adapters | 操作 worktrees、issue/PR、check-runs/statuses、發布結果 | 真實 SHA、checks、URLs、API receipts，不替 agent 判需求 |
+ | Skills | 定義各角色如何工作與結果格式 | 可重用方法與薄封裝；沒有整體 Pass 或重試政策的決定權 |
+ 
+-持久化已改採使用者指定的人可讀檔案。建議 YAML 保存 workflow/gate 設定，排版過的 JSON 保存 run、assignment 與 result，JSONL 保存事件歷史，測試 logs 與 review 報告保留可直接閱讀的檔案。Controller 仍建議用本機 Python CLI，在專用 Orca terminal 以單一前景 process 運作。以原生 Run/Task/Dispatch 追蹤 workers，透過 CLI/API 操作 GitHub；不新增 dashboard 或另一個 scheduler。詳細布局及一致性提案見 [檔案狀態設計](file-state.md)。
++持久化已改採使用者指定的人可讀檔案。建議 YAML 保存 workflow/gate 設定，排版過的 JSON 保存 run、assignment 與 result，JSONL 保存事件歷史，測試 logs 與 review 報告保留可直接閱讀的檔案。Controller 仍建議用本機 Python CLI，以單一前景 process 運作；Orca 環境可從專用 terminal 啟動，公司 OpenCode 環境直接啟動。核心保存自己的 run/task/attempt；Orca 的 Run/Task/Dispatch 或 OpenCode 的 session/message 身份由各 adapter 對應，透過 CLI/API 操作 GitHub；不新增 dashboard 或另一個 scheduler。詳細布局及一致性提案見 [檔案狀態設計](file-state.md)。
+ 
+ ## Controller 的核心循環
+ 
+--- before/docs/file-state.md
++++ after/docs/file-state.md
+@@ -13,7 +13,7 @@
+   assignments/<attempt-id>.json   # 固定版本的派工輸入
+   results/<attempt-id>.json       # Worker／adapter 保存的結構化結果
+   evidence/                      # 測試 logs、review 報告與版本證據
+-  receipts/                      # Orca／GitHub 操作回執
++  receipts/                      # Runtime（Orca／OpenCode 等）與 GitHub 操作回執
+ ```
+ 
+ YAML 適合人工維護設定與註解；run、assignment、result 使用有縮排的 UTF-8 JSON，固定欄位命名，讓人和程式都能讀。JSONL 是歷史紀錄，每行獨立可解析；當前狀態不需要人重讀整份 history 才能了解。
+@@ -42,7 +42,7 @@
+ - 若 snapshot 已更新但 history 未寫完，resume 從 pending history 補寫；遇到已存在的相同 event ID 不重複追加。
+ - 若 JSONL 最後一筆因中斷只寫一半，保留損壞 bytes 的診斷副本，在鎖內移除未完成尾筆，再從 pending history 恢復；中段損壞或同 ID 內容衝突則 Blocked。
+ - 若 result 已存在但尚未匯入，reconcile 核對 assignment、SHA 與 evidence 後匯入一次。
+-- 若 API 結果 unknown，保存原 operation 並查外部實況；檔案格式本身不提供 GitHub／Orca 的 exactly-once 保證。
++- 若 API 結果 unknown，保存原 operation 並查外部實況；檔案格式本身不提供 GitHub 或 agent runtime 的 exactly-once 保證。
+ - 若 `run.json` 不存在、無法解析或 schema 不相容，resume 明確報錯／Blocked，不覆寫成新的空 run。
+ 
+ 本機預設檔案系統是第一個驗證範圍；共享網路磁碟的 lock、rename 與 durability 語意需另外驗證，不能直接宣稱支援多主機 writers。
+--- before/docs/workflow-design.md
++++ after/docs/workflow-design.md
+@@ -218,9 +218,9 @@
+ 
+ ## 9. 最小實作形態與 skills
+ 
+-依 D30，workflow／controller 核心只依賴穩定的角色、派工／結果與能力契約；底層 runtime／model 透過 adapter 與設定接入。換工具仍需驗證派工、恢復、結果及隔離能力，不因可替換而放寬 gates。G2 既有獨立 Codex review 要求維持；Codex 的 runtime/model 定義仍待決，不由此選定 opencode。
+-
+-初始部署沿用 D08 的 lead agent + 小型持久化 controller。相較純 prompt：可以確定地處理 SHA、重試及恢復；相較全面 workflow framework：用本機檔案、單一 process 與既有 Orca/GitHub 就能先驗證。現階段不新增 dashboard、多 repo swarm 或第二個 scheduler。
++依 D30，workflow／controller 核心只依賴穩定的角色、派工／結果與能力契約；底層 runtime／model 透過 adapter 與設定接入。換工具仍需驗證派工、恢復、結果及隔離能力，不因可替換而放寬 gates。G2 既有獨立 Codex review 要求維持；Codex 的 runtime/model 定義仍待決。D37 要求提供公司 OpenCode 的使用路徑，不因此自動改動 G2 的模型政策。
++
++初始部署沿用 D08 的 lead agent + 小型持久化 controller。相較純 prompt：可以確定地處理 SHA、重試及恢復；相較全面 workflow framework：用本機檔案、單一 process 與窄 runtime／GitHub adapters 可分段驗證。Orca 是推薦接法，公司另有直接 OpenCode 接法。現階段不新增 dashboard、多 repo swarm 或第二個 scheduler。
+ 
+ D31 的 authoring／planning 組合已重新開放評估，Q-METHOD 尚待收斂；既有 OpenSpec 文件保留，比較稿只作研究樣本。D32 確認工作責任，不等於選定以下工具；每個 skill 的實際名稱、安裝版本、觸發限制及輸出契約要在採用前核對。
+ 
+@@ -238,7 +238,7 @@
+ 
+ 依 D17 使用單一 `orchestrate` 入口；建議以 router 按意圖載入 project / feature / adopt-resume / retro references；共用 gate、assignment/result 與 owner 契約。Skill 程序與輸出範圍見 [契約文件](workflow-contracts.md#skills-交接契約)。自動呼叫限制不靠 wrapper 名稱繞過；保留原方法或明示整合調整。
+ 
+-Controller 建議為本機 Python CLI，YAML 保存設定、JSON 保存狀態、JSONL 保存事件；運作原子性見 [file-state.md](file-state.md)。Orca/GitHub/git/CI 經窄 adapters 操作，核心規則可用 fake adapters 測。實際語言與執行命令將在 implementation plan 固定，目前沒有可直接啟動的產品指令。
++Controller 建議為本機 Python CLI，YAML 保存設定、JSON 保存狀態、JSONL 保存事件；運作原子性見 [file-state.md](file-state.md)。Orca／直接 OpenCode／GitHub／git／CI 經窄 adapters 操作，核心規則可用 fake adapters 測。實際語言與執行命令將在 implementation plan 固定，目前沒有可直接啟動的產品指令。
+ 
+ ## 10. 驗證與交付順序
+ 
+@@ -247,7 +247,7 @@
+ | V1 設計收斂 | 決策、角色、全部正常／退回路徑與 artifacts 一致 | 本設計、契約、政策選擇；既有 OpenSpec 規格與待完成的 design／可派工 plan，方法組合依 Q-METHOD 收斂 |
+ | V2 核心規則 | 舊版本、缺證據、未知 check、未解 blocker 不放行；round 與 retry 分開 | 經 TDD 驗證的 gate evaluator／狀態轉移 |
+ | V3 持久化與恢復 | Crash、重複結果、遺失通知、未知發文結果不重派／重貼 | 檔案 store、outbox、reconcile 與故障注入證據 |
+-| V4 真實 adapters | 正確 workspace / worker 身份、隔離、結構化結果與生命週期 | 有界 Orca/Claude/Codex/GitHub integration 證據 |
++| V4 真實 adapters | 正確 workspace / worker 身份、隔離、結構化結果與生命週期；Orca 與無 Orca 的 OpenCode 接法分別驗證 | 各核准部署的 integration 證據；不可將一種接法的成功當作另一種已通過 |
+ | V5 Skills／預設工具組合驗證 | Member 經 orchestrate 入口按預設方法前進，新 session 讀交接能接續、不繞 gates 或啟動第二 loop | 固定版本的工具組合、可安裝 skill、操作說明及可追溯交接證據；mock／真實執行分開 |
+ | V6 真實完整試用 | 本 repo 測通後，cross-node-file-transfer 從既有基準匯入、初始化到 feature 交付；含 finding → fix → re-review 與最新版本三 gates | 可追溯的 project／feature 歷程及 PR Pass package／Blocked 證據；舊 P03 接入不是預設前置 |
+ 
+@@ -270,6 +270,18 @@
+ 
+ D15／D16 的既有 PR 接入保留為暫緩方案，非目前前置；如使用者日後恢復，再核對 Q-TARGET 與原 owner 交接。P03 Retro 仍可由使用者單獨啟動，不混入本輪新專案準備。
+ 
++### 10.2 建置 harness 本身與後續試用
++
++Controller／adapters／orchestrate 是本專案的正式交付範圍，不是可拋棄的練習。依 D04／D05，當 feature spec、AC 與可獨立驗收切片清楚時，建立或沿用對應的 GitHub feature issue，引用唯一規格及後續 design／plan／validation；正式 implementation 前須有可核對 ticket，tasks 留在該 feature 計畫。若整個 change 過大，先在 roadmap 拆切片，再各自對應 issue／PR，不用一張含糊大票強塞所有工作。
++
++本次先更新及 review 既有設計，不以 ticket 存在作為文件研究前提，也未批准現在建立 GitHub issue。待目標 repository 與切片確定後再發布；目前 orca-delivery 尚無 remote。Ticket 草稿可先保存在本 repo，不能冒充已發布紀錄。
++
++首次建置 controller 時，由目前協作者協調使用者指定的 Opus 5.5 Implementer、獨立 Reviewer 及真實 CI，保存可追溯證據；不能依賴尚未完成的 controller 自動完成自身 bootstrap。這次設計文件 review 也不是產品 PR 的 G2。Controller 可執行後再分別驗證其核心、恢復、runtime 接入及自動交付流程，清楚標示由人／協作者協調與由 controller 自動執行的區段。
++
++依 D33 及使用者本輪再次確認，先完成並測通本 repo 的 harness／controller 實作，再以新 workflow 從頭啟動 cross-node-file-transfer，作為完整 Project＋Feature 流程的驗證與操作練習。它沿用適用的既有專案基準，仍有自己的 spec／issue／PR 與新證據；不是先拿新專案代替尚未完成的 controller。控制用假 adapter 或有意設置的失敗案例屬測試，不能冒充真實 feature 的獨立 finding → fix → re-review。真實 review 沒有 finding 時如實記未覆蓋該展示條件。
++
++建議在設計 review 結束後準備可讀 handoff，再 compact 或開新 session：交接已確認／待決事項、artifact 位置與版本、review findings／覆核結果、目前狀態、下一步及授權邊界。Compact 不代表開工批准或 gate 通過；新 session 先讀交接及實際文件，不重問已有適用確認的問題。
++
+ ## 11. 本輪決策前緣
+ 
+ D24–D28 已確認 finding 權威／發布、一次爭議覆核、TDD／非行為例外、相依 feature 啟動條件及自動 Retro 候選；CIT 依 D29 暫不處理，G3 維持必要 CI。
+--- before/openspec/changes/implement-delivery-loop/proposal.md
++++ after/openspec/changes/implement-delivery-loop/proposal.md
+@@ -4,7 +4,7 @@
+ 
+ 使用者目前要自行在 agents 間搬運規格、追蹤 findings 與 CI，再判斷目前 PR 是否可驗收。需要一個可恢復、會核對證據的 delivery loop，讓人集中處理需求取捨、設計確認與最終接受。
+ 
+-本 change 將既有決策與設計具體化為正式規劃文件，包含 D32 的分析／設計分工與 D34 的 Research＋SA 階段契約；D31 的 authoring／planning 組合已重新開放評估，不作固定工具要求；**狀態為 awaiting design/plan approval，尚未實作**。驗證對照沿用 D19 的 AC → 驗法 → 通過標準 → 預期／實際證據要求，待 design／plan 階段具體化；使用者對對照方法的「Ok」不視為尚未提出之技術設計已獲批准。
++本 change 將既有決策與設計具體化為正式規劃文件，包含 D32 的分析／設計分工、D34 的 Research＋SA 階段契約與 D37 的 Orca 選配／公司 OpenCode 接入；D31 的 authoring／planning 組合已重新開放評估，不作固定工具要求；**狀態為 awaiting design/plan approval，尚未實作**。驗證對照沿用 D19 的 AC → 驗法 → 通過標準 → 預期／實際證據要求，待 design／plan 階段具體化；使用者對對照方法的「Ok」不視為尚未提出之技術設計已獲批准。
+ 
+ ## What Changes
+ 
+@@ -14,7 +14,7 @@
+ - 單 repo、已選定 issue、單一 feature PR；支援從頭執行及既有 pre-PR adopt，保留成果與原 owner 交接。
+ - 以 Superpowers TDD 證據、獨立 Codex review、必要 GitHub CI 三 gates 判定適用版本的 PR Pass。
+ - 穩定 finding registry、有界修正／一次爭議覆核、反覆 finding 的提前升級與人工裁決。
+-- JSON/YAML 可讀狀態、單 writer、outbox、reconcile、重啟恢復與去重；runtime/model 經 adapter 接入。
++- JSON/YAML 可讀狀態、單 writer、outbox、reconcile、重啟恢復與去重；runtime/model 經 adapter 接入。Orca 是推薦的選配入口；公司只有 OpenCode 時可直接派工、回收、管理工作區與 resume，不依賴 Orca，亦不因此放寬 G2 政策。
+ - 薄 project 層保存 baseline/feature refs、人工接受、相依啟動與 Retro 候選，不擴張成新 dashboard 或完整專案管理平台。
+ - Design／plan 階段將規格內的 AC 逐項映射到驗法、環境、判定標準與證據位置；目前尚未執行，實作後回填實際適用版本。
+ 
+--- before/openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md
++++ after/openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md
+@@ -29,7 +29,7 @@
+ - **THEN** 最多一方取得派工權，另一方可讀狀態但不得派 writer；衝突及現有 owner 可查
+ 
+ #### Scenario: AC-D04 Worker 狀態 unknown
+-- **WHEN** worker 超時且 Orca 無法查詢，或只見 terminal idle／缺少 status
++- **WHEN** worker 超時且 runtime／接入服務無法查詢，或只見 terminal idle／缺少 status
+ - **THEN** 保存 unknown、原 dispatch identity 與需查明事項，不派競爭 writer；確認停止或有效 fencing 的證據存在後才允許替代 attempt
+ 
+ ### Requirement: DUR-03 Assignment 與結果身份契約
+@@ -42,7 +42,7 @@
+ 
+ #### Scenario: AC-D06 只有原生 assistant message
+ - **WHEN** runtime 完成輸出只能由 adapter 讀 native messages，且 notification 未到
+-- **THEN** adapter 保存原文與來源 identity，controller 可據完整 result/evidence 核對成果；沒有 native worker_done receipt 就如實記未確認，不代造已 settlement
++- **THEN** adapter 保存原文與來源 identity，controller 可據完整 result/evidence 核對成果；原生 lifecycle／停止證據不足就如實記未確認，不捏造 Orca worker_done 或其他 runtime 的完成證據
+ 
+ ### Requirement: DUR-04 結果先保存且去重匯入
+ 
+@@ -112,7 +112,7 @@
+ 
+ ### Requirement: DUR-09 Adapter 與 runtime/model 解耦
+ 
+-核心 SHALL 依穩定角色、assignment/result 及能力契約執行，runtime 與 model 為分開的核准設定。Orca workers SHALL 由 adapter 接入，初始 controller 從專用 Orca terminal 啟動／resume。派工前 SHALL 核對安裝版本、工具權限、實際 repo/workspace/branch、認證可用性與結果通道；能力不足應具體 Blocked，不自動換用未批准工具或放寬隔離。Credentials、dispatch capabilities 與未清理 runtime logs SHALL 不寫入交接文件或自動進 Git。（來源：D08、D30；preflight 與敏感資料約束為契約提案）
++核心 SHALL 依穩定角色、assignment/result 及能力契約執行，runtime 與 model 為分開的核准設定。Orca SHALL 作為推薦的選配入口，workers 由 adapter 接入；系統 SHALL 同時提供無 Orca 的直接 OpenCode 接法，使啟動／resume、派工、結果回收與工作區管理不依賴 Orca 程式、設定或服務。核心 run/task/attempt identity SHALL 與外部 handles 分開，Orca 專有 Run/Dispatch/terminal 欄位不能成為共用契約的必填條件。派工前 SHALL 核對安裝版本、工具權限、實際 repo/workspace/branch、認證可用性與結果通道；能力不足應具體 Blocked，不自動換用未批准工具或放寬隔離。Credentials、dispatch capabilities 與未清理 runtime logs SHALL 不寫入交接文件或自動進 Git。（來源：D08、D30、D37；preflight 與敏感資料約束為契約提案）
+ 
+ #### Scenario: AC-D18 正確 workspace 與設定
+ - **WHEN** adapter 的 requested workspace/model 與回傳 identity 或實際執行設定不一致，或只有 input_accepted
+@@ -121,3 +121,15 @@
+ #### Scenario: AC-D19 能力缺口與替換
+ - **WHEN** 目前 adapter 不能在核准隔離條件下取得可信結果／lifecycle，而候選 runtime 尚未核准
+ - **THEN** 系統顯示具體 Blocked 與最小能力需求，保留已取得成果；替換工具仍須符合既有 gates 與獨立 Codex 政策，不把研究報告當成成功實證
++
++#### Scenario: AC-D20 沒有 Orca 的公司部署
++- **WHEN** 環境沒有 Orca 程式、設定或服務，而已配置並核准直接 OpenCode 接入與必要工具
++- **THEN** controller 可直接啟動／resume、派發及核對 OpenCode 任務、回收結果並管理隔離工作區；相同版本、ownership、gates、budget 與持久恢復規則仍成立，不暗中呼叫 Orca CLI
++
++#### Scenario: AC-D21 Runtime 身份不取代共用身份
++- **WHEN** 同一 controller 核心分別接收 Orca dispatch 或 OpenCode session/message 的原生識別
++- **THEN** 結果可對回自己的 run/task/attempt 與來源 runtime，保留原生回執，不為 OpenCode 補造 Orca ID；通知或任一 runtime 的 idle 狀態仍不能放行 gate
++
++#### Scenario: AC-D22 兩種接法分別驗證
++- **WHEN** Orca 接法已驗證通過，但公司 OpenCode 的模型、隔離或 lifecycle 尚未驗證，或反之
++- **THEN** 報告按接法保存可用能力與缺口，不共用成功標記；不能藉替換 runtime 自動放寬獨立 Codex review 政策或冒稱完整 E2E 已完成
+--- before/docs/decisions.md
++++ after/docs/decisions.md
+@@ -40,7 +40,7 @@
+ | D30 | Workflow／controller 核心與底層 runtime／model 的具體實作解耦：角色、gates、assignment/result 契約維持穩定，由 adapter 與設定提供執行能力及選型。這是架構原則，不等於選定 model-only G2、採用 opencode 或撤銷既有獨立 Codex review 要求；Codex 的 runtime/model 定義及具體 adapter 仍待定 | 使用者撤回誤輸入「改用 model」後，補充「不過不綁定底層確實是好的」（2026-09-26） |
+ | D31 | **選型重新評估**：原先的 OpenSpec spec/design/tasks + Writing Plans 方法 + Superpowers TDD 組合保留為候選，不能再寫成整套已固定。既有 OpenSpec 文件沿用；spec 與 plan 各有唯一權威、D26 的 TDD／例外規則、唯一 controller 與獨立 Reviewer 邊界維持。Matt to-spec、OpenSpec 與 Writing Plans 的 authoring／planning 分工、格式及交接方式見 Q-METHOD | 2026-09-26 曾以「Ok」接受原組合；其後使用者明示「先不考慮剛剛那個 workflow，我也還在探索…最佳組合」，並持續比較 artifacts 與 Writing Plans；2026-09-27 更新狀態，保留原決策沿革 |
+ | D32 | Project Lead 在產出 project baseline、roadmap／milestones 及 feature spec 前，負責 research、SA、domain modeling、grill 與必要 high-level design；專案分析導出 milestones 與 features，單一 feature 再做聚焦分析與高層設計。Implementer 承接 spec／AC／設計邊界，繼續研究、完成 detailed design 並維護最終可執行 plan／tasks；Project Lead 可提工作包或任務草案，由 Implementer 校準。重要 scope／AC／架構變更沿 D11 回人，日常核准範圍內的實作不新增逐 task 簽核。具體 skills、檔名及整合方式仍待選型 | 使用者釐清「Project lead 在寫 spec 前…SA 或 research…high level design…才有辦法寫出 roadmap…拆成 features」，接續角色／tasks 討論並要求「以上是否應該更新？」（2026-09-27） |
+-| D33 | **先在 orca-delivery 測通 workflow、orchestrate 與預設工具組合，再啟動 cross-node-file-transfer 的完整 project／feature 流程。** 預設方法、版本、artifact／角色交接與執行歷程由本專案整合，讓 member 不必各自挑 skills、重新摸索流程；具體組合仍由 Q-METHOD 收斂。新專案沿用 gigaxfer 適用的需求、domain、設計、決策及 roadmap 基準，保留來源版本、處理路徑／結構映射，不重做已確認需求的完整 grill；新實作保存自己的驗證證據。D15／D16／D18 的既有 PR 接入保留為暫緩方案，不再是預設下一步；本輪只記錄方向與順序，不初始化新 repo、不接管 gigaxfer | 使用者提出以 cross-node-file-transfer 從頭套用完整流程、沿用既有 project 文件，接著要求「把這個記下來，我們先在這個 project 裏把 workflow, orchestrate 和預設工具組合測通」（2026-09-27） |
++| D33 | **先在 orca-delivery 測通 workflow、orchestrate 與預設工具組合，再啟動 cross-node-file-transfer 的完整 project／feature 流程。** 預設方法、版本、artifact／角色交接與執行歷程由本專案整合，讓 member 不必各自挑 skills、重新摸索流程；具體組合仍由 Q-METHOD 收斂。新專案沿用 gigaxfer 適用的需求、domain、設計、決策及 roadmap 基準，保留來源版本、處理路徑／結構映射，不重做已確認需求的完整 grill；新實作保存自己的驗證證據。D15／D16／D18 的既有 PR 接入保留為暫緩方案，不再是預設下一步；本輪只記錄方向與順序，不初始化新 repo、不接管 gigaxfer | 使用者提出以 cross-node-file-transfer 從頭套用完整流程、沿用既有 project 文件，接著要求「把這個記下來，我們先在這個 project 裏把 workflow, orchestrate 和預設工具組合測通」（2026-09-27）；同日再次確認「等到實作之後」，才用新 workflow 重開 cross-node-file-transfer 作驗證練習 |
+ | D34 | 將使用者提供的 Project Lead prompt 作為 project／feature 共用的 Research＋SA 階段契約，內容深度依層級調整：先研究並區分事實／假設／建議，每輪 1–3 題釐清關鍵決策、維護共同語言，以七項內容整理唯一權威 Spec。SA 是活動、Spec 是成果；project SA 支持高層設計及 roadmap／milestones，選定 feature 再聚焦需求／AC，不提前寫完所有功能。SA 完成時提出可進入 Design 的理由，由使用者確認；此確認不取代 D11 的 design＋plan 開工確認。交接層級／baseline、穩定需求／AC IDs、文件版本、待決影響及下一位 owner；既有適用成果及確認沿用。工具分工仍為 Q-METHOD 的試驗建議，不因本輪更新選定整套組合 | 使用者提供完整九節 Project Lead prompt，討論其在兩層流程的位置後要求「更新？」（2026-09-27）；完整契約見 [project-lead-sa.md](project-lead-sa.md) |
+ | D35 | 以 Delivery Harness 稱呼涵蓋 Project／Feature 流程、skills／工作指引、controller、adapters 與狀態／證據的整套系統；Project Lead SA 文件是其中工作指引。命名不表示產品已實作或擴張既有 scope | 使用者詢問「他是個 harness？」後，接受整套系統與工作指引的區分（2026-09-27） |
+ | D36 | Orca Delivery controller 的本次實作指定交給 Opus 5.5 agent；派工需核對明確 model 與實際執行身份，不自動替換。此指定是 controller 開發工作的實作者選擇，不把 controller 改成 LLM 判定器，不設定所有未來 features 的 model，也不取代 D11 的 design＋plan 開工確認或 G2 獨立 review | 使用者「我希望 controller 由 opus 5.5 agent 實作」（2026-09-27） |

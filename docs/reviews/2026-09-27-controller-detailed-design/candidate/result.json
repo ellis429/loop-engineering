@@ -1,0 +1,417 @@
+{
+  "run_id": "controller-bootstrap-20260927",
+  "task_id": "controller-detailed-design",
+  "attempt_id": "design-02",
+  "role": "implementer",
+  "phase": "design-and-plan-draft",
+  "status": "completed",
+  "status_note": "v3：回應 re-review-v2 的 DR-04（still_open）與新增 DR-10，皆 fix_submitted 待 Reviewer 覆核；其餘 8 項依 re-review-v2 為 verified（Reviewer 結論）。不代表 gate 通過、D11 確認或產品程式授權。",
+  "completed_at": "2026-09-27T12:13:28+08:00",
+  "inputs": {
+    "manifest": "input-manifest.json",
+    "all_hashes_match": true,
+    "files": [
+      {
+        "source": "/Users/johnson.chiang/workspace/orca-delivery/docs/decisions.md",
+        "snapshot": "/private/tmp/orca-controller-bootstrap-20260927/opus-session-design-02/inputs/docs/decisions.md",
+        "sha256_expected": "3322dd015d8d511e3331a1cf597a26ff0e855deaa377eb1fcc40046bc8665eb9",
+        "sha256_read": "3322dd015d8d511e3331a1cf597a26ff0e855deaa377eb1fcc40046bc8665eb9",
+        "match": true
+      },
+      {
+        "source": "/Users/johnson.chiang/workspace/orca-delivery/docs/handoffs/2026-09-27-controller-design.md",
+        "snapshot": "/private/tmp/orca-controller-bootstrap-20260927/opus-session-design-02/inputs/docs/handoffs/2026-09-27-controller-design.md",
+        "sha256_expected": "f4e115e4914990a7afbfcd335fa9a9b51e6e5b4ba8c70aabf7c86d5579767f0a",
+        "sha256_read": "f4e115e4914990a7afbfcd335fa9a9b51e6e5b4ba8c70aabf7c86d5579767f0a",
+        "match": true
+      },
+      {
+        "source": "/Users/johnson.chiang/workspace/orca-delivery/docs/delivery-harness-overview.md",
+        "snapshot": "/private/tmp/orca-controller-bootstrap-20260927/opus-session-design-02/inputs/docs/delivery-harness-overview.md",
+        "sha256_expected": "972945a242eed56428dd6d62b8acde33f9386b4b0adb556988f9478df009c60b",
+        "sha256_read": "972945a242eed56428dd6d62b8acde33f9386b4b0adb556988f9478df009c60b",
+        "match": true
+      },
+      {
+        "source": "/Users/johnson.chiang/workspace/orca-delivery/docs/workflow-design.md",
+        "snapshot": "/private/tmp/orca-controller-bootstrap-20260927/opus-session-design-02/inputs/docs/workflow-design.md",
+        "sha256_expected": "95a61ad4591152132eb31ccb0af61c30dce281bf35b55e0ed0a27e88b8a89777",
+        "sha256_read": "95a61ad4591152132eb31ccb0af61c30dce281bf35b55e0ed0a27e88b8a89777",
+        "match": true
+      },
+      {
+        "source": "/Users/johnson.chiang/workspace/orca-delivery/docs/workflow-contracts.md",
+        "snapshot": "/private/tmp/orca-controller-bootstrap-20260927/opus-session-design-02/inputs/docs/workflow-contracts.md",
+        "sha256_expected": "e2dc4c900f734eb243751c3adda338a013823a4b994d047e6edf0cebf3c1c6a0",
+        "sha256_read": "e2dc4c900f734eb243751c3adda338a013823a4b994d047e6edf0cebf3c1c6a0",
+        "match": true
+      },
+      {
+        "source": "/Users/johnson.chiang/workspace/orca-delivery/docs/file-state.md",
+        "snapshot": "/private/tmp/orca-controller-bootstrap-20260927/opus-session-design-02/inputs/docs/file-state.md",
+        "sha256_expected": "e065a0d736049e0c87960287211a5f7c014d5ca731f17758703cbed262e179f0",
+        "sha256_read": "e065a0d736049e0c87960287211a5f7c014d5ca731f17758703cbed262e179f0",
+        "match": true
+      },
+      {
+        "source": "/Users/johnson.chiang/workspace/orca-delivery/docs/project-intent.md",
+        "snapshot": "/private/tmp/orca-controller-bootstrap-20260927/opus-session-design-02/inputs/docs/project-intent.md",
+        "sha256_expected": "b6ad2b7ef30def7b5c07dac6254bb8a9ad7c03e042312f2ec1ccf8e00fc5ac37",
+        "sha256_read": "b6ad2b7ef30def7b5c07dac6254bb8a9ad7c03e042312f2ec1ccf8e00fc5ac37",
+        "match": true
+      },
+      {
+        "source": "/Users/johnson.chiang/workspace/orca-delivery/docs/research/2026-09-27/controller-bootstrap.md",
+        "snapshot": "/private/tmp/orca-controller-bootstrap-20260927/opus-session-design-02/inputs/docs/research/2026-09-27/controller-bootstrap.md",
+        "sha256_expected": "576225f6dd9592d844d46d4f3344c70c09566c13079572f6a6b77fc11d306f67",
+        "sha256_read": "576225f6dd9592d844d46d4f3344c70c09566c13079572f6a6b77fc11d306f67",
+        "match": true
+      },
+      {
+        "source": "/Users/johnson.chiang/workspace/orca-delivery/docs/research/2026-09-27/planning-preflight.md",
+        "snapshot": "/private/tmp/orca-controller-bootstrap-20260927/opus-session-design-02/inputs/docs/research/2026-09-27/planning-preflight.md",
+        "sha256_expected": "8c6f81b5db7dfc324df599845be3fb4ce170c994f8fff6176f0c4024f6ec905f",
+        "sha256_read": "8c6f81b5db7dfc324df599845be3fb4ce170c994f8fff6176f0c4024f6ec905f",
+        "match": true
+      },
+      {
+        "source": "/Users/johnson.chiang/workspace/orca-delivery/docs/research/2026-09-27/opencode-setup.md",
+        "snapshot": "/private/tmp/orca-controller-bootstrap-20260927/opus-session-design-02/inputs/docs/research/2026-09-27/opencode-setup.md",
+        "sha256_expected": "12885903b9e611b086934f189e3ff35b95a0e3922f83c82873dc17dc2e1eb35e",
+        "sha256_read": "12885903b9e611b086934f189e3ff35b95a0e3922f83c82873dc17dc2e1eb35e",
+        "match": true
+      },
+      {
+        "source": "/Users/johnson.chiang/workspace/orca-delivery/openspec/changes/implement-delivery-loop/proposal.md",
+        "snapshot": "/private/tmp/orca-controller-bootstrap-20260927/opus-session-design-02/inputs/openspec/changes/implement-delivery-loop/proposal.md",
+        "sha256_expected": "f8341121771303f35f63d2bd00534c1c95c458680d06007a0d9fc5017d16727c",
+        "sha256_read": "f8341121771303f35f63d2bd00534c1c95c458680d06007a0d9fc5017d16727c",
+        "match": true
+      },
+      {
+        "source": "/Users/johnson.chiang/workspace/orca-delivery/openspec/changes/implement-delivery-loop/specs/delivery-gates/spec.md",
+        "snapshot": "/private/tmp/orca-controller-bootstrap-20260927/opus-session-design-02/inputs/openspec/changes/implement-delivery-loop/specs/delivery-gates/spec.md",
+        "sha256_expected": "64951e366865cfb10042c2c997288b4129b76751f67231118f562af44801f566",
+        "sha256_read": "64951e366865cfb10042c2c997288b4129b76751f67231118f562af44801f566",
+        "match": true
+      },
+      {
+        "source": "/Users/johnson.chiang/workspace/orca-delivery/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+        "snapshot": "/private/tmp/orca-controller-bootstrap-20260927/opus-session-design-02/inputs/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+        "sha256_expected": "cf33d466f69a928d41183bc5d1cc36c53f5b80c7f4f11e42d4070ee21962050c",
+        "sha256_read": "cf33d466f69a928d41183bc5d1cc36c53f5b80c7f4f11e42d4070ee21962050c",
+        "match": true
+      },
+      {
+        "source": "/Users/johnson.chiang/workspace/orca-delivery/openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md",
+        "snapshot": "/private/tmp/orca-controller-bootstrap-20260927/opus-session-design-02/inputs/openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md",
+        "sha256_expected": "e1ac3e9fc830e4234e5197fd7325791da52a31cf70324283b359123637024c1c",
+        "sha256_read": "e1ac3e9fc830e4234e5197fd7325791da52a31cf70324283b359123637024c1c",
+        "match": true
+      },
+      {
+        "source": "/Users/johnson.chiang/workspace/orca-delivery/openspec/changes/implement-delivery-loop/specs/finding-resolution/spec.md",
+        "snapshot": "/private/tmp/orca-controller-bootstrap-20260927/opus-session-design-02/inputs/openspec/changes/implement-delivery-loop/specs/finding-resolution/spec.md",
+        "sha256_expected": "f5b11ef6c0edb41a8725ad9104f8fcab9d660ee5fc10b8d3be2eb8ffba551601",
+        "sha256_read": "f5b11ef6c0edb41a8725ad9104f8fcab9d660ee5fc10b8d3be2eb8ffba551601",
+        "match": true
+      }
+    ],
+    "live_repo_check": {
+      "repo": "/Users/johnson.chiang/workspace/orca-delivery",
+      "head": "bc255674f47afb5d45d5a6f2067846b06dec1137",
+      "matches_assignment_base": true,
+      "differs_from_snapshot": [
+        "docs/handoffs/2026-09-27-controller-design.md",
+        "docs/research/2026-09-27/controller-bootstrap.md"
+      ],
+      "diff_nature": "兩檔在 11:24:59 各追加『已交接 opus session（design-02）』段落，只記錄本次派工本身；無政策或規格變更，判定與快照無語意矛盾。其餘 13 檔 hash 相同。"
+    },
+    "other_reads": {
+      "superpowers_writing_plans": {
+        "path": "~/.claude/plugins/cache/claude-plugins-official/superpowers/6.3.0/skills/writing-plans/SKILL.md",
+        "sha256": "48508f44bbfd7d24b029fbf3a314f3cd14c9615599059366e922f47b8dc08cf2",
+        "use": "僅參考方法；預設路徑與 execution handoff 明示不沿用（design.md §12）"
+      },
+      "superpowers_tdd": {
+        "path": "~/.claude/plugins/cache/claude-plugins-official/superpowers/6.3.0/skills/test-driven-development/SKILL.md",
+        "sha256": "bf1b8216e523851a411e91d429a7c1c2a173e79d88957bc78e348218d50edd54",
+        "use": "D26 既定方法；讀至 Red-Green-Refactor 段"
+      },
+      "openspec_instructions": "openspec 1.13.1 `instructions design|tasks --change implement-delivery-loop`（唯讀；未寫入 live repo）"
+    }
+  },
+  "outputs": {
+    "dir": "outputs/",
+    "files": {
+      "design.md": {
+        "sha256": "732e8a545fbc1e02b8e260b594cd923301f86a5ad8c0c806a34f19d79881ad0b"
+      },
+      "tasks.md": {
+        "sha256": "2859298de5ab96a8e644ca5fa6d8a9eaa822f608e2efdf46aa94d745a2fdda02"
+      },
+      "validation.md": {
+        "sha256": "6ae103b3b190ff363a05b95ce100b4e06e68f07b6155b606e200d7a37a672b12"
+      },
+      "finding-responses.json": {
+        "sha256": "71d5e06b2afe3c41bc52a483c2cb03fc1c6f4f8c0a73fa0098289f1a307f302a"
+      }
+    },
+    "result": "outputs/result.json",
+    "previous_v1_hashes": {
+      "design.md": "b26fc0430579f7ab893b739b78118baaddf02c755ed2cb868d955834b490b0c8",
+      "tasks.md": "7ce4ce9599813ab3dc655adc67d45ab698c9d0d74aa0774419eeb7a67e09888e",
+      "validation.md": "5dd4abd55a38714a91fbab8a8b0bd1fe3905c3a701af627141faf289831a5f88",
+      "result.json": "8b96a3af96d02d8459c83cd340f45ab3ee1b475bd58c3a2e4906e4fef6876dce"
+    },
+    "previous_v2_hashes": {
+      "design.md": "760ef3ae2a6b06d77ddf85c2c0be56fec47dccd96699b80f11134ef9ad4e7649",
+      "tasks.md": "886302a98e940c1272acd904d0c219c865f23bcb7e4ffd1ba220664c2ef90b3e",
+      "validation.md": "ee8c3fe7c4ccb920487fedfb1a37d8938eee857a2887739467464b902814e0dd",
+      "finding-responses.json": "a6f49bb7d8f5f578254e07e96849a31b80cf487a678ae4142640117152ddf9ae",
+      "result.json": "faaf558453d598a20711234a56c764a572690045702248b1134a2175172fa41a"
+    }
+  },
+  "summary": [
+    "最小 controller：Python 3.12 CLI（stdlib＋PyYAML），純函式核心＋adapters/outbox。",
+    "v2 修正：binding/observation 分離且 version_key 無時間；evidence 與 gate assessment 分離並有 R-unaffected/R-base/R-reuse 推導；temp-index Red snapshot；G3 head/merge 候選 SHA 與 mapping；durable blob 屏障；主機層級 authority＋預算 lineage；per-attempt clone＋CAS fast-forward 唯一整合模型；OS sandbox 權限邊界與負例套件；dispatch 分段恢復。 v3：Red snapshot 改 baseline(HEAD)＋允許 overlay、寫 tree 前驗證、違禁內容一律不寫入；gate 依賴改完整 fail-closed 矩陣、移除人工 reuse、G2 需讀當前契約的新 review。",
+    "tasks.md 維持 3 切片提案，DR 行為測試落入 1.2/1.3/1.6/1.7/1.9/2.1/2.3/2.4/2.9/2.10/3.1–3.2/4.2–4.3；validation.md 88/88 AC，22 列依 DR 更新，全部未執行。"
+  ],
+  "validation_coverage": {
+    "spec_ac_count": 88,
+    "validation_rows": 88,
+    "missing": [],
+    "extra": [],
+    "rows_updated_v3": [
+      "AC-G06",
+      "AC-G07",
+      "AC-G11",
+      "AC-G17",
+      "AC-D05"
+    ]
+  },
+  "model_evidence": {
+    "requested_model": "claude-opus-5-5",
+    "evidence": [
+      {
+        "kind": "api_response_model_field",
+        "source": "Claude Code 本 session transcript ~/.claude/projects/-Users-johnson-chiang-workspace-gigaxfer/6cddf430-fc81-402c-b21d-be31c3f95a33.jsonl",
+        "observation": "截至讀取時 22 則 assistant message 的 message.model 皆為 claude-opus-5-5",
+        "sample_ids": [
+          {
+            "message_id": "msg_011CfTEDycWnsgPzrsjXEe8y",
+            "request_id": "req_011CfTEDyATmpBYkLR2pgC7w"
+          },
+          {
+            "message_id": "msg_011CfTEF24sxWzt6YC2turE4",
+            "request_id": "req_011CfTEF1cqKqUH23dY6ezUT"
+          }
+        ]
+      },
+      {
+        "kind": "system_prompt_self_report",
+        "observation": "session system prompt 宣告 model ID claude-opus-5-5；屬自述，非推論證據"
+      },
+      {
+        "kind": "client",
+        "observation": "Claude Code 2.1.283"
+      }
+    ],
+    "gaps": [
+      "本 session 的 ANTHROPIC_BASE_URL 指向本機 proxy http://127.0.0.1:8787/w/claude；transcript 的 model 欄位是經該 proxy 回傳的值，無法獨立證明上游實際推論模型。",
+      "未查 proxy 上游紀錄；畫面型號（assignment.observed_ui_model）不作證據。"
+    ],
+    "verification_method": "由協作者以上列 request_id 對照 proxy 上游請求/回應紀錄或 Anthropic console usage 的 model 欄位；兩者一致才將 actual_inference_model_verified 設為 true。",
+    "actual_inference_model_verified": false,
+    "stop_condition_evaluated": "可得證據均指向指定模型、無任何反證，故未觸發『非指定模型即停止』；但最終核對仍待上述驗法。"
+  },
+  "blocking_decisions": [
+    {
+      "id": "B1",
+      "question": "D11：確認本版 design/tasks/validation（以上 sha256），含 design.md 標 [建議] 的預設：Python+PyYAML、POSIX 範圍、timeout 45/30/30、active time 聯集與 crash unknown 全額計入、skipped/neutral 預設拒絕、recurrence 門檻 2/reopen 即 Blocked、Red replay always-on、spec/design 任一 digest 變更回 awaiting_approval；v2 新增的建議：macOS Seatbelt sandbox launcher（Linux 待實測）與未 verified 即 Blocked、per-attempt clone＋CAS fast-forward 整合、主機層級 feature authority 與預算 lineage、R-base 重驗規則；v3 的 baseline＋overlay Red snapshot 與完整依賴矩陣（無人工 reuse）。",
+      "blocks": "任何產品程式派工"
+    },
+    {
+      "id": "B2",
+      "question": "GitHub owner/repo、各切片 feature issue 與 required check 名稱（含 sandbox repo 供 GH 層實測）。",
+      "blocks": "正式 implementation 前的 ticket（D04/D05）、G3 與發布相關實測"
+    },
+    {
+      "id": "B3",
+      "question": "PR 切片：建議 3 個 feature/PR（S1 core、S2 adapters、S3 orchestrate+E2E），或單一 PR／4 PR；需接受 D27 帶來的上游 accepted+merged 等待。",
+      "blocks": "issue 建立與 tasks 分組定稿"
+    }
+  ],
+  "unresolved_recommendations": [
+    "Q-METHOD：OpenSpec tasks.md 為唯一 plan，補 Writing Plans 欄位；execution handoff 由 controller/協作者承接（design.md §14）。",
+    "Q-RUNTIME／G2：reviewer 精確 provider/model；OpenCode 在 sandbox 下的必要寫入路徑、keychain 依賴、endpoints、actual model 欄位、session 列表一致性（tasks 4.2/4.3）。",
+    "Q-PLATFORM：macOS Seatbelt 為建議 launcher（Apple 標 deprecated）；Linux bubblewrap/Landlock 待安裝實測；專用 UID 替代需使用者決定帳戶設定；Windows/WSL2 未涵蓋。",
+    "macOS 目錄 fd F_FULLFSYNC 支援待測；power-loss durability 未驗證（明示）。",
+    "Bootstrap：S1 完成後可非權威地用 delivery gate eval 自檢 S2/S3。"
+  ],
+  "validation_status": {
+    "tests_run": 0,
+    "real_runtime_runs": 0,
+    "github_operations": 0,
+    "e2e": 0,
+    "note": "全部 88 AC 為未執行的規劃；無 gate 結論。"
+  },
+  "scope_compliance": {
+    "writes": [
+      "outputs/design.md",
+      "outputs/tasks.md",
+      "outputs/validation.md",
+      "outputs/result.json",
+      "outputs/finding-responses.json"
+    ],
+    "no_repo_writes": true,
+    "no_git_commit_push": true,
+    "no_github_posts": true,
+    "no_installs_or_account_changes": true,
+    "no_model_inference_tests": true,
+    "no_subagents": true,
+    "tmp_experiments": "scratchpad 內 tmp git repo 與 sandbox-exec probe；未觸及任何 repo、全域設定或 GitHub",
+    "reviewed_v1_and_review_untouched": true
+  },
+  "revision": 3,
+  "review_round": {
+    "review_ref": {
+      "review_id": "controller-design-02-gpt-review-01",
+      "files": {
+        "review/review.json": "24fc31a39bd7aeec53474f4b65606332547831708cb7640a136c8029a9b617f6",
+        "review/review.md": "7dc6a24ca45f3148c0b41e3599f77f15379d65ed0b81e1b36524aa8577684041",
+        "review/red-snapshot-probe.json": "c690110003898f167e40a71f87c8e4876742ad4a43a307bd078552384cbd34d9"
+      }
+    },
+    "reviewed_v1_frozen": "reviewed-v1/（未修改）",
+    "responses": "outputs/finding-responses.json",
+    "fix_summary": {
+      "DR-01": "新增 §10 OS 權限邊界：每個 worker 經 sandbox launcher 啟動，明列可寫（own clone/rt/inbox）、拒寫（主 repo、.delivery、authority、他 attempt）、拒讀（gh/ssh 憑證）、env scrub 與子程序繼承；verified 只由負例套件＋receipt profile digest 成立，clone/env/事後比對不能升格；未通過→reviewer G2 unknown、implementer 派工 Blocked。macOS Seatbelt 為建議、Linux bubblewrap/Landlock 平台待實測、專用 UID 為使用者決定的替代。",
+      "DR-02": "§5.1 將不可變 binding（content_digest＋adopted_at）與 observation（last_observed_at、只在差異或 resume 首讀記事件）分離；§5.2 VersionSet 不含任何時間；相同 bytes 重讀 version_key 不變，不同 digest 只建 candidate binding，adopt_binding decision 才產生新版本。",
+      "DR-03": "§5.3 分開不可變 evidence 與綁當前 version_key 的 gate assessment，定義各 gate 依賴欄位及 R-unaffected（首次 PR binding）、R-base（merge-tree＋在 merge tree 重跑 g1.commands，衝突進 correction，不無條件沿用）、R-reuse（decision）推導規則，derived 欄位保存理由；狀態機加入 base-only 轉移。",
+      "DR-04": "§6.1 以 temp index（複製 worker index→add -A scope pathspec＋exclude→write-tree→commit-tree→update-ref）取代 stash create；worker index/工作樹不變、收 tracked/staged/untracked 非 ignored 檔、限定 scope 並對 scope 外 dirty 檔標 scope_violation。",
+      "DR-05": "§9.2 選定唯一模型：per-attempt 獨立 clone（起點 T0），controller 為整合 branch 唯一 writer；新增 integrate op：fetch→lease/ancestry/scope 核對→update-ref CAS（old=T0）只 fast-forward→integration.log；crash 依 ref==A/T0/其他 收斂、重做或 Blocked；舊 attempt 不再 fetch 即 fencing；Red lineage 以 P 為 A 祖先成立。",
+      "DR-06": "§9.1 新增主機層級 features/<feature_id>/authority.json（repo+feature canonical identity、active run、run lineage、state_dir/repo_path），flock 只防同時 step；start/adopt 先解析 authority，另一 clone 被拒且拒絕資訊持久；state 不可讀→Blocked，只有 abandon_run decision 可替代且繼承預算；budget 以 lineage 加總；project.json 由 authority 修復。",
+      "DR-07": "§11 將 dispatch 拆為持久化 stages（session_pending→session_created→prompt_sending→prompt_accepted→running→completed），每段以 marker/payload digest 查回；prompt 無法證實未送達時不在同 session 重送，改 stop 確認後 fence＋新 attempt，stop 不可確認→Blocked；訂外部呼叫次數不變式。",
+      "DR-08": "§6.3 定義候選 source SHA：H 由 pulls/{n} read-back；M 由 merge_commit_sha＋fetch pull/{n}/merge 驗 parents=[當前 base_tip,H] 並保存 mapping；policy 每個 required check 明示 source: head|merge；舊 M stale、未計算 unknown 並在 CI timeout 內輪詢。",
+      "DR-09": "§8 定義 durable blob 協定（O_EXCL tmp→fsync/F_FULLFSYNC→link 不覆寫→dir fsync→unlink→dir fsync，含新目錄父目錄 fsync 與錯誤中止）及提交屏障（snapshot 只能引用 durable handle，外部 op 在其後）；resume 引用完整性檢查；列 Linux/macOS 保證與驗證範圍（SIGKILL、Linux strace 順序；power-loss 未覆蓋）。"
+    },
+    "local_probes": {
+      "DR-04": {
+        "kind": "local_tmp_git_probe",
+        "executed_by": "implementer (this session), scratchpad tmp repo",
+        "git": "system git",
+        "result": {
+          "untracked_only": {
+            "stash_create": "empty (reproduces review/red-snapshot-probe.json)",
+            "temp_index_snapshot_contains_new_test": true,
+            "worker_index_sha_unchanged": true,
+            "replay_failing_ids": [
+              "test_add (test_new.T)"
+            ]
+          },
+          "tracked_staged_untracked_mix": {
+            "snapshot_contains": [
+              "app.py(tracked mod)",
+              "test_sub.py(staged)",
+              "test_new.py(untracked)"
+            ],
+            "worker_index_sha_unchanged": true,
+            "worker_status_unchanged": "M app.py / A test_sub.py / ?? test_new.py",
+            "replay_failing_ids": [
+              "test_add (test_new.T)",
+              "test_sub (test_sub.S)"
+            ]
+          },
+          ".env_excluded": true,
+          "observed_risk": "未 ignore 的 __pycache__ 被收入 → 設計限定 scope pathspec＋scope_violation"
+        },
+        "not_product_evidence": true
+      },
+      "DR-01": {
+        "kind": "local_os_sandbox_probe",
+        "platform": "macOS 27.0, /usr/bin/sandbox-exec (Seatbelt)",
+        "result": {
+          "direct_write_author_git": "denied",
+          "grandchild_write_author": "denied",
+          "write_controller_state": "denied",
+          "write_own_inbox": "allowed",
+          "write_work_dir": "allowed",
+          "read_credential_file": "denied",
+          "rename_own_inbox_out": "denied"
+        },
+        "not_tested": [
+          "OpenCode server under sandbox",
+          "keychain/gh auth token",
+          "network",
+          "Linux bubblewrap/Landlock"
+        ],
+        "not_product_evidence": true
+      }
+    }
+  },
+  "review_round_v3": {
+    "review_ref": {
+      "review_id": "controller-design-02-gpt-rereview-v2",
+      "files": {
+        "re-review-v2.md": "73490700eb6894c85e094aab3bd90f0dc3baec6bf033edd142e2731e7262cae4",
+        "re-review-v2.json": "e20df76058c89c6f2639d1958eb5da49393a3c72f4763ad01e1aeff816bc8c98",
+        "staged-exclude-probe.json": "0cb586331a70d8ae48958e7c142daab74cf2533d487b82557bfad34cf46e1b66"
+      }
+    },
+    "reviewed_v2_frozen": "reviewed-v2/（未修改）",
+    "fix_summary": {
+      "DR-04": "§6.1 v3：暫存 index 改從 HEAD tree（baseline）以 read-tree 起算、不複製 worker index；overlay 只收工作樹中相對 baseline 變更、在 scope 內、非 ignored、非 exclude 的路徑（staged／unstaged 不區分，以執行時工作樹為準；只在 index 的內容永不收入）。exclude 對 baseline 已 tracked 檔：未修改保留、修改或刪除則拒絕。scope 外、已 commit 違禁或 tracked 排除檔被改 → 在任何 git add／write-tree 前拒絕，不寫物件、不建 ref、不跑測試。寫 tree 前以 diff-index 驗證候選差異恰等於 allowed 集合；測試後檢查 drift；controller 匯入時以 diff-tree 再驗。",
+      "DR-10": "§5.3 改為完整依賴矩陣：每個 VersionSet 欄位對每個 gate 各一格，未列欄位或 skill 一律 stale。移除 R-reuse 與 adopt_binding.reuse（schema 拒絕 reuse 欄位），adopt_binding 對 gate 無效果；新增 R-reevaluate（只從既有 evidence 重算）與 R-reobserve（G3 一律重新查詢）。Binding、head、base、pr、釘住 skill 變更 → G2 stale，只能由 §6.2 新契約 review 取得（result 回報的 binding digests 須與當前 VersionSet 相符）；skill 變更使 evidence 標 method_changed；controller_version 變更 → 全部重算、不沿用。人工 decision 在 G2 只保留 D09 的指定 finding closure，不產生 G2 clean。"
+    },
+    "local_probes": {
+      "DR-04": {
+        "kind": "local_tmp_git_probe",
+        "executed_by": "implementer (this session), scratchpad tmp repo（本輪 v3）",
+        "procedure": "design.md §6.1 v3 的 baseline＋overlay 程序（python 腳本實作步驟 1–8）",
+        "result": {
+          "A_staged_excluded_untracked_test_staged_then_modified": {
+            "snapshot_files": [
+              "README.md",
+              "src/app.py",
+              "tests/test_new.py"
+            ],
+            "omitted_excluded": [
+              ".env.fake"
+            ],
+            "app_py_version": "worktree（非 staged）",
+            "worker_index_sha_unchanged": true,
+            "worker_status_unchanged": true,
+            "controller_repo_has_env_blob_after_fetch": false,
+            "replay_failing_ids": [
+              "test_add (test_new.T)"
+            ]
+          },
+          "B_staged_out_of_scope": {
+            "refused": [
+              "scope_violation: outside.txt"
+            ],
+            "ref_created": false,
+            "git_add_executed": false,
+            "worker_index_sha_unchanged": true
+          },
+          "C_baseline_tracked_excluded_modified": {
+            "refused": [
+              "excluded_tracked_modified: .env.example"
+            ]
+          },
+          "D_baseline_tracked_excluded_unmodified": {
+            "kept_from_baseline": ".env.example"
+          }
+        },
+        "reproduces_reviewer_counterexample": "review/staged-exclude-probe.json（staged .env.fake 留在 tree）在 v3 程序下不成立",
+        "not_product_evidence": true
+      }
+    },
+    "consistency_adjustments": [
+      "design.md §4 decision kinds 移除 reuse；§5.1 adopt_binding 註明不影響 gate；Risks 更新",
+      "finding-responses DR-03 加註 R-reuse 已移除（DR-03 處理不變）",
+      "validation 更新 AC-G06、G07、G11、G17、D05"
+    ]
+  }
+}

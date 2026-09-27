@@ -1,0 +1,9 @@
+{
+  "repo": "/private/tmp/orca-index-exclude-n1uvvbnr",
+  "snapshot_files": [
+    ".env.fake",
+    "app.py",
+    "test_new.py"
+  ],
+  "staged_excluded_file_retained": true
+}

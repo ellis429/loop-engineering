@@ -1,0 +1,59 @@
+{
+  "kind": "design-document-review",
+  "product_gate": false,
+  "git_head": "bc255674f47afb5d45d5a6f2067846b06dec1137",
+  "snapshots": [
+    {
+      "archive": "snapshot-v1.tar.gz",
+      "archive_sha256": "73cc10d9c30e023c1f4e7f7afd383c20b022cd0e5edd58451ba5afdfb1099606",
+      "manifest_sha256": "01bf57d44f3ffe4b1570d0251602d8e46d1d86f9f74d88c56600ada54e90182e"
+    },
+    {
+      "archive": "snapshot-v2.tar.gz",
+      "archive_sha256": "988b614961d98487492f83fcc07b4df224d043ba30486e9322c3aa317344ea58",
+      "manifest_sha256": "a187e22c275e01e08b82737052239af2a7daa84a989c73acc51782a064328d98"
+    }
+  ],
+  "checks": [
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/johnson.chiang/.local/bin/openspec",
+        "validate",
+        "implement-delivery-loop",
+        "--strict",
+        "--no-interactive"
+      ],
+      "exit_code": 0,
+      "stdout": "Change 'implement-delivery-loop' is valid\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/johnson.chiang/.local/bin/openspec",
+        "status",
+        "--change",
+        "implement-delivery-loop",
+        "--json"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"changeName\": \"implement-delivery-loop\",\n  \"schemaName\": \"spec-driven\",\n  \"planningHome\": {\n    \"kind\": \"repo\",\n    \"root\": \"/Users/johnson.chiang/workspace/orca-delivery\",\n    \"changesDir\": \"/Users/johnson.chiang/workspace/orca-delivery/openspec/changes\",\n    \"defaultSchema\": \"spec-driven\"\n  },\n  \"changeRoot\": \"/Users/johnson.chiang/workspace/orca-delivery/openspec/changes/implement-delivery-loop\",\n  \"artifactPaths\": {\n    \"proposal\": {\n      \"outputPath\": \"proposal.md\",\n      \"resolvedOutputPath\": \"/Users/johnson.chiang/workspace/orca-delivery/openspec/changes/implement-delivery-loop/proposal.md\",\n      \"existingOutputPaths\": [\n        \"/Users/johnson.chiang/workspace/orca-delivery/openspec/changes/implement-delivery-loop/proposal.md\"\n      ]\n    },\n    \"specs\": {\n      \"outputPath\": \"specs/**/*.md\",\n      \"resolvedOutputPath\": \"/Users/johnson.chiang/workspace/orca-delivery/openspec/changes/implement-delivery-loop/specs/**/*.md\",\n      \"existingOutputPaths\": [\n        \"/Users/johnson.chiang/workspace/orca-delivery/openspec/changes/implement-delivery-loop/specs/delivery-gates/spec.md\",\n        \"/Users/johnson.chiang/workspace/orca-delivery/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md\",\n        \"/Users/johnson.chiang/workspace/orca-delivery/openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md\",\n        \"/Users/johnson.chiang/workspace/orca-delivery/openspec/changes/implement-delivery-loop/specs/finding-resolution/spec.md\"\n      ]\n    },\n    \"design\": {\n      \"outputPath\": \"design.md\",\n      \"resolvedOutputPath\": \"/Users/johnson.chiang/workspace/orca-delivery/openspec/changes/implement-delivery-loop/design.md\",\n      \"existingOutputPaths\": []\n    },\n    \"tasks\": {\n      \"outputPath\": \"tasks.md\",\n      \"resolvedOutputPath\": \"/Users/johnson.chiang/workspace/orca-delivery/openspec/changes/implement-delivery-loop/tasks.md\",\n      \"existingOutputPaths\": []\n    }\n  },\n  \"isPlanningComplete\": false,\n  \"isComplete\": false,\n  \"applyRequires\": [\n    \"tasks\"\n  ],\n  \"nextSteps\": [\n    \"Run openspec instructions design --change \\\"implement-delivery-loop\\\" --json before writing that artifact.\"\n  ],\n  \"actionContext\": {\n    \"mode\": \"repo-local\",\n    \"sourceOfTruth\": \"repo\",\n    \"planningArtifacts\": [\n      \"proposal\",\n      \"specs\",\n      \"design\",\n      \"tasks\"\n    ],\n    \"linkedContext\": [],\n    \"allowedEditRoots\": [\n      \"/Users/johnson.chiang/workspace/orca-delivery\"\n    ],\n    \"requiresAffectedAreaSelection\": false,\n    \"constraints\": [\n      \"Repo-local change artifacts and implementation edits are scoped to this project.\"\n    ]\n  },\n  \"artifacts\": [\n    {\n      \"id\": \"proposal\",\n      \"outputPath\": \"proposal.md\",\n      \"status\": \"done\",\n      \"requires\": []\n    },\n    {\n      \"id\": \"specs\",\n      \"outputPath\": \"specs/**/*.md\",\n      \"status\": \"done\",\n      \"requires\": [\n        \"proposal\"\n      ]\n    },\n    {\n      \"id\": \"design\",\n      \"outputPath\": \"design.md\",\n      \"status\": \"ready\",\n      \"requires\": [\n        \"proposal\"\n      ]\n    },\n    {\n      \"id\": \"tasks\",\n      \"outputPath\": \"tasks.md\",\n      \"status\": \"blocked\",\n      \"requires\": [\n        \"specs\",\n        \"design\"\n      ],\n      \"missingDeps\": [\n        \"design\"\n      ]\n    }\n  ],\n  \"root\": {\n    \"path\": \"/Users/johnson.chiang/workspace/orca-delivery\",\n    \"source\": \"nearest\"\n  }\n}\n",
+      "stderr": ""
+    }
+  ],
+  "artifact_checks": {
+    "active_markdown_files": 19,
+    "missing_local_link_targets": [],
+    "unique_formal_ac_ids": 86,
+    "staged_text_whitespace": "passed"
+  }
+}

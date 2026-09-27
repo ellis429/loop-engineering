@@ -1,0 +1,66 @@
+{
+  "observed_on": "2026-09-27",
+  "purpose": "planning_reference_not_execution_evidence",
+  "skills": [
+    {
+      "name": "domain-modeling",
+      "local_source": "/Users/johnson.chiang/.agents/skills/domain-modeling/SKILL.md",
+      "sha256": "327a2b50620e2fd70abc6893cd6965e76b20f8d0adb0dc2c8d5eb3845efb643e"
+    },
+    {
+      "name": "grilling",
+      "local_source": "/Users/johnson.chiang/.agents/skills/grilling/SKILL.md",
+      "sha256": "10ff989e7498b23b5acb49d5048f11dcd906757d2f79c5cdf8a00001381296f2"
+    },
+    {
+      "name": "grill-with-docs",
+      "local_source": "/Users/johnson.chiang/.agents/skills/grill-with-docs/SKILL.md",
+      "sha256": "7de372c13488f1ee96cc11cd8907b56b6809cc93eef776eeddd37de6b6cbe3fe"
+    },
+    {
+      "name": "openspec-continue-change",
+      "local_source": "/Users/johnson.chiang/.agents/skills/openspec-continue-change/SKILL.md",
+      "sha256": "5120ec867288e4a117949e333f980f51df79e641739c9f4a23df6656311af920"
+    },
+    {
+      "name": "openspec-apply-change",
+      "local_source": "/Users/johnson.chiang/.agents/skills/openspec-apply-change/SKILL.md",
+      "sha256": "0cf1cb26935b55d83e240631500c8cee484a7b241c84a705387c0eeb88676ccf"
+    },
+    {
+      "name": "to-spec",
+      "local_source": "/Users/johnson.chiang/.agents/skills/to-spec/SKILL.md",
+      "sha256": "43ad9cf318e5e7d3d1fa360253a37021796dc87a0c2e595ad262661a10f85088"
+    },
+    {
+      "name": "code-review",
+      "local_source": "/Users/johnson.chiang/.agents/skills/code-review/SKILL.md",
+      "sha256": "47f4e52c21694def9c7c11cbfbf891ca35eac7a93e395797515be3c8a409ae50"
+    },
+    {
+      "name": "retro",
+      "local_source": "/Users/johnson.chiang/.agents/skills/retro/SKILL.md",
+      "sha256": "264f3330f1e2382af89610ed048ba0ed6d08883eb69f596a8f1df3f1e1a4c6a1"
+    },
+    {
+      "name": "writing-plans",
+      "local_source": "/Users/johnson.chiang/.claude/plugins/cache/claude-plugins-official/superpowers/6.3.0/skills/writing-plans/SKILL.md",
+      "sha256": "48508f44bbfd7d24b029fbf3a314f3cd14c9615599059366e922f47b8dc08cf2"
+    },
+    {
+      "name": "test-driven-development",
+      "local_source": "/Users/johnson.chiang/.claude/plugins/cache/claude-plugins-official/superpowers/6.3.0/skills/test-driven-development/SKILL.md",
+      "sha256": "bf1b8216e523851a411e91d429a7c1c2a173e79d88957bc78e348218d50edd54"
+    },
+    {
+      "name": "systematic-debugging",
+      "local_source": "/Users/johnson.chiang/.claude/plugins/cache/claude-plugins-official/superpowers/6.3.0/skills/systematic-debugging/SKILL.md",
+      "sha256": "808fc5717aa88ad65efff312b11c186294d3e6ee301afb584e2f86599b137787"
+    },
+    {
+      "name": "receiving-code-review",
+      "local_source": "/Users/johnson.chiang/.claude/plugins/cache/claude-plugins-official/superpowers/6.3.0/skills/receiving-code-review/SKILL.md",
+      "sha256": "091df1629510af1b92fc4abd6f96732ebedb4cb2c0f3457e8f2740b0504a2438"
+    }
+  ]
+}

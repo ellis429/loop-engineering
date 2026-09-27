@@ -1,0 +1,206 @@
+{
+  "schema_version": 1,
+  "review_id": "controller-design-02-gpt-rereview-v3",
+  "review_kind": "fixed-snapshot design re-review; not product G2",
+  "prior_review": "review/re-review-v2.json",
+  "verdict": "clean",
+  "scope": "聚焦 reviewed-v3 對 DR-04、DR-10 的修正，及 v2→v3 改動是否破壞前次 verified 結論；不是重新審查全 repo。",
+  "summary": {
+    "verified_total": 10,
+    "still_open": 0,
+    "new_blocking": 0,
+    "unresolved_blocking": 0
+  },
+  "results": [
+    {
+      "id": "DR-01",
+      "status": "verified",
+      "verification": "保持 v2 已驗證的 OS launcher／負例套件／dispatch receipt 門檻及 fail-closed 路徑；v3 未修改相關規則。",
+      "basis": "reviewed-v3/design.md §10（366–416）；review/re-review-v2.json"
+    },
+    {
+      "id": "DR-02",
+      "status": "verified",
+      "verification": "Binding/observation 分離、不含時間的 VersionSet 保留；移除 adopt_binding.reuse 沒有改變同內容重讀的穩定性。",
+      "basis": "reviewed-v3/design.md:155–163"
+    },
+    {
+      "id": "DR-03",
+      "status": "verified",
+      "verification": "Immutable evidence/current assessment 分離、pre-PR→PR 的 G1 R-unaffected 與 base 的 R-base 保留；v3 完整矩陣仍支持原轉移。",
+      "basis": "reviewed-v3/design.md:165–206"
+    },
+    {
+      "id": "DR-04",
+      "status": "verified",
+      "verification": "不再複製 worker index；從 HEAD baseline 建立 temp index，overlay 採工作樹內容並先分類 scope/exclude。Staged .env.fake 不從 index 帶入；staged out-of-scope 在 add/tree/commit/ref 前拒絕。Tracked excluded 的未修改保留與修改拒絕已明定，controller 匯入再查 tree 差異。原 untracked 遺失與 staged 排除繞過反例均已解除。",
+      "basis": "reviewed-v3/design.md:214–247；tasks.md:32–43；validation.md:70–71、94",
+      "required_validation": "task 1.2 已列 staged excluded、staged scope 外、stage後再修改、baseline excluded 及 drift 的真 git 案例；尚未執行產品測試。"
+    },
+    {
+      "id": "DR-05",
+      "status": "verified",
+      "verification": "Per-attempt clone、controller 唯一整合 writer、CAS／T0-A 查回未改；新 snapshot 仍使用 parent 與 integration lineage，未恢復直接寫 author branch。",
+      "basis": "reviewed-v3/design.md §9.2（351–364）；review/re-review-v2.json"
+    },
+    {
+      "id": "DR-06",
+      "status": "verified",
+      "verification": "Host authority locator、跨 clone 拒絕、run lineage 累計及不可讀 Blocked 未改。",
+      "basis": "reviewed-v3/design.md §9.1（334–349）；review/re-review-v2.json"
+    },
+    {
+      "id": "DR-07",
+      "status": "verified",
+      "verification": "Dispatch session/prompt 分段持久化、訊息 marker 查回、未知時停止/fencing 路徑未改。",
+      "basis": "reviewed-v3/design.md §11（418–446）；review/re-review-v2.json"
+    },
+    {
+      "id": "DR-08",
+      "status": "verified",
+      "verification": "Head/merge source discovery、parents mapping、按 source SHA 查詢未改；v3 改為重新觀察 G3，未失去合法 M checks 的取得路徑。",
+      "basis": "reviewed-v3/design.md §6.3（274–282）及 §5.3；review/re-review-v2.json"
+    },
+    {
+      "id": "DR-09",
+      "status": "verified",
+      "verification": "Durable blob/file-directory sync、snapshot 引用屏障及恢復引用完整性未改；小型 probe 未被升格成 power-loss 證据。",
+      "basis": "reviewed-v3/design.md §8（308–330）；review/re-review-v2.json"
+    },
+    {
+      "id": "DR-10",
+      "status": "verified",
+      "verification": "移除 R-reuse 及 adopt_binding.reuse，schema 拒絕舊欄位；spec/design/plan等 binding 或 pinned skill 變更使 G2 stale，必須取得讀過當前 digests 的新契約 Reviewer verdict。完整欄位×gate矩陣與 unknown→stale 補掉遺漏依賴；controller 更新重算 assessment，不能直接 R-unaffected 沿用。原 S1 clean→S2＋reuse 與 skill/controller 欄位漏列反例均解除。",
+      "basis": "reviewed-v3/design.md:161–206、262–270；tasks.md:81–98、113–117；validation.md:75、81",
+      "required_validation": "task 2.1/2.3/2.10 已列 reuse拒絕、新AC缺證據、skill/controller變更、matrix完整性及新契約review路徑；尚未執行產品測試。"
+    }
+  ],
+  "findings": [],
+  "nonblocking_notes": [
+    {
+      "id": "N-V3-01",
+      "severity": "informational",
+      "blocking": false,
+      "location": "reviewed-v3/design.md:182、189、267–270",
+      "note": "建議實作時明定 method_changed 是供 G2 判斷方法適用性的 evidence 註記，還是會影響 G1 資格；目前依 G1 確定性核對／G2 語意審查的既有分工，可先完成 G1 再由 G2 審查該註記，未證明存在依賴循環。",
+      "followup": "保留在實作交接，補 skill更新→G1確定性核對→新契約G2 的狀態機測試；若實作選擇使 method_changed 阻擋 G1，須提供前置 eligibility 或重驗路徑，不能等待尚不可派發的正式 G2。此建議不要求本輪新增修正批次。"
+    }
+  ],
+  "limitations": [
+    "clean 僅表示本輪指定設計審查範圍的 confirmed blocking 為 0，不是 D11 批准或產品 G1/G2/G3 通過。",
+    "v3 finding-responses 中的 tmp git probe 僅為作者提供的小型設計佐證；本 reviewer 未自行重跑，未將其算入產品驗收。",
+    "產品測試、OpenCode 在 sandbox 下的推論／生命週期、keychain、Linux launcher、GH及E2E仍待實測，缺能力維持 preflight fail-closed。",
+    "GitHub目標、切片與D11等待決事項保留；未讀或要求模型上游attestation。",
+    "先前 review/review.json、review.md、re-review-v2.json、re-review-v2.md 全部保留；未改repo、未發文、未派子代理。"
+  ],
+  "prior_review_hashes": {
+    "review/review.json": "24fc31a39bd7aeec53474f4b65606332547831708cb7640a136c8029a9b617f6",
+    "review/review.md": "7dc6a24ca45f3148c0b41e3599f77f15379d65ed0b81e1b36524aa8577684041",
+    "review/re-review-v2.json": "e20df76058c89c6f2639d1958eb5da49393a3c72f4763ad01e1aeff816bc8c98",
+    "review/re-review-v2.md": "73490700eb6894c85e094aab3bd90f0dc3baec6bf033edd142e2731e7262cae4"
+  },
+  "bound_files": [
+    {
+      "path": "inputs/docs/decisions.md",
+      "sha256": "3322dd015d8d511e3331a1cf597a26ff0e855deaa377eb1fcc40046bc8665eb9"
+    },
+    {
+      "path": "inputs/docs/delivery-harness-overview.md",
+      "sha256": "972945a242eed56428dd6d62b8acde33f9386b4b0adb556988f9478df009c60b"
+    },
+    {
+      "path": "inputs/docs/file-state.md",
+      "sha256": "e065a0d736049e0c87960287211a5f7c014d5ca731f17758703cbed262e179f0"
+    },
+    {
+      "path": "inputs/docs/handoffs/2026-09-27-controller-design.md",
+      "sha256": "f4e115e4914990a7afbfcd335fa9a9b51e6e5b4ba8c70aabf7c86d5579767f0a"
+    },
+    {
+      "path": "inputs/docs/project-intent.md",
+      "sha256": "b6ad2b7ef30def7b5c07dac6254bb8a9ad7c03e042312f2ec1ccf8e00fc5ac37"
+    },
+    {
+      "path": "inputs/docs/research/2026-09-27/controller-bootstrap.md",
+      "sha256": "576225f6dd9592d844d46d4f3344c70c09566c13079572f6a6b77fc11d306f67"
+    },
+    {
+      "path": "inputs/docs/research/2026-09-27/opencode-setup.md",
+      "sha256": "12885903b9e611b086934f189e3ff35b95a0e3922f83c82873dc17dc2e1eb35e"
+    },
+    {
+      "path": "inputs/docs/research/2026-09-27/planning-preflight.md",
+      "sha256": "8c6f81b5db7dfc324df599845be3fb4ce170c994f8fff6176f0c4024f6ec905f"
+    },
+    {
+      "path": "inputs/docs/workflow-contracts.md",
+      "sha256": "e2dc4c900f734eb243751c3adda338a013823a4b994d047e6edf0cebf3c1c6a0"
+    },
+    {
+      "path": "inputs/docs/workflow-design.md",
+      "sha256": "95a61ad4591152132eb31ccb0af61c30dce281bf35b55e0ed0a27e88b8a89777"
+    },
+    {
+      "path": "inputs/openspec/changes/implement-delivery-loop/proposal.md",
+      "sha256": "f8341121771303f35f63d2bd00534c1c95c458680d06007a0d9fc5017d16727c"
+    },
+    {
+      "path": "inputs/openspec/changes/implement-delivery-loop/specs/delivery-gates/spec.md",
+      "sha256": "64951e366865cfb10042c2c997288b4129b76751f67231118f562af44801f566"
+    },
+    {
+      "path": "inputs/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+      "sha256": "cf33d466f69a928d41183bc5d1cc36c53f5b80c7f4f11e42d4070ee21962050c"
+    },
+    {
+      "path": "inputs/openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md",
+      "sha256": "e1ac3e9fc830e4234e5197fd7325791da52a31cf70324283b359123637024c1c"
+    },
+    {
+      "path": "inputs/openspec/changes/implement-delivery-loop/specs/finding-resolution/spec.md",
+      "sha256": "f5b11ef6c0edb41a8725ad9104f8fcab9d660ee5fc10b8d3be2eb8ffba551601"
+    },
+    {
+      "path": "reviewed-v2/design.md",
+      "sha256": "760ef3ae2a6b06d77ddf85c2c0be56fec47dccd96699b80f11134ef9ad4e7649"
+    },
+    {
+      "path": "reviewed-v2/finding-responses.json",
+      "sha256": "a6f49bb7d8f5f578254e07e96849a31b80cf487a678ae4142640117152ddf9ae"
+    },
+    {
+      "path": "reviewed-v2/result.json",
+      "sha256": "faaf558453d598a20711234a56c764a572690045702248b1134a2175172fa41a"
+    },
+    {
+      "path": "reviewed-v2/tasks.md",
+      "sha256": "886302a98e940c1272acd904d0c219c865f23bcb7e4ffd1ba220664c2ef90b3e"
+    },
+    {
+      "path": "reviewed-v2/validation.md",
+      "sha256": "ee8c3fe7c4ccb920487fedfb1a37d8938eee857a2887739467464b902814e0dd"
+    },
+    {
+      "path": "reviewed-v3/design.md",
+      "sha256": "732e8a545fbc1e02b8e260b594cd923301f86a5ad8c0c806a34f19d79881ad0b"
+    },
+    {
+      "path": "reviewed-v3/finding-responses.json",
+      "sha256": "71d5e06b2afe3c41bc52a483c2cb03fc1c6f4f8c0a73fa0098289f1a307f302a"
+    },
+    {
+      "path": "reviewed-v3/result.json",
+      "sha256": "e3700260413cf53b63f7bda541a93bf969725d9dec3b5aad554c4c3086e1dfc0"
+    },
+    {
+      "path": "reviewed-v3/tasks.md",
+      "sha256": "2859298de5ab96a8e644ca5fa6d8a9eaa822f608e2efdf46aa94d745a2fdda02"
+    },
+    {
+      "path": "reviewed-v3/validation.md",
+      "sha256": "6ae103b3b190ff363a05b95ce100b4e06e68f07b6155b606e200d7a37a672b12"
+    }
+  ],
+  "declared_v3_hashes_match": true,
+  "created_at": "2026-09-27T04:17:01.095032+00:00"
+}

@@ -1,6 +1,6 @@
 # Gigaxfer pre-PR gating experiment
 
-狀態：D15/D16 已確認實驗方向；交接與執行契約準備中，controller 尚未實作，未啟動 review/fix loop。
+狀態：**依 D33 保留為暫緩方案，不是預設下一步**。目前先在 orca-delivery 測通 workflow、orchestrate 與預設工具組合，之後以 cross-node-file-transfer 匯入既有基準、從初始化跑完整流程。下文保留 D15／D16 的舊接入設計；只有使用者另行恢復此方案才重查 Q-TARGET 與原 owner。Controller 尚未實作，本文未啟動 review/fix loop。
 
 ## Scope
 
@@ -25,9 +25,9 @@
 ## Gating loop：接手方執行
 
 1. 讀取交接資料與外部實況，以 JSON 保存 run/versions/ownership。驗證 G1；缺資料記 missing/blocked，先要求可驗證補件。重跑目前測試能證明當前 Green，不能自行證明歷史 test-first 過程。
-2. G1 通過後建立或接續同一 feature PR，固定 head/base。新 reviewer 必須是與原實作者獨立的 Codex runtime，使用完整 spec/design/diff package。
+2. G1 通過後建立或接續同一 feature PR，固定 head/base。新 Reviewer 必須與原實作者隔離，由 controller 派獨立 session，符合既有獨立 Codex review 要求，使用完整 spec/design/diff package。依 D30，契約與底層實作解耦；Codex 指 runtime 或 model 及本次具體 adapter 仍需在試用前選定並驗證，不由本文件默認選擇。
 3. Review 與真正 GitHub CI 並行；先保存結構化結果，再發布/通知。CI 用 API/CLI 讀取必要 checks，agent 的 console 結語不是 CI 證據。
-4. 收齊同版本結果後形成一次修正批次。優先派回已確認的原實作 owner；若 owner 不可接續，先確認舊執行權已解除，才派替代 worker。Gating coordinator 不直接修改作者 branch。
+4. 收齊同版本結果後形成一次修正批次。優先派回已確認的原實作 owner；若 owner 不可接續，先確認舊執行權已解除，才派替代 worker。Controller 與 Reviewer Agent 不直接修改作者 branch。
 5. 修正產生新 head 後重新跑 G1、必要 CI 和獨立覆核。Finding 保留 ID，實作者提交 fix/evidence；reviewer 驗證後才解除阻擋，爭議交人裁決。
 6. Pass 前再次核對 PR head/base 及適用規格版本；三 gates 都適用且通過才記錄 PR Pass。發布失敗保留結果只重試發布，仍需完成原 issue 的可讀取 review 紀錄。
 
@@ -37,11 +37,11 @@
 
 - 真實 feature 的 G1、獨立 review、GitHub CI 均有可讀取且版本適用的證據。
 - 至少一次成立的 review finding → fix → re-review；保留穩定 finding ID 與兩版 head 的對應。
-- Review 明細與原 issue 能看見的結果互相連結；具體 finding authority / 發布形式仍待 Q-PUBLISH。
+- 依 D24，本機 JSON finding registry 為權威；PR 保存完整 review，原 issue 保存可採取行動的摘要與連結，兩者可對回同一結果與版本。
 - 保存 JSON 狀態與證據後可 resume；至少驗證一次遺失通知或重啟不重派、不重貼。
 - 若未找到真實 blocking finding，如實報 review clean，不虛構問題來宣稱循環驗收完成。
 
-先以可控 adapters 驗證 stale SHA、缺 check、crash、重複事件與發文失敗；这些測試和真實 feature 的 demo 證據分開保存。
+先以可控 adapters 驗證 stale SHA、缺 check、crash、重複事件與發文失敗；這些測試和真實 feature 的 demo 證據分開保存。
 
 ## 已查核的候選；尚待使用者選定
 

@@ -1,0 +1,572 @@
+{
+  "schema_version": 1,
+  "run_id": "controller-bootstrap-20260927",
+  "task_id": "controller-detailed-design",
+  "attempt_id": "design-02",
+  "revision": 3,
+  "review_ref": {
+    "v1": {
+      "review_id": "controller-design-02-gpt-review-01",
+      "files": {
+        "review/review.json": "24fc31a39bd7aeec53474f4b65606332547831708cb7640a136c8029a9b617f6",
+        "review/review.md": "7dc6a24ca45f3148c0b41e3599f77f15379d65ed0b81e1b36524aa8577684041",
+        "review/red-snapshot-probe.json": "c690110003898f167e40a71f87c8e4876742ad4a43a307bd078552384cbd34d9"
+      }
+    },
+    "v2": {
+      "review_id": "controller-design-02-gpt-rereview-v2",
+      "files": {
+        "re-review-v2.md": "73490700eb6894c85e094aab3bd90f0dc3baec6bf033edd142e2731e7262cae4",
+        "re-review-v2.json": "e20df76058c89c6f2639d1958eb5da49393a3c72f4763ad01e1aeff816bc8c98",
+        "staged-exclude-probe.json": "0cb586331a70d8ae48958e7c142daab74cf2533d487b82557bfad34cf46e1b66"
+      }
+    }
+  },
+  "note": "Implementer 只提交 fix_submitted；resolved/verified 由 Reviewer 決定。re_review_v2_status 為引用 Reviewer 結論，非自評。所有 probe 均為本機 tmp 實驗，非產品 gate evidence。",
+  "responses": [
+    {
+      "finding_id": "DR-01",
+      "status": "fix_submitted",
+      "summary": "新增 §10 OS 權限邊界：每個 worker 經 sandbox launcher 啟動，明列可寫（own clone/rt/inbox）、拒寫（主 repo、.delivery、authority、他 attempt）、拒讀（gh/ssh 憑證）、env scrub 與子程序繼承；verified 只由負例套件＋receipt profile digest 成立，clone/env/事後比對不能升格；未通過→reviewer G2 unknown、implementer 派工 Blocked。macOS Seatbelt 為建議、Linux bubblewrap/Landlock 平台待實測、專用 UID 為使用者決定的替代。",
+      "locations": [
+        {
+          "file": "outputs/design.md",
+          "line": 311,
+          "anchor": "### 10. Worker 的 OS 權限邊界"
+        },
+        {
+          "file": "outputs/design.md",
+          "line": 336,
+          "anchor": "#### 10.3 Verified 條件與失敗路徑"
+        },
+        {
+          "file": "outputs/design.md",
+          "line": 347,
+          "anchor": "#### 10.4 負例套件"
+        },
+        {
+          "file": "outputs/design.md",
+          "line": 214,
+          "anchor": "3. **Isolation = verified**"
+        },
+        {
+          "file": "outputs/tasks.md",
+          "line": 72,
+          "anchor": "- [ ] 1.9 (DR-01)"
+        },
+        {
+          "file": "outputs/tasks.md",
+          "line": 84,
+          "anchor": "- [ ] 2.3 (DR-01)"
+        },
+        {
+          "file": "outputs/tasks.md",
+          "line": 121,
+          "anchor": "- [ ] 4.3 (DR-01)"
+        },
+        {
+          "file": "outputs/validation.md",
+          "line": 75,
+          "anchor": "| AC-G12 |"
+        },
+        {
+          "file": "outputs/validation.md",
+          "line": 74,
+          "anchor": "| AC-G11 |"
+        },
+        {
+          "file": "outputs/validation.md",
+          "line": 112,
+          "anchor": "| AC-D24 |"
+        }
+      ],
+      "verification_evidence": [
+        {
+          "kind": "local_os_sandbox_probe",
+          "platform": "macOS 27.0, /usr/bin/sandbox-exec (Seatbelt)",
+          "result": {
+            "direct_write_author_git": "denied",
+            "grandchild_write_author": "denied",
+            "write_controller_state": "denied",
+            "write_own_inbox": "allowed",
+            "write_work_dir": "allowed",
+            "read_credential_file": "denied",
+            "rename_own_inbox_out": "denied"
+          },
+          "not_tested": [
+            "OpenCode server under sandbox",
+            "keychain/gh auth token",
+            "network",
+            "Linux bubblewrap/Landlock"
+          ],
+          "not_product_evidence": true
+        },
+        "tasks 1.9/2.3/4.3 的負例（直接＋孫程序、authority 寫入拒絕）與 validation AC-G12 的 OS/R 層 pass 標準"
+      ],
+      "residual": "平台待實測：Linux launcher、OpenCode 在 sandbox 下的必要路徑、keychain；本 probe 非產品驗收",
+      "re_review_v2_status": "verified",
+      "locations_version": "v2（reviewed-v2/ 行號；v3 未改動其內容）"
+    },
+    {
+      "finding_id": "DR-02",
+      "status": "fix_submitted",
+      "summary": "§5.1 將不可變 binding（content_digest＋adopted_at）與 observation（last_observed_at、只在差異或 resume 首讀記事件）分離；§5.2 VersionSet 不含任何時間；相同 bytes 重讀 version_key 不變，不同 digest 只建 candidate binding，adopt_binding decision 才產生新版本。",
+      "locations": [
+        {
+          "file": "outputs/design.md",
+          "line": 154,
+          "anchor": "#### 5.1 Binding 與 observation 分離"
+        },
+        {
+          "file": "outputs/design.md",
+          "line": 160,
+          "anchor": "#### 5.2 VersionSet"
+        },
+        {
+          "file": "outputs/tasks.md",
+          "line": 77,
+          "anchor": "- [ ] 2.1 (DR-02, DR-03)"
+        },
+        {
+          "file": "outputs/validation.md",
+          "line": 79,
+          "anchor": "| AC-G16 |"
+        },
+        {
+          "file": "outputs/validation.md",
+          "line": 33,
+          "anchor": "| AC-O03 |"
+        }
+      ],
+      "verification_evidence": [
+        "task 2.1 Red：同 body 輪詢 10 次＋restart version_key 不變且 V1 review 被採用；改 1 byte → candidate＋awaiting_approval",
+        "validation AC-G16/O03 pass 標準"
+      ],
+      "residual": null,
+      "re_review_v2_status": "verified",
+      "locations_version": "v2（reviewed-v2/ 行號；v3 未改動其內容）"
+    },
+    {
+      "finding_id": "DR-03",
+      "status": "fix_submitted",
+      "summary": "§5.3 分開不可變 evidence 與綁當前 version_key 的 gate assessment，定義各 gate 依賴欄位及 R-unaffected（首次 PR binding）、R-base（merge-tree＋在 merge tree 重跑 g1.commands，衝突進 correction，不無條件沿用）、R-reuse（decision）推導規則，derived 欄位保存理由；狀態機加入 base-only 轉移。",
+      "locations": [
+        {
+          "file": "outputs/design.md",
+          "line": 164,
+          "anchor": "#### 5.3 Gate assessment 與推導規則"
+        },
+        {
+          "file": "outputs/design.md",
+          "line": 107,
+          "anchor": "| checking | base_tip/merge_base 改變"
+        },
+        {
+          "file": "outputs/tasks.md",
+          "line": 101,
+          "anchor": "(DR-03) 必含兩個端到端案例"
+        },
+        {
+          "file": "outputs/validation.md",
+          "line": 64,
+          "anchor": "| AC-G01 |"
+        },
+        {
+          "file": "outputs/validation.md",
+          "line": 80,
+          "anchor": "| AC-G17 |"
+        },
+        {
+          "file": "outputs/validation.md",
+          "line": 38,
+          "anchor": "| AC-O08 |"
+        }
+      ],
+      "verification_evidence": [
+        "task 2.10 端到端：pre-PR→PR→Pass；base-only→R-base→重新收齊三 gates 得 Pass／衝突→correcting",
+        "validation AC-G17 要求重新收齊同版本三 gates"
+      ],
+      "residual": null,
+      "re_review_v2_status": "verified",
+      "locations_version": "v2（reviewed-v2/ 行號；v3 未改動其內容）",
+      "v3_note": "v3 依 DR-10 移除 R-reuse；R-unaffected／R-base 與 DR-03 反例的處理不變。"
+    },
+    {
+      "finding_id": "DR-04",
+      "status": "fix_submitted",
+      "summary": "§6.1 v3：暫存 index 改從 HEAD tree（baseline）以 read-tree 起算、不複製 worker index；overlay 只收工作樹中相對 baseline 變更、在 scope 內、非 ignored、非 exclude 的路徑（staged／unstaged 不區分，以執行時工作樹為準；只在 index 的內容永不收入）。exclude 對 baseline 已 tracked 檔：未修改保留、修改或刪除則拒絕。scope 外、已 commit 違禁或 tracked 排除檔被改 → 在任何 git add／write-tree 前拒絕，不寫物件、不建 ref、不跑測試。寫 tree 前以 diff-index 驗證候選差異恰等於 allowed 集合；測試後檢查 drift；controller 匯入時以 diff-tree 再驗。",
+      "locations": [
+        {
+          "file": "outputs/design.md",
+          "line": 214,
+          "anchor": "**Red snapshot 程序（DR-04 v3）**"
+        },
+        {
+          "file": "outputs/design.md",
+          "line": 216,
+          "anchor": "**語意（何者進 snapshot）**"
+        },
+        {
+          "file": "outputs/design.md",
+          "line": 232,
+          "anchor": "5. **有任何拒絕**"
+        },
+        {
+          "file": "outputs/design.md",
+          "line": 234,
+          "anchor": "7. **寫 tree 前驗證**"
+        },
+        {
+          "file": "outputs/design.md",
+          "line": 247,
+          "anchor": "**Red 有效性（確定性）**"
+        },
+        {
+          "file": "outputs/tasks.md",
+          "line": 32,
+          "anchor": "- [ ] 1.2 (DR-04)"
+        },
+        {
+          "file": "outputs/validation.md",
+          "line": 71,
+          "anchor": "| AC-G07 |"
+        },
+        {
+          "file": "outputs/validation.md",
+          "line": 70,
+          "anchor": "| AC-G06 |"
+        },
+        {
+          "file": "outputs/validation.md",
+          "line": 94,
+          "anchor": "| AC-D05 |"
+        }
+      ],
+      "verification_evidence": [
+        {
+          "kind": "local_tmp_git_probe",
+          "executed_by": "implementer (this session), scratchpad tmp repo（本輪 v3）",
+          "procedure": "design.md §6.1 v3 的 baseline＋overlay 程序（python 腳本實作步驟 1–8）",
+          "result": {
+            "A_staged_excluded_untracked_test_staged_then_modified": {
+              "snapshot_files": [
+                "README.md",
+                "src/app.py",
+                "tests/test_new.py"
+              ],
+              "omitted_excluded": [
+                ".env.fake"
+              ],
+              "app_py_version": "worktree（非 staged）",
+              "worker_index_sha_unchanged": true,
+              "worker_status_unchanged": true,
+              "controller_repo_has_env_blob_after_fetch": false,
+              "replay_failing_ids": [
+                "test_add (test_new.T)"
+              ]
+            },
+            "B_staged_out_of_scope": {
+              "refused": [
+                "scope_violation: outside.txt"
+              ],
+              "ref_created": false,
+              "git_add_executed": false,
+              "worker_index_sha_unchanged": true
+            },
+            "C_baseline_tracked_excluded_modified": {
+              "refused": [
+                "excluded_tracked_modified: .env.example"
+              ]
+            },
+            "D_baseline_tracked_excluded_unmodified": {
+              "kept_from_baseline": ".env.example"
+            }
+          },
+          "reproduces_reviewer_counterexample": "review/staged-exclude-probe.json（staged .env.fake 留在 tree）在 v3 程序下不成立",
+          "not_product_evidence": true
+        },
+        "task 1.2 Red 清單涵蓋 staged 排除檔、staged scope 外檔、staged/unstaged 混合、tracked 排除檔修改或未修改、已 commit 違禁、drift，且每案斷言 worker index 與 status 不變"
+      ],
+      "residual": null,
+      "revision": 3,
+      "previous_revision": "v2 回應見 reviewed-v2/finding-responses.json",
+      "re_review_v2_status": "still_open"
+    },
+    {
+      "finding_id": "DR-05",
+      "status": "fix_submitted",
+      "summary": "§9.2 選定唯一模型：per-attempt 獨立 clone（起點 T0），controller 為整合 branch 唯一 writer；新增 integrate op：fetch→lease/ancestry/scope 核對→update-ref CAS（old=T0）只 fast-forward→integration.log；crash 依 ref==A/T0/其他 收斂、重做或 Blocked；舊 attempt 不再 fetch 即 fencing；Red lineage 以 P 為 A 祖先成立。",
+      "locations": [
+        {
+          "file": "outputs/design.md",
+          "line": 296,
+          "anchor": "#### 9.2 單一整合模型"
+        },
+        {
+          "file": "outputs/design.md",
+          "line": 101,
+          "anchor": "| implementing | task 派工 → result 匯入 → `integrate` op"
+        },
+        {
+          "file": "outputs/tasks.md",
+          "line": 91,
+          "anchor": "- [ ] 2.9 (DR-05)"
+        },
+        {
+          "file": "outputs/validation.md",
+          "line": 71,
+          "anchor": "| AC-G08 |"
+        },
+        {
+          "file": "outputs/validation.md",
+          "line": 92,
+          "anchor": "| AC-D04 |"
+        }
+      ],
+      "verification_evidence": [
+        "task 2.9 真 git 測試：兩 task 依序、舊 attempt 晚到、update-ref 前/後 crash、第三值 Blocked、scope 外拒絕、整合 regression 紅"
+      ],
+      "residual": null,
+      "re_review_v2_status": "verified",
+      "locations_version": "v2（reviewed-v2/ 行號；v3 未改動其內容）"
+    },
+    {
+      "finding_id": "DR-06",
+      "status": "fix_submitted",
+      "summary": "§9.1 新增主機層級 features/<feature_id>/authority.json（repo+feature canonical identity、active run、run lineage、state_dir/repo_path），flock 只防同時 step；start/adopt 先解析 authority，另一 clone 被拒且拒絕資訊持久；state 不可讀→Blocked，只有 abandon_run decision 可替代且繼承預算；budget 以 lineage 加總；project.json 由 authority 修復。",
+      "locations": [
+        {
+          "file": "outputs/design.md",
+          "line": 279,
+          "anchor": "#### 9.1 Feature authority locator 與預算 lineage"
+        },
+        {
+          "file": "outputs/design.md",
+          "line": 395,
+          "anchor": "- **Active time**"
+        },
+        {
+          "file": "outputs/tasks.md",
+          "line": 53,
+          "anchor": "- [ ] 1.6 (DR-06)"
+        },
+        {
+          "file": "outputs/validation.md",
+          "line": 91,
+          "anchor": "| AC-D03 |"
+        },
+        {
+          "file": "outputs/validation.md",
+          "line": 105,
+          "anchor": "| AC-D17 |"
+        },
+        {
+          "file": "outputs/validation.md",
+          "line": 124,
+          "anchor": "| AC-F07 |"
+        }
+      ],
+      "verification_evidence": [
+        "task 1.6 Red：跨 clone 順序啟動被拒、state 被移走 Blocked、abandon 後繼承 rounds/active time、lineage 不可讀 Blocked"
+      ],
+      "residual": "跨主機不支援（明示）",
+      "re_review_v2_status": "verified",
+      "locations_version": "v2（reviewed-v2/ 行號；v3 未改動其內容）"
+    },
+    {
+      "finding_id": "DR-07",
+      "status": "fix_submitted",
+      "summary": "§11 將 dispatch 拆為持久化 stages（session_pending→session_created→prompt_sending→prompt_accepted→running→completed），每段以 marker/payload digest 查回；prompt 無法證實未送達時不在同 session 重送，改 stop 確認後 fence＋新 attempt，stop 不可確認→Blocked；訂外部呼叫次數不變式。",
+      "locations": [
+        {
+          "file": "outputs/design.md",
+          "line": 369,
+          "anchor": "**Dispatch 分段（DR-07）**"
+        },
+        {
+          "file": "outputs/tasks.md",
+          "line": 61,
+          "anchor": "- [ ] 1.7 (DR-07)"
+        },
+        {
+          "file": "outputs/tasks.md",
+          "line": 119,
+          "anchor": "- [ ] 4.2 (DR-07)"
+        },
+        {
+          "file": "outputs/validation.md",
+          "line": 101,
+          "anchor": "| AC-D13 |"
+        },
+        {
+          "file": "outputs/validation.md",
+          "line": 100,
+          "anchor": "| AC-D12 |"
+        },
+        {
+          "file": "outputs/validation.md",
+          "line": 102,
+          "anchor": "| AC-D14 |"
+        }
+      ],
+      "verification_evidence": [
+        "task 1.7 故障矩陣（8 格）斷言 stage 與外部呼叫次數；task 4.2 真 OpenCode 的 session 後/prompt 前 kill 案例"
+      ],
+      "residual": "OpenCode session 列表一致性與 message marker 查回能力待 /doc＋實測",
+      "re_review_v2_status": "verified",
+      "locations_version": "v2（reviewed-v2/ 行號；v3 未改動其內容）"
+    },
+    {
+      "finding_id": "DR-08",
+      "status": "fix_submitted",
+      "summary": "§6.3 定義候選 source SHA：H 由 pulls/{n} read-back；M 由 merge_commit_sha＋fetch pull/{n}/merge 驗 parents=[當前 base_tip,H] 並保存 mapping；policy 每個 required check 明示 source: head|merge；舊 M stale、未計算 unknown 並在 CI timeout 內輪詢。",
+      "locations": [
+        {
+          "file": "outputs/design.md",
+          "line": 222,
+          "anchor": "**候選 source SHA 發現（DR-08）**"
+        },
+        {
+          "file": "outputs/tasks.md",
+          "line": 111,
+          "anchor": "- [ ] 3.1 (DR-08)"
+        },
+        {
+          "file": "outputs/tasks.md",
+          "line": 114,
+          "anchor": "(DR-08) 案例：H 無 check"
+        },
+        {
+          "file": "outputs/tasks.md",
+          "line": 86,
+          "anchor": "- [ ] 2.4 (DR-08)"
+        },
+        {
+          "file": "outputs/validation.md",
+          "line": 78,
+          "anchor": "| AC-G15 |"
+        }
+      ],
+      "verification_evidence": [
+        "adapter contract（fake）＋GH 實測：H 無 check、M 有 required check 採用；base 前進後舊 M stale"
+      ],
+      "residual": "GH 實測依 GitHub 目標（使用者未決）",
+      "re_review_v2_status": "verified",
+      "locations_version": "v2（reviewed-v2/ 行號；v3 未改動其內容）"
+    },
+    {
+      "finding_id": "DR-09",
+      "status": "fix_submitted",
+      "summary": "§8 定義 durable blob 協定（O_EXCL tmp→fsync/F_FULLFSYNC→link 不覆寫→dir fsync→unlink→dir fsync，含新目錄父目錄 fsync 與錯誤中止）及提交屏障（snapshot 只能引用 durable handle，外部 op 在其後）；resume 引用完整性檢查；列 Linux/macOS 保證與驗證範圍（SIGKILL、Linux strace 順序；power-loss 未覆蓋）。",
+      "locations": [
+        {
+          "file": "outputs/design.md",
+          "line": 253,
+          "anchor": "### 8. 持久化：snapshot、durable blobs、events（DR-09）"
+        },
+        {
+          "file": "outputs/design.md",
+          "line": 262,
+          "anchor": "**提交屏障**"
+        },
+        {
+          "file": "outputs/design.md",
+          "line": 268,
+          "anchor": "**驗證範圍**"
+        },
+        {
+          "file": "outputs/tasks.md",
+          "line": 41,
+          "anchor": "- [ ] 1.3 (DR-09)"
+        },
+        {
+          "file": "outputs/validation.md",
+          "line": 97,
+          "anchor": "| AC-D09 |"
+        }
+      ],
+      "verification_evidence": [
+        "task 1.3 Red：未 durable 引用拒提交、遺失 blob→Blocked、conflict、SIGKILL 200 次不變式、strace 順序"
+      ],
+      "residual": "macOS 目錄 F_FULLFSYNC 待測；power-loss 未驗證（明示）",
+      "re_review_v2_status": "verified",
+      "locations_version": "v2（reviewed-v2/ 行號；v3 未改動其內容）"
+    },
+    {
+      "finding_id": "DR-10",
+      "status": "fix_submitted",
+      "revision": 3,
+      "summary": "§5.3 改為完整依賴矩陣：每個 VersionSet 欄位對每個 gate 各一格，未列欄位或 skill 一律 stale。移除 R-reuse 與 adopt_binding.reuse（schema 拒絕 reuse 欄位），adopt_binding 對 gate 無效果；新增 R-reevaluate（只從既有 evidence 重算）與 R-reobserve（G3 一律重新查詢）。Binding、head、base、pr、釘住 skill 變更 → G2 stale，只能由 §6.2 新契約 review 取得（result 回報的 binding digests 須與當前 VersionSet 相符）；skill 變更使 evidence 標 method_changed；controller_version 變更 → 全部重算、不沿用。人工 decision 在 G2 只保留 D09 的指定 finding closure，不產生 G2 clean。",
+      "locations": [
+        {
+          "file": "outputs/design.md",
+          "line": 165,
+          "anchor": "#### 5.3 Gate assessment 與推導規則（DR-03、DR-10）"
+        },
+        {
+          "file": "outputs/design.md",
+          "line": 169,
+          "anchor": "**完整依賴矩陣（fail-closed）**"
+        },
+        {
+          "file": "outputs/design.md",
+          "line": 193,
+          "anchor": "**沒有人工 reuse 路徑（DR-10）**"
+        },
+        {
+          "file": "outputs/design.md",
+          "line": 262,
+          "anchor": "5. **讀過當前契約（DR-10）**"
+        },
+        {
+          "file": "outputs/design.md",
+          "line": 267,
+          "anchor": "**新契約 review**"
+        },
+        {
+          "file": "outputs/design.md",
+          "line": 161,
+          "anchor": "#### 5.2 VersionSet"
+        },
+        {
+          "file": "outputs/tasks.md",
+          "line": 87,
+          "anchor": "(DR-10) 矩陣完整性"
+        },
+        {
+          "file": "outputs/tasks.md",
+          "line": 88,
+          "anchor": "(DR-10) S1 下 G2 clean"
+        },
+        {
+          "file": "outputs/tasks.md",
+          "line": 97,
+          "anchor": "(DR-10) review result 回報的 binding digests"
+        },
+        {
+          "file": "outputs/tasks.md",
+          "line": 117,
+          "anchor": "(DR-10) 另含：契約變更"
+        },
+        {
+          "file": "outputs/validation.md",
+          "line": 81,
+          "anchor": "| AC-G17 |"
+        },
+        {
+          "file": "outputs/validation.md",
+          "line": 75,
+          "anchor": "| AC-G11 |"
+        }
+      ],
+      "verification_evidence": [
+        "task 2.1 Red：矩陣完整性、S1 clean→S2 新增 AC＋adopt_binding 不可 Pass、reuse decision 被拒、skill 變更 method_changed＋G2 stale、controller 升級全數重算、G3 重新查詢",
+        "task 2.3 Red：binding digests 不符不支持當前 key；新契約 review clean 才 passed",
+        "task 2.10 端到端：契約變更→補 AC→新契約 review→Pass",
+        "validation AC-G17／G11 pass 標準"
+      ],
+      "residual": null,
+      "re_review_v2_status": "new (confirmed)"
+    }
+  ]
+}

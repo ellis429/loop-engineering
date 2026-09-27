@@ -1,0 +1,46 @@
+[
+  {
+    "path": "CONTEXT.md",
+    "sha256": "fdf18dc7f32b7a37d0052e74b395f402f279b51b5936fe025f6af2bf11803f5c"
+  },
+  {
+    "path": "README.md",
+    "sha256": "020c9540c3ab88ebe409e86780378d62bd0073b2e4f72f13b15ceedd560901e6"
+  },
+  {
+    "path": "docs/decisions.md",
+    "sha256": "2e63051992eecc441f58dc613c38a98ad8ae5dd053ce275ba011ff0f996908ac"
+  },
+  {
+    "path": "docs/workflow-design.md",
+    "sha256": "d069ec3f6cdb95356e0930d535aebeb349572c0b4c9cf7873bb2b1e7f4850e9a"
+  },
+  {
+    "path": "docs/workflow-contracts.md",
+    "sha256": "dd5660ecfbf849a4966945383e4d65f355d5fa525ffec7ed3fc664831750d5cb"
+  },
+  {
+    "path": "docs/file-state.md",
+    "sha256": "61e9a58388fdf19945fbe06830b8d5d2c074f24389a99677cfbe7d88eaa72648"
+  },
+  {
+    "path": "docs/project-intent.md",
+    "sha256": "15c3666174dc5daf3dbb12fb0981d7b30500494c48d04e9992fe34398c49493d"
+  },
+  {
+    "path": "docs/experiments/pr-gating.md",
+    "sha256": "060f4497428a475338224944fcc03c891b4fce6077704af13974c5047385704d"
+  },
+  {
+    "path": "docs/research/2026-09-25/runtime-probe.md",
+    "sha256": "68a8e8e735dfe71ef426249814bf13a2f9b35b5f75a34865e642749c56c50b01"
+  },
+  {
+    "path": "docs/research/2026-09-25/integration-gaps.md",
+    "sha256": "1a50209457bfd084e29b51f15c22c63f8b41116ce6567e64f4643fc7a39754c0"
+  },
+  {
+    "path": "docs/research/2026-09-26/agent-messaging-and-opencode.md",
+    "sha256": "88e87093adc5c76d62592c6202810472a7ee1826cdf47d8ea12eab61e037a33f"
+  }
+]

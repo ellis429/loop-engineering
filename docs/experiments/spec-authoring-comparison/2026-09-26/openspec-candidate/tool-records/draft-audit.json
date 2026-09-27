@@ -1,0 +1,80 @@
+{
+  "capabilities": 4,
+  "requirements": 31,
+  "unique_scenarios": 69,
+  "files": [
+    {
+      "path": "openspec/changes/implement-delivery-loop/specs/delivery-gates/spec.md",
+      "requirements": 8,
+      "scenarios": 20,
+      "lines": 119
+    },
+    {
+      "path": "openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+      "requirements": 8,
+      "scenarios": 16,
+      "lines": 103
+    },
+    {
+      "path": "openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md",
+      "requirements": 9,
+      "scenarios": 19,
+      "lines": 121
+    },
+    {
+      "path": "openspec/changes/implement-delivery-loop/specs/finding-resolution/spec.md",
+      "requirements": 6,
+      "scenarios": 14,
+      "lines": 87
+    }
+  ],
+  "design_exists": false,
+  "tasks_exists": false,
+  "source_snapshot_checks": [
+    {
+      "path": "CONTEXT.md",
+      "match": true
+    },
+    {
+      "path": "README.md",
+      "match": true
+    },
+    {
+      "path": "docs/decisions.md",
+      "match": true
+    },
+    {
+      "path": "docs/workflow-design.md",
+      "match": true
+    },
+    {
+      "path": "docs/workflow-contracts.md",
+      "match": true
+    },
+    {
+      "path": "docs/file-state.md",
+      "match": true
+    },
+    {
+      "path": "docs/project-intent.md",
+      "match": true
+    },
+    {
+      "path": "docs/experiments/pr-gating.md",
+      "match": true
+    },
+    {
+      "path": "docs/research/2026-09-25/runtime-probe.md",
+      "match": true
+    },
+    {
+      "path": "docs/research/2026-09-25/integration-gaps.md",
+      "match": true
+    },
+    {
+      "path": "docs/research/2026-09-26/agent-messaging-and-opencode.md",
+      "match": true
+    }
+  ],
+  "scope": "Document structure and source integrity only; no product tests run."
+}

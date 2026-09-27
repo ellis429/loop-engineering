@@ -1,0 +1,19 @@
+schema: spec-driven
+
+context: |
+  Orca Delivery MVP specification comparison, not an adopted plan.
+  Traditional Chinese prose; preserve native headings and SHALL.
+  Read-only source snapshots: ../baseline/ and ../shared-input.md.
+  Confirmed policy is recorded in baseline/docs/decisions.md; preserve the
+  proposed or unresolved status of design details and runtime choices.
+  Produce proposal and specs only; design/tasks and implementation are excluded.
+  Public controller operation testing seams remain an unconfirmed proposal.
+
+rules:
+  proposal:
+    - Keep one repo, issue, PR delivery and a thin project layer.
+    - State draft status and unapproved implementation/trial boundaries.
+  specs:
+    - Use one to four capability files with stable acceptance scenario IDs.
+    - Every requirement needs observable WHEN/THEN scenarios.
+    - Preserve confirmed policy and identify proposed refinements explicitly.

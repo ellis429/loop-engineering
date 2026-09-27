@@ -1,0 +1,9 @@
+{
+  "repo": "/private/tmp/orca-red-snapshot-ryuwocsv",
+  "untracked_only_snapshot": null,
+  "tracked_change_snapshot": "09bb7da96279afce9855da4606d704586fa310e3",
+  "snapshot_files": [
+    "app.py"
+  ],
+  "new_test_in_snapshot": false
+}

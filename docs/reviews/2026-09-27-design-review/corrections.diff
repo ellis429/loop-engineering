@@ -1,0 +1,33 @@
+--- before/docs/workflow-contracts.md
++++ after/docs/workflow-contracts.md
+@@ -183,7 +183,8 @@
+ | 正常／review finding／CI fail／review fail | 只有三 gates 同版本通過才 Pass；修正保留 finding ID 和新版本覆核 |
+ | 缺 Red／無效測試／未核准 N/A | G1 明列缺失或待裁決，不以最終綠燈補造過程 |
+ | 舊 SHA 結果晚到／Pass 前 push／base 或 spec 改變 | 不放行舊結果，保存歷史並重評目前版本 |
+-| 必要 check missing / pending / cancelled / skipped | 逐項顯示原因，只有 policy 明示接受才通過 |
++| 必要 check missing / pending / cancelled / timed-out / failed / unknown / stale | 一律不通過，逐項顯示原因；policy 不能將這些狀態豁免成成功 |
++| 必要 check skipped / neutral | 只有明確且適用的 policy 允許才可接受；未設定或未核准例外時不通過 |
+ | 通知丟失／重複／只接受輸入 | Result reconcile 恢復，不因通知判成功或重派 |
+ | 發文失敗／回應未知 | 保留 review，按 operation marker 查回並安全重試，避免重貼 |
+ | Worker crash／controller restart／兩個 run 搶一個 feature | 保留執行權證據、去重匯入、拒絕競爭 writer |
+--- before/docs/decisions.md
++++ after/docs/decisions.md
+@@ -51,6 +51,8 @@
+ | ID | 建議 | 主要取捨 |
+ | --- | --- | --- |
+ | Q-METHOD | **建議優先試驗，尚未固定**：Project 文件管理 baseline／roadmap；Project Lead 與 Implementer 接續同一 OpenSpec change 的 spec、design、tasks。Matt research／grill／domain 方法按需支援，to-spec 保留比較候選而非必經；Writing Plans 與 tasks 的接合及版本仍待驗證 | 分析內容依 D34，角色依 D32；須核對原生格式、觸發限制、分步交接及產物品質，保持唯一 spec／plan 權威。寫入試驗方向不等於選型完成或整合已實證 |
++| Q-RUNTIME | **待回答，不改 D01／D30／D37**：G2 的「獨立 Codex reviewer」如何對應 runtime 與 model；候選為核准 Codex model＋獨立 session／隔離，可由 Codex CLI 或 OpenCode 接入，仍需查核公司能力 | 公司只有 OpenCode 已確認；這不等於任意模型已符合 G2，也不應把 Codex CLI 當成未經確認的公司必要工具。Controller 本次由 Opus 5.5 實作是 D36 的另一件事 |
++| Q-PLATFORM | **待環境補充／查核**：初版支援 macOS／Linux、Windows＋WSL2 或原生 Windows；已提出問題，尚未收到答案 | 影響啟動、檔案鎖／原子寫入與 reviewer 隔離驗證；目前 macOS 本機查核不能替代公司環境或宣稱跨平台已驗證 |
+ | Q-TARGET | **暫存，非目前待答前置**：僅在使用者重新選擇 gigaxfer pre-PR 接入時，核對 feature／issue／PR、session identity、交接版本與原 owner | D33 已將目前工作改為 orca-delivery 內測通，後續採 cross-node-file-transfer；舊 P03／PR #11 快照不是現況或接管授權 |
+ 
+ 已收斂：Q-PUBLISH → D24、finding 爭議覆核 → D25、Q-TDD → D26、Q-NEXT → D27、Q-RETRO → D28；CIT 依 D29 暫緩。
+--- before/docs/workflow-design.md
++++ after/docs/workflow-design.md
+@@ -1,6 +1,6 @@
+ # Orchestrate：整體 Workflow Design v1
+ 
+-日期：2026-09-26；2026-09-27 補入 D32／D34 的分析／設計分工、SA 契約與 D31 選型狀態。狀態：供使用者 review 的整合設計，尚非已安裝 skill、controller 或批准開工的 implementation plan。
++日期：2026-09-26；2026-09-27 更新 D32／D34 的分析／設計分工、D31 選型狀態、D37 選配部署及建置／後續試用順序。狀態：供使用者 review 的整合設計，尚非已安裝 skill、controller 或批准開工的 implementation plan。
+ 
+ 本文是最新整體設計入口。[decisions.md](decisions.md) 記錄已確認政策；[先前討論草案](orchestrate-workflow-draft.md) 保留來源比較與推導；執行契約見 [workflow-contracts.md](workflow-contracts.md)。建議與未決事項不因寫入本文就成為已核准政策。現行順序依 D33：先在 orca-delivery 測通 workflow、orchestrate 與預設工具組合，再啟動 cross-node-file-transfer。P03 Retro 仍等使用者開始，既有 PR 接入保留暫緩。
+ 

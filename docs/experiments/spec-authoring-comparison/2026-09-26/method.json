@@ -1,0 +1,27 @@
+{
+  "date": "2026-09-26",
+  "input_manifest": "input-manifest.json",
+  "snapshot_sha256": "10addc5298fb7056e8720856966e07aa4a1ea3cc006baa8eb659802a7be1088a",
+  "agents": {
+    "openspec": "/root/openspec_candidate",
+    "matt": "/root/matt_spec_candidate"
+  },
+  "model_selection": "Both inherit the same parent model and reasoning; no override; runtime model id not exposed by the dispatch receipt.",
+  "openspec_cli_version": "1.13.1",
+  "skills": [
+    {
+      "name": "to-spec",
+      "local_path": "/Users/johnson.chiang/.agents/skills/to-spec/SKILL.md",
+      "sha256": "43ad9cf318e5e7d3d1fa360253a37021796dc87a0c2e595ad262661a10f85088"
+    },
+    {
+      "name": "openspec-propose",
+      "local_path": "/Users/johnson.chiang/.agents/skills/openspec-propose/SKILL.md",
+      "sha256": "f4ef2689aa615105c3f6c3d95f7f92bb340953e419e702ecccabbabc82142c62"
+    }
+  ],
+  "scope": "Draft specifications only; no implementation, no issue publication, no trial start.",
+  "testing_seam_status": "proposed_pending_user_confirmation",
+  "controlled_benchmark": false,
+  "context_limitations": "Independent conversations share inherited runtime/repo instructions; Matt author confirmed gigaxfer AGENTS rules were promoted into Orca confirmed policy. See R02; not a pure controlled skill benchmark."
+}

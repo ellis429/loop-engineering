@@ -1,0 +1,35 @@
+{
+  "type": "document_structure_and_source_integrity_check",
+  "product_tests_executed": false,
+  "baseline_files_verified": 11,
+  "native_headings": [
+    "Problem Statement",
+    "Solution",
+    "User Stories",
+    "Implementation Decisions",
+    "Testing Decisions",
+    "Out of Scope",
+    "Further Notes"
+  ],
+  "user_story_count": 40,
+  "acceptance_criteria_count": 40,
+  "sequential_unique_ids": true,
+  "all_D01_D30_mapped": true,
+  "no_code_fences_or_specific_implementation_paths_in_spec": true,
+  "pending_seam_explicit": true,
+  "files": {
+    "author-notes.md": {
+      "bytes": 12842,
+      "sha256": "ceb9427f64f6ae1a7022dd90ee8147f19a33c769e51d4b6a2376c350dcb7065a"
+    },
+    "coverage-notes.md": {
+      "bytes": 4437,
+      "sha256": "7a23c3f3a51a7485a01cc711f7ac1eeeca2673caa3e511441fb0cd45bc947104"
+    },
+    "spec.md": {
+      "bytes": 39786,
+      "sha256": "51141cf17c2ff5c4593ffa97a7961c7bdf8183a909361434a18f916767bcc4c9"
+    }
+  },
+  "provenance_exception": "Testing Decisions inherits gigaxfer AGENTS test restrictions outside common baseline; author-notes records limitation; spec preserved on parent instruction."
+}

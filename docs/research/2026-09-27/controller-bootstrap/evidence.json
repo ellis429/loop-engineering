@@ -1,0 +1,44 @@
+{
+  "schema_version": "bootstrap-observation-1",
+  "run_id": "controller-bootstrap-20260927",
+  "attempt_id": "design-intake-01",
+  "producer": "root-bootstrap-coordinator",
+  "runtime": "claude-code",
+  "requested_model": "claude-opus-5-5",
+  "actual_model_verified": false,
+  "execution_status": "failed",
+  "raw_result_sha256": "2eede3ffe1078f8c5c8be3c5886f763fa6d89af9e3dac35d523935b335b03487",
+  "native_result_selected_fields": {
+    "type": "result",
+    "subtype": "success",
+    "is_error": true,
+    "result": "API Error: Connection refused — a firewall or proxy may be blocking it (ECONNREFUSED)",
+    "num_turns": 1,
+    "total_cost_usd": 0,
+    "session_id": "26ba6323-3b4e-412b-81af-b70b4fd89238"
+  },
+  "receipt": {
+    "exit_code": 1,
+    "session_id": "26ba6323-3b4e-412b-81af-b70b4fd89238",
+    "assistant_models": [
+      "<synthetic>"
+    ],
+    "subtype": "success",
+    "is_error": true,
+    "total_cost_usd": 0,
+    "num_turns": 1,
+    "model_usage_keys": [],
+    "has_structured_output": false
+  },
+  "native_api_retry_events": 10,
+  "diagnostics": {
+    "auth_check_outside_sandbox": "loggedIn=true; claude.ai; firstParty",
+    "configured_proxy_endpoint": "http://127.0.0.1:8787",
+    "proxy_listening": false,
+    "connect_errno": 61,
+    "opencode_path_lookup": null,
+    "common_opencode_locations_found": []
+  },
+  "scope": "design intake only; no implementation, GitHub publication or gate evidence",
+  "next_runtime_policy": "D38: OpenCode default; Claude Code optional"
+}

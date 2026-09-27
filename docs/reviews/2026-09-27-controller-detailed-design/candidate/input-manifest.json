@@ -1,0 +1,77 @@
+[
+  {
+    "source": "/Users/johnson.chiang/workspace/orca-delivery/docs/decisions.md",
+    "snapshot": "/private/tmp/orca-controller-bootstrap-20260927/opus-session-design-02/inputs/docs/decisions.md",
+    "sha256": "3322dd015d8d511e3331a1cf597a26ff0e855deaa377eb1fcc40046bc8665eb9"
+  },
+  {
+    "source": "/Users/johnson.chiang/workspace/orca-delivery/docs/handoffs/2026-09-27-controller-design.md",
+    "snapshot": "/private/tmp/orca-controller-bootstrap-20260927/opus-session-design-02/inputs/docs/handoffs/2026-09-27-controller-design.md",
+    "sha256": "f4e115e4914990a7afbfcd335fa9a9b51e6e5b4ba8c70aabf7c86d5579767f0a"
+  },
+  {
+    "source": "/Users/johnson.chiang/workspace/orca-delivery/docs/delivery-harness-overview.md",
+    "snapshot": "/private/tmp/orca-controller-bootstrap-20260927/opus-session-design-02/inputs/docs/delivery-harness-overview.md",
+    "sha256": "972945a242eed56428dd6d62b8acde33f9386b4b0adb556988f9478df009c60b"
+  },
+  {
+    "source": "/Users/johnson.chiang/workspace/orca-delivery/docs/workflow-design.md",
+    "snapshot": "/private/tmp/orca-controller-bootstrap-20260927/opus-session-design-02/inputs/docs/workflow-design.md",
+    "sha256": "95a61ad4591152132eb31ccb0af61c30dce281bf35b55e0ed0a27e88b8a89777"
+  },
+  {
+    "source": "/Users/johnson.chiang/workspace/orca-delivery/docs/workflow-contracts.md",
+    "snapshot": "/private/tmp/orca-controller-bootstrap-20260927/opus-session-design-02/inputs/docs/workflow-contracts.md",
+    "sha256": "e2dc4c900f734eb243751c3adda338a013823a4b994d047e6edf0cebf3c1c6a0"
+  },
+  {
+    "source": "/Users/johnson.chiang/workspace/orca-delivery/docs/file-state.md",
+    "snapshot": "/private/tmp/orca-controller-bootstrap-20260927/opus-session-design-02/inputs/docs/file-state.md",
+    "sha256": "e065a0d736049e0c87960287211a5f7c014d5ca731f17758703cbed262e179f0"
+  },
+  {
+    "source": "/Users/johnson.chiang/workspace/orca-delivery/docs/project-intent.md",
+    "snapshot": "/private/tmp/orca-controller-bootstrap-20260927/opus-session-design-02/inputs/docs/project-intent.md",
+    "sha256": "b6ad2b7ef30def7b5c07dac6254bb8a9ad7c03e042312f2ec1ccf8e00fc5ac37"
+  },
+  {
+    "source": "/Users/johnson.chiang/workspace/orca-delivery/docs/research/2026-09-27/controller-bootstrap.md",
+    "snapshot": "/private/tmp/orca-controller-bootstrap-20260927/opus-session-design-02/inputs/docs/research/2026-09-27/controller-bootstrap.md",
+    "sha256": "576225f6dd9592d844d46d4f3344c70c09566c13079572f6a6b77fc11d306f67"
+  },
+  {
+    "source": "/Users/johnson.chiang/workspace/orca-delivery/docs/research/2026-09-27/planning-preflight.md",
+    "snapshot": "/private/tmp/orca-controller-bootstrap-20260927/opus-session-design-02/inputs/docs/research/2026-09-27/planning-preflight.md",
+    "sha256": "8c6f81b5db7dfc324df599845be3fb4ce170c994f8fff6176f0c4024f6ec905f"
+  },
+  {
+    "source": "/Users/johnson.chiang/workspace/orca-delivery/docs/research/2026-09-27/opencode-setup.md",
+    "snapshot": "/private/tmp/orca-controller-bootstrap-20260927/opus-session-design-02/inputs/docs/research/2026-09-27/opencode-setup.md",
+    "sha256": "12885903b9e611b086934f189e3ff35b95a0e3922f83c82873dc17dc2e1eb35e"
+  },
+  {
+    "source": "/Users/johnson.chiang/workspace/orca-delivery/openspec/changes/implement-delivery-loop/proposal.md",
+    "snapshot": "/private/tmp/orca-controller-bootstrap-20260927/opus-session-design-02/inputs/openspec/changes/implement-delivery-loop/proposal.md",
+    "sha256": "f8341121771303f35f63d2bd00534c1c95c458680d06007a0d9fc5017d16727c"
+  },
+  {
+    "source": "/Users/johnson.chiang/workspace/orca-delivery/openspec/changes/implement-delivery-loop/specs/delivery-gates/spec.md",
+    "snapshot": "/private/tmp/orca-controller-bootstrap-20260927/opus-session-design-02/inputs/openspec/changes/implement-delivery-loop/specs/delivery-gates/spec.md",
+    "sha256": "64951e366865cfb10042c2c997288b4129b76751f67231118f562af44801f566"
+  },
+  {
+    "source": "/Users/johnson.chiang/workspace/orca-delivery/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+    "snapshot": "/private/tmp/orca-controller-bootstrap-20260927/opus-session-design-02/inputs/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+    "sha256": "cf33d466f69a928d41183bc5d1cc36c53f5b80c7f4f11e42d4070ee21962050c"
+  },
+  {
+    "source": "/Users/johnson.chiang/workspace/orca-delivery/openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md",
+    "snapshot": "/private/tmp/orca-controller-bootstrap-20260927/opus-session-design-02/inputs/openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md",
+    "sha256": "e1ac3e9fc830e4234e5197fd7325791da52a31cf70324283b359123637024c1c"
+  },
+  {
+    "source": "/Users/johnson.chiang/workspace/orca-delivery/openspec/changes/implement-delivery-loop/specs/finding-resolution/spec.md",
+    "snapshot": "/private/tmp/orca-controller-bootstrap-20260927/opus-session-design-02/inputs/openspec/changes/implement-delivery-loop/specs/finding-resolution/spec.md",
+    "sha256": "f5b11ef6c0edb41a8725ad9104f8fcab9d660ee5fc10b8d3be2eb8ffba551601"
+  }
+]
