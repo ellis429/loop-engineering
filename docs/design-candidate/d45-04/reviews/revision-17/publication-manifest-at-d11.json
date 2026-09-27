@@ -1,0 +1,90 @@
+{
+  "scope": "design+plan publication; D11 pending; no implementation",
+  "revision": "revision-17",
+  "review_chain": [
+    {
+      "revision": "revision-15",
+      "review": "reviews/revision-15/review.md",
+      "type": "full independent design+plan review",
+      "verdict": "changes_requested",
+      "session": "01a0e3fa-993e-7f51-9349-09125bcb73ce"
+    },
+    {
+      "revision": "revision-16",
+      "review": "reviews/revision-16/review.md",
+      "type": "bounded re-review",
+      "verdict": "changes_requested",
+      "session": "01a0e40b-8274-7bd1-bdf7-5daa15200a48"
+    },
+    {
+      "revision": "revision-17",
+      "review": "reviews/revision-17/review.md",
+      "type": "bounded re-review",
+      "verdict": "clean",
+      "session": "01a0e415-5c66-7141-be1f-a73a21c49591"
+    }
+  ],
+  "reviewer_model": "gpt-6-astra xhigh (Codex native turn_context, each session)",
+  "author_model": "claude-opus-5-5 (this Claude Code session, CLAUDE_EFFORT=xhigh)",
+  "artifacts": {
+    "README.md": {
+      "reviewed_sha256": "9f5e9a1ee1a06043d00cfc05bc22fc44446df780c90192fa10f8b32c008c8d98",
+      "published_sha256": "51ac67ff6382e771b73f945793b93314291ae00be1f98ace361c1fec76bdde5e",
+      "transform": "review status row for revision-17 and link to publication manifest (README bookkeeping)"
+    },
+    "cleanup-map.md": {
+      "reviewed_sha256": "000c997fd5102088c74f8ccf7a3b21bfec48b08e3ca553495e25ce53226d65a5",
+      "published_sha256": "000c997fd5102088c74f8ccf7a3b21bfec48b08e3ca553495e25ce53226d65a5",
+      "transform": "none"
+    },
+    "coverage.md": {
+      "reviewed_sha256": "84076c5c249d8b29d6983362851ffcd9554b5434a055cfc1004038dc86d2744e",
+      "published_sha256": "84076c5c249d8b29d6983362851ffcd9554b5434a055cfc1004038dc86d2744e",
+      "transform": "none"
+    },
+    "d11-confirmation.md": {
+      "reviewed_sha256": "8dadbcd3d67d514f179b7b9231417478aee1cbee8e77dbcbfc3aa2b0ae78db8c",
+      "published_sha256": "0f7a520adc5c5406364c7d9b23ae89957933e03f02e9307ab787f2ea42a47020",
+      "transform": "status line cites review outcome; spec-delta sha256 filled in (bookkeeping, no decision content changed)"
+    },
+    "design.md": {
+      "reviewed_sha256": "b5577109c74bad77da02e86e67699080cfaae9ba6dc840524e01c3361191a67e",
+      "published_sha256": "3944ac04c806a387a83c4c23a924949749072f9a2afabaf4b71e3901c020c66a",
+      "transform": "R17-01: author-submission label revision-16 -> revision-17 (one line)"
+    },
+    "revision-16.json": {
+      "reviewed_sha256": "4fcaf0b82dbf07894683b0a5637ed25787d415a31e8a393b7f7f7c9cccd96e9f",
+      "published_sha256": "4fcaf0b82dbf07894683b0a5637ed25787d415a31e8a393b7f7f7c9cccd96e9f",
+      "transform": "none"
+    },
+    "revision-17.json": {
+      "reviewed_sha256": "70a701720602681567dbba5ada7e75d02b4c0cf345ada60f30f349235a30c242",
+      "published_sha256": "70a701720602681567dbba5ada7e75d02b4c0cf345ada60f30f349235a30c242",
+      "transform": "none"
+    },
+    "spec-delta.md": {
+      "reviewed_sha256": "81ce7366894349d9d56493ddd1c01901a641746897c7cdf9d8aaced87e6e284b",
+      "published_sha256": "81ce7366894349d9d56493ddd1c01901a641746897c7cdf9d8aaced87e6e284b",
+      "transform": "none"
+    },
+    "tasks.md": {
+      "reviewed_sha256": "1a793b5a7e7d0397d25d7c89e956220976ad90b45712c2f569ac7e9100b77503",
+      "published_sha256": "1a793b5a7e7d0397d25d7c89e956220976ad90b45712c2f569ac7e9100b77503",
+      "transform": "none"
+    },
+    "validation.md": {
+      "reviewed_sha256": "600dd217457690dde31e6f81de5cb3d3715bf838130d5c63dc038997c2b77aa1",
+      "published_sha256": "600dd217457690dde31e6f81de5cb3d3715bf838130d5c63dc038997c2b77aa1",
+      "transform": "none"
+    }
+  },
+  "spec_sources_for_d11": {
+    "d45-02/spec-delta.md": "7ebd8d014f5765cc35767a6a4372f4871d70f1af4ef72c3cb940da11a2c18565",
+    "d45-04/spec-delta.md": "81ce7366894349d9d56493ddd1c01901a641746897c7cdf9d8aaced87e6e284b"
+  },
+  "historical_publications": [
+    "reviews/revision-14-publication",
+    "reviews/review-15"
+  ],
+  "note": "Top-level review.md, review-result.json, input-manifest.json, native-identity.json, result.json describe revision-14 and are kept only as history (copies also in reviews/revision-14-publication). Current review status lives in README and review_chain above. document-check.json is regenerated for revision-17."
+}

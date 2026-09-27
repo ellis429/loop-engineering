@@ -1,0 +1,32 @@
+{
+  "native_session_id": "8c4fbb2f-2ae4-442f-ba3d-e1e9eced8df2",
+  "source": "/Users/johnson.chiang/.claude/projects/-Users-johnson-chiang-workspace-loop-engineering--delivery-bootstrap-herdr-design-d45-01/8c4fbb2f-2ae4-442f-ba3d-e1e9eced8df2.jsonl",
+  "latest_assistant_metadata": [
+    {
+      "timestamp": "2026-09-27T12:31:08.713Z",
+      "model": "claude-opus-5-5",
+      "message_id": "msg_011CfTwuckXMPzEqQ8iuEL4S"
+    },
+    {
+      "timestamp": "2026-09-27T12:31:10.738Z",
+      "model": "claude-opus-5-5",
+      "message_id": "msg_011CfTwuckXMPzEqQ8iuEL4S"
+    },
+    {
+      "timestamp": "2026-09-27T12:31:13.568Z",
+      "model": "claude-opus-5-5",
+      "message_id": "msg_011CfTwwACfTJVJ49m9XoD9R"
+    },
+    {
+      "timestamp": "2026-09-27T12:31:14.739Z",
+      "model": "claude-opus-5-5",
+      "message_id": "msg_011CfTwwACfTJVJ49m9XoD9R"
+    },
+    {
+      "timestamp": "2026-09-27T12:31:24.586Z",
+      "model": "claude-opus-5-5",
+      "message_id": "msg_011CfTwwTAsqanUrZYSWFnat"
+    }
+  ],
+  "note": "Native metadata only; no reasoning/message content. Not a product gate."
+}

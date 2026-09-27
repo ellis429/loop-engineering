@@ -1,0 +1,700 @@
+{
+  "repo": "/Users/johnson.chiang/workspace/loop-engineering",
+  "head": "4ce111011fde83c3a2784402cea111e52a954b3c",
+  "branch": "delivery/s1-controller-core",
+  "source": "working-directory including uncommitted changes",
+  "files": [
+    {
+      "path": ".github/workflows/test.yml",
+      "sha256": "11ea12c47d723ff5bc96ed7fbcae4306ceae99a14ec9910f2c95e9e6749b7bfe"
+    },
+    {
+      "path": "CONTEXT.md",
+      "sha256": "1f76fa7bfd2d2e711f1b05343114d3786c52cf875400a66aec33486a795d429c"
+    },
+    {
+      "path": "README.md",
+      "sha256": "1fcf707f21ebb65a20adbe9fe23aa1fe5069978d50a7777a54419d3fd7d9a4f8"
+    },
+    {
+      "path": "docs/README.md",
+      "sha256": "0e4e18e5ce3612058be5c88a9907960843c069a3325f9a42455a5303e0d6ed4f"
+    },
+    {
+      "path": "docs/decisions.md",
+      "sha256": "60cc389436bae4792e5c9536082b73caf7701cf156e6290f90e1ed3be65d8fef"
+    },
+    {
+      "path": "docs/experiments/pr-gating.md",
+      "sha256": "6ffb35691117116645e68613b88fafeaa06a162de8de368242daaa407bdca9fd"
+    },
+    {
+      "path": "docs/experiments/spec-authoring-comparison/2026-09-26/README.md",
+      "sha256": "50102e77d9f11db9053c4b5ed39410fa162dc2583b0ab18e5d4fc7474b321722"
+    },
+    {
+      "path": "docs/experiments/spec-authoring-comparison/2026-09-26/comparison-checklist.md",
+      "sha256": "02be2e2216324781156eff13df229d9bd0462c7d9b577a876d366385deb551ee"
+    },
+    {
+      "path": "docs/experiments/spec-authoring-comparison/2026-09-26/comparison-context.md",
+      "sha256": "6dcaed280ec36ad47d426f24237bfe97a7d886ab74a7d8c87e244c35a6a009b3"
+    },
+    {
+      "path": "docs/experiments/spec-authoring-comparison/2026-09-26/input-manifest.json",
+      "sha256": "e7c16adc048f6431a51a81086cd31e59f13ee4498e51e533a71188ceffdc4db7"
+    },
+    {
+      "path": "docs/experiments/spec-authoring-comparison/2026-09-26/matt-candidate/author-notes.md",
+      "sha256": "ceb9427f64f6ae1a7022dd90ee8147f19a33c769e51d4b6a2376c350dcb7065a"
+    },
+    {
+      "path": "docs/experiments/spec-authoring-comparison/2026-09-26/matt-candidate/coverage-notes.md",
+      "sha256": "7a23c3f3a51a7485a01cc711f7ac1eeeca2673caa3e511441fb0cd45bc947104"
+    },
+    {
+      "path": "docs/experiments/spec-authoring-comparison/2026-09-26/matt-candidate/spec.md",
+      "sha256": "51141cf17c2ff5c4593ffa97a7961c7bdf8183a909361434a18f916767bcc4c9"
+    },
+    {
+      "path": "docs/experiments/spec-authoring-comparison/2026-09-26/matt-candidate/validation-notes.json",
+      "sha256": "509b83816eeba05594daeeb50a105111bf70f8bfdf5372470221b0d5b590d582"
+    },
+    {
+      "path": "docs/experiments/spec-authoring-comparison/2026-09-26/method.json",
+      "sha256": "9bd5cbe930652ebd3dbea37132f96f9d677116d6b9b26c1d7a6143a5eabe2027"
+    },
+    {
+      "path": "docs/experiments/spec-authoring-comparison/2026-09-26/metrics.json",
+      "sha256": "05bf7600c982b186915c1efd4c7e01f70335466657f07bb2b159861224b31191"
+    },
+    {
+      "path": "docs/experiments/spec-authoring-comparison/2026-09-26/openspec-candidate/author-notes.md",
+      "sha256": "1053c6a304549a959285c6d05c718170c857b24f44516098c258978d790cd1f3"
+    },
+    {
+      "path": "docs/experiments/spec-authoring-comparison/2026-09-26/openspec-candidate/coverage-notes.md",
+      "sha256": "ff119395cc9895861954e2cb149ed32ac72842ccb1e805c2a1f0b9e6bde1dc57"
+    },
+    {
+      "path": "docs/experiments/spec-authoring-comparison/2026-09-26/openspec-candidate/openspec/changes/implement-delivery-loop/.openspec.yaml",
+      "sha256": "062e545e250441aa0692c22d7a65e07334f1c0f2e706c0e297f36065b6a0699c"
+    },
+    {
+      "path": "docs/experiments/spec-authoring-comparison/2026-09-26/openspec-candidate/openspec/changes/implement-delivery-loop/proposal.md",
+      "sha256": "aeda1968199d092263a378ff3e74e7f96809bd48873a445f9faf6d89c691e919"
+    },
+    {
+      "path": "docs/experiments/spec-authoring-comparison/2026-09-26/openspec-candidate/openspec/changes/implement-delivery-loop/specs/delivery-gates/spec.md",
+      "sha256": "3444f8bdab9ac35a90cc1052970af07770888b782c878113bde121b7b02f9eec"
+    },
+    {
+      "path": "docs/experiments/spec-authoring-comparison/2026-09-26/openspec-candidate/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+      "sha256": "cf3ff6b03e3a9680798102e04141ecafc915dbaf034092001bf32ec31e5ce839"
+    },
+    {
+      "path": "docs/experiments/spec-authoring-comparison/2026-09-26/openspec-candidate/openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md",
+      "sha256": "cb08d5c3effc1cb23645b0eaa5417df5e9b59b6d471de7d6e290899304032ab2"
+    },
+    {
+      "path": "docs/experiments/spec-authoring-comparison/2026-09-26/openspec-candidate/openspec/changes/implement-delivery-loop/specs/finding-resolution/spec.md",
+      "sha256": "77ee22798e8f787691c8e2da8e071c2cefae397ad9addd7025fccbe4eefe36fa"
+    },
+    {
+      "path": "docs/experiments/spec-authoring-comparison/2026-09-26/openspec-candidate/openspec/config.yaml",
+      "sha256": "f5ef09c9d93abd150569276fabfefd7056c7a2f8b6b407eb9af61d69a01ec467"
+    },
+    {
+      "path": "docs/experiments/spec-authoring-comparison/2026-09-26/openspec-candidate/output-manifest.json",
+      "sha256": "701d6e353ea75da5a3d882b13318cbc69062d2cb422030a629a0649af3953bc5"
+    },
+    {
+      "path": "docs/experiments/spec-authoring-comparison/2026-09-26/openspec-candidate/tool-records/draft-audit.json",
+      "sha256": "3dd8d303016905c073e34d6fa3b471570b5e298bc2372035e34e39b8701c99d1"
+    },
+    {
+      "path": "docs/experiments/spec-authoring-comparison/2026-09-26/openspec-candidate/tool-records/instructions-design.json",
+      "sha256": "3db19342d9886ccc4dc9471091893ecceefdffd9c9656c00ace2a238888f8842"
+    },
+    {
+      "path": "docs/experiments/spec-authoring-comparison/2026-09-26/openspec-candidate/tool-records/instructions-proposal.json",
+      "sha256": "6b48c45cc462d4cf8d618d5636b8db2b6c4302e10b294c160c446d29b35451a0"
+    },
+    {
+      "path": "docs/experiments/spec-authoring-comparison/2026-09-26/openspec-candidate/tool-records/instructions-specs.json",
+      "sha256": "d5012d2fe54c44c9691a3e463ccf40f8a79dd1d5babe7995471151d6a31c7f8d"
+    },
+    {
+      "path": "docs/experiments/spec-authoring-comparison/2026-09-26/openspec-candidate/tool-records/instructions-tasks.json",
+      "sha256": "dab8524e6f246b2f85fa85a79e9e58ee3b7be7495f4006a8fbf1048f2e54eeee"
+    },
+    {
+      "path": "docs/experiments/spec-authoring-comparison/2026-09-26/openspec-candidate/tool-records/status-after-proposal.json",
+      "sha256": "d0a67eb1f225d887a2bf3dbc2a01362f5dfa66b089954ed08df3a1a5f8410b02"
+    },
+    {
+      "path": "docs/experiments/spec-authoring-comparison/2026-09-26/openspec-candidate/tool-records/status-after-specs.json",
+      "sha256": "4f4a334f90b16780c7949d5f950e48ad5eaa795826d1c3c6339710e179e69c30"
+    },
+    {
+      "path": "docs/experiments/spec-authoring-comparison/2026-09-26/openspec-candidate/tool-records/status-final.json",
+      "sha256": "4f4a334f90b16780c7949d5f950e48ad5eaa795826d1c3c6339710e179e69c30"
+    },
+    {
+      "path": "docs/experiments/spec-authoring-comparison/2026-09-26/openspec-candidate/tool-records/status-initial.json",
+      "sha256": "538d168720dbf1bcf381e0920657a7c4515cb622b82ae0cea503184bdf7bd546"
+    },
+    {
+      "path": "docs/experiments/spec-authoring-comparison/2026-09-26/openspec-candidate/tool-records/validation.json",
+      "sha256": "62ab32745c8147dc463d3c91e6a81415de66c05661f044c0a03f0071399fec9f"
+    },
+    {
+      "path": "docs/experiments/spec-authoring-comparison/2026-09-26/shared-input.md",
+      "sha256": "1e0f51b8ff41bc3ba31ddee9cd0b244f4e45267cd2cf37e831df25c7793df4e4"
+    },
+    {
+      "path": "docs/handoffs/2026-09-27-controller-design.md",
+      "sha256": "d12778612a8b9f1bce1add898a4e604fb3c5863d365e7f8d0b1abe8aa4d7dd36"
+    },
+    {
+      "path": "docs/harness/herdr-integration.md",
+      "sha256": "0b87ccdaa830a653ea9a9df6058c6836fcc8208f3529c5a644e04acbc630283a"
+    },
+    {
+      "path": "docs/harness/history/file-state.md",
+      "sha256": "9821c283f9cf3b309c4632803a8a8bd4c94b91b9a7b182f2a977666837dd8a8f"
+    },
+    {
+      "path": "docs/harness/history/loop-engineering.md",
+      "sha256": "d4df1d16e17df9556515987ca1f650b0d34236f76a9578c68b1cf1087eeb99c0"
+    },
+    {
+      "path": "docs/harness/overview.md",
+      "sha256": "c5c214a1da8c4256e622fc937eb15268aef67c780cb1c487d836d3a1dc682c31"
+    },
+    {
+      "path": "docs/harness/scope-reconciliation.md",
+      "sha256": "553e65914931313e630fd423006dbf3a4b840fa66981f88242dd4a55089cd92a"
+    },
+    {
+      "path": "docs/implementation/cli.md",
+      "sha256": "1c202c307e9315c769843119ebd8c22d572b702168e9ab9dbd01c5b94e2b7889"
+    },
+    {
+      "path": "docs/project-intent.md",
+      "sha256": "17a2097ec7333c12a92affb07622ae290de1711728da0341820eb043cca601d5"
+    },
+    {
+      "path": "docs/references/dual-loop-retro.md",
+      "sha256": "33c96bdc1fe8e2fe9f504fad3ce19add5ee63effefa41a878c26ca956d686f67"
+    },
+    {
+      "path": "docs/references/fixing-the-pr-bottleneck.md",
+      "sha256": "bdf8a1b04d1913768db6a67fdf0321d995d661e5effac50d62e1c2dae5f26986"
+    },
+    {
+      "path": "docs/references/spec-driven-development-workflow.md",
+      "sha256": "3620944447c17259a5d0b46423e1a2806acc33af1318d94addd6c56e356326ed"
+    },
+    {
+      "path": "docs/research/2026-09-25/demo-ticket-draft.md",
+      "sha256": "a8c0195a78099d7d324fee4fe1c9b0090fff616e0070af9ae85843fae3a1f543"
+    },
+    {
+      "path": "docs/research/2026-09-25/design-foundation.md",
+      "sha256": "dcdcc1b150117b010cb2430c75edcb0074a1c05056f6e72d3eacfb94a80ce629"
+    },
+    {
+      "path": "docs/research/2026-09-25/evidence/claude-probe-result.json",
+      "sha256": "8a1baab2755b7905e5bd98b10048d9ed83bbf8f40441eedefea493a899574b34"
+    },
+    {
+      "path": "docs/research/2026-09-25/evidence/codex-probe-result.json",
+      "sha256": "c36b5213432fe3035f455e3be382536ba4d0858ea2ec160cdb41570a563d31b7"
+    },
+    {
+      "path": "docs/research/2026-09-25/evidence/orca-command-schema.json",
+      "sha256": "3f7768f2755ac67451233cbd21aff184367248e06b3a6d2082c5190d3542e32b"
+    },
+    {
+      "path": "docs/research/2026-09-25/evidence/probe-cleanup.json",
+      "sha256": "ebd38306cce56ee5a8ac04d4100310b13f85eae6243fc5cdce5a6533aa95e14d"
+    },
+    {
+      "path": "docs/research/2026-09-25/evidence/probe-final-fleet.json",
+      "sha256": "805f8712a01d43d89baa59317a858b50d8fa49ca561d10e70e9f7eca16d1d83f"
+    },
+    {
+      "path": "docs/research/2026-09-25/feature-handoff-contract.md",
+      "sha256": "9f5e199113967c525b00284f153b28443aba11329a3072debe39217442b0ff64"
+    },
+    {
+      "path": "docs/research/2026-09-25/integration-gaps.md",
+      "sha256": "1a50209457bfd084e29b51f15c22c63f8b41116ce6567e64f4643fc7a39754c0"
+    },
+    {
+      "path": "docs/research/2026-09-25/orca-capabilities.md",
+      "sha256": "d9769c85f10d660f3fd17ddd6597d3ca320bc648b5cfb2d03ab8b3d5342461ca"
+    },
+    {
+      "path": "docs/research/2026-09-25/research.md",
+      "sha256": "e62596d5b63bcc6c5e3a04a98e3265a6cd3777cdf31ee375eaa8f53730e09c18"
+    },
+    {
+      "path": "docs/research/2026-09-25/runtime-probe.md",
+      "sha256": "68a8e8e735dfe71ef426249814bf13a2f9b35b5f75a34865e642749c56c50b01"
+    },
+    {
+      "path": "docs/research/2026-09-25/skills.md",
+      "sha256": "be680aec7f699f11143928307200df08495ca5c0d1cd11cb423a67fb895e093c"
+    },
+    {
+      "path": "docs/research/2026-09-26/agent-messaging-and-opencode.md",
+      "sha256": "c4b26b0d4eebdf7bea8966362d0c923d65891f46bf6693ba7f860b3b6adcbdd8"
+    },
+    {
+      "path": "docs/research/2026-09-26/change-request-application.md",
+      "sha256": "465cc90cd85d3d40c220bd643389c2457181719d76dd4b48a66ce4b6caf497e9"
+    },
+    {
+      "path": "docs/research/2026-09-26/sdd-workflow-comparison.md",
+      "sha256": "72daee3ffbb5d3b6c91dd3d3b9a419a4ed1d3a7be5745b7f7de8d4db916a0f56"
+    },
+    {
+      "path": "docs/research/2026-09-26/workflow-gap-review.md",
+      "sha256": "976cc2e6282f5bf2e548b4bba356fe266c938e607fc36f8804927f1da417a8ab"
+    },
+    {
+      "path": "docs/research/2026-09-27/controller-bootstrap/assignment.json",
+      "sha256": "51a49c619c93da2c13c49dc9ec0f45da015b66293b5ac6e8374eca676a4b6653"
+    },
+    {
+      "path": "docs/research/2026-09-27/controller-bootstrap/evidence.json",
+      "sha256": "1361bf172158f8fd3a23b2ce9be23908739e4def7b2537f518fa47ba45194b91"
+    },
+    {
+      "path": "docs/research/2026-09-27/controller-bootstrap/input-manifest.json",
+      "sha256": "3c8eeae9f5461bfce62d9f430ad994d7d332caff6e1d52aeb9822ff547a91262"
+    },
+    {
+      "path": "docs/research/2026-09-27/controller-bootstrap/prompt.md",
+      "sha256": "0ff2062885ff24ad5b56ad396029d9de5302a00e848e4f9ea0d639ca232fe471"
+    },
+    {
+      "path": "docs/research/2026-09-27/controller-bootstrap.md",
+      "sha256": "48b37fa6389df10f79a930f925db8e01cf0d0e6a5fb3fb94932052b072022418"
+    },
+    {
+      "path": "docs/research/2026-09-27/herdr-orchestrators.md",
+      "sha256": "7f8f3c553538bcb9edb5b7da90faf71057856ad4d0ec5bf28a8f92db4d64222c"
+    },
+    {
+      "path": "docs/research/2026-09-27/herdr-setup/luna.json",
+      "sha256": "c7660b16cde50e01c676097fe7d652b5caa9b6c426fa8a86cfd390ec7a99deee"
+    },
+    {
+      "path": "docs/research/2026-09-27/herdr-setup/preflight.json",
+      "sha256": "30b1dd3186238d0ba09753e37905159c325cb819f601d0f1bf3758e63147cf1f"
+    },
+    {
+      "path": "docs/research/2026-09-27/herdr-setup/sonnet-claude.json",
+      "sha256": "45c04327fbbe9b22ddfb5911295a958cac2527db196448954ae12f5873d2b1d7"
+    },
+    {
+      "path": "docs/research/2026-09-27/herdr-setup/transport.json",
+      "sha256": "83f27fb3058df6cd3403e997f01103dac3411b1e114a0a737226867aad930a20"
+    },
+    {
+      "path": "docs/research/2026-09-27/herdr-setup.md",
+      "sha256": "16b67a3c3fafa9246ff58bf9ad3763a0c23607cd6d6b9493a611917255177ada"
+    },
+    {
+      "path": "docs/research/2026-09-27/opencode-setup/capabilities.json",
+      "sha256": "a62070d1df7213de86c0df529642ca15b944dc83281cf48d460da429278ca810"
+    },
+    {
+      "path": "docs/research/2026-09-27/opencode-setup/install-receipt.json",
+      "sha256": "19b165deb563145655cdfc3396041dabdb9b4f8e97ea72eae55bcb7e592a1cc9"
+    },
+    {
+      "path": "docs/research/2026-09-27/opencode-setup.md",
+      "sha256": "ecdb5139b2518aa973bbb554b31a61683264fefdda3e3714284bb46627b2cfc1"
+    },
+    {
+      "path": "docs/research/2026-09-27/planning-preflight.md",
+      "sha256": "8c6f81b5db7dfc324df599845be3fb4ce170c994f8fff6176f0c4024f6ec905f"
+    },
+    {
+      "path": "docs/research/2026-09-27/skill-fingerprints.json",
+      "sha256": "a850a862d6d2c24faad21968d64f9ae2d323f5ae5ded7dfaddc30e3d5a9dd463"
+    },
+    {
+      "path": "docs/reviews/2026-09-27-controller-detailed-design/approval.md",
+      "sha256": "519c816f858548943fa56ecae7a65884a8c17a0297b7ff2a39743ad250d73cdb"
+    },
+    {
+      "path": "docs/reviews/2026-09-27-controller-detailed-design/candidate/design.md",
+      "sha256": "732e8a545fbc1e02b8e260b594cd923301f86a5ad8c0c806a34f19d79881ad0b"
+    },
+    {
+      "path": "docs/reviews/2026-09-27-controller-detailed-design/candidate/finding-responses.json",
+      "sha256": "71d5e06b2afe3c41bc52a483c2cb03fc1c6f4f8c0a73fa0098289f1a307f302a"
+    },
+    {
+      "path": "docs/reviews/2026-09-27-controller-detailed-design/candidate/input-manifest.json",
+      "sha256": "c0ace79ba11902e6de33b722fee4eb45e2722790d251b618cc98b355ec7324b3"
+    },
+    {
+      "path": "docs/reviews/2026-09-27-controller-detailed-design/candidate/result.json",
+      "sha256": "e3700260413cf53b63f7bda541a93bf969725d9dec3b5aad554c4c3086e1dfc0"
+    },
+    {
+      "path": "docs/reviews/2026-09-27-controller-detailed-design/candidate/tasks.md",
+      "sha256": "2859298de5ab96a8e644ca5fa6d8a9eaa822f608e2efdf46aa94d745a2fdda02"
+    },
+    {
+      "path": "docs/reviews/2026-09-27-controller-detailed-design/candidate/validation.md",
+      "sha256": "6ae103b3b190ff363a05b95ce100b4e06e68f07b6155b606e200d7a37a672b12"
+    },
+    {
+      "path": "docs/reviews/2026-09-27-controller-detailed-design/model-observation.json",
+      "sha256": "7cb72df622a5361f972b046f882bb602f1969d1968d42740840b7c99c2fc6e86"
+    },
+    {
+      "path": "docs/reviews/2026-09-27-controller-detailed-design/re-review-v2.json",
+      "sha256": "e20df76058c89c6f2639d1958eb5da49393a3c72f4763ad01e1aeff816bc8c98"
+    },
+    {
+      "path": "docs/reviews/2026-09-27-controller-detailed-design/re-review-v2.md",
+      "sha256": "73490700eb6894c85e094aab3bd90f0dc3baec6bf033edd142e2731e7262cae4"
+    },
+    {
+      "path": "docs/reviews/2026-09-27-controller-detailed-design/re-review-v3.json",
+      "sha256": "c29ba889389ab5a25cdc03eda98417ba5fb7e21af5c2603ebafeb164003e8c51"
+    },
+    {
+      "path": "docs/reviews/2026-09-27-controller-detailed-design/re-review-v3.md",
+      "sha256": "990b6cedaa234dc04855d773f7237aaa77c625643488171de4175f8d768e5190"
+    },
+    {
+      "path": "docs/reviews/2026-09-27-controller-detailed-design/red-snapshot-probe.json",
+      "sha256": "c690110003898f167e40a71f87c8e4876742ad4a43a307bd078552384cbd34d9"
+    },
+    {
+      "path": "docs/reviews/2026-09-27-controller-detailed-design/review-v1.json",
+      "sha256": "24fc31a39bd7aeec53474f4b65606332547831708cb7640a136c8029a9b617f6"
+    },
+    {
+      "path": "docs/reviews/2026-09-27-controller-detailed-design/review-v1.md",
+      "sha256": "7dc6a24ca45f3148c0b41e3599f77f15379d65ed0b81e1b36524aa8577684041"
+    },
+    {
+      "path": "docs/reviews/2026-09-27-controller-detailed-design/staged-exclude-probe.json",
+      "sha256": "0cb586331a70d8ae48958e7c142daab74cf2533d487b82557bfad34cf46e1b66"
+    },
+    {
+      "path": "docs/reviews/2026-09-27-controller-detailed-design.md",
+      "sha256": "3c23d8899d1d484f2b52893049634e484131bbed187694bf956c6a6f4257c7ff"
+    },
+    {
+      "path": "docs/reviews/2026-09-27-design-review/evidence.json",
+      "sha256": "586159a557075220cada3877f5d6d363ad890c6ff2ecb97351288fa8cf988449"
+    },
+    {
+      "path": "docs/reviews/2026-09-27-design-review.md",
+      "sha256": "ac5ba5a68283d51eca47784d5ee6447424678132b7fcc6415a9d7a7db6de2875"
+    },
+    {
+      "path": "docs/validation/evidence/s1-bootstrap-20260927.json",
+      "sha256": "88c887d0cf4ad8a4065f1ffa3d5d1e3f900b2eca5f37e87795f4924c12ec9e06"
+    },
+    {
+      "path": "docs/validation/implement-delivery-loop.md",
+      "sha256": "1a544f8a00b010bc38301cb2b477e0eab9c8e5ef6e44f9e121eeed9dc7eb7b3d"
+    },
+    {
+      "path": "docs/validation/s1-bootstrap-20260927.md",
+      "sha256": "e033b02d38c75f18054abb7d2e417e088db7930ae9586dc433061f4372586e02"
+    },
+    {
+      "path": "docs/workflow/contracts.md",
+      "sha256": "09eb92d11fbc3dc8c84f696bc4d670a0af49927578b26f95320dc53d0a63c378"
+    },
+    {
+      "path": "docs/workflow/history/orchestrate-workflow-draft.md",
+      "sha256": "73532b2e58ce46299a570479453f73cec60ab5955f3e217f8181ebb28a76a65e"
+    },
+    {
+      "path": "docs/workflow/overview.md",
+      "sha256": "e12b14991e3f2d2e6c900370bfb78135a37cf8a4ef9b38a55a30a34bb4f14114"
+    },
+    {
+      "path": "docs/workflow/project-lead-sa.md",
+      "sha256": "77a7a6524f1a8801c8471302f50f4ca5ddc92e031aa3ac9791abd7a2f5984c24"
+    },
+    {
+      "path": "openspec/changes/implement-delivery-loop/.openspec.yaml",
+      "sha256": "062e545e250441aa0692c22d7a65e07334f1c0f2e706c0e297f36065b6a0699c"
+    },
+    {
+      "path": "openspec/changes/implement-delivery-loop/approval.json",
+      "sha256": "e166cd46fee2e7c5c2855b37fab329e267a4c26e006d3ca175cb325f50ef8e97"
+    },
+    {
+      "path": "openspec/changes/implement-delivery-loop/design.md",
+      "sha256": "61c4dce1c1d0bc43418a6e586dad85ad55d58a18528e7d483fa4dcc50eaca482"
+    },
+    {
+      "path": "openspec/changes/implement-delivery-loop/proposal.md",
+      "sha256": "4d0291105184a6e1ee2853564f951075ceffb981ff09176c100686f98e1455eb"
+    },
+    {
+      "path": "openspec/changes/implement-delivery-loop/specs/delivery-gates/spec.md",
+      "sha256": "a8d68b7c03e45a55da796f8b223d7534266010af534e8c0506f36f66b0218d91"
+    },
+    {
+      "path": "openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+      "sha256": "a54c18f808079dfe8d2c032a574eda5411916566124909ca4149fa4a46161c25"
+    },
+    {
+      "path": "openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md",
+      "sha256": "f873aae0d549f5f8e11cfcca801cf78610aa970d071c09fcd5776f814ca5a9f6"
+    },
+    {
+      "path": "openspec/changes/implement-delivery-loop/specs/finding-resolution/spec.md",
+      "sha256": "2f37c77709d526b2259b2285c99617fe8d4a2768cb318ccf860dec8a8b6c8629"
+    },
+    {
+      "path": "openspec/changes/implement-delivery-loop/tasks.md",
+      "sha256": "4489c8b4cf555581327ce6c7bca22b8258e40d05604b2484e72a35a45d577126"
+    },
+    {
+      "path": "openspec/config.yaml",
+      "sha256": "7f06227db1180864ab2436d0e485965148e53c1713902ac4eb58dc0f4dade12b"
+    },
+    {
+      "path": "pyproject.toml",
+      "sha256": "e14abf540a23eb77c3d342623c001cadbe78935b0767e7c3e5965ffd0047dbdd"
+    },
+    {
+      "path": "src/delivery/__init__.py",
+      "sha256": "c5324e5c3230b05941737d52c2666adec4d7f21f407aca4cfd623b064e09f8e3"
+    },
+    {
+      "path": "src/delivery/authority.py",
+      "sha256": "955f33eaf1cea2564d90df50b50af4f32ec4f6b5e647f8c2d4988d7469301745"
+    },
+    {
+      "path": "src/delivery/budget.py",
+      "sha256": "c6295004972fb3cffd53675c9a718bd5fa370caf5d3beee4652686d713c39c49"
+    },
+    {
+      "path": "src/delivery/cli.py",
+      "sha256": "253f7c1580296831ee5ed4462b33b87f254c5ee0057ebda31b0f377079f2e14b"
+    },
+    {
+      "path": "src/delivery/controller.py",
+      "sha256": "55aeb43dd9cd4901bfc27112bf56e6575038168afd9eb3d4cc7a7d08856dac4f"
+    },
+    {
+      "path": "src/delivery/correction.py",
+      "sha256": "fec2b460387464f2b2b3eeedaa75914e75207f85900cb84ef9cb4656130db533"
+    },
+    {
+      "path": "src/delivery/decisions.py",
+      "sha256": "a801c0f9d0addf3421de1de280b797314e1b7bb5e29e1f691ca083ee146ac114"
+    },
+    {
+      "path": "src/delivery/events.py",
+      "sha256": "56abdaa94103df9329dffb5c7f1414f9b14031a71c6590ace945df71d91f57f3"
+    },
+    {
+      "path": "src/delivery/findings.py",
+      "sha256": "45530ad697e48c6f686ca9ef3712a12dae611ca42226a30e8551146a02711b2f"
+    },
+    {
+      "path": "src/delivery/gates.py",
+      "sha256": "b1c1d8a1b01d731eef3ea64ca3a96f54468cf68af534601231bd9dbe99559e03"
+    },
+    {
+      "path": "src/delivery/integration.py",
+      "sha256": "f5cf60f4040ac7debc737d8833dd71488113524eddd42a3d51a577425f9a3989"
+    },
+    {
+      "path": "src/delivery/loop.py",
+      "sha256": "4e95a7d7db28a9486dbaaa4b7795b209185f45b66c98828190550c8cf10e0e4f"
+    },
+    {
+      "path": "src/delivery/outbox.py",
+      "sha256": "fe11a50cd11c853a888ff0d1fcd3269c9c55d525383c8a2ec48dbfe8898508f8"
+    },
+    {
+      "path": "src/delivery/publication.py",
+      "sha256": "fa89582c4b5b767f8caa536fc977858cad101593f4c2429531fa96b2b49b49c5"
+    },
+    {
+      "path": "src/delivery/results.py",
+      "sha256": "0608d7b37ea04d5346c98bef08ce9e628287c267891a0d885e9ec0822739ba72"
+    },
+    {
+      "path": "src/delivery/resume.py",
+      "sha256": "2a4f080e7e789eef37b553ca5e170eadcb735159afbbd2381b30f7a0d430d079"
+    },
+    {
+      "path": "src/delivery/retro.py",
+      "sha256": "26ee717a463c46421f3e2511578f1fd61465f17a0092fcd36fb2bb969f3d0896"
+    },
+    {
+      "path": "src/delivery/runner.py",
+      "sha256": "b826b2dfc9c139ac55c7830e5a21d268bc86b0a7e4495c339b454b360a44de32"
+    },
+    {
+      "path": "src/delivery/sandbox.py",
+      "sha256": "871a4570993221a9bf788c3d30c4da9a235744ae11b63be0cb5ac6aae5ea120e"
+    },
+    {
+      "path": "src/delivery/store.py",
+      "sha256": "c4b9da23ba6e4786a36819501a4cd94cf8914406719d92104d3f1bb09a1878fc"
+    },
+    {
+      "path": "src/delivery/versions.py",
+      "sha256": "c54fad7fb9bfff68ac944a39d85acdd751f18f2f7bbcb38262c022d4a695f6e4"
+    },
+    {
+      "path": "tests/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tests/fake_agents.py",
+      "sha256": "7a5a98d35f099ffe3d34d31c56a0e5590a72c545f2c29f7b6ed157163d288501"
+    },
+    {
+      "path": "tests/fakes.py",
+      "sha256": "35611987eb295cf890ee0281f012c333da872350e246238bbf30fd297d5ee026"
+    },
+    {
+      "path": "tests/os/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tests/os/test_sandbox_credentials.py",
+      "sha256": "7090968746483a5fef23e2d66e032d0039bf9d7972ce3e52f1d2fe0390bf1348"
+    },
+    {
+      "path": "tests/os/test_sandbox_macos.py",
+      "sha256": "a804c55980ae270c9e1387e72c0835124ef2c1088e887c52b7ba3028ed20ff96"
+    },
+    {
+      "path": "tests/test_assessments.py",
+      "sha256": "6c7f2d579ec256038878298c0ac38e2885309baa612c1aed8faca625929fcc10"
+    },
+    {
+      "path": "tests/test_authority.py",
+      "sha256": "c280947cebdb105a0d1f1d1f6adafacd0f89088059150b04b454996825787d2a"
+    },
+    {
+      "path": "tests/test_budget.py",
+      "sha256": "4cdb8e5368acc43a0212afbf3462ae5b3a9dbd3609ed09099863e9371118ba12"
+    },
+    {
+      "path": "tests/test_cli.py",
+      "sha256": "cf3c57ca7e6391db93a5b288f894c4c44da0072d0a8df7b338c4acc36b2a83b2"
+    },
+    {
+      "path": "tests/test_cli_commands.py",
+      "sha256": "889c0eb3e038cc22550363d00c7c3ac87de18afd1599973321abb4c4283ff01e"
+    },
+    {
+      "path": "tests/test_controller_e2e.py",
+      "sha256": "404da6aa5f993ce88d49b27db9e2bc411e57759625f1d57d697f5c3dd2be8fd8"
+    },
+    {
+      "path": "tests/test_controller_flow.py",
+      "sha256": "c74a84112a0c0e5eb2df959bf1197b90f67b61a77f8292628d0c9b11d6824f15"
+    },
+    {
+      "path": "tests/test_correction.py",
+      "sha256": "99245822df3679cb1449425882462b4816a9d49f7d4dbfc0bda281a8af69b209"
+    },
+    {
+      "path": "tests/test_decisions.py",
+      "sha256": "336acb283b7978ae3f6ca71c9db41c0773767c92f9cbb1521ae9e1ea7a1352c3"
+    },
+    {
+      "path": "tests/test_dispatch_recovery.py",
+      "sha256": "493fdb480d19051c538f46271f51c9abe48a5c0164ec1af737316be499ed9d9c"
+    },
+    {
+      "path": "tests/test_events.py",
+      "sha256": "78b0939fd27d593de00c90018b2e5df04dbb028185e22a9e890a298affc5ee74"
+    },
+    {
+      "path": "tests/test_findings.py",
+      "sha256": "2f99f33bf0033ae8fb310fb7ab27b1c2d8f17c03f7245fca0c779f153533d070"
+    },
+    {
+      "path": "tests/test_gate_g1.py",
+      "sha256": "9f38e20f8b8504d11f16c01a76e3795947ce845064b07048408cc0df3b04d197"
+    },
+    {
+      "path": "tests/test_gate_g2.py",
+      "sha256": "56f205d24283d7581babae49183a78f777c0ce9d4c88de50db3b4c00f64a2d2a"
+    },
+    {
+      "path": "tests/test_gate_g3.py",
+      "sha256": "ef365d48d47470b0f868fd0aa519e6e7df22771a414d6a72d1748e204d7eca2d"
+    },
+    {
+      "path": "tests/test_integration.py",
+      "sha256": "a8a23f155f99b6a12f93bbe23626e44bb72e29c962a2b163f8f64951356488a4"
+    },
+    {
+      "path": "tests/test_loop.py",
+      "sha256": "565eb935deb09706ee08de2c60e77cc48b2324d10ef29899ed6795e3fd3df390"
+    },
+    {
+      "path": "tests/test_outbox.py",
+      "sha256": "96aa5a2236b864dd51828bd78332a8e6cb270f9eb4b5bf3670f830eb4cb06c9b"
+    },
+    {
+      "path": "tests/test_pass.py",
+      "sha256": "ead3a321cc7f55c14697b9e07152847a8cd37e7667aaac16d5de5dad623cc197"
+    },
+    {
+      "path": "tests/test_publication.py",
+      "sha256": "fa8c382743547ea2da4d2700eaf161dc08f5daa8bc273c9d026d45d8018cd6fe"
+    },
+    {
+      "path": "tests/test_results.py",
+      "sha256": "01f6a2fecefb4f7807c6ab8d1433b992ef15403e36b1504be0f08fc5c261fe23"
+    },
+    {
+      "path": "tests/test_resume.py",
+      "sha256": "0b1ff635b8612d9847efa4c8cbba2a842eecfd0c92dbc9d9cfbd5fb49fc10d4b"
+    },
+    {
+      "path": "tests/test_retro.py",
+      "sha256": "93d9e44bbd12f901603932e70783f88cacfecb9fb78b44e084721b33187f4bb7"
+    },
+    {
+      "path": "tests/test_runner.py",
+      "sha256": "ce62ccafa62c92482df9ba1d18aa8da2ff20dda99e2d945c0fae9516a661aa6c"
+    },
+    {
+      "path": "tests/test_status.py",
+      "sha256": "3f37ae8bbdd39a2ee126f81afab2dc33978f9478db5485caa6386cd7fd94f972"
+    },
+    {
+      "path": "tests/test_store.py",
+      "sha256": "9d9a15253d33732d6b090145216235906dc011fe45ecfb52d8e59353030e14b3"
+    },
+    {
+      "path": "tests/test_store_crash.py",
+      "sha256": "22599be1d1a9995a88d443ef5c17353e93362388efbd8b6f5f1def6944b4e513"
+    },
+    {
+      "path": "tests/test_versions.py",
+      "sha256": "ad21a51ddb8dc82938d7a4c7401dbfb5d3445e44415cdd1f52f16b9e800e8510"
+    }
+  ]
+}

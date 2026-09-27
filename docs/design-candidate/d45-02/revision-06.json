@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "revision_id": "design-02-rev-06",
+  "run_id": "herdr-design-d45",
+  "task_id": "thin-controller-design",
+  "attempt_id": "design-02",
+  "author": {"role": "implementer", "model_self_reported": "claude-opus-5-5"},
+  "input_review": {"source": "review-08/review.md and review-08/review-result.json", "verdict": "changes_required (three narrow residuals)", "residuals": ["D45-S03", "D45-S06", "D45-S07"], "verified_by_reviewer": ["D45-S01", "D45-S02", "D45-S04", "D45-S05", "D45-S08", "D45-S09", "D45-S10", "D45-R01..R06 (no regression)"]},
+  "review_files_modified": false,
+  "revised_artifact_sha256": null,
+  "revised_artifact_sha256_note": "Not computed: only Read/Write/Edit/Glob/Grep are allowed. The reviewer should hash the current outputs-02 files.",
+  "scope": "Only three minimal fixes. No supervisor, fencing service, timer or deadline platform, and no product code. All verified fixes are preserved.",
+  "responses": [
+    {
+      "finding_id": "D45-S03",
+      "status": "fix_submitted",
+      "change": "The worktree_create retry row is replaced. `herdr worktree` goes through the Herdr socket API to a persistent server (per the frozen preflight help), so client PGID cessation plus an absent path is never proof. A retry needs authoritative proof of non-delivery, or of completion that excludes a later effect, or a verified native idempotency guarantee. Otherwise the result is outcome_unknown, Blocked for a human. Cessation stays sufficient only for operations genuinely performed directly and synchronously in-process, and it is not inferred from a local CLI address. Task 4.1's positive retry case becomes a negative case. The 13.1 fake-server-late-completion case and the spec DUR-06 wording are updated.",
+      "locations": ["outputs-02/design.md §6 retry-safety table, op table worktree_create row", "outputs-02/spec-delta.md DUR-06", "outputs-02/tasks.md global constraints, 4.1, 13.1", "outputs-02/validation.md V-H1-04, V-H1-13", "outputs-02/coverage.md S1-R05"]
+    },
+    {
+      "finding_id": "D45-S06",
+      "status": "fix_submitted",
+      "change": "The uncounted in_progress exception and the undefined per-op deadline are removed. Every automatic reconciliation invocation, including process-liveness checks and in_progress results, now uses one of the existing MAX_READBACKS=3 slots; only sleeping without a query is free. On the third unresolved result the operation is persisted as blocked(readback_exhausted) and removed from automatic next_action/safety_actions until a human recheck. Active/unknown is preserved and nothing is resent. A live-begin-holder case is added to tasks 4.1 and 13.1 and to V-H1-04 and V-H1-13: a stuck publication client with three in_progress results, then no further automatic reconciliation and a publish call count of 1.",
+      "locations": ["outputs-02/design.md §2 readback mode, §6 in_progress and readback cap, §9 rule 2", "outputs-02/spec-delta.md DUR-06", "outputs-02/tasks.md global constraints, 4.1, 13.1", "outputs-02/validation.md V-H1-04, V-H1-13"]
+    },
+    {
+      "finding_id": "D45-S07",
+      "status": "fix_submitted",
+      "change": "Task 1.1 files and outputs now include `src/loopctl/tools/__init__.py` as a tools package skeleton (docstring only, no behavior), so the installed-wheel smoke can import loopctl.tools before task 13. The final installed-package smoke is still re-run in task 15.2.",
+      "locations": ["outputs-02/tasks.md 1.1 Files/Produces", "outputs-02/validation.md V-DIST"]
+    }
+  ],
+  "resolved_by_author": [],
+  "requested_action": "Bounded re-review of D45-S03, S06 and S07. The author does not mark any finding resolved.",
+  "policy_status": {"D47": "approved", "D48": "approved", "D49": "approved", "specific_check_set": "not_approved"},
+  "product_gate_verdict": null,
+  "s1_findings": "S1-R01..R17 remain open"
+}

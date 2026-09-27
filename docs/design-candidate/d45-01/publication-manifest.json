@@ -1,0 +1,83 @@
+{
+  "status": "candidate, not full design approval; D45-R01-R06 verified in bounded review-04; DN1A/DN2A/DN3B approved as D47-D49; check set and D11 pending",
+  "source_root": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01",
+  "files": [
+    {
+      "file": "design.md",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/review-04/design.md",
+      "source_sha256": "68398aefd5a512461311dbd6335d33eb13bcf465998f84308ffce673564a81ef",
+      "published_sha256": "28d99264f1ed278697619571020d427605f3d523ed8ec881f5aab09d09cbdaf1",
+      "link_only_transformations": [
+        {
+          "from": "../inputs/openspec/changes/implement-delivery-loop/proposal.md",
+          "to": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/inputs/openspec/changes/implement-delivery-loop/proposal.md"
+        },
+        {
+          "from": "../inputs/docs/harness/scope-reconciliation.md",
+          "to": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/inputs/docs/harness/scope-reconciliation.md"
+        },
+        {
+          "from": "coverage.json",
+          "to": "pending artifact label"
+        },
+        {
+          "from": "../inputs/docs/research/2026-09-27/herdr-setup.md",
+          "to": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/inputs/docs/research/2026-09-27/herdr-setup.md"
+        }
+      ]
+    },
+    {
+      "file": "cleanup-map.md",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/review-04/cleanup-map.md",
+      "source_sha256": "79d0b7fe204b4c5aaf4804207881b933b7298553e142642545f8fef42202aaa2",
+      "published_sha256": "4a1532a192f0773944f905c27f1d0f1048bdcad1bba28c1c961cb73785d35fb9",
+      "link_only_transformations": [
+        {
+          "from": "../source-inventory.json",
+          "to": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/source-inventory.json"
+        }
+      ]
+    },
+    {
+      "file": "decisions-needed.md",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/review-04/decisions-needed.md",
+      "source_sha256": "3cf509c855f756796410c1a705278c9760fe641fc5ca10d9b5c14d09de0e2270",
+      "published_sha256": "3cf509c855f756796410c1a705278c9760fe641fc5ca10d9b5c14d09de0e2270",
+      "link_only_transformations": []
+    },
+    {
+      "file": "result.json",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/review-04/result.json",
+      "source_sha256": "89e5c40ff7c1b294d68eb5f63ce9b3b2462523cfe221a28443f906eb0ea06853",
+      "published_sha256": "89e5c40ff7c1b294d68eb5f63ce9b3b2462523cfe221a28443f906eb0ea06853",
+      "link_only_transformations": []
+    },
+    {
+      "file": "revision-01.json",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/outputs/revision-01.json",
+      "source_sha256": "c8ef80daddfc342278363e83e2b11e21abc115ea103c148010e20f8b7b89795a",
+      "published_sha256": "c8ef80daddfc342278363e83e2b11e21abc115ea103c148010e20f8b7b89795a",
+      "link_only_transformations": []
+    },
+    {
+      "file": "revision-02.json",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/outputs/revision-02.json",
+      "source_sha256": "7bb6f5faf63c68cde7031d9c98aed835f0942e887c1b9109eb8a713cd3013906",
+      "published_sha256": "7bb6f5faf63c68cde7031d9c98aed835f0942e887c1b9109eb8a713cd3013906",
+      "link_only_transformations": []
+    },
+    {
+      "file": "revision-03.json",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/review-04/revision-03.json",
+      "source_sha256": "580cfff8a68583b82a0caa7eeab2bd8744786a8d429160347f655e987b5baf7d",
+      "published_sha256": "580cfff8a68583b82a0caa7eeab2bd8744786a8d429160347f655e987b5baf7d",
+      "link_only_transformations": []
+    }
+  ],
+  "source_code_copied": false,
+  "policy_approval": {
+    "file": "policy-approval.json",
+    "sha256": "77080eacb88f2b144e706216ba6c7087dc24f1a0520004910a3d25985d5311ef",
+    "scope": "policy boundaries only"
+  }
+}

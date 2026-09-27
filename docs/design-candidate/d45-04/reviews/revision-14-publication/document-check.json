@@ -1,0 +1,19 @@
+{
+  "scope": "revision-14 document correction publication only",
+  "source_snapshot": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/opus55-fix-d45-04/review-03",
+  "review_verdict": "clean",
+  "review_inputs_verified": 20,
+  "protected_product_and_formal_files": 67,
+  "unexpected_changes": [],
+  "preserved_history_files": 20,
+  "substantive_files_match_reviewed_source": true,
+  "coverage_rows": 105,
+  "unique_ids": 105,
+  "ac_rows": 88,
+  "old_findings": 17,
+  "coverage_id_order_unchanged": true,
+  "product_tests_executed": false,
+  "D11_approved": false,
+  "checked_local_links": 130,
+  "broken_local_links": []
+}

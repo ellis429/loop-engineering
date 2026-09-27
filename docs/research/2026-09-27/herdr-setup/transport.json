@@ -1,0 +1,318 @@
+{
+  "observed_at": "2026-09-27T10:23:49.272630+00:00",
+  "session": "le-h0-544w2nok",
+  "server_stopped": true,
+  "worktree_retained": true,
+  "worktree": "/private/tmp/le-herdr-h0-544w2nok/worktree",
+  "branch": "h0/probe",
+  "head": "7dfc7be5a721787bd49cf036c3119caeb7857db9",
+  "waiter_process_absent": true,
+  "assignment": {
+    "schema_version": "h0-probe-v1",
+    "run_id": "herdr-h0-544w2nok",
+    "task_id": "transport",
+    "attempt_id": "transport-01",
+    "head_sha": "7dfc7be5a721787bd49cf036c3119caeb7857db9",
+    "worktree": "/private/tmp/le-herdr-h0-544w2nok/worktree",
+    "output": "result.json"
+  },
+  "files": {
+    "README.md": {
+      "sha256": "5857ee8889226b842a4721a15b90d2f101e563afe4cf14cd9fdab904a2b78c80",
+      "content": "# Herdr H0 fixture\nTemporary transport probe; no model inference or delivery gate.\n"
+    },
+    "probe.py": {
+      "sha256": "b97f270c0dfa105a3eceba4dc31a63c63ecfaf85e4ce676a7adc8034869c8ac7",
+      "content": "import json, os, subprocess\nfrom pathlib import Path\na=json.loads(Path(\"/private/tmp/le-herdr-h0-544w2nok/assignment.json\").read_text())\nhead=subprocess.check_output([\"/usr/bin/git\",\"rev-parse\",\"HEAD\"],text=True).strip()\nassert head == a[\"head_sha\"]\nassert Path.cwd().resolve() == Path(a[\"worktree\"]).resolve()\nr={\"run_id\":a[\"run_id\"],\"task_id\":a[\"task_id\"],\"attempt_id\":a[\"attempt_id\"],\"execution_status\":\"succeeded\",\"head_sha\":head,\"cwd\":str(Path.cwd()),\"herdr_context\":{k:os.environ.get(k) for k in [\"HERDR_ENV\",\"HERDR_PANE_ID\",\"HERDR_WORKSPACE_ID\",\"HERDR_TAB_ID\"]},\"producer\":\"deterministic_python_fixture\",\"inference\":False}\nPath(\"result.json\").write_text(json.dumps(r,indent=2)+\"\\n\")\nprint(\"H0_RESULT_SAVED\",flush=True)\n"
+    },
+    "waiter.py": {
+      "sha256": "444fadce58219c3e4a24cf42270cfb92c029fcdeb21626b20b04d92d69aaa467",
+      "content": "import os, signal, json\nfrom pathlib import Path\nPath(\"waiter.json\").write_text(json.dumps({\"pid\":os.getpid(),\"state\":\"running\"}))\nprint(\"H0_WAITER_RUNNING\",flush=True)\ntry:\n signal.pause()\nexcept KeyboardInterrupt:\n Path(\"waiter.json\").write_text(json.dumps({\"pid\":os.getpid(),\"state\":\"interrupted\"}))\n print(\"H0_WAITER_INTERRUPTED\",flush=True)\n"
+    },
+    "result.json": {
+      "sha256": "6da25aa6657a19e6a34c1906d4fa46f1fbe47b2bf081e498d6384c7ef90dd796",
+      "content": "{\n  \"run_id\": \"herdr-h0-544w2nok\",\n  \"task_id\": \"transport\",\n  \"attempt_id\": \"transport-01\",\n  \"execution_status\": \"succeeded\",\n  \"head_sha\": \"7dfc7be5a721787bd49cf036c3119caeb7857db9\",\n  \"cwd\": \"/private/tmp/le-herdr-h0-544w2nok/worktree\",\n  \"herdr_context\": {\n    \"HERDR_ENV\": \"1\",\n    \"HERDR_PANE_ID\": \"w2:p1\",\n    \"HERDR_WORKSPACE_ID\": \"w2\",\n    \"HERDR_TAB_ID\": \"w2:t1\"\n  },\n  \"producer\": \"deterministic_python_fixture\",\n  \"inference\": false\n}\n"
+    },
+    "waiter.json": {
+      "sha256": "449da99c0382915db3f14c35b4ffe82ce562622a0e6e2c4e16fb31942c648c9d",
+      "content": "{\"pid\": 80892, \"state\": \"interrupted\"}"
+    }
+  },
+  "commands": [
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok worktree create --workspace w1 --branch h0/probe --base main --path /private/tmp/le-herdr-h0-544w2nok/worktree --label h0-worktree --no-focus",
+      "result": {
+        "chunk_id": "f40343",
+        "wall_time_seconds": 1.1583e-05,
+        "exit_code": 1,
+        "original_token_count": 31,
+        "output": "{\"error\":{\"code\":\"worktree_create_failed\",\"message\":\"Bad CPU type in executable (os error 86)\"},\"id\":\"cli:worktree:create\"}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok server stop",
+      "result": {
+        "chunk_id": "72dcfc",
+        "wall_time_seconds": 0.200292875,
+        "exit_code": 0,
+        "original_token_count": 0,
+        "output": ""
+      }
+    },
+    {
+      "cmd": "PATH=/usr/bin:/bin:/usr/sbin:/sbin:/Users/johnson.chiang/.local/bin HERDR_CONFIG_PATH=/private/tmp/le-herdr-h0-544w2nok/config.toml /Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok server",
+      "result": {
+        "chunk_id": "a77bc4",
+        "wall_time_seconds": 1.002502125,
+        "session_id": 18412,
+        "original_token_count": 105,
+        "output": "herdr server running; you can use any herdr CLI command in another terminal.\napi socket: /Users/johnson.chiang/.config/herdr/sessions/le-h0-544w2nok/herdr.sock\nclient socket: /Users/johnson.chiang/.config/herdr/sessions/le-h0-544w2nok/herdr-client.sock\nlogs: /Users/johnson.chiang/.config/herdr/sessions/le-h0-544w2nok/herdr-server.log\ndid you mean to open the Herdr TUI? run `herdr`; you do not need `herdr server`.\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok workspace list",
+      "result": {
+        "chunk_id": "7a1173",
+        "wall_time_seconds": 1.125e-05,
+        "exit_code": 0,
+        "original_token_count": 56,
+        "output": "{\"id\":\"cli:workspace:list\",\"result\":{\"type\":\"workspace_list\",\"workspaces\":[{\"active_tab_id\":\"w1:t1\",\"agent_status\":\"unknown\",\"focused\":true,\"label\":\"h0-repo\",\"number\":1,\"pane_count\":1,\"tab_count\":1,\"workspace_id\":\"w1\"}]}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok worktree create --workspace w1 --branch h0/probe --base main --path /private/tmp/le-herdr-h0-544w2nok/worktree --label h0-worktree --no-focus",
+      "result": {
+        "chunk_id": "7e9060",
+        "wall_time_seconds": 1.1792e-05,
+        "exit_code": 0,
+        "original_token_count": 285,
+        "output": "{\"id\":\"cli:worktree:create\",\"result\":{\"root_pane\":{\"agent_status\":\"unknown\",\"cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"focused\":false,\"foreground_cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"pane_id\":\"w2:p1\",\"revision\":0,\"scroll\":{\"max_offset_from_bottom\":0,\"offset_from_bottom\":0,\"viewport_rows\":40},\"tab_id\":\"w2:t1\",\"terminal_id\":\"term_65c744d31c9512\",\"workspace_id\":\"w2\"},\"tab\":{\"agent_status\":\"unknown\",\"focused\":false,\"label\":\"1\",\"number\":1,\"pane_count\":1,\"tab_id\":\"w2:t1\",\"workspace_id\":\"w2\"},\"type\":\"worktree_created\",\"workspace\":{\"active_tab_id\":\"w2:t1\",\"agent_status\":\"unknown\",\"focused\":false,\"label\":\"h0-worktree\",\"number\":2,\"pane_count\":1,\"tab_count\":1,\"workspace_id\":\"w2\",\"worktree\":{\"checkout_path\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"is_linked_worktree\":true,\"repo_key\":\"/private/tmp/le-herdr-h0-544w2nok/repo/.git\",\"repo_name\":\"repo\",\"repo_root\":\"/private/tmp/le-herdr-h0-544w2nok/repo\"}},\"worktree\":{\"branch\":\"h0/probe\",\"is_bare\":false,\"is_detached\":false,\"is_linked_worktree\":true,\"is_prunable\":false,\"label\":\"repo\",\"open_workspace_id\":\"w2\",\"path\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\"}}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok pane run w2:p1 '/usr/bin/python3 probe.py'",
+      "result": {
+        "chunk_id": "4c55bb",
+        "wall_time_seconds": 9.458e-06,
+        "exit_code": 0,
+        "original_token_count": 0,
+        "output": ""
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok pane wait-output w2:p1 --match H0_RESULT_SAVED --timeout 5000",
+      "result": {
+        "chunk_id": "6e70fa",
+        "wall_time_seconds": 0.018769916,
+        "exit_code": 0,
+        "original_token_count": 85,
+        "output": "{\"id\":\"cli:pane:wait-output\",\"result\":{\"matched_line\":\"H0_RESULT_SAVED\",\"pane_id\":\"w2:p1\",\"read\":{\"format\":\"text\",\"pane_id\":\"w2:p1\",\"revision\":0,\"source\":\"recent_unwrapped\",\"tab_id\":\"w2:t1\",\"text\":\"sh-3.2$ /usr/bin/python3 probe.py\\nH0_RESULT_SAVED\\nsh-3.2$\",\"truncated\":false,\"workspace_id\":\"w2\"},\"revision\":0,\"type\":\"output_matched\"}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok pane read w2:p1 --source recent-unwrapped --lines 40",
+      "result": {
+        "chunk_id": "4f085a",
+        "wall_time_seconds": 1.1708e-05,
+        "exit_code": 0,
+        "original_token_count": 15,
+        "output": "sh-3.2$ /usr/bin/python3 probe.py\nH0_RESULT_SAVED\nsh-3.2$"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok pane wait-output w2:p1 --match H0_NEVER_EMITTED_544w2nok --timeout 250",
+      "result": {
+        "chunk_id": "74c1f4",
+        "wall_time_seconds": 0.18291825,
+        "exit_code": 1,
+        "original_token_count": 26,
+        "output": "{\"error\":{\"code\":\"timeout\",\"message\":\"timed out waiting for output match\"},\"id\":\"cli:pane:wait-output\"}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok pane run w2:p1 '/usr/bin/python3 waiter.py'",
+      "result": {
+        "chunk_id": "79e93c",
+        "wall_time_seconds": 1.025e-05,
+        "exit_code": 0,
+        "original_token_count": 0,
+        "output": ""
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok pane wait-output w2:p1 --match H0_WAITER_RUNNING --timeout 5000",
+      "result": {
+        "chunk_id": "223112",
+        "wall_time_seconds": 9.542e-06,
+        "exit_code": 0,
+        "original_token_count": 97,
+        "output": "{\"id\":\"cli:pane:wait-output\",\"result\":{\"matched_line\":\"H0_WAITER_RUNNING\",\"pane_id\":\"w2:p1\",\"read\":{\"format\":\"text\",\"pane_id\":\"w2:p1\",\"revision\":0,\"source\":\"recent_unwrapped\",\"tab_id\":\"w2:t1\",\"text\":\"sh-3.2$ /usr/bin/python3 probe.py\\nH0_RESULT_SAVED\\nsh-3.2$ /usr/bin/python3 waiter.py\\nH0_WAITER_RUNNING\",\"truncated\":false,\"workspace_id\":\"w2\"},\"revision\":0,\"type\":\"output_matched\"}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok pane process-info --pane w2:p1",
+      "result": {
+        "chunk_id": "bbf04a",
+        "wall_time_seconds": 1.05e-05,
+        "exit_code": 0,
+        "original_token_count": 146,
+        "output": "{\"id\":\"cli:pane:process_info\",\"result\":{\"process_info\":{\"foreground_process_group_id\":80892,\"foreground_processes\":[{\"argv\":[\"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/Resources/Python.app/Contents/MacOS/Python\",\"waiter.py\"],\"argv0\":\"Python\",\"cmdline\":\"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/Resources/Python.app/Contents/MacOS/Python waiter.py\",\"cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"name\":\"Python\",\"pid\":80892}],\"pane_id\":\"w2:p1\",\"shell_pid\":80203},\"type\":\"pane_process_info\"}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok pane send-keys w2:p1 ctrl+c",
+      "result": {
+        "chunk_id": "5cb48f",
+        "wall_time_seconds": 1.3208e-05,
+        "exit_code": 0,
+        "original_token_count": 0,
+        "output": ""
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok pane wait-output w2:p1 --match H0_WAITER_INTERRUPTED --timeout 5000",
+      "result": {
+        "chunk_id": "dbf9ae",
+        "wall_time_seconds": 1.1167e-05,
+        "exit_code": 0,
+        "original_token_count": 107,
+        "output": "{\"id\":\"cli:pane:wait-output\",\"result\":{\"matched_line\":\"^CH0_WAITER_INTERRUPTED\",\"pane_id\":\"w2:p1\",\"read\":{\"format\":\"text\",\"pane_id\":\"w2:p1\",\"revision\":0,\"source\":\"recent_unwrapped\",\"tab_id\":\"w2:t1\",\"text\":\"sh-3.2$ /usr/bin/python3 probe.py\\nH0_RESULT_SAVED\\nsh-3.2$ /usr/bin/python3 waiter.py\\nH0_WAITER_RUNNING\\n^CH0_WAITER_INTERRUPTED\\nsh-3.2$\",\"truncated\":false,\"workspace_id\":\"w2\"},\"revision\":0,\"type\":\"output_matched\"}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok pane process-info --pane w2:p1",
+      "result": {
+        "chunk_id": "2ea734",
+        "wall_time_seconds": 1.1375e-05,
+        "exit_code": 0,
+        "original_token_count": 79,
+        "output": "{\"id\":\"cli:pane:process_info\",\"result\":{\"process_info\":{\"foreground_process_group_id\":80203,\"foreground_processes\":[{\"argv\":[\"/bin/sh\"],\"argv0\":\"sh\",\"cmdline\":\"/bin/sh\",\"cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"name\":\"bash\",\"pid\":80203}],\"pane_id\":\"w2:p1\",\"shell_pid\":80203},\"type\":\"pane_process_info\"}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok agent start h0-opencode --kind opencode --pane w2:p1 --timeout 15000 -- --pure",
+      "result": {
+        "chunk_id": "974178",
+        "wall_time_seconds": 1.00090925,
+        "session_id": 17654,
+        "original_token_count": 0,
+        "output": ""
+      }
+    },
+    {
+      "poll_session": 17654,
+      "result": {
+        "chunk_id": "0bde71",
+        "wall_time_seconds": 1.9542e-05,
+        "exit_code": 0,
+        "original_token_count": 110,
+        "output": "{\"id\":\"cli:agent:start\",\"result\":{\"agent\":{\"agent\":\"opencode\",\"agent_status\":\"idle\",\"cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"focused\":false,\"foreground_cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"interactive_ready\":true,\"name\":\"h0-opencode\",\"pane_id\":\"w2:p1\",\"revision\":0,\"state_change_seq\":1,\"tab_id\":\"w2:t1\",\"terminal_id\":\"term_65c744d31c9512\",\"workspace_id\":\"w2\"},\"argv\":[\"opencode\",\"--pure\"],\"type\":\"agent_started\"}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok agent get h0-opencode",
+      "result": {
+        "chunk_id": "9edc2f",
+        "wall_time_seconds": 1.1166e-05,
+        "exit_code": 0,
+        "original_token_count": 118,
+        "output": "{\"id\":\"cli:agent:get\",\"result\":{\"agent\":{\"agent\":\"opencode\",\"agent_status\":\"idle\",\"cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"focused\":false,\"foreground_cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"interactive_ready\":true,\"name\":\"h0-opencode\",\"pane_id\":\"w2:p1\",\"revision\":1,\"state_change_seq\":1,\"tab_id\":\"w2:t1\",\"terminal_id\":\"term_65c744d31c9512\",\"terminal_title\":\"OpenCode\",\"terminal_title_stripped\":\"OpenCode\",\"workspace_id\":\"w2\"},\"type\":\"agent_info\"}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok agent read h0-opencode --source recent-unwrapped --lines 60",
+      "result": {
+        "chunk_id": "ceb55b",
+        "wall_time_seconds": 0.245276167,
+        "exit_code": 0,
+        "original_token_count": 299,
+        "output": "\n\n\n\n\n\n\n\n\n\n\n\n\n                                                                          ▄\n                                         █▀▀█ █▀▀█ █▀▀█ █▀▀▄ █▀▀▀ █▀▀█ █▀▀█ █▀▀█\n                                         █  █ █  █ █▀▀▀ █  █ █    █  █ █  █ █▀▀▀\n                                         ▀▀▀▀ █▀▀▀ ▀▀▀▀ ▀▀▀▀ ▀▀▀▀ ▀▀▀▀ ▀▀▀▀ ▀▀▀▀\n\n\n                       ┃\n                       ┃  Ask anything… \"What is the tech stack of this project?\"\n                       ┃\n                       ┃  Build · Claude Sonnet 4.6 Vertex (Anthropic)\n                       ╹▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀\n                                                                       tab agents  ctrl+p commands\n\n\n\n\n\n\n\n\n\n\n\n\n\n  /private/tmp/le-herdr-h0-544w2nok/worktree:h0/probe                                                          1.18.32\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok agent send-keys h0-opencode ctrl+c",
+      "result": {
+        "chunk_id": "6e9afc",
+        "wall_time_seconds": 1.0375e-05,
+        "exit_code": 0,
+        "original_token_count": 13,
+        "output": "{\"id\":\"cli:agent:send-keys\",\"result\":{\"type\":\"ok\"}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok pane read w2:p1 --source recent-unwrapped --lines 40",
+      "result": {
+        "chunk_id": "cf8222",
+        "wall_time_seconds": 1.1042e-05,
+        "exit_code": 0,
+        "original_token_count": 40,
+        "output": "sh-3.2$ /usr/bin/python3 probe.py\nH0_RESULT_SAVED\nsh-3.2$ /usr/bin/python3 waiter.py\nH0_WAITER_RUNNING\n^CH0_WAITER_INTERRUPTED\nsh-3.2$ opencode --pure\nsh-3.2$"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok pane process-info --pane w2:p1",
+      "result": {
+        "chunk_id": "0478ef",
+        "wall_time_seconds": 1.0042e-05,
+        "exit_code": 0,
+        "original_token_count": 79,
+        "output": "{\"id\":\"cli:pane:process_info\",\"result\":{\"process_info\":{\"foreground_process_group_id\":80203,\"foreground_processes\":[{\"argv\":[\"/bin/sh\"],\"argv0\":\"sh\",\"cmdline\":\"/bin/sh\",\"cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"name\":\"bash\",\"pid\":80203}],\"pane_id\":\"w2:p1\",\"shell_pid\":80203},\"type\":\"pane_process_info\"}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok workspace close w2",
+      "result": {
+        "chunk_id": "4e3f2e",
+        "wall_time_seconds": 1.7042e-05,
+        "exit_code": 0,
+        "original_token_count": 13,
+        "output": "{\"id\":\"cli:workspace:close\",\"result\":{\"type\":\"ok\"}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok worktree list --cwd /private/tmp/le-herdr-h0-544w2nok/repo",
+      "result": {
+        "chunk_id": "281ce6",
+        "wall_time_seconds": 9.583e-06,
+        "exit_code": 0,
+        "original_token_count": 167,
+        "output": "{\"id\":\"cli:worktree:list\",\"result\":{\"source\":{\"repo_key\":\"/private/tmp/le-herdr-h0-544w2nok/repo/.git\",\"repo_name\":\"repo\",\"repo_root\":\"/private/tmp/le-herdr-h0-544w2nok/repo\",\"source_checkout_path\":\"/private/tmp/le-herdr-h0-544w2nok/repo\",\"source_workspace_id\":\"w1\"},\"type\":\"worktree_list\",\"worktrees\":[{\"branch\":\"main\",\"is_bare\":false,\"is_detached\":false,\"is_linked_worktree\":false,\"is_prunable\":false,\"label\":\"repo\",\"open_workspace_id\":\"w1\",\"path\":\"/private/tmp/le-herdr-h0-544w2nok/repo\"},{\"branch\":\"h0/probe\",\"is_bare\":false,\"is_detached\":false,\"is_linked_worktree\":true,\"is_prunable\":false,\"label\":\"repo\",\"path\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\"}]}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok worktree open --cwd /private/tmp/le-herdr-h0-544w2nok/repo --path /private/tmp/le-herdr-h0-544w2nok/worktree --label h0-reopened --no-focus",
+      "result": {
+        "chunk_id": "a06418",
+        "wall_time_seconds": 1.0375e-05,
+        "exit_code": 0,
+        "original_token_count": 290,
+        "output": "{\"id\":\"cli:worktree:open\",\"result\":{\"already_open\":false,\"root_pane\":{\"agent_status\":\"unknown\",\"cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"focused\":false,\"foreground_cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"pane_id\":\"w3:p1\",\"revision\":0,\"scroll\":{\"max_offset_from_bottom\":0,\"offset_from_bottom\":0,\"viewport_rows\":40},\"tab_id\":\"w3:t1\",\"terminal_id\":\"term_65c745542986f3\",\"workspace_id\":\"w3\"},\"tab\":{\"agent_status\":\"unknown\",\"focused\":false,\"label\":\"1\",\"number\":1,\"pane_count\":1,\"tab_id\":\"w3:t1\",\"workspace_id\":\"w3\"},\"type\":\"worktree_opened\",\"workspace\":{\"active_tab_id\":\"w3:t1\",\"agent_status\":\"unknown\",\"focused\":false,\"label\":\"h0-reopened\",\"number\":2,\"pane_count\":1,\"tab_count\":1,\"workspace_id\":\"w3\",\"worktree\":{\"checkout_path\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"is_linked_worktree\":true,\"repo_key\":\"/private/tmp/le-herdr-h0-544w2nok/repo/.git\",\"repo_name\":\"repo\",\"repo_root\":\"/private/tmp/le-herdr-h0-544w2nok/repo\"}},\"worktree\":{\"branch\":\"h0/probe\",\"is_bare\":false,\"is_detached\":false,\"is_linked_worktree\":true,\"is_prunable\":false,\"label\":\"repo\",\"open_workspace_id\":\"w3\",\"path\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\"}}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok pane get w2:p1",
+      "result": {
+        "chunk_id": "94381e",
+        "wall_time_seconds": 1.4333e-05,
+        "exit_code": 1,
+        "original_token_count": 23,
+        "output": "{\"error\":{\"code\":\"pane_not_found\",\"message\":\"pane w2:p1 not found\"},\"id\":\"cli:pane:get\"}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok server stop",
+      "result": {
+        "chunk_id": "ebaa4c",
+        "wall_time_seconds": 0.099460125,
+        "exit_code": 0,
+        "original_token_count": 0,
+        "output": ""
+      }
+    }
+  ],
+  "inference_run": false,
+  "gates_assessed": false,
+  "native_agent_session_observed": false,
+  "selected_model_display_only": "Claude Sonnet 4.6 / Vertex (Anthropic)",
+  "coverage": "real_cli_and_opencode_startup_only"
+}

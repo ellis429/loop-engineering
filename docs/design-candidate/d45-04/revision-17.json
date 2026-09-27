@@ -1,0 +1,52 @@
+{
+  "revision": "revision-17",
+  "author_role": "lead designer / coordinator",
+  "actual_model": "claude-opus-5-5 (Claude Code, CLAUDE_EFFORT=xhigh)",
+  "basis": "revision-16 as reviewed in reviews/revision-16 (changes_requested)",
+  "d11_status": "pending",
+  "product_tests_executed": false,
+  "before_sha256": {
+    "README.md": "060114b755aa51fa14a1ff4070a7e2ea46e58bf34a8c0f6fe174e968928eae9a",
+    "design.md": "5581f96fdc6091be87b93f232849618788493c05113bae9af3d6d6ff6590465a",
+    "tasks.md": "940d9aac7a1878b2f4fdfc836f421ea8555c537de10b47cf090b9e8a6e9279f1",
+    "validation.md": "510760d14df01298fc34156787f1ac5d27af37d632b427320623d7b50f9ef94f",
+    "coverage.md": "6e6b33c367e3ec2108de5f5a36b07c7656df18161d710ed7bb7bb40fdfeb9ea9",
+    "cleanup-map.md": "46c20f095d1ec7cfb8c39fd674388c4e4391f4e2e62f146669ca1fbae0132af3",
+    "d11-confirmation.md": "036ebd4b3205405fb78c6582bf240bc2e4ec51d724ab0355f974255fce40d051"
+  },
+  "unchanged": [
+    "spec-delta.md",
+    "revision-15.json",
+    "revision-16.json"
+  ],
+  "dispositions": [
+    {
+      "id": "R16-01",
+      "status": "fix_submitted",
+      "where": "design §7, §10; tasks 2.3/3.1/7.1 rows, cards, shared budget.py, completion; validation §1.5, b0, g15(b), b7; coverage AC-D17",
+      "planned_tests": [
+        "b0",
+        "g15",
+        "b7"
+      ]
+    },
+    {
+      "id": "R15-01",
+      "status": "fix_submitted",
+      "note": "remaining interaction resolved via R16-01"
+    },
+    {
+      "id": "R15-02",
+      "status": "fix_submitted",
+      "where": "design §8 review assignment snapshot; validation r10; coverage AC-F08",
+      "planned_tests": [
+        "r10"
+      ]
+    },
+    {
+      "id": "R16-02",
+      "status": "fix_submitted",
+      "where": "design §10 timeout rationale"
+    }
+  ]
+}

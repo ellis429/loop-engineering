@@ -1,0 +1,20 @@
+{
+  "scope": "document corrections and independent re-review only; not product runtime preflight",
+  "author": {
+    "session": "cb50b108-d7fc-4221-869d-6c06c1d2ca0e",
+    "actual_model": "claude-opus-5-5",
+    "revisions": [
+      "revision-12",
+      "revision-13"
+    ],
+    "source": "native Claude session assistant model metadata"
+  },
+  "coordinator_revision": "revision-14; see revision-14.json",
+  "reviewer": {
+    "session": "01a0e3b5-682c-7170-9408-3f91d8cbeff4",
+    "actual_model": "gpt-6-astra",
+    "effort": "xhigh",
+    "source": "native Codex turn_context metadata"
+  },
+  "historical_author_identity": "reviews/review-15/native-identity.json"
+}

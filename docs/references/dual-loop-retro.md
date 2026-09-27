@@ -33,6 +33,6 @@
 - 偏好可以驗證的最小改善，不把每個人類偏好升級為 blocker 或 lint。選定自動檢查要證明已知壞例失敗、有效例成功；抽象測試品質不保證能被一條 lint 規則全面辨識。
 - 版本、未結 findings 與證據先保存，再按需要開 fresh session；CLI / MCP 與 branch / 檔名採實際 repo 能力和慣例。
 
-具體提案：[Retro 接入設計](../orchestrate-workflow-draft.md#retro-接入設計建議)。政策確認來源：[decisions.md](../decisions.md)。
+具體提案：[Retro 接入設計](../workflow/history/orchestrate-workflow-draft.md#retro-接入設計建議)。政策確認來源：[decisions.md](../decisions.md)。
 
 使用者後續補充的 Matt 演講完整主題摘要，另收錄於 [Fixing the PR Bottleneck](fixing-the-pr-bottleneck.md)，包含三層品質控制、依風險調整人工 review 與視覺化 PR 說明。該份來源也未獨立觀看查核。

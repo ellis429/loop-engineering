@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "execution_status": "succeeded",
+  "verdict": "verified_within_scope",
+  "scope": "Only R01/R02 residuals and adjacent contracts; R03-R06 carried by unchanged-source checks",
+  "artifact_hashes_sha256": {
+    "result.json": "89e5c40ff7c1b294d68eb5f63ce9b3b2462523cfe221a28443f906eb0ea06853",
+    "cleanup-map.md": "79d0b7fe204b4c5aaf4804207881b933b7298553e142642545f8fef42202aaa2",
+    "decisions-needed.md": "3cf509c855f756796410c1a705278c9760fe641fc5ca10d9b5c14d09de0e2270",
+    "design.md": "68398aefd5a512461311dbd6335d33eb13bcf465998f84308ffce673564a81ef",
+    "revision-03.json": "580cfff8a68583b82a0caa7eeab2bd8744786a8d429160347f655e987b5baf7d"
+  },
+  "manifest_sha256": "fb88a75fd2bbb30d5654f36b80a9573afe4da91d0e7f818adf0c8c6534ce941d",
+  "manifest_verified": true,
+  "unchanged_documents_from_review_03": {
+    "cleanup-map.md": true,
+    "decisions-needed.md": true
+  },
+  "unchanged_design_sections_from_review_03": {
+    "R03_version_and_pass_sections": true,
+    "R04_checking_path": true,
+    "R04_publication_section": true
+  },
+  "findings": [
+    {
+      "id": "D45-R01",
+      "status": "verified",
+      "verification": "current_bounded_recheck",
+      "blocking": false
+    },
+    {
+      "id": "D45-R02",
+      "status": "verified",
+      "verification": "current_bounded_recheck",
+      "blocking": false
+    },
+    {
+      "id": "D45-R03",
+      "status": "verified",
+      "verification": "carried_unchanged_from_review_03",
+      "blocking": false
+    },
+    {
+      "id": "D45-R04",
+      "status": "verified",
+      "verification": "carried_unchanged_from_review_03",
+      "blocking": false
+    },
+    {
+      "id": "D45-R05",
+      "status": "verified",
+      "verification": "carried_unchanged_from_review_03",
+      "blocking": false
+    },
+    {
+      "id": "D45-R06",
+      "status": "verified",
+      "verification": "carried_unchanged_from_review_03",
+      "blocking": false
+    }
+  ],
+  "residual_findings": [],
+  "clarifications": {
+    "DN-1_no_implicit_fallback": "verified_carried",
+    "DN-2": "verified_carried",
+    "DN-3": "verified_carried"
+  },
+  "policy_decisions": {
+    "DN-1": "unapproved",
+    "DN-2": "unapproved",
+    "DN-3": "unapproved"
+  },
+  "full_design_verdict": null,
+  "product_gate_verdict": null,
+  "ready_for_implementation": false,
+  "limits": [
+    "No full-design clean claim; review restricted to requested residuals.",
+    "Document verification only; described tests have not been executed.",
+    "No product code/tests/GitHub operations or S1 closure.",
+    "Full design synchronization, policy decisions, spec-delta/tasks/coverage/validation and D11 remain pending."
+  ]
+}

@@ -139,7 +139,7 @@ OAuth token 可以讀 checks，但不能建立/更新 check-runs；[GitHub Check
 
 Orca 原生 Run 不自行排程：小控制器只擁有 feature policy，Orca 保留 execution state，兩者需以 IDs 對應，不能把 Orca done 升格成 PR Pass。Orca terminal caller identity 是實際整合前提；第一個可執行版本建議在專用 Orca terminal 前景啟動 controller，之後才驗證獨立 service 模式。
 
-研究時曾考慮 SQLite + immutable result/evidence files + publication outbox；此提案已由 2026-09-26 的 D14 取代，改採人可讀的 JSON／YAML 檔案，詳見 [檔案狀態設計](../../file-state.md)。GitHub 是對人發布的 review 紀錄，結構化 finding authority 的選擇仍待 grill。
+研究時曾考慮 SQLite + immutable result/evidence files + publication outbox；此提案已由 2026-09-26 的 D14 取代，改採人可讀的 JSON／YAML 檔案，詳見 [檔案狀態設計](../../harness/history/file-state.md)。GitHub 是對人發布的 review 紀錄，結構化 finding authority 的選擇仍待 grill。
 
 ### 設計前必做的有界 spike
 

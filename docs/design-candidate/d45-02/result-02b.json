@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "run_id": "herdr-design-d45",
+  "task_id": "thin-controller-design",
+  "attempt_id": "design-02",
+  "stage": "02B coherent design and executable H1 plan",
+  "requested_model": "claude-opus-5-5",
+  "self_reported_model": "claude-opus-5-5",
+  "input_manifest_sha256": "486c7941e30830499350043060dd1ab6c44e3b39730c9933dc8eecf395cd749c",
+  "inputs_used": ["stage-02b.md", "reviewer-simplification-02.md", "outputs-02/spec-delta.md", "outputs-02/coverage.md", "outputs-02/design.md (base = review-04)", "outputs-02/cleanup-map.md (base = review-04)", "review-05/review.md"],
+  "execution_status": "succeeded",
+  "summary": "Candidate documents only. design.md was edited in place: D46-D49 confirmed, the DN placeholders removed, D45-R01..R06 kept, and the simplifications applied (no prescribed module count, no forwarding layers, no crypto ledger/signatures/keys/full chain scan, no token renewal or auto takeover, no generic workflow engine or recovery platform, one blob helper). The coverage.json link was replaced with coverage.md, and the D49 policy-source rule is spelled out. cleanup-map.md status and cross-references were updated; its historical source evidence is unchanged. tasks.md is the single candidate plan: H1-0..H1-15 with dependencies, named public interfaces, commands, observable Red cases and commits, integration checkpoint CP-1 and an independent review checkpoint, plus H2/H3 outlines with capability criteria. It uses the pinned Writing Plans methodology with a declared adaptation: no embedded full code, per coordinator instruction. validation.md gives H1 scenarios (environment, command, threshold, evidence path, coverage IDs), separate H2/H3 real requirements, and a D11 candidate CI check set that is not approved. It states that H1 is independently reviewable but is not end-to-end delivery. spec-delta.md and coverage.md were not changed in this stage.",
+  "artifacts": [
+    {"path": "outputs-02/design.md", "status": "delivered_candidate"},
+    {"path": "outputs-02/cleanup-map.md", "status": "delivered_candidate", "note": "status and references only"},
+    {"path": "outputs-02/tasks.md", "status": "delivered_candidate"},
+    {"path": "outputs-02/validation.md", "status": "delivered_candidate"},
+    {"path": "outputs-02/result-02b.json", "status": "delivered"},
+    {"path": "outputs-02/spec-delta.md", "status": "revised_by_revision-04", "note": "unchanged during 02B; later edited only for D45-S01..S06"},
+    {"path": "outputs-02/coverage.md", "status": "revised_by_revision-04", "note": "unchanged during 02B; later edited only for D45-S01..S06"},
+    {"path": "outputs-02/revision-04.json", "status": "delivered"},
+    {"path": "outputs-02/revision-05.json", "status": "delivered", "note": "D45-S07..S10 plus conservative D45-S03; fix_submitted"},
+    {"path": "outputs-02/revision-06.json", "status": "delivered", "note": "review-08 residuals D45-S03 (Herdr socket worktree), S06 (in_progress counted), S07 (tools package skeleton in task 1.1); fix_submitted"}
+  ],
+  "h1_claim": "H1 is an independently reviewable core slice validated only with fake external programs. It is not end-to-end delivery and demonstrates no real Herdr, runtime, GitHub or CI capability.",
+  "remaining_human_decisions": [
+    {"id": "D11-CI-SET", "topic": "Approve or change the candidate required check set in validation.md §4 (loopctl-ci: unit-linux, unit-macos, static; app github-actions; source head; no exceptions), then record a policy_change decision under D49"},
+    {"id": "D11-PLAN", "topic": "D11 start confirmation of the adopted design, tasks and validation, including the 45/30/30 min timeout defaults and the reviewer model ID"},
+    {"id": "WS-W1", "topic": "Confirm executing the W1 worktree attachment and the old-code removal commit (operational action)"}
+  ],
+  "policy_status": {"D46": "approved", "D47": "approved", "D48": "approved", "D49": "approved (check set not approved)"},
+  "correction_batch": {"revision": "outputs-02/revision-04.json", "findings": ["D45-S01", "D45-S02", "D45-S03", "D45-S04", "D45-S05", "D45-S06"], "status": "fix_submitted, awaiting re-review", "note": "spec-delta.md and coverage.md were edited only for this correction batch, after Stage 02B"},
+  "review_status": "review-08 verified D45-S01, S02, S04, S05, S08, S09, S10 and found no R01..R06 regression; the S03/S06/S07 residuals were fix_submitted in revision-06",
+  "pending_after_02b": ["Bounded re-review of revision-06 (D45-S03, S06, S07)", "User adoption and D11 (check set, plan, timeouts, reviewer model, W1 execution)"],
+  "s1_findings_status": "S1-R01..R17 all open",
+  "ready_for_implementation": false,
+  "product_gate_verdict": null,
+  "constraints_observed": {"modified_paths": ["outputs-02/**"], "ran_src_or_tests": false, "github_changes": false, "spawned_agents": false, "worktree_initialized": false}
+}

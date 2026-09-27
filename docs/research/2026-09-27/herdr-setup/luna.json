@@ -1,0 +1,810 @@
+{
+  "observed_at": "2026-09-27T10:43:34.210326+00:00",
+  "status": "passed_for_luna_handoff_and_explicit_resume",
+  "requested_model": "openai/gpt-6-luna",
+  "observed_models": [
+    "openai/gpt-6-luna"
+  ],
+  "authentication": "OpenCode OpenAI OAuth via ChatGPT account",
+  "native_session_id": "ses_f1d8c6311ffeZE2kCvT8P52ocj",
+  "runtime_version": "1.18.32",
+  "head": "7dfc7be5a721787bd49cf036c3119caeb7857db9",
+  "records": [
+    {
+      "assignment": {
+        "schema_version": "h0-agent-probe-v1",
+        "run_id": "herdr-h0-544w2nok",
+        "task_id": "luna-file-handoff",
+        "attempt_id": "luna-01",
+        "requested_model": "openai/gpt-6-luna",
+        "worktree": "/private/tmp/le-herdr-h0-544w2nok/worktree",
+        "head_sha": "7dfc7be5a721787bd49cf036c3119caeb7857db9",
+        "allowed_write_paths": [
+          "luna-result.json"
+        ],
+        "input": {
+          "values": [
+            3,
+            5,
+            8
+          ],
+          "expected_operation": "sum"
+        },
+        "acceptance": [
+          "Read assignment from disk",
+          "Read current git HEAD using a tool; report it as observed_head_sha",
+          "Read README.md and return its first heading",
+          "Compute the sum of input values",
+          "Write only luna-result.json; do not commit or change tracked files"
+        ],
+        "output_schema": {
+          "run_id": "copy",
+          "task_id": "copy",
+          "attempt_id": "copy",
+          "execution_status": "succeeded or blocked",
+          "observed_head_sha": "actual git head",
+          "readme_heading": "actual first heading",
+          "sum": "number",
+          "summary": "short string"
+        },
+        "result_path": "luna-result.json"
+      },
+      "result": {
+        "run_id": "herdr-h0-544w2nok",
+        "task_id": "luna-file-handoff",
+        "attempt_id": "luna-01",
+        "execution_status": "succeeded",
+        "observed_head_sha": "7dfc7be5a721787bd49cf036c3119caeb7857db9",
+        "readme_heading": "# Herdr H0 fixture",
+        "sum": 16,
+        "summary": "Read the assignment and README; verified HEAD and summed input values."
+      },
+      "result_sha256": "d0114703c8f7bbac4cf86ec9808716e88359a73cc3e006b8e7bc78a38bb83bfa"
+    },
+    {
+      "assignment": {
+        "schema_version": "h0-agent-probe-v1",
+        "run_id": "herdr-h0-544w2nok",
+        "task_id": "luna-resume-handoff",
+        "attempt_id": "luna-02",
+        "requested_model": "openai/gpt-6-luna",
+        "worktree": "/private/tmp/le-herdr-h0-544w2nok/worktree",
+        "head_sha": "7dfc7be5a721787bd49cf036c3119caeb7857db9",
+        "allowed_write_paths": [
+          "luna-resume-result.json"
+        ],
+        "input": {
+          "values": [
+            2,
+            7,
+            11
+          ],
+          "expected_operation": "sum"
+        },
+        "acceptance": [
+          "Read assignment from disk",
+          "Read current git HEAD using a tool; report it as observed_head_sha",
+          "Read README.md and return its first heading",
+          "Compute the sum of input values",
+          "Write only luna-resume-result.json; do not commit or change tracked files"
+        ],
+        "output_schema": {
+          "run_id": "copy",
+          "task_id": "copy",
+          "attempt_id": "copy",
+          "execution_status": "succeeded or blocked",
+          "observed_head_sha": "actual git head",
+          "readme_heading": "actual first heading",
+          "sum": "number",
+          "summary": "short string"
+        },
+        "result_path": "luna-resume-result.json"
+      },
+      "result": {
+        "run_id": "herdr-h0-544w2nok",
+        "task_id": "luna-resume-handoff",
+        "attempt_id": "luna-02",
+        "execution_status": "succeeded",
+        "observed_head_sha": "7dfc7be5a721787bd49cf036c3119caeb7857db9",
+        "readme_heading": "# Herdr H0 fixture",
+        "sum": 20,
+        "summary": "Read the resume assignment and README; verified HEAD and summed its input values."
+      },
+      "result_sha256": "acd6c180e423cad6c90276de10948b1c979f5e8a8fd57862e6215ca4da63bb64"
+    }
+  ],
+  "messages": [
+    {
+      "info": {
+        "id": "msg_0e2739d02001J38PqSk6U3kHlJ",
+        "sessionID": "ses_f1d8c6311ffeZE2kCvT8P52ocj",
+        "role": "user",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-6-luna"
+        },
+        "time": {
+          "created": 1790505622786
+        }
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "[redacted:text:prt_0e2739d03001x0P9Api5seUdOh]",
+          "id": "prt_0e2739d03001x0P9Api5seUdOh",
+          "sessionID": "ses_f1d8c6311ffeZE2kCvT8P52ocj",
+          "messageID": "msg_0e2739d02001J38PqSk6U3kHlJ"
+        }
+      ]
+    },
+    {
+      "info": {
+        "id": "msg_0e2739d0e001UYwgDqsP7G4S39",
+        "sessionID": "ses_f1d8c6311ffeZE2kCvT8P52ocj",
+        "role": "assistant",
+        "providerID": "openai",
+        "modelID": "gpt-6-luna",
+        "tokens": {
+          "total": 19970,
+          "input": 19933,
+          "output": 37,
+          "reasoning": 0,
+          "cache": {
+            "write": 0,
+            "read": 0
+          }
+        },
+        "cost": 0,
+        "time": {
+          "created": 1790505622798,
+          "completed": 1790505626082
+        },
+        "finish": "tool-calls"
+      },
+      "parts": [
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_aFqzAFMBsZMWa3p422MGMBHh",
+          "state": {
+            "status": "completed",
+            "input": {
+              "redacted": "tool-input:prt_0e273a6d3001ajrRshgCpTMg87"
+            },
+            "output": "[redacted:tool-output:prt_0e273a6d3001ajrRshgCpTMg87]",
+            "metadata": {
+              "redacted": "tool-state-metadata:prt_0e273a6d3001ajrRshgCpTMg87"
+            },
+            "title": "[redacted:tool-title:prt_0e273a6d3001ajrRshgCpTMg87]",
+            "time": {
+              "start": 1790505625945,
+              "end": 1790505625958
+            }
+          },
+          "metadata": {
+            "redacted": "tool-metadata:prt_0e273a6d3001ajrRshgCpTMg87"
+          },
+          "id": "prt_0e273a6d3001ajrRshgCpTMg87",
+          "sessionID": "ses_f1d8c6311ffeZE2kCvT8P52ocj",
+          "messageID": "msg_0e2739d0e001UYwgDqsP7G4S39"
+        }
+      ]
+    },
+    {
+      "info": {
+        "id": "msg_0e273a9e4001qSE33rQkYZHc5l",
+        "sessionID": "ses_f1d8c6311ffeZE2kCvT8P52ocj",
+        "role": "assistant",
+        "providerID": "openai",
+        "modelID": "gpt-6-luna",
+        "tokens": {
+          "total": 20526,
+          "input": 1490,
+          "output": 92,
+          "reasoning": 0,
+          "cache": {
+            "write": 0,
+            "read": 18944
+          }
+        },
+        "cost": 0,
+        "time": {
+          "created": 1790505626084,
+          "completed": 1790505630618
+        },
+        "finish": "tool-calls"
+      },
+      "parts": [
+        {
+          "type": "tool",
+          "tool": "bash",
+          "callID": "call_08eBE4XYK4lZgRvNxTANwdfT",
+          "state": {
+            "status": "completed",
+            "input": {
+              "redacted": "tool-input:prt_0e273bac7001ur4wFLTK6pV5SK"
+            },
+            "output": "[redacted:tool-output:prt_0e273bac7001ur4wFLTK6pV5SK]",
+            "metadata": {
+              "redacted": "tool-state-metadata:prt_0e273bac7001ur4wFLTK6pV5SK"
+            },
+            "title": "[redacted:tool-title:prt_0e273bac7001ur4wFLTK6pV5SK]",
+            "time": {
+              "start": 1790505630455,
+              "end": 1790505630520
+            }
+          },
+          "metadata": {
+            "redacted": "tool-metadata:prt_0e273bac7001ur4wFLTK6pV5SK"
+          },
+          "id": "prt_0e273bac7001ur4wFLTK6pV5SK",
+          "sessionID": "ses_f1d8c6311ffeZE2kCvT8P52ocj",
+          "messageID": "msg_0e273a9e4001qSE33rQkYZHc5l"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_1ieiZCtJPvhlcGrbkpt71r8h",
+          "state": {
+            "status": "completed",
+            "input": {
+              "redacted": "tool-input:prt_0e273bb0000141cd9rOzXQkppI"
+            },
+            "output": "[redacted:tool-output:prt_0e273bb0000141cd9rOzXQkppI]",
+            "metadata": {
+              "redacted": "tool-state-metadata:prt_0e273bb0000141cd9rOzXQkppI"
+            },
+            "title": "[redacted:tool-title:prt_0e273bb0000141cd9rOzXQkppI]",
+            "time": {
+              "start": 1790505630468,
+              "end": 1790505630484
+            }
+          },
+          "metadata": {
+            "redacted": "tool-metadata:prt_0e273bb0000141cd9rOzXQkppI"
+          },
+          "id": "prt_0e273bb0000141cd9rOzXQkppI",
+          "sessionID": "ses_f1d8c6311ffeZE2kCvT8P52ocj",
+          "messageID": "msg_0e273a9e4001qSE33rQkYZHc5l"
+        }
+      ]
+    },
+    {
+      "info": {
+        "id": "msg_0e273bb9f001Ze2dE505G09PiZ",
+        "sessionID": "ses_f1d8c6311ffeZE2kCvT8P52ocj",
+        "role": "assistant",
+        "providerID": "openai",
+        "modelID": "gpt-6-luna",
+        "tokens": {
+          "total": 20826,
+          "input": 668,
+          "output": 190,
+          "reasoning": 0,
+          "cache": {
+            "write": 0,
+            "read": 19968
+          }
+        },
+        "cost": 0,
+        "time": {
+          "created": 1790505630623,
+          "completed": 1790505635959
+        },
+        "finish": "tool-calls"
+      },
+      "parts": [
+        {
+          "type": "tool",
+          "tool": "apply_patch",
+          "callID": "call_STdNi4rFmyZRS9aDZC84TAcf",
+          "state": {
+            "status": "completed",
+            "input": {
+              "redacted": "tool-input:prt_0e273c260001It0m5M3Nss3EAD"
+            },
+            "output": "[redacted:tool-output:prt_0e273c260001It0m5M3Nss3EAD]",
+            "metadata": {
+              "redacted": "tool-state-metadata:prt_0e273c260001It0m5M3Nss3EAD"
+            },
+            "title": "[redacted:tool-title:prt_0e273c260001It0m5M3Nss3EAD]",
+            "time": {
+              "start": 1790505635759,
+              "end": 1790505635763
+            }
+          },
+          "metadata": {
+            "redacted": "tool-metadata:prt_0e273c260001It0m5M3Nss3EAD"
+          },
+          "id": "prt_0e273c260001It0m5M3Nss3EAD",
+          "sessionID": "ses_f1d8c6311ffeZE2kCvT8P52ocj",
+          "messageID": "msg_0e273bb9f001Ze2dE505G09PiZ"
+        }
+      ]
+    },
+    {
+      "info": {
+        "id": "msg_0e273d0790013kbpMVW5PtHji6",
+        "sessionID": "ses_f1d8c6311ffeZE2kCvT8P52ocj",
+        "role": "assistant",
+        "providerID": "openai",
+        "modelID": "gpt-6-luna",
+        "tokens": {
+          "total": 20859,
+          "input": 880,
+          "output": 11,
+          "reasoning": 0,
+          "cache": {
+            "write": 0,
+            "read": 19968
+          }
+        },
+        "cost": 0,
+        "time": {
+          "created": 1790505635961,
+          "completed": 1790505637973
+        },
+        "finish": "stop"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "[redacted:text:prt_0e273d60a001yVVdkUoolnqDk1]",
+          "time": {
+            "start": 1790505637386,
+            "end": 1790505637749
+          },
+          "metadata": {
+            "redacted": "text-metadata:prt_0e273d60a001yVVdkUoolnqDk1"
+          },
+          "id": "prt_0e273d60a001yVVdkUoolnqDk1",
+          "sessionID": "ses_f1d8c6311ffeZE2kCvT8P52ocj",
+          "messageID": "msg_0e273d0790013kbpMVW5PtHji6"
+        }
+      ]
+    },
+    {
+      "info": {
+        "id": "msg_0e275926f0011EhmiC5Zj0bv4Q",
+        "sessionID": "ses_f1d8c6311ffeZE2kCvT8P52ocj",
+        "role": "user",
+        "model": {
+          "providerID": "openai",
+          "modelID": "gpt-6-luna"
+        },
+        "time": {
+          "created": 1790505751151
+        }
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "[redacted:text:prt_0e2759270001y6yKgdpkT06vG1]",
+          "id": "prt_0e2759270001y6yKgdpkT06vG1",
+          "sessionID": "ses_f1d8c6311ffeZE2kCvT8P52ocj",
+          "messageID": "msg_0e275926f0011EhmiC5Zj0bv4Q"
+        }
+      ]
+    },
+    {
+      "info": {
+        "id": "msg_0e275927b0018wXFyCvnGO6kRk",
+        "sessionID": "ses_f1d8c6311ffeZE2kCvT8P52ocj",
+        "role": "assistant",
+        "providerID": "openai",
+        "modelID": "gpt-6-luna",
+        "tokens": {
+          "total": 20954,
+          "input": 20915,
+          "output": 39,
+          "reasoning": 0,
+          "cache": {
+            "write": 0,
+            "read": 0
+          }
+        },
+        "cost": 0,
+        "time": {
+          "created": 1790505751163,
+          "completed": 1790505754926
+        },
+        "finish": "tool-calls"
+      },
+      "parts": [
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_VXCU1mPqfkII71BZrGZiPXzp",
+          "state": {
+            "status": "completed",
+            "input": {
+              "redacted": "tool-input:prt_0e2759e1b001t12CKoJ34mKm4X"
+            },
+            "output": "[redacted:tool-output:prt_0e2759e1b001t12CKoJ34mKm4X]",
+            "metadata": {
+              "redacted": "tool-state-metadata:prt_0e2759e1b001t12CKoJ34mKm4X"
+            },
+            "title": "[redacted:tool-title:prt_0e2759e1b001t12CKoJ34mKm4X]",
+            "time": {
+              "start": 1790505754731,
+              "end": 1790505754737
+            }
+          },
+          "metadata": {
+            "redacted": "tool-metadata:prt_0e2759e1b001t12CKoJ34mKm4X"
+          },
+          "id": "prt_0e2759e1b001t12CKoJ34mKm4X",
+          "sessionID": "ses_f1d8c6311ffeZE2kCvT8P52ocj",
+          "messageID": "msg_0e275927b0018wXFyCvnGO6kRk"
+        }
+      ]
+    },
+    {
+      "info": {
+        "id": "msg_0e275a130001CJRrs2JVB1F6Fg",
+        "sessionID": "ses_f1d8c6311ffeZE2kCvT8P52ocj",
+        "role": "assistant",
+        "providerID": "openai",
+        "modelID": "gpt-6-luna",
+        "tokens": {
+          "total": 21519,
+          "input": 1459,
+          "output": 92,
+          "reasoning": 0,
+          "cache": {
+            "write": 0,
+            "read": 19968
+          }
+        },
+        "cost": 0,
+        "time": {
+          "created": 1790505754928,
+          "completed": 1790505758648
+        },
+        "finish": "tool-calls"
+      },
+      "parts": [
+        {
+          "type": "tool",
+          "tool": "bash",
+          "callID": "call_90gRi4V2SOsJOfV9iNNS6tzD",
+          "state": {
+            "status": "completed",
+            "input": {
+              "redacted": "tool-input:prt_0e275ae8d0016e2yQ75YuGAMzX"
+            },
+            "output": "[redacted:tool-output:prt_0e275ae8d0016e2yQ75YuGAMzX]",
+            "metadata": {
+              "redacted": "tool-state-metadata:prt_0e275ae8d0016e2yQ75YuGAMzX"
+            },
+            "title": "[redacted:tool-title:prt_0e275ae8d0016e2yQ75YuGAMzX]",
+            "time": {
+              "start": 1790505758422,
+              "end": 1790505758481
+            }
+          },
+          "metadata": {
+            "redacted": "tool-metadata:prt_0e275ae8d0016e2yQ75YuGAMzX"
+          },
+          "id": "prt_0e275ae8d0016e2yQ75YuGAMzX",
+          "sessionID": "ses_f1d8c6311ffeZE2kCvT8P52ocj",
+          "messageID": "msg_0e275a130001CJRrs2JVB1F6Fg"
+        },
+        {
+          "type": "tool",
+          "tool": "read",
+          "callID": "call_mZmGQGmDTdwqMOeRRcPWQFnK",
+          "state": {
+            "status": "completed",
+            "input": {
+              "redacted": "tool-input:prt_0e275aee5001qeGVOsrdstOOlR"
+            },
+            "output": "[redacted:tool-output:prt_0e275aee5001qeGVOsrdstOOlR]",
+            "metadata": {
+              "redacted": "tool-state-metadata:prt_0e275aee5001qeGVOsrdstOOlR"
+            },
+            "title": "[redacted:tool-title:prt_0e275aee5001qeGVOsrdstOOlR]",
+            "time": {
+              "start": 1790505758463,
+              "end": 1790505758471
+            }
+          },
+          "metadata": {
+            "redacted": "tool-metadata:prt_0e275aee5001qeGVOsrdstOOlR"
+          },
+          "id": "prt_0e275aee5001qeGVOsrdstOOlR",
+          "sessionID": "ses_f1d8c6311ffeZE2kCvT8P52ocj",
+          "messageID": "msg_0e275a130001CJRrs2JVB1F6Fg"
+        }
+      ]
+    },
+    {
+      "info": {
+        "id": "msg_0e275afbb0018fWL7IM4NiQe4D",
+        "sessionID": "ses_f1d8c6311ffeZE2kCvT8P52ocj",
+        "role": "assistant",
+        "providerID": "openai",
+        "modelID": "gpt-6-luna",
+        "tokens": {
+          "total": 21824,
+          "input": 637,
+          "output": 195,
+          "reasoning": 0,
+          "cache": {
+            "write": 0,
+            "read": 20992
+          }
+        },
+        "cost": 0,
+        "time": {
+          "created": 1790505758651,
+          "completed": 1790505765297
+        },
+        "finish": "tool-calls"
+      },
+      "parts": [
+        {
+          "type": "tool",
+          "tool": "apply_patch",
+          "callID": "call_MqrvVejTusc4fyZfc3k9N24U",
+          "state": {
+            "status": "completed",
+            "input": {
+              "redacted": "tool-input:prt_0e275b6aa0014GyLaAyujgroXD"
+            },
+            "output": "[redacted:tool-output:prt_0e275b6aa0014GyLaAyujgroXD]",
+            "metadata": {
+              "redacted": "tool-state-metadata:prt_0e275b6aa0014GyLaAyujgroXD"
+            },
+            "title": "[redacted:tool-title:prt_0e275b6aa0014GyLaAyujgroXD]",
+            "time": {
+              "start": 1790505765167,
+              "end": 1790505765170
+            }
+          },
+          "metadata": {
+            "redacted": "tool-metadata:prt_0e275b6aa0014GyLaAyujgroXD"
+          },
+          "id": "prt_0e275b6aa0014GyLaAyujgroXD",
+          "sessionID": "ses_f1d8c6311ffeZE2kCvT8P52ocj",
+          "messageID": "msg_0e275afbb0018fWL7IM4NiQe4D"
+        }
+      ]
+    },
+    {
+      "info": {
+        "id": "msg_0e275c9b3001QLcenuRnD317Nu",
+        "sessionID": "ses_f1d8c6311ffeZE2kCvT8P52ocj",
+        "role": "assistant",
+        "providerID": "openai",
+        "modelID": "gpt-6-luna",
+        "tokens": {
+          "total": 21861,
+          "input": 856,
+          "output": 13,
+          "reasoning": 0,
+          "cache": {
+            "write": 0,
+            "read": 20992
+          }
+        },
+        "cost": 0,
+        "time": {
+          "created": 1790505765299,
+          "completed": 1790505767551
+        },
+        "finish": "stop"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "[redacted:text:prt_0e275d06900103lK3lwNt8EZ8L]",
+          "time": {
+            "start": 1790505767017,
+            "end": 1790505767365
+          },
+          "metadata": {
+            "redacted": "text-metadata:prt_0e275d06900103lK3lwNt8EZ8L"
+          },
+          "id": "prt_0e275d06900103lK3lwNt8EZ8L",
+          "sessionID": "ses_f1d8c6311ffeZE2kCvT8P52ocj",
+          "messageID": "msg_0e275c9b3001QLcenuRnD317Nu"
+        }
+      ]
+    }
+  ],
+  "tracked_files_unchanged": true,
+  "resume_mode": "Explicit OpenCode --session after stopping previous agent process; not Herdr integration automatic restore",
+  "cost_note": "OAuth runtime records cost 0; not proof of no subscription quota usage or zero API price",
+  "pending": [
+    "Sonnet 5.0 provider credentials",
+    "integration-reported native ID",
+    "model cancellation during inference",
+    "reviewer permissions",
+    "full delivery loop"
+  ],
+  "server_stopped": true,
+  "worktree_retained": true,
+  "herdr_commands": [
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok pane list --workspace w3",
+      "result": {
+        "chunk_id": "6aa879",
+        "wall_time_seconds": 0.079571417,
+        "exit_code": 0,
+        "original_token_count": 101,
+        "output": "{\"id\":\"cli:pane:list\",\"result\":{\"panes\":[{\"agent_status\":\"unknown\",\"cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"focused\":false,\"foreground_cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"pane_id\":\"w3:p1\",\"revision\":0,\"scroll\":{\"max_offset_from_bottom\":0,\"offset_from_bottom\":0,\"viewport_rows\":40},\"tab_id\":\"w3:t1\",\"terminal_id\":\"term_65c7491b8540f2\",\"workspace_id\":\"w3\"}],\"type\":\"pane_list\"}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok agent start h0-luna --kind opencode --pane w3:p1 --timeout 20000 -- --pure --model openai/gpt-6-luna",
+      "result": {
+        "chunk_id": "7ef6fa",
+        "wall_time_seconds": 1.002263334,
+        "session_id": 31752,
+        "original_token_count": 0,
+        "output": ""
+      }
+    },
+    {
+      "poll_session": 31752,
+      "result": {
+        "chunk_id": "edd4ef",
+        "wall_time_seconds": 1.5583e-05,
+        "exit_code": 0,
+        "original_token_count": 133,
+        "output": "{\"id\":\"cli:agent:start\",\"result\":{\"agent\":{\"agent\":\"opencode\",\"agent_status\":\"idle\",\"cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"focused\":false,\"foreground_cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"interactive_ready\":true,\"name\":\"h0-luna\",\"pane_id\":\"w3:p1\",\"revision\":1,\"state_change_seq\":1,\"tab_id\":\"w3:t1\",\"terminal_id\":\"term_65c7491b8540f2\",\"terminal_title\":\"OpenCode\",\"terminal_title_stripped\":\"OpenCode\",\"workspace_id\":\"w3\"},\"argv\":[\"opencode\",\"--pure\",\"--model\",\"openai/gpt-6-luna\"],\"type\":\"agent_started\"}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok agent prompt h0-luna 'H0 Luna file handoff probe luna-01. Read ./luna-assignment.json and complete exactly its acceptance criteria using your tools. Write ./luna-result.json in the requested JSON format. Do not run probe.py, change tracked files, create a commit, access credentials, or call other agents. After saving the file, reply briefly with H0_LUNA_RESULT_SAVED. This is a small transport test, not product implementation.' --wait --timeout 45000",
+      "result": {
+        "chunk_id": "050284",
+        "wall_time_seconds": 1.002291542,
+        "session_id": 51136,
+        "original_token_count": 0,
+        "output": ""
+      }
+    },
+    {
+      "poll_session": 51136,
+      "result": {
+        "chunk_id": "46c0a4",
+        "wall_time_seconds": 5.001143125,
+        "session_id": 51136,
+        "original_token_count": 0,
+        "output": ""
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok agent read h0-luna --source visible",
+      "result": {
+        "chunk_id": "014c10",
+        "wall_time_seconds": 1.0792e-05,
+        "exit_code": 0,
+        "original_token_count": 375,
+        "output": "  ┃  files, create a commit, access credentials, or call other agents. After saving the file, reply briefly with\n  ┃  H0_LUNA_RESULT_SAVED. This is a small transport test, not product implementation.\n  ┃\n\n     → Read luna-assignment.json\n\n  ┃\n  ┃  $ git rev-parse HEAD\n  ┃\n  ┃  7dfc7be5a721787bd49cf036c3119caeb7857db9\n  ┃\n\n     → Read README.md [limit=20]\n\n  ┃\n  ┃  # Created luna-result.json\n  ┃\n  ┃     1 + {\n  ┃     2 +   \"run_id\": \"herdr-h0-544w2nok\",\n  ┃     3 +   \"task_id\": \"luna-file-handoff\",\n  ┃     4 +   \"attempt_id\": \"luna-01\",\n  ┃     5 +   \"execution_status\": \"succeeded\",\n  ┃     6 +   \"observed_head_sha\": \"7dfc7be5a721787bd49cf036c3119caeb7857db9\",\n  ┃     7 +   \"readme_heading\": \"# Herdr H0 fixture\",\n  ┃     8 +   \"sum\": 16,\n  ┃     9 +   \"summary\": \"Read the assignment and README; verified HEAD and summed input values.\"\n  ┃    10 + }\n  ┃\n\n     H0_LUNA_RESULT_SAVED\n\n     ▣  Build · GPT-6 Luna · 15.2s\n\n  ┃\n  ┃\n  ┃\n  ┃  Build · GPT-6 Luna OpenAI\n  ╹▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀\n   /private/tmp/le-herdr-h0-544w2nok/worktree                                             20.9K (2%)  ctrl+p commands\n"
+      }
+    },
+    {
+      "poll_session": 51136,
+      "result": {
+        "chunk_id": "4af20b",
+        "wall_time_seconds": 7.209e-06,
+        "exit_code": 0,
+        "original_token_count": 130,
+        "output": "{\"id\":\"cli:agent:prompt\",\"result\":{\"agent\":{\"agent\":\"opencode\",\"agent_status\":\"done\",\"cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"focused\":false,\"foreground_cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"interactive_ready\":true,\"name\":\"h0-luna\",\"pane_id\":\"w3:p1\",\"revision\":2,\"state_change_seq\":3,\"tab_id\":\"w3:t1\",\"terminal_id\":\"term_65c7491b8540f2\",\"terminal_title\":\"OC | H0 Luna file handoff probe\",\"terminal_title_stripped\":\"OC | H0 Luna file handoff probe\",\"workspace_id\":\"w3\"},\"type\":\"agent_prompted\"}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok agent get h0-luna",
+      "result": {
+        "chunk_id": "d2f463",
+        "wall_time_seconds": 1.025e-05,
+        "exit_code": 0,
+        "original_token_count": 128,
+        "output": "{\"id\":\"cli:agent:get\",\"result\":{\"agent\":{\"agent\":\"opencode\",\"agent_status\":\"done\",\"cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"focused\":false,\"foreground_cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"interactive_ready\":true,\"name\":\"h0-luna\",\"pane_id\":\"w3:p1\",\"revision\":2,\"state_change_seq\":3,\"tab_id\":\"w3:t1\",\"terminal_id\":\"term_65c7491b8540f2\",\"terminal_title\":\"OC | H0 Luna file handoff probe\",\"terminal_title_stripped\":\"OC | H0 Luna file handoff probe\",\"workspace_id\":\"w3\"},\"type\":\"agent_info\"}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok agent send-keys h0-luna ctrl+c",
+      "result": {
+        "chunk_id": "d91a5f",
+        "wall_time_seconds": 6.2083e-05,
+        "exit_code": 0,
+        "original_token_count": 13,
+        "output": "{\"id\":\"cli:agent:send-keys\",\"result\":{\"type\":\"ok\"}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok pane process-info --pane w3:p1",
+      "result": {
+        "chunk_id": "ce130e",
+        "wall_time_seconds": 1.0542e-05,
+        "exit_code": 0,
+        "original_token_count": 79,
+        "output": "{\"id\":\"cli:pane:process_info\",\"result\":{\"process_info\":{\"foreground_process_group_id\":99143,\"foreground_processes\":[{\"argv\":[\"/bin/sh\"],\"argv0\":\"sh\",\"cmdline\":\"/bin/sh\",\"cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"name\":\"bash\",\"pid\":99143}],\"pane_id\":\"w3:p1\",\"shell_pid\":99143},\"type\":\"pane_process_info\"}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok agent start h0-luna-resume --kind opencode --pane w3:p1 --timeout 20000 -- --pure --model openai/gpt-6-luna --session ses_f1d8c6311ffeZE2kCvT8P52ocj",
+      "result": {
+        "chunk_id": "bbc0a6",
+        "wall_time_seconds": 1.001806125,
+        "session_id": 80926,
+        "original_token_count": 0,
+        "output": ""
+      }
+    },
+    {
+      "poll_session": 80926,
+      "result": {
+        "chunk_id": "0e79cc",
+        "wall_time_seconds": 0.000120458,
+        "exit_code": 0,
+        "original_token_count": 157,
+        "output": "{\"id\":\"cli:agent:start\",\"result\":{\"agent\":{\"agent\":\"opencode\",\"agent_status\":\"idle\",\"cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"focused\":false,\"foreground_cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"interactive_ready\":true,\"name\":\"h0-luna-resume\",\"pane_id\":\"w3:p1\",\"revision\":5,\"state_change_seq\":5,\"tab_id\":\"w3:t1\",\"terminal_id\":\"term_65c7491b8540f2\",\"terminal_title\":\"OC | H0 Luna file handoff probe\",\"terminal_title_stripped\":\"OC | H0 Luna file handoff probe\",\"workspace_id\":\"w3\"},\"argv\":[\"opencode\",\"--pure\",\"--model\",\"openai/gpt-6-luna\",\"--session\",\"ses_f1d8c6311ffeZE2kCvT8P52ocj\"],\"type\":\"agent_started\"}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok agent prompt h0-luna-resume 'H0 resume verification, new attempt luna-02. Read ./luna-resume-assignment.json and complete its acceptance criteria. Write only ./luna-resume-result.json. Do not reuse the old result: the input values and attempt ID are different. Do not modify tracked files, commit, access credentials, or call other agents. After saving reply H0_LUNA_RESUME_RESULT_SAVED.' --wait --timeout 45000",
+      "result": {
+        "chunk_id": "c9cbe9",
+        "wall_time_seconds": 1.01629725,
+        "session_id": 78349,
+        "original_token_count": 0,
+        "output": ""
+      }
+    },
+    {
+      "poll_session": 78349,
+      "result": {
+        "chunk_id": "396dd4",
+        "wall_time_seconds": 2.4625e-05,
+        "exit_code": 0,
+        "original_token_count": 132,
+        "output": "{\"id\":\"cli:agent:prompt\",\"result\":{\"agent\":{\"agent\":\"opencode\",\"agent_status\":\"done\",\"cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"focused\":false,\"foreground_cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"interactive_ready\":true,\"name\":\"h0-luna-resume\",\"pane_id\":\"w3:p1\",\"revision\":5,\"state_change_seq\":7,\"tab_id\":\"w3:t1\",\"terminal_id\":\"term_65c7491b8540f2\",\"terminal_title\":\"OC | H0 Luna file handoff probe\",\"terminal_title_stripped\":\"OC | H0 Luna file handoff probe\",\"workspace_id\":\"w3\"},\"type\":\"agent_prompted\"}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok agent read h0-luna-resume --source visible",
+      "result": {
+        "chunk_id": "e0e8a4",
+        "wall_time_seconds": 1.2083e-05,
+        "exit_code": 0,
+        "original_token_count": 371,
+        "output": "  ┃  are different. Do not modify tracked files, commit, access credentials, or call other agents. After saving\n  ┃  reply H0_LUNA_RESUME_RESULT_SAVED.\n  ┃\n\n     → Read luna-resume-assignment.json\n\n  ┃\n  ┃  $ git rev-parse HEAD\n  ┃\n  ┃  7dfc7be5a721787bd49cf036c3119caeb7857db9\n  ┃\n\n     → Read README.md [limit=5]\n\n  ┃\n  ┃  # Created luna-resume-result.json\n  ┃\n  ┃     1 + {\n  ┃     2 +   \"run_id\": \"herdr-h0-544w2nok\",\n  ┃     3 +   \"task_id\": \"luna-resume-handoff\",\n  ┃     4 +   \"attempt_id\": \"luna-02\",\n  ┃     5 +   \"execution_status\": \"succeeded\",\n  ┃     6 +   \"observed_head_sha\": \"7dfc7be5a721787bd49cf036c3119caeb7857db9\",\n  ┃     7 +   \"readme_heading\": \"# Herdr H0 fixture\",\n  ┃     8 +   \"sum\": 20,\n  ┃     9 +   \"summary\": \"Read the resume assignment and README; verified HEAD and summed its input values.\"\n  ┃    10 + }\n  ┃\n\n     H0_LUNA_RESUME_RESULT_SAVED\n\n     ▣  Build · GPT-6 Luna · 16.4s\n\n  ┃\n  ┃\n  ┃\n  ┃  Build · GPT-6 Luna OpenAI\n  ╹▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀\n   /private/tmp/le-herdr-h0-544w2nok/worktree                                             21.9K (2%)  ctrl+p commands\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok agent send-keys h0-luna-resume ctrl+c",
+      "result": {
+        "chunk_id": "3c864e",
+        "wall_time_seconds": 1.1709e-05,
+        "exit_code": 0,
+        "original_token_count": 13,
+        "output": "{\"id\":\"cli:agent:send-keys\",\"result\":{\"type\":\"ok\"}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok pane process-info --pane w3:p1",
+      "result": {
+        "chunk_id": "8d8da7",
+        "wall_time_seconds": 1.0792e-05,
+        "exit_code": 0,
+        "original_token_count": 79,
+        "output": "{\"id\":\"cli:pane:process_info\",\"result\":{\"process_info\":{\"foreground_process_group_id\":99143,\"foreground_processes\":[{\"argv\":[\"/bin/sh\"],\"argv0\":\"sh\",\"cmdline\":\"/bin/sh\",\"cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"name\":\"bash\",\"pid\":99143}],\"pane_id\":\"w3:p1\",\"shell_pid\":99143},\"type\":\"pane_process_info\"}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok server stop",
+      "result": {
+        "chunk_id": "07a3e4",
+        "wall_time_seconds": 0.099295375,
+        "exit_code": 0,
+        "original_token_count": 0,
+        "output": ""
+      }
+    }
+  ]
+}

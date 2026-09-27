@@ -1,0 +1,46 @@
+{
+  "decision": "D53",
+  "recorded_in": "/Users/johnson.chiang/workspace/loop-engineering/docs/decisions.md",
+  "date": "2026-09-28",
+  "user_words": [
+    "CI 需要分 os?",
+    "8 ok",
+    "Others ok"
+  ],
+  "interpretation": "A–F approved as proposed except D uses validation §6.3 (required check unit-linux only); W1-A. '8' could not be mapped to an item; 'Others ok' covers the remaining items. Correct on user feedback.",
+  "approved_snapshot": {
+    "publication_manifest": "reviews/revision-17/publication-manifest-at-d11.json",
+    "publication_manifest_sha256": "b408e3da79d28c9a9b4d86ad66e52d569c4b977517b116f5761bdb4d97d5af60",
+    "artifacts": {
+      "README.md": "51ac67ff6382e771b73f945793b93314291ae00be1f98ace361c1fec76bdde5e",
+      "cleanup-map.md": "000c997fd5102088c74f8ccf7a3b21bfec48b08e3ca553495e25ce53226d65a5",
+      "coverage.md": "84076c5c249d8b29d6983362851ffcd9554b5434a055cfc1004038dc86d2744e",
+      "d11-confirmation.md": "0f7a520adc5c5406364c7d9b23ae89957933e03f02e9307ab787f2ea42a47020",
+      "design.md": "3944ac04c806a387a83c4c23a924949749072f9a2afabaf4b71e3901c020c66a",
+      "revision-16.json": "4fcaf0b82dbf07894683b0a5637ed25787d415a31e8a393b7f7f7c9cccd96e9f",
+      "revision-17.json": "70a701720602681567dbba5ada7e75d02b4c0cf345ada60f30f349235a30c242",
+      "spec-delta.md": "81ce7366894349d9d56493ddd1c01901a641746897c7cdf9d8aaced87e6e284b",
+      "tasks.md": "1a793b5a7e7d0397d25d7c89e956220976ad90b45712c2f569ac7e9100b77503",
+      "validation.md": "600dd217457690dde31e6f81de5cb3d3715bf838130d5c63dc038997c2b77aa1"
+    },
+    "spec_sources": {
+      "d45-02/spec-delta.md": "7ebd8d014f5765cc35767a6a4372f4871d70f1af4ef72c3cb940da11a2c18565",
+      "d45-04/spec-delta.md": "81ce7366894349d9d56493ddd1c01901a641746897c7cdf9d8aaced87e6e284b"
+    }
+  },
+  "choices": {
+    "A": "adopt revision-17 docs; compose formal specs per spec-delta §12 from the two pinned deltas",
+    "B": "product profile as design §6",
+    "C": "bootstrap allocation as tasks 派工與模型",
+    "D": "validation §6.3: required_checks = [unit-linux] (tests + ruff + mypy + dist-smoke); no unit-macos job",
+    "E": "timeouts and limits as design §4/§5/§7/§10 and validation §6.2",
+    "F": "W1 from origin/main; A0 carries current uncommitted docs as-is",
+    "W1": "W1-A (docs PR merged by user before worktree)"
+  },
+  "not_authorized": [
+    "auto merge/close/release/deploy",
+    "T8 feature selection (needs its own D11)"
+  ],
+  "next_task": "T0.1 (W1)",
+  "executed": false
+}

@@ -1,0 +1,19 @@
+{
+  "candidate/result.json": "19c133530dedd603f3534ae1e4e0737fe80ce03a821ac4a366f591c7eb4079c2",
+  "candidate/cleanup-map.md": "71abeccb5fef62826ec44fef5822815a6490f33c6efe4055b0c082c7b30e1db8",
+  "candidate/validation.md": "833a4efe882c36d3037548c194948f1e1ec6c6eee43fdbf9cdf91b2caba521f4",
+  "candidate/spec-delta.md": "d5765b3529a1482e134be1fa51697c5ac7e48f8cef6cb425b170a446d80f990b",
+  "candidate/README.md": "2e7e309a8128332aa18358547e9742539b2b12c7f997ea53e5c08e960018e9d0",
+  "candidate/tasks.md": "8a2027649ab022fb9f0795b26808823e16b960a3f296ab0c493ef20077be182e",
+  "candidate/revision-12.json": "aef0db2c5b1cfbd0a2191117a782fcbbf96cdc29e38636a78c47b08a77273974",
+  "candidate/coverage.md": "5a9977d768df1a1f468d8d15da879455ebb8f67fd09f1904657b771996355e0c",
+  "candidate/design.md": "fbcd8c72a1232aa6b535bee76bc9e2431d5eb25aed060d990b38805cdf6ee60f",
+  "inputs/delivery-gates-spec.md": "a8d68b7c03e45a55da796f8b223d7534266010af534e8c0506f36f66b0218d91",
+  "inputs/finding-resolution-spec.md": "2f37c77709d526b2259b2285c99617fe8d4a2768cb318ccf860dec8a8b6c8629",
+  "inputs/delivery-orchestration-spec.md": "a54c18f808079dfe8d2c032a574eda5411916566124909ca4149fa4a46161c25",
+  "inputs/durable-delivery-spec.md": "f873aae0d549f5f8e11cfcca801cf78610aa970d071c09fcd5776f814ca5a9f6",
+  "inputs/project-intent.md": "15965737acb1d0343c9067187fe553a9abec235658a3780e1b9ef20e328208a5",
+  "inputs/baseline-spec-delta.md": "7ebd8d014f5765cc35767a6a4372f4871d70f1af4ef72c3cb940da11a2c18565",
+  "inputs/review.md": "a85d35aa42bd048714bf13ae10138033f71a69a864dd13a5679e8680198c5849",
+  "inputs/decisions.md": "99abe0270cd108610d2fde6e4baf43f8c38d5e90e9dbb81e934e4a1db50f9377"
+}

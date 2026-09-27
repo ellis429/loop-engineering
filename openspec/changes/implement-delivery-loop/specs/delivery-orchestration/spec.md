@@ -1,28 +1,38 @@
 # Spec Delta
 
+> **D53 採用（2026-09-28）**：本文依 D11（D53）採用，由「正式 specs 原文＋D45-02 spec-delta（sha256 `7ebd8d014f5765cc35767a6a4372f4871d70f1af4ef72c3cb940da11a2c18565`）＋D45-04 spec-delta（sha256 `81ce7366894349d9d56493ddd1c01901a641746897c7cdf9d8aaced87e6e284b`）」依 D45-04 spec-delta §12 組成；逐項來源見 [source-map](../../adoption/source-map.md)。
+> - orchestrate 是同一 feature 唯一的外層協調循環；
+> - 薄 controller 是狀態、交接／版本核對、gates 與 findings 的唯一寫入與判定入口；
+> - 第一條實作路徑是 Herdr 原生 sessions／panes／worktrees（D45）。
+>
+> D47–D49 的政策邊界已併入相關 requirement。D40 的 approval、舊 S1 程式、測試與 review 只作歷史紀錄，不是本版的核准或證據。
+
 ## Purpose
 
-讓使用者透過共同 orchestrate 入口，將單一 feature 從新建或既有成果接入交付流程，並在 project 層保有來源引用、人工接受、相依啟動與有證據的 Retro 候選。本文為本 change 的D40 已核准的規格；D 編號是既有決策來源，操作名稱及細部驗收為規格化提案，並非已實作 API。
+讓使用者透過共同 orchestrate 入口，將單一 feature 從新建或既有成果接入交付流程，並在 project 層保有來源引用、人工接受、相依啟動與有證據的 Retro 候選。本文是 D45 收斂後的規格。orchestrate 協調工作並以既有 runtime 工具派工；controller 核對授權與版本，並發出允許動作。D 編號是既有決策來源；操作名稱不代表已實作的 API。
 
-本 capability 的 AC 以穩定 ID 保存；驗證對照已在 `docs/validation/implement-delivery-loop.md` 補齊，包含 D32 的 AC-O20–AC-O23 與 D34 的 AC-O24–AC-O28，均需對應驗法與預期／實際證據。目前尚無執行結果，不因文件更新而視為驗收通過。
+本 capability 的 AC 以穩定 ID 保存；驗證對照已在 D53 採用的 `docs/design-candidate/d45-04/validation.md` 補齊，包含 D32 的 AC-O20–AC-O23 與 D34 的 AC-O24–AC-O28，均需對應驗法與預期／實際證據。目前尚無執行結果，不因文件更新而視為驗收通過。
 
 ## ADDED Requirements
 
 ### Requirement: ORC-01 共同入口、角色責任與授權
 
-系統 SHALL 提供共用 `orchestrate` 入口處理 project 準備、feature start/adopt、status/resume、decision 及 Retro 意圖。Project Lead Agent SHALL 負責專案及 feature 的研究、SA／domain 釐清／grill、高層設計、roadmap／milestones、feature 拆分與 spec 準備；Implementer Agent SHALL 承接實作研究、detailed design、最終 plan／tasks 與功能交付，兩者以 spec／AC、高層設計邊界、依賴及成果交接。Project Lead SHALL 僅在使用者明確授權範圍內安排優先順序、協調及提出委派意圖；Implementer SHALL 在已核准的 scope／design 內作實作決策，超出範圍的問題交回裁決。唯一 controller SHALL 核對授權與核准 plan 後實際派工、管理狀態與 gates。系統 SHALL 允許使用者直接與任一角色協作，不綁定固定的 runtime 父子關係，也不由共同入口或父子關係推定相同決策權；D11 人工裁決與 G2 Reviewer 獨立性維持。（來源：D02、D08、D17、D20、D23、D32）
+系統 SHALL 提供共用 `orchestrate` 入口處理 project 準備、feature start/adopt、status/resume、decision 及 Retro 意圖。Project Lead Agent SHALL 負責專案及 feature 的研究、SA／domain 釐清／grill、高層設計、roadmap／milestones、feature 拆分與 spec 準備；Implementer Agent SHALL 承接實作研究、detailed design、最終 plan／tasks 與功能交付，兩者以 spec／AC、高層設計邊界、依賴及成果交接。Project Lead SHALL 僅在使用者明確授權範圍內安排優先順序、協調及提出委派意圖；Implementer SHALL 在已核准的 scope／design 內作實作決策，超出範圍的問題交回裁決。Orchestrate SHALL 是同一 feature 唯一的外層協調循環，只在 controller 發出許可後以既有 runtime 工具派工。Controller SHALL 核對授權、核准 plan、scope、依賴與預算，並是狀態、gates 與 findings 的唯一寫入入口。Controller 每次被呼叫時，完成核對或狀態更新後即返回，SHALL NOT 常駐、啟動 agents 或執行 worker 提供的命令。系統 SHALL 允許使用者直接與任一角色協作，不綁定固定的 runtime 父子關係，也不由共同入口或父子關係推定相同決策權；D11 人工裁決與 G2 Reviewer 獨立性維持。（來源：D02、D08、D17、D20、D23、D32）
+
+第一片中，adopt、Project Lead 委派、Retro 候選產生、跨 feature 依賴解除，都由 workflow／skill 與人依既有契約執行；controller 只記錄相關的 decision 與證據。未支援的 controller 入口 SHALL 明確回 `unsupported`，SHALL NOT 讓任何路徑略過 D11、G1、D27 或 owner 的核對。
 
 #### Scenario: AC-O01 直接與 Implementer 協作
 - **WHEN** 使用者直接交付已選定的 feature 給 Implementer
-- **THEN** 系統允許進入 design/plan 準備，保留 feature owner 與 controller identity，不要求經 Project Lead 轉達，也不因此取得開工確認或 scope 變更權限
+- **THEN** 系統允許進入 design/plan 準備，保留 feature owner 與協調者 identity，不要求經 Project Lead 轉達，也不因此取得開工確認或 scope 變更權限
 
 #### Scenario: AC-O02 拒絕第二個外層 loop
 - **WHEN** Implementer 的 skill、Project Lead 或另一個 session 請求派發同一 feature 的外層實作／正式 review
-- **THEN** 系統只接受經 controller 核對 plan、scope、依賴與預算的 assignment；局部 review 不可更新 G2 或繞過 controller
+- **THEN** 系統只接受經 controller 許可、由持有該 feature 協調權的 orchestrate 派出的 assignment。沒有協調權的 session 只能讀取狀態；局部 review 不能更新 G2，也不能繞過 controller。
 
 #### Scenario: AC-O18 授權 Project Lead 協調與委派
 - **WHEN** 使用者明確授權 Project Lead 在指定 roadmap／feature 範圍內協調順序與委派工作
-- **THEN** Project Lead 可在該範圍提出帶授權來源的安排，controller 核對核准 plan、依賴、scope 與預算後派發；Implementer 接收 spec／AC 與依賴、交回成果及待決事項，授權不代替 D11 開工確認或最終接受
+- **THEN** Project Lead 可在該範圍提出帶授權來源的安排，controller 核對核准 plan、依賴、scope 與預算後發出許可，由 orchestrate 以工具派發；Implementer 接收 spec／AC 與依賴、交回成果及待決事項，授權不代替 D11 開工確認或最終接受
+- **切片**：[延後] 由後續切片負責，第一片不算完成（D45-04 spec-delta §9）。
 
 #### Scenario: AC-O19 入口與 runtime 關係不授予決策權
 - **WHEN** agents 使用相同入口，或 runtime 將 Project Lead 與 Implementer 顯示為父子 sessions
@@ -50,7 +60,7 @@ Feature 的 AC SHALL 使用穩定 ID 描述情境、操作與可觀察結果，�
 
 #### Scenario: AC-O06 核准後按 plan 前進
 - **WHEN** 使用者確認 design+plan 版本，且 scope、依賴與預算符合要求
-- **THEN** controller 可依序派 task，交接每項 AC ID 與驗法；正常 finding 修正不逐 task 再要求批准
+- **THEN** controller 依序發出 task 許可，由 orchestrate 派出；交接帶每項 AC ID 與驗法。正常的 finding 修正不需逐 task 再批准。批准必須綁定已登記的 plan 版本及其 producer／校準來源；從未批准狀態經公開入口批准後，可以取得第一個合法許可。
 
 #### Scenario: AC-O07 需求變更不混入修正
 - **WHEN** 修正需要改 AC、spec 或已核准設計，或使用者提出範圍外想法
@@ -63,14 +73,18 @@ Feature 的 AC SHALL 使用穩定 ID 描述情境、操作與可觀察結果，�
 #### Scenario: AC-O08 已實作 pre-PR 接入
 - **WHEN** 原 owner 已交接，版本固定，既有 design/plan 有適用確認，程式已完成而 G1 尚待核對
 - **THEN** 系統從 G1 驗證開始；若 G1 已證明適用則核對／建立 PR 並進 checking，不重跑初始研究與實作派工
+- **切片**：[延後] 由後續切片負責，第一片不算完成（D45-04 spec-delta §9）。
 
 #### Scenario: AC-O09 Adopt 缺口
 - **WHEN** 接入資料缺 D11 確認、歷史 Red、固定 base，或有相關未提交內容／未知 writer
-- **THEN** 系統分別顯示需補的確認／證據／版本／ownership；缺確認回 planning 或 awaiting approval，其他無法安全續行項目 Blocked，不能以 pre-PR ready 通知判 G1 通過
+- **THEN** 系統分別顯示需補的確認／證據／版本／ownership；缺確認回 planning 或 awaiting approval，其他無法安全續行項目 Blocked，不能以 pre-PR ready 通知判 G1 通過。G1 以完整的核准 task／AC 集合判定；空集合或只含本次建立項目的集合 SHALL NOT 通過。
+- **切片**：[延後] 由後續切片負責，第一片不算完成（D45-04 spec-delta §9）。
 
 ### Requirement: ORC-05 交付與人工接受分離
 
 系統 SHALL 將 task execution、gate verdict、publication、feature phase、human acceptance 與 GitHub merge 事實分開呈現。PR Pass SHALL 交付含版本、三 gates 理由與 evidence、findings、限制及發布狀態的可讀 package，等待使用者接受；不自動 merge、close issue、release 或 deploy。人工決策 SHALL 保存 actor、來源、時間、問題／版本、選擇、理由與影響。（來源：D03、D09、D11、D19）
+
+Pass package SHALL 由 feature 狀態投影，不是另一份權威，也 SHALL NOT 單獨放行。它 SHALL 人可讀，並列出版本、PR identity、三 gates 的理由與結果引用、findings、限制、G3 政策來源與 GitHub rules 是否核對、發布狀態，以及 acceptance 為 pending。
 
 #### Scenario: AC-O10 Pass 尚未接受或 merge
 - **WHEN** 目前版本三 gates 已通過而使用者尚未接受
@@ -83,6 +97,8 @@ Feature 的 AC SHALL 使用穩定 ID 描述情境、操作與可觀察結果，�
 ### Requirement: ORC-06 相依 feature 的啟動條件
 
 系統 SHALL 在有依賴的下一 feature 開始實作前，核對上游指定版本已人工接受、GitHub 已 merge，且本次採用 baseline 包含所依賴成果。等待期間 SHALL 允許準備 spec/design；Project 薄層保存 refs 與等待原因，不以 PR Pass、accepted 或舊 merged 標記代替三項核對。（來源：D27）
+
+依賴 controller 本身的第一個 feature，SHALL 在 bootstrap PR 已經人工 accepted、實際 merge，並登記 baseline 之後才開始；SHALL NOT 自動 merge。第一片中，AC-O12、AC-O13 由 skill 與人核對，controller 不自動解除等待。
 
 #### Scenario: AC-O12 上游 accepted 但未 merge
 - **WHEN** 上游已 accepted，PR 仍 open
@@ -99,14 +115,15 @@ Feature 的 AC SHALL 使用穩定 ID 描述情境、操作與可觀察結果，�
 #### Scenario: AC-O14 重複接受事件
 - **WHEN** 同一 acceptance identity／版本被重送或於 restart 後讀到
 - **THEN** 系統查回同一 Retro operation/result，不重複產出；輸出明列證據與尚未涵蓋階段，變更是否落地仍依既有決策權限
+- **切片**：[延後] 由後續切片負責，第一片不算完成（D45-04 spec-delta §9）。
 
 #### Scenario: AC-O15 暫停的 P03 試用
-- **WHEN** 使用者只查看流程／此規格，尚未明確開始 P03 Retro 或恢復 PR trial，也未回答 Q-TARGET
-- **THEN** 系統不接管 P03、不啟動 Retro 或 PR gating；保留待確認 feature/session、交接版本與原 owner 資訊
+- **WHEN** 使用者只查看流程或規格，尚未以明確的 `init` 或授權啟動某項工作（例如暫停中的試用或 Retro）
+- **THEN** 系統 SHALL NOT 接管該工作，也 SHALL NOT 啟動 Retro 或 PR gating；待確認的 feature／session、交接版本與原 owner 只記錄在 handoff。產品 SHALL NOT 含針對特定歷史試用（例如 P03、Q-TARGET）的特判。
 
 ### Requirement: ORC-08 方法交接不新增排程器
 
-系統 SHALL 記錄所採 authoring／planning 方法與唯一 spec、design、plan／tasks 的原生 binding，不因不同角色或技能各產生一套可獨立漂移的權威。D31 的 Matt to-spec／OpenSpec／Writing Plans 組合已重新評估；既有 OpenSpec 文件 SHALL 保留其來源與身份，工具候選不視為已選定或已驗證整合。整合 SHALL 保存 skill 引用版本、觸發／user-only 限制及格式／execution handoff 的調整，工作結果交回唯一 controller，不自動啟動另一套外層 loop；D26 的 TDD／例外要求維持，Retro 自動化須明示整合方法與輸出契約。（來源：D02、D07、D19、D26、D28；D31 選型狀態修訂、D32）
+系統 SHALL 記錄所採 authoring／planning 方法與唯一 spec、design、plan／tasks 的原生 binding，不因不同角色或技能各產生一套可獨立漂移的權威。D31 的 Matt to-spec／OpenSpec／Writing Plans 組合已重新評估；既有 OpenSpec 文件 SHALL 保留其來源與身份，工具候選不視為已選定或已驗證整合。整合 SHALL 保存 skill 引用版本、觸發／user-only 限制及格式／execution handoff 的調整，工作結果交回 controller 核對與記錄；只有 orchestrate 維持外層 loop，其他 skills SHALL NOT 啟動另一套外層 loop；D26 的 TDD／例外要求維持，Retro 自動化須明示整合方法與輸出契約。（來源：D02、D07、D19、D26、D28；D31 選型狀態修訂、D32）
 
 #### Scenario: AC-O16 Skills 交回 controller
 - **WHEN** plan、TDD 或局部 review 方法完成一個工作單位
@@ -142,11 +159,11 @@ Implementer SHALL 承接 feature spec／AC、project baseline 與高層設計，
 
 #### Scenario: AC-O23 詳細設計發現跨 feature 影響
 - **WHEN** Implementer 發現任務調整需要改 AC、突破高層設計限制或改變其他 feature 依賴的契約
-- **THEN** 保存具體影響與待決事項，交 Project Lead 分析並回使用者裁決；未取得適用決策前不依該變更派工，核准範圍內未受影響的工作可依現有計畫繼續
+- **THEN** 保存具體影響與待決事項，交 Project Lead 分析並回使用者裁決；未取得適用決策前 SHALL NOT 依該變更派工。第一片：整個 run SHALL 停下等待批准，不派任何新 attempt（d4、W-C）。**[延後 S2]**：核准範圍內未受影響的工作依現有計畫繼續；第一片不算完成。
 
 ### Requirement: ORC-12 Project Lead 的 Research 與 SA 階段契約
 
-系統 SHALL 在 project 需求準備、feature 需求準備或重開需求分析時，讓 Project Lead 依 [SA 階段契約](../../../../../docs/project-lead-sa.md) 工作，記錄層級、適用 baseline、需求／AC IDs、來源版本與待決影響。Project Lead SHALL 先查證，再每輪提出 1–3 個需使用者取捨的問題，區分事實、假設、建議與已確認需求；研究、CONTEXT、Spec 與 Design／ADR 各保存其責任內容，不建立同義權威副本。SA SHALL 以七項內容的實質充分性判斷能否進入 Design，交使用者確認適用版本；核心 scope／行為／驗收仍有阻擋或僅填滿模板時不得宣告 ready。已有適用來源與確認 SHALL 可沿用；此確認不得取代 D11 開工確認。SA 範圍 SHALL 不包含 detailed design、implementation plan 或產品程式碼修改；必要可行性查證可進行，prototype／環境變更先提出目的及範圍並依適用授權處理。工具候選不構成已選定或已驗證的方法。（來源：D19、D31、D32、D34；七項內容及交接語意由使用者 prompt 具體化）
+系統 SHALL 在 project 需求準備、feature 需求準備或重開需求分析時，讓 Project Lead 依 [SA 階段契約](../../../../../docs/workflow/project-lead-sa.md) 工作，記錄層級、適用 baseline、需求／AC IDs、來源版本與待決影響。Project Lead SHALL 先查證，再每輪提出 1–3 個需使用者取捨的問題，區分事實、假設、建議與已確認需求；研究、CONTEXT、Spec 與 Design／ADR 各保存其責任內容，不建立同義權威副本。SA SHALL 以七項內容的實質充分性判斷能否進入 Design，交使用者確認適用版本；核心 scope／行為／驗收仍有阻擋或僅填滿模板時不得宣告 ready。已有適用來源與確認 SHALL 可沿用；此確認不得取代 D11 開工確認。SA 範圍 SHALL 不包含 detailed design、implementation plan 或產品程式碼修改；必要可行性查證可進行，prototype／環境變更先提出目的及範圍並依適用授權處理。工具候選不構成已選定或已驗證的方法。（來源：D19、D31、D32、D34；七項內容及交接語意由使用者 prompt 具體化）
 
 #### Scenario: AC-O24 專案與功能的分析深度
 - **WHEN** Project Lead 準備 project roadmap，之後再準備其中一個 feature

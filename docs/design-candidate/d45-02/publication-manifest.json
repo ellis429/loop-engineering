@@ -1,0 +1,119 @@
+{
+  "status": "ready_for_human_review for H1 candidate; zero residual document blockers; no D11/product implementation/gates",
+  "files": [
+    {
+      "file": "cleanup-map.md",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/review-09/cleanup-map.md",
+      "source_sha256": "93f40005c0fe05c90ad5299278a528dea8d51330541fd1005ccfce24dc58d46c",
+      "published_sha256": "f4d092ed2a5f88fc7d71b5eb259e8fb07df6de81a82a1f6b402257b87301691e",
+      "link_only_transformations": [
+        {
+          "from": "../source-inventory.json",
+          "to": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/source-inventory.json"
+        }
+      ]
+    },
+    {
+      "file": "coverage.md",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/review-09/coverage.md",
+      "source_sha256": "d43942163de3339fa7c76c0531db1a3a10e52a40a3a7d2e6d9b6c0d56fd63d97",
+      "published_sha256": "2bab038ca6168dc12a565464264d3259526f796834c1ab3be4752b00806b0573",
+      "link_only_transformations": [
+        {
+          "from": "../inputs/docs/harness/scope-reconciliation.md",
+          "to": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/inputs/docs/harness/scope-reconciliation.md"
+        }
+      ]
+    },
+    {
+      "file": "design.md",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/review-09/design.md",
+      "source_sha256": "bfb0f0341fc7d1b483b456e50a93270b90d83311926cbb5db9e129123282186f",
+      "published_sha256": "0293e3d966a2e3c1b13d4e341a09318fd0dd48a0b78ee51a3da30f465b5648ea",
+      "link_only_transformations": [
+        {
+          "from": "../inputs/openspec/changes/implement-delivery-loop/proposal.md",
+          "to": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/inputs/openspec/changes/implement-delivery-loop/proposal.md"
+        },
+        {
+          "from": "../inputs/docs/harness/scope-reconciliation.md",
+          "to": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/inputs/docs/harness/scope-reconciliation.md"
+        },
+        {
+          "from": "../inputs/docs/research/2026-09-27/herdr-setup.md",
+          "to": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/inputs/docs/research/2026-09-27/herdr-setup.md"
+        }
+      ]
+    },
+    {
+      "file": "result-02a.json",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/review-09/result-02a.json",
+      "source_sha256": "33668da146481bc1817acf053b1fcd24b4cabf5355250bb8c4d2527c6add372c",
+      "published_sha256": "33668da146481bc1817acf053b1fcd24b4cabf5355250bb8c4d2527c6add372c",
+      "link_only_transformations": []
+    },
+    {
+      "file": "result-02b.json",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/review-09/result-02b.json",
+      "source_sha256": "0e4008169057b1df14c1389a83114c995047f84d5f2e3587fe58d4d904da5ab6",
+      "published_sha256": "0e4008169057b1df14c1389a83114c995047f84d5f2e3587fe58d4d904da5ab6",
+      "link_only_transformations": []
+    },
+    {
+      "file": "revision-04.json",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/review-09/revision-04.json",
+      "source_sha256": "c0272621e65d18c646b1157e0982dec63e9a3a3e04f7e325ee15583646e1b9bd",
+      "published_sha256": "c0272621e65d18c646b1157e0982dec63e9a3a3e04f7e325ee15583646e1b9bd",
+      "link_only_transformations": []
+    },
+    {
+      "file": "revision-05.json",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/review-09/revision-05.json",
+      "source_sha256": "b65a400de74f51027a7bdd0b932e2a6327b5167b9682a5fed2f1278479123755",
+      "published_sha256": "b65a400de74f51027a7bdd0b932e2a6327b5167b9682a5fed2f1278479123755",
+      "link_only_transformations": []
+    },
+    {
+      "file": "revision-06.json",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/review-09/revision-06.json",
+      "source_sha256": "58969a068603b8c1a33c1edb5d230e9cc8f90784fb045e9a0fbd6621545dd21f",
+      "published_sha256": "58969a068603b8c1a33c1edb5d230e9cc8f90784fb045e9a0fbd6621545dd21f",
+      "link_only_transformations": []
+    },
+    {
+      "file": "spec-delta.md",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/review-09/spec-delta.md",
+      "source_sha256": "7ebd8d014f5765cc35767a6a4372f4871d70f1af4ef72c3cb940da11a2c18565",
+      "published_sha256": "7ebd8d014f5765cc35767a6a4372f4871d70f1af4ef72c3cb940da11a2c18565",
+      "link_only_transformations": []
+    },
+    {
+      "file": "tasks.md",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/review-09/tasks.md",
+      "source_sha256": "7aa1a49036e81c5fb909031a9df72cecfc574889f4e6a98ad825c0a8dac2804e",
+      "published_sha256": "7aa1a49036e81c5fb909031a9df72cecfc574889f4e6a98ad825c0a8dac2804e",
+      "link_only_transformations": []
+    },
+    {
+      "file": "validation.md",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/review-09/validation.md",
+      "source_sha256": "c1aecd0b867f6d1199cda71ca80b21ad1b3cd50f3f327f25d2af8f455b379b20",
+      "published_sha256": "c1aecd0b867f6d1199cda71ca80b21ad1b3cd50f3f327f25d2af8f455b379b20",
+      "link_only_transformations": []
+    }
+  ],
+  "unresolved_links": [],
+  "source_code_copied": false,
+  "review": [
+    {
+      "file": "review.md",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/review-09/review.md",
+      "sha256": "9ced0adca15d2fd50bf083a87289575f868f84843fc08c63c20fba154c1f12e7"
+    },
+    {
+      "file": "review-result.json",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/review-09/review-result.json",
+      "sha256": "64ff7f328dc1e75b04f39d031f98db844bc4de9556f5fd7f341d2424eaf7651b"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "source": "native Claude session metadata",
+  "session": "8c4fbb2f-2ae4-442f-ba3d-e1e9eced8df2",
+  "herdr_session": "le-design-d45-01",
+  "agent": "opus-design-d45",
+  "latest_observation": {
+    "timestamp": "2026-09-27T15:25:32.381Z",
+    "model": "claude-opus-5-5",
+    "message_id": "msg_011CfUBCumwnQeT8z82J4DqG"
+  },
+  "scope": "document author only; not product runtime preflight"
+}

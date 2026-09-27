@@ -6,7 +6,7 @@
 
 已選擇一個 lead agent、一個持久化 controller，以及 Orca supervised workers。Lead agent 協助需求與 finding 判斷；controller 擁有排程、版本驗證、狀態轉移、重試與發布。Orca Run/Task/Dispatch 只承擔執行身分與生命週期。
 
-2026-09-26 依 D14 修訂：建議採 Python CLI、人可讀 JSON／YAML 與不可覆寫的 evidence files，移除 SQLite 提案。本機 Python 3.10.10、uv 0.11.24 已查核，正式最低 Python 版本會在 design 選定。狀態一致性使用單一 writer、檔案鎖與原子 snapshot 替換，詳見 [檔案狀態設計](../../file-state.md)。Runtime adapters 應位於窄介面後，state machine 不直接讀自由文字終端輸出。
+2026-09-26 依 D14 修訂：建議採 Python CLI、人可讀 JSON／YAML 與不可覆寫的 evidence files，移除 SQLite 提案。本機 Python 3.10.10、uv 0.11.24 已查核，正式最低 Python 版本會在 design 選定。狀態一致性使用單一 writer、檔案鎖與原子 snapshot 替換，詳見 [檔案狀態設計](../../harness/history/file-state.md)。Runtime adapters 應位於窄介面後，state machine 不直接讀自由文字終端輸出。
 
 測試邊界是對使用者有意義的行為：restart 不重派、舊版本不放行、部分結果保留、未解決阻擋不消失、發文失敗只重試發文。不要用驗證私有函式呼叫次數取代上述可觀察結果。
 

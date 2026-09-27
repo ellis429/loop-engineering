@@ -28,7 +28,7 @@ Agent Teams 請求 [#12661](https://github.com/anomalyco/opencode/issues/12661) 
 ## 權限與認證
 
 - 官方設定支援 agent 權限與 `edit`／`bash` 規則；Reviewer 應禁用 edit。Bash 若開放，需足以防止寫入作者分支及繞過限制的白名單與隔離；也可由 controller 的 test runner 執行指定驗證。只 deny edit 不等於所有工具都唯讀。[Permissions](https://opencode.ai/docs/permissions/)
-- 若 runtime 只回原生 messages，adapter 保存原文並寫 result，記錄 adapter、session/message IDs 與 digest；Reviewer 不需為了交 result 而取得一般檔案寫入權。結果寫檔與真正證據有效性分開驗證，見 [執行契約](../../workflow-contracts.md#派工與結果)。
+- 若 runtime 只回原生 messages，adapter 保存原文並寫 result，記錄 adapter、session/message IDs 與 digest；Reviewer 不需為了交 result 而取得一般檔案寫入權。結果寫檔與真正證據有效性分開驗證，見 [執行契約](../../workflow/contracts.md#派工與結果)。
 - 官方 OpenAI provider 文件列出 ChatGPT 登入及 API key；原生 Anthropic provider 的 API key 路徑有文件依據。本版本文件同時留有 Pro/Max 登入敘述與「1.3.0 起不再內建相關 plugin」說明，不能把前者當成已支援或已授權的登入方式。本輪未登入或測試任一 provider，也未改 credential 設定。[Providers](https://opencode.ai/docs/providers/)、[固定版本 provider 文件](https://github.com/anomalyco/opencode/blob/545f51d26cc39a907d2867492d498d9607ea5fa4/packages/web/src/content/docs/providers.mdx#L332)
 
 ## Orca：同版本查證與更正
@@ -53,4 +53,4 @@ Durable enqueue、pull/check 與 ack 的既有研究沿用 [orca-capabilities.md
 - Permission/question 事件可由外部 controller 正確識別與回覆，特別是子 session 的詢問；未知權限問題不默認批准。
 - 結果先落檔再通知；crash、遺失事件、同 attempt 重複回傳及外部狀態不明仍符合既有 controller 契約。
 
-Runtime 候選的研究不等於已選 runtime。後續 D30 確認 workflow／controller 核心與底層 runtime/model 實作解耦；使用者已撤回「改用 model」的誤輸入，因此「獨立 Codex」的 runtime/model 定義及是否採用 opencode 仍待選定。這項架構原則不改變上述固定版本研究事實。正式 V4 範圍仍以 [Workflow Design v1](../../workflow-design.md#10-驗證與交付順序) 為準。
+Runtime 候選的研究不等於已選 runtime。後續 D30 確認 workflow／controller 核心與底層 runtime/model 實作解耦；使用者已撤回「改用 model」的誤輸入，因此「獨立 Codex」的 runtime/model 定義及是否採用 opencode 仍待選定。這項架構原則不改變上述固定版本研究事實。正式 V4 範圍仍以 [Workflow Design v1](../../workflow/overview.md#10-驗證與交付順序) 為準。

@@ -1,0 +1,128 @@
+{
+  "observed_at": "2026-09-27T10:01:06.220392+00:00",
+  "platform": "Darwin",
+  "arch": "arm64",
+  "herdr_binary": "/Users/johnson.chiang/.local/bin/herdr",
+  "binary_sha256": "5fc7a7e7adfaca56fa80aa89dcb025693357268dab8285b9ce2d08a2313c89de",
+  "herdr_env": null,
+  "managed_pane": false,
+  "records": {
+    "herdr-skill": {
+      "argv": [
+        "herdr",
+        "--skill"
+      ],
+      "exit_code": 0,
+      "sha256": "03855a7a1f9d0aa1ba6444fed2e4971adf796e91e73001d8f2472f5f9e5f659f",
+      "source_snapshot": "/private/tmp/loop-engineering-herdr-h0-20260927/herdr-skill.md"
+    },
+    "herdr-help": {
+      "argv": [
+        "herdr",
+        "--help"
+      ],
+      "exit_code": 0,
+      "sha256": "7b6cbcf26b5773e0b4da8011f53d5b5899b752e730af6fcb121583781794ea0d",
+      "stdout": "herdr — terminal workspace manager for AI coding agents\n\nUsage: herdr [options]\n       herdr --session <name> [options]\n       herdr --machine <label-or-id> <command>\n       herdr --remote <ssh-target> [--session <name>]\n       herdr session attach <name>\n       herdr completion zsh\n       herdr update [--handoff]\n       herdr channel set <stable|preview>\n       herdr machine <subcommand> ...\n       herdr server stop\n       herdr server reload-config\n       herdr api <subcommand> ...\n       herdr completion <shell>\n       herdr config <subcommand> ...\n       herdr channel <subcommand> ...\n       herdr workspace <subcommand> ...\n       herdr worktree <subcommand> ...\n       herdr tab <subcommand> ...\n       herdr notification <subcommand> ...\n       herdr agent <subcommand> ...\n       herdr pane <subcommand> ...\n       herdr session <subcommand> ...\n       herdr integration <subcommand> ...\n\nCommon commands:\n  herdr                            Launch or attach to the persistent session\n  herdr status [server|client]     Show local client and running server status\n  herdr update                     Download and install the latest version\n  herdr completion zsh             Generate shell completions for zsh\n  herdr server stop                Stop the running server via the API socket\n  herdr channel set <stable|preview> Choose the stable or preview update channel\n  herdr server reload-config       Reload config.toml in the running server\n  herdr config reset-keys          Back up config.toml and remove custom keybindings\n  herdr channel <subcommand>       Manage the stable or preview update channel\n  herdr machine <subcommand>       Manage saved SSH machines\n  herdr api <subcommand>           Inspect socket API metadata and live runtime state\n  herdr workspace <subcommand>     Workspace helpers over the socket API\n  herdr worktree <subcommand>      Git worktree helpers over the socket API\n  herdr tab <subcommand>           Tab helpers over the socket API\n  herdr notification <subcommand>  Notification helpers over the socket API\n  herdr agent <subcommand>         Agent/terminal helpers over the socket API\n  herdr pane <subcommand>          Pane control helpers over the socket API\n  herdr session <subcommand>       Manage named persistent sessions\n  herdr integration <subcommand>   Manage built-in agent integrations\n\nAdvanced commands:\n  herdr server                     Run as headless server\n\nOptions:\n  --session <name>    Use or create a named persistent session\n  --machine <label-or-id>  Run an API command on a saved SSH machine\n  --remote <target>   Attach through SSH to a remote Herdr server\n  --remote-keybindings <local|server>\n                      Keybindings for --remote app attach (default: local)\n  --handoff           Opt into live handoff for update or remote attach\n  --default-config    Print default configuration and exit\n  --skill             Print the agent skill file and exit\n  --version, -V       Print version and exit\n  --help, -h          Show this help\n\nConfig: /Users/johnson.chiang/.config/herdr/config.toml\nLogs:   /Users/johnson.chiang/.config/herdr/herdr.log (plus herdr-client.log, herdr-server.log)\nEnv:    HERDR_CONFIG_PATH overrides config file path\nHome:   https://herdr.dev\n\nAre you an AI? Use these resources ONLY IF your task specifically asks you to:\n  Help a human understand or set up Herdr for the first time:\n    https://herdr.dev/agent-guide.md\n  Debug or investigate a problem with Herdr:\n    https://herdr.dev/llms.txt\n  Control Herdr panes, agents, or workspaces:\n    SKIP if a Herdr skill is already in your context. Otherwise run: herdr --skill\n",
+      "source_snapshot": "/private/tmp/loop-engineering-herdr-h0-20260927/herdr-help.txt"
+    },
+    "herdr-agent-help": {
+      "argv": [
+        "herdr",
+        "agent",
+        "--help"
+      ],
+      "exit_code": 0,
+      "sha256": "f52a6553d333765e86d14ed6c02c35b2e26efd73c7a66e8dd5151de2f70ac423",
+      "stdout": "Control and inspect agent panes\n\nUsage: herdr agent [COMMAND]\n\nCommands:\n  list       List agents\n  get        Show an agent\n  read       Read agent terminal output\n  send-keys  Send key presses to an agent\n  prompt     Submit a prompt to an agent\n  rename     Rename an agent\n  focus      Focus an agent\n  wait       Wait until an agent reaches one of the requested states\n  attach     Attach directly to an agent terminal\n  start      Start a supported interactive agent in an existing pane\n  explain    Explain agent detection state\n\nAre you an AI? Use these resources ONLY IF your task specifically asks you to:\n  Help a human understand or set up Herdr for the first time:\n    https://herdr.dev/agent-guide.md\n  Debug or investigate a problem with Herdr:\n    https://herdr.dev/llms.txt\n  Control Herdr panes, agents, or workspaces:\n    SKIP if a Herdr skill is already in your context. Otherwise run: herdr --skill\n\n",
+      "source_snapshot": "/private/tmp/loop-engineering-herdr-h0-20260927/herdr-agent-help.txt"
+    },
+    "herdr-worktree-help": {
+      "argv": [
+        "herdr",
+        "worktree",
+        "--help"
+      ],
+      "exit_code": 0,
+      "sha256": "0254321d93b6e73e5edbf4265958458c6bb60d991b8cb841db2cdbd8917f3537",
+      "stdout": "Manage Git worktree-backed workspaces\n\nUsage: herdr worktree [COMMAND]\n\nCommands:\n  list    List worktree workspaces\n  create  Create and open a Git worktree\n  open    Open an existing Git worktree\n  remove  Remove a worktree checkout\n\nAre you an AI? Use these resources ONLY IF your task specifically asks you to:\n  Help a human understand or set up Herdr for the first time:\n    https://herdr.dev/agent-guide.md\n  Debug or investigate a problem with Herdr:\n    https://herdr.dev/llms.txt\n  Control Herdr panes, agents, or workspaces:\n    SKIP if a Herdr skill is already in your context. Otherwise run: herdr --skill\n\n",
+      "source_snapshot": "/private/tmp/loop-engineering-herdr-h0-20260927/herdr-worktree-help.txt"
+    },
+    "herdr-session-help": {
+      "argv": [
+        "herdr",
+        "session",
+        "--help"
+      ],
+      "exit_code": 0,
+      "sha256": "c07e477f82bdef8e2e34e73595d8b0a54c54ed6b663b848e076a8ee7c65b1720",
+      "stdout": "Manage named persistent sessions\n\nUsage: herdr session [COMMAND]\n\nCommands:\n  list    List sessions\n  attach  Attach to a session\n  stop    Stop a session\n  delete  Delete a stopped session\n\nAre you an AI? Use these resources ONLY IF your task specifically asks you to:\n  Help a human understand or set up Herdr for the first time:\n    https://herdr.dev/agent-guide.md\n  Debug or investigate a problem with Herdr:\n    https://herdr.dev/llms.txt\n  Control Herdr panes, agents, or workspaces:\n    SKIP if a Herdr skill is already in your context. Otherwise run: herdr --skill\n\n",
+      "source_snapshot": "/private/tmp/loop-engineering-herdr-h0-20260927/herdr-session-help.txt"
+    },
+    "herdr-version": {
+      "argv": [
+        "herdr",
+        "--version"
+      ],
+      "exit_code": 0,
+      "sha256": "90f319c32a8166770c9173feb8dbe7d17190da9586fbc4622c6eb0be39f893da",
+      "stdout": "herdr 0.9.1\n",
+      "source_snapshot": "/private/tmp/loop-engineering-herdr-h0-20260927/herdr-version.txt"
+    }
+  },
+  "native_controls_run": false,
+  "inference_run": false,
+  "snapshot_at": "2026-09-27T10:09:59.406019+00:00",
+  "additional_readonly_commands": [
+    {
+      "argv": [
+        "/Users/johnson.chiang/.local/bin/herdr",
+        "agent",
+        "start",
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "Start a supported interactive agent in an existing pane\n\nUsage: herdr agent start <NAME> --kind <KIND> --pane <ID> [OPTIONS] [-- [AGENT_ARG]...]\n\nArguments:\n  <NAME>\n          \n\n  [AGENT_ARG]...\n          \n\nOptions:\n      --kind <KIND>\n          Supported agent kind and canonical executable\n          \n          [possible values: pi, claude, codex, gemini, cursor, devin, agy, cline, omp, mastracode, opencode, copilot, kimi, kiro, droid, amp, grok, hermes, kilo, qodercli, qwen, letta, maki, muse]\n\n      --pane <ID>\n          Existing pane at an interactive shell prompt\n\n      --timeout <MS>\n          Wait for interactive readiness (default: 30000; max: 300000)\n\nThe pane must be at its interactive shell prompt. Success means the expected agent was detected in the same terminal and is ready for input.\n\nnext: herdr agent prompt <TARGET> <TEXT> --wait\n\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/johnson.chiang/.local/bin/herdr",
+        "worktree",
+        "create",
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "Create and open a Git worktree\n\nUsage: herdr worktree create [OPTIONS]\n\nOptions:\n      --workspace <ID>\n          \n\n      --cwd <PATH>\n          \n\n      --branch <NAME>\n          \n\n      --base <REF>\n          \n\n      --path <PATH>\n          \n\n      --label <TEXT>\n          \n\n      --focus\n          \n\n      --no-focus\n          \n\n      --trust-repository\n\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/johnson.chiang/.local/bin/opencode",
+        "--version"
+      ],
+      "exit_code": 0,
+      "stdout": "1.18.32\n",
+      "stderr": ""
+    }
+  ],
+  "opencode_auth_observation": {
+    "argv": [
+      "opencode",
+      "auth",
+      "list"
+    ],
+    "exit_code": 0,
+    "stored_credentials_count": 0,
+    "detected_environment_providers": [
+      "Vertex (Anthropic)",
+      "Vertex"
+    ],
+    "credential_values_recorded": false,
+    "provider_usability_verified": false
+  },
+  "official_setup_guide": {
+    "url": "https://herdr.dev/agent-guide.md",
+    "snapshot_sha256": "088652fe2098c0af8fba8bfa12dfe2d6de802ccab9fc1f8eac42a5b6c2a6dba7"
+  }
+}

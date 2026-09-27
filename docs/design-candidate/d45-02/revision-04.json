@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "revision_id": "design-02-rev-04",
+  "run_id": "herdr-design-d45",
+  "task_id": "thin-controller-design",
+  "attempt_id": "design-02",
+  "author": {"role": "implementer", "model_self_reported": "claude-opus-5-5"},
+  "input_reviews": [
+    {"source": "review-05/review.md", "verdict": "changes_required", "scope": "Stage 02A spec-delta.md and coverage.md", "findings": ["D45-S01", "D45-S02"]},
+    {"source": "review-06/review.md and review-06/review-result.json", "verdict": "changes_required", "scope": "design.md and cleanup-map.md", "reviewed_sha256": {"design.md": "dad2422db6691776d26806f707cb2f8466f27df30985bc1e7759225c1c858ba8", "cleanup-map.md": "18063238a186048dc2079c712ee7a01d2c7f6bfdc0c1b8e4afbc02f6ed77675b"}, "manifest_sha256": "cd0be3a4170066b53afac650fad3d92051570bf3969ed6b6dce84d43e721bae4", "findings": ["D45-S03", "D45-S04", "D45-S05", "D45-S06"]}
+  ],
+  "review_files_modified": false,
+  "revised_artifact_sha256": null,
+  "revised_artifact_sha256_note": "Not computed: only Read/Write/Edit/Glob/Grep are allowed. The reviewer should hash the current outputs-02 files.",
+  "scope": "One focused correction batch. No new policy approval: these changes restore existing boundaries. No architecture expansion: no supervisor, fencing service, queue, scheduler or recovery platform. D45-R01..R06 fixes are preserved.",
+  "responses": [
+    {
+      "finding_id": "D45-S01",
+      "status": "fix_submitted",
+      "change": "FIN-03 now uses the reviewer's replacement: correctable findings within the approved scope/spec/AC/design, including document defects and missing required verification, plus correctable CI failures, may enter a correction batch. CI policy-source unknown and infrastructure failures are not correction items. Anything that needs a scope/spec/AC/design change still returns to the user via D11. The complete-assignment requirement is kept. AC-F05 THEN is extended. Coverage adds a planned documentation/verification finding → fix → independent re-review case, clearly marked as not executed. design §6 and §12, tasks 10.1 and 14.1, and validation V-H1-10 and V-H1-S are aligned.",
+      "locations": ["outputs-02/spec-delta.md FIN-03 (line 276), AC-F05, §5 table", "outputs-02/coverage.md AC-F05 row", "outputs-02/design.md §6 classification, §12 eligibility", "outputs-02/tasks.md 10.1, 14.1", "outputs-02/validation.md V-H1-10, V-H1-S"]
+    },
+    {
+      "finding_id": "D45-S02",
+      "status": "fix_submitted",
+      "change": "The final sentence of DUR-02 is replaced with the reviewer's wording: evidence is kept and the feature Blocked only for checkable identity, version, digest, lineage or state-tampering mismatches; there is no promise to detect or prevent coordinated same-OS-account forgery (D48). The coverage AC-D02 row is aligned, and the validation plan claims no detection of coordinated forgery.",
+      "locations": ["outputs-02/spec-delta.md DUR-02 (line 195), §5 table", "outputs-02/coverage.md AC-D02 row"]
+    },
+    {
+      "finding_id": "D45-S03",
+      "status": "fix_submitted",
+      "change": "Not-found alone is removed as proof that absence makes a retry safe. begin records the owner's host/pid/pgid. Readback returns in_progress while the owner process group is alive. Retry is allowed only when the owner recorded a definite pre-execution failure or when the kind's retry-safety condition holds: owner ceased plus no marker/path effect for worktree/publish; external idempotency for integrate CAS and push force-with-lease; no side effect for observe/evidence. For agent_start, prompt and stop, absence never proves safety, so the result is outcome_unknown and Blocked for a human. The spec DUR-06 sentence is added. Planned counterexample: A is mid-invocation, B reconciles and sees not-found, then A is released; B never obtains a retry permit and the fake agent start count is 1.",
+      "locations": ["outputs-02/design.md §6 (lines ~155-175 incl. retry-safety table), §6 stop row, §9 stop failed branch", "outputs-02/spec-delta.md DUR-06", "outputs-02/coverage.md AC-D13", "outputs-02/tasks.md global constraints, 4.1, 13.1", "outputs-02/validation.md V-H1-04, V-H1-13"]
+    },
+    {
+      "finding_id": "D45-S04",
+      "status": "fix_submitted",
+      "change": "A persisted monotonic observe_seq is added. Each logical observation cycle uses target_key <purpose>:<version_key>:<seq>. Duplicate prepare and infra retries reuse the same ID. After a succeeded cycle that is still pending, next_action selects seq+1 after a bounded wait. The pass observation is a distinct purpose and cycle. This is one field, not a queue or scheduler. Planned case: V fixed across pending→pending→success yields three cycles, and duplicates create none.",
+      "locations": ["outputs-02/design.md §6 observation-cycle rule and op table row, §8 example, §9 checking", "outputs-02/spec-delta.md DUR-06", "outputs-02/coverage.md AC-G13", "outputs-02/tasks.md 12.1, 14.1", "outputs-02/validation.md V-H1-12, V-H1-S"]
+    },
+    {
+      "finding_id": "D45-S05",
+      "status": "fix_submitted",
+      "change": "A pre-review G1-failure route is added. When an attributable, correctable integration failure occurs in validating, the attributable diagnostics are saved and a correction batch kind=pre_review_g1 is opened through the existing machinery and feature budget. It counts one round when the dispatch is registered, within the same D13 cap. The repair is followed by integrated G1 again, and the first formal G2 happens only after G1 passes. No review or CI is required on this path. Missing original Red, unknown infrastructure, or a needed spec/design change is Blocked for a human. The spec FIN-03 sentence is added. Planned case: integration regression → repair → Green → first formal G2, with no G2 before Green and no budget reset.",
+      "locations": ["outputs-02/design.md §9 validating, §12 batch sources", "outputs-02/spec-delta.md FIN-03", "outputs-02/coverage.md AC-G08", "outputs-02/tasks.md 10.1, 12.1, 14.1", "outputs-02/validation.md V-H1-10, V-H1-12, V-H1-S"]
+    },
+    {
+      "finding_id": "D45-S06",
+      "status": "fix_submitted",
+      "change": "Automatic readbacks are bounded: MAX_READBACKS=3 per begun attempt, recorded in readbacks[]; in_progress waits are not counted. On exhaustion the operation becomes blocked(readback_exhausted) and its automatic readback is removed from next_action/safety_actions until a human resolve_operation recheck grants another bounded round. The worker stays active/unknown, no stop is resent, and no competing writer is dispatched. The spec DUR-06 and DUR-08 sentences are added. Planned cases: repeated query errors, and repeated still-running results, each stop automatic polling with a fixed call count of 3 and preserved state.",
+      "locations": ["outputs-02/design.md §2 readback mode, §6 readback cap, §6 stop row, §9 stop branches and verification step 7, §9 rule 2", "outputs-02/spec-delta.md DUR-06, DUR-08", "outputs-02/coverage.md AC-D17", "outputs-02/tasks.md global constraints, 4.1, 12.1, 13.1", "outputs-02/validation.md V-H1-04, V-H1-12, V-H1-13"]
+    }
+  ],
+  "resolved_by_author": [],
+  "requested_action": "Bounded re-review of D45-S01..S06 by the original reviewers. The author does not mark any finding resolved.",
+  "policy_status": {"D47": "approved", "D48": "approved", "D49": "approved", "specific_check_set": "not_approved (D11 candidate in validation.md §4)"},
+  "product_gate_verdict": null,
+  "s1_findings": "S1-R01..R17 remain open"
+}

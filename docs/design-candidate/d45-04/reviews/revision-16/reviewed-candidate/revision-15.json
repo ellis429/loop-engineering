@@ -1,0 +1,286 @@
+{
+  "revision": "revision-15",
+  "author_role": "lead designer / coordinator",
+  "actual_model": "claude-opus-5-5 (Claude Code 2.1.283, CLAUDE_EFFORT=xhigh)",
+  "basis": "revision-14 (reviewed clean for its own corrections) + D52",
+  "d11_status": "pending",
+  "product_tests_executed": false,
+  "before_sha256": {
+    "cleanup-map.md": "3c86cf63e0731e50def4ce984f52ba2fee0aab4755a9537906b0f350831f8258",
+    "coverage.md": "ffd8872aae82b76fd62f7823712413794cf3f7a412ef86da3d7dcb44ab71ba39",
+    "design.md": "e40e2227b9c10811fc48da83c84f37792bb5c0e0c38554af1787f215f053d4a8",
+    "README.md": "d95a7459450d992060fb0d4424b0d53faacba966cdd06ee2d1cafc289bd67f56",
+    "review.md": "4102ec4a71725b303874a400659342a6813a95a526804dc90cc91f35fd96e43d",
+    "spec-delta.md": "a0ca23c6abb7a833bb830d18943c51151d97248efa96080699f02ebe4c7f59d5",
+    "tasks.md": "57e0a9e09593ad00bcda1b47312712104d664837d30b9f7e1dd5ca6475978437",
+    "validation.md": "3f7160377e0fab8d528427eaf28693a2e0c652bf87ac155d2ab5acbad564374b"
+  },
+  "helper_inputs": {
+    "sol-spec-sources": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/herdr-design-plan-20260928/helpers/sol-spec-sources/result.md",
+    "sol-plan-ac": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/herdr-design-plan-20260928/helpers/sol-plan-ac/result.md",
+    "identity": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/herdr-design-plan-20260928/helpers/native-identity.jsonl"
+  },
+  "dispositions": [
+    {
+      "id": "SS-01",
+      "status": "fix_submitted",
+      "where": "spec-delta §1 取代範圍",
+      "note": "D45-02 DUR-06 appended paragraph replaced as a whole; read-only observation needs no permission (D50 OE)"
+    },
+    {
+      "id": "SS-02",
+      "status": "fix_submitted",
+      "where": "spec-delta §1",
+      "note": "local-synchronous retry exception explicitly removed (narrowing; no first-slice op needs it)"
+    },
+    {
+      "id": "SS-03",
+      "status": "fix_submitted",
+      "where": "spec-delta §7",
+      "note": "AC-D10 full scenario"
+    },
+    {
+      "id": "SS-04",
+      "status": "fix_submitted",
+      "where": "spec-delta §6; design §8",
+      "note": "GAT-06 full requirement text incl. readable URL, run/attempt identity; check URL stored"
+    },
+    {
+      "id": "SS-05",
+      "status": "fix_submitted",
+      "where": "spec-delta §9",
+      "note": "AC-O23 THEN full text with first-slice and deferred clauses"
+    },
+    {
+      "id": "SS-06",
+      "status": "fix_submitted",
+      "where": "spec-delta §9; validation s7, W-F",
+      "note": "AC-O15 generic scenario"
+    },
+    {
+      "id": "SS-07",
+      "status": "fix_submitted",
+      "where": "spec-delta §8",
+      "note": "AC-D23 full scenario"
+    },
+    {
+      "id": "SS-08",
+      "status": "fix_submitted",
+      "where": "spec-delta §6",
+      "note": "AC-G15 full scenario"
+    },
+    {
+      "id": "SS-09",
+      "status": "proposed_for_d11",
+      "where": "design §6; validation §6; d11-confirmation B, D",
+      "note": "exact reviewer model and CI policy proposed; not approved"
+    },
+    {
+      "id": "SS-10",
+      "status": "proposed_for_d11",
+      "where": "design §4, §5, §10; validation §6.2; spec-delta §10",
+      "note": "timeouts, active intervals, polling, call limits"
+    },
+    {
+      "id": "SS-11",
+      "status": "fix_submitted",
+      "where": "spec-delta §2",
+      "note": "parallel writers marked [延後 S2]"
+    },
+    {
+      "id": "PA-01",
+      "status": "fix_submitted",
+      "where": "tasks T0.1 step 3",
+      "note": "adoption/source-map.md, review.json paths"
+    },
+    {
+      "id": "PA-02",
+      "status": "fix_submitted",
+      "where": "tasks T1.1; design §6",
+      "note": "profiles/ files owned by T1.1; receipt format"
+    },
+    {
+      "id": "PA-03",
+      "status": "fix_submitted",
+      "where": "design §3",
+      "note": "store internal contract"
+    },
+    {
+      "id": "PA-04",
+      "status": "fix_submitted",
+      "where": "validation d7a/d7b; tasks 2.2, 6.2",
+      "note": "split decision-record vs effects"
+    },
+    {
+      "id": "PA-05",
+      "status": "fix_submitted",
+      "where": "design §4",
+      "note": "op record, adapter outcome, assignment schema"
+    },
+    {
+      "id": "PA-06",
+      "status": "fix_submitted",
+      "where": "design §7; validation g6, r13",
+      "note": "G1 reads assignment fields only; batch creation in T5.1"
+    },
+    {
+      "id": "PA-07",
+      "status": "fix_submitted",
+      "where": "tasks shared files (writes.py); validation h13",
+      "note": "push/pr_ensure op kinds by T6.1; finding dedupe stays in r12(d)"
+    },
+    {
+      "id": "PA-08",
+      "status": "fix_submitted",
+      "where": "tasks shared files (next.py); design §2 safety",
+      "note": "budget/timeout priority in next.py via T7.1"
+    },
+    {
+      "id": "PA-09",
+      "status": "fix_submitted",
+      "where": "design §2 action vocabulary; tasks 4.1 deps 7.1",
+      "note": "complete next vocabulary; checklist path owned"
+    },
+    {
+      "id": "PA-10",
+      "status": "fix_submitted",
+      "where": "tasks 4.2 card; validation R2",
+      "note": "fixture and expected trace; positive G1 required"
+    },
+    {
+      "id": "PA-11",
+      "status": "fix_submitted",
+      "where": "design §8 G2",
+      "note": "review assignment/result fields"
+    },
+    {
+      "id": "PA-12",
+      "status": "fix_submitted",
+      "where": "design §2, §8; validation p7",
+      "note": "observe pr|ci --purpose pass"
+    },
+    {
+      "id": "PA-13",
+      "status": "fix_submitted",
+      "where": "tasks 8.x card",
+      "note": "T8 D11 packet is explicit input"
+    },
+    {
+      "id": "PA-14",
+      "status": "fix_submitted",
+      "where": "tasks shared files (cli.py)",
+      "note": "sequential subcommand ownership"
+    },
+    {
+      "id": "PA-15",
+      "status": "fix_submitted",
+      "where": "tasks shared files (tools/herdr.py)",
+      "note": "T1.1 -> T2.3 order"
+    },
+    {
+      "id": "PA-16",
+      "status": "fix_submitted",
+      "where": "same as PA-02"
+    },
+    {
+      "id": "PA-17",
+      "status": "fix_submitted",
+      "where": "tasks 1.1 card, owned paths",
+      "note": "tests/fakes/scenarios/<tool>/ format"
+    },
+    {
+      "id": "PA-18",
+      "status": "fix_submitted",
+      "where": "tasks B1, 4.1 owned paths",
+      "note": "index.md by B1; DOC checklist by 4.1"
+    },
+    {
+      "id": "PA-19",
+      "status": "fix_submitted",
+      "where": "tasks general rules, shared files; cleanup-map §1",
+      "note": "extraction-log append-only per task"
+    },
+    {
+      "id": "PA-20",
+      "status": "fix_submitted",
+      "where": "validation g5"
+    },
+    {
+      "id": "PA-21",
+      "status": "fix_submitted",
+      "where": "validation w2, w8"
+    },
+    {
+      "id": "PA-22",
+      "status": "fix_submitted",
+      "where": "validation h10, h11"
+    },
+    {
+      "id": "PA-23",
+      "status": "fix_submitted",
+      "where": "validation p4, p6"
+    },
+    {
+      "id": "PA-24",
+      "status": "fix_submitted",
+      "where": "validation r10"
+    },
+    {
+      "id": "PA-25",
+      "status": "fix_submitted",
+      "where": "validation f5, R1, R2"
+    },
+    {
+      "id": "PA-26",
+      "status": "fix_submitted",
+      "where": "validation W-F, s7"
+    },
+    {
+      "id": "PA-27",
+      "status": "fix_submitted",
+      "where": "validation r1 (0 new findings); coverage AC-G20"
+    },
+    {
+      "id": "C-01",
+      "status": "fix_submitted",
+      "source": "coordinator",
+      "where": "tasks T0.1",
+      "note": "W1 from origin/main; 4ce1110 is open PR #2 head (verified via gh read 2026-09-28), inclusion would show PR #2 merged"
+    },
+    {
+      "id": "C-02",
+      "status": "fix_submitted",
+      "source": "coordinator",
+      "where": "spec-delta §3; design §7; validation g14",
+      "note": "D45-02 'independent checkout' for Green was dropped by revision-14 wording; restored"
+    },
+    {
+      "id": "C-03",
+      "status": "fix_submitted",
+      "source": "coordinator",
+      "where": "design §4; validation w11",
+      "note": "write call timeout is unknown, not failed"
+    },
+    {
+      "id": "C-04",
+      "status": "fix_submitted",
+      "source": "coordinator",
+      "where": "tasks header, 派工與模型, B1",
+      "note": "D52 wording replaces fixed D39 Opus/GPT phrasing"
+    },
+    {
+      "id": "C-05",
+      "status": "fix_submitted",
+      "source": "coordinator",
+      "where": "design §6; validation f4",
+      "note": "approved profiles must name different models"
+    }
+  ],
+  "facts_checked": {
+    "claude_cli": "claude --help lists --effort, --model, --settings, --permission-mode",
+    "opencode_cli": "opencode run --help lists -m provider/model, --variant, --agent, --format json; model list includes openai/gpt-6-astra and openai/gpt-6-sol (catalog only; no inference run)",
+    "codex": "codex-cli 0.157.0; helpers ran gpt-6-sol effort high per native turn_context",
+    "repo": "yschiang/loop-engineering private, default main=359ffcf; PR #2 open, head delivery/s1-controller-core=4ce1110",
+    "git": "2.54.0 (merge-tree --write-tree available)"
+  }
+}

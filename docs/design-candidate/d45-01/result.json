@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "run_id": "herdr-design-d45",
+  "task_id": "thin-controller-design",
+  "attempt_id": "design-01",
+  "role": "implementer",
+  "requested_model": "claude-opus-5-5",
+  "self_reported_model": "claude-opus-5-5",
+  "model_check": "Model self-reported by this session; the harness did not independently attest it. The coordinator should verify it against the native session record.",
+  "native_session_id": "8c4fbb2f-2ae4-442f-ba3d-e1e9eced8df2",
+  "input_manifest_sha256": "486c7941e30830499350043060dd1ab6c44e3b39730c9933dc8eecf395cd749c",
+  "additional_inputs": [
+    {"path": "steering-01.md", "sha256": null, "note": "User request for stale/dead-code cleanup; sha256 not computed because only Read/Write/Edit/Glob/Grep are allowed"},
+    {"path": "steering-02.md", "sha256": null, "note": "D46 isolated workspace directive; supersedes the earlier in-tree replacement proposal"},
+    {"path": "source-inventory.json", "sha256": null, "note": "Static AST import inventory; used only as a reference"},
+    {"path": "coordinator turn instruction", "sha256": null, "note": "Staged delivery: this turn delivers only cleanup-map.md, decisions-needed.md and result.json, with execution_status partial"}
+  ],
+  "execution_status": "partial",
+  "summary": "Staged delivery, part 1. cleanup-map.md assigns every one of the 21 src/delivery modules a disposition (reuse/extract 10, rewrite 4, not carried 7), gives a one-sentence src basis for each, and records the D46 isolated-worktree hookup proposal (W1) and the source extraction contract. decisions-needed.md lists three contract-changing decisions with recommended options: DN-1 A (4h limit while offline), DN-2 A (evidence trust boundary), DN-3 B (G3 when required rules return 403). All 17 S1 findings remain open. The 88 AC mapping, spec delta, tasks and validation are pending; tasks that depend on the decisions will be expanded only after the user answers. This is a successful candidate output, not a review-clean result or a product gate verdict.",
+  "artifacts": [
+    {"path": "outputs/cleanup-map.md", "status": "delivered", "note": "21 modules, D46 workspace hookup, extraction contract, cleanup completion criteria"},
+    {"path": "outputs/decisions-needed.md", "status": "delivered", "note": "DN-1..DN-3 with options, recommendations, impact and blocked items"},
+    {"path": "outputs/result.json", "status": "delivered"},
+    {"path": "outputs/revision-03.json", "status": "delivered", "note": "Responses to the final narrow review-03 residuals of D45-R01/R02; fix_submitted and awaiting bounded re-review"},
+    {"path": "outputs/revision-02.json", "status": "delivered", "note": "Responses to the review-02 residuals of D45-R01/R02; fix_submitted and awaiting bounded re-review. review-02 verified D45-R03..R06 and the DN clarifications."},
+    {"path": "outputs/revision-01.json", "status": "delivered", "note": "Responses to review-01 D45-R01..R06 and the DN-1/DN-2/DN-3 clarifications; all fix_submitted, none resolved by the author; awaiting re-review by the original reviewer"},
+    {"path": "outputs/design.md", "status": "draft_pending_sync", "note": "Full draft written before the coordinator narrowed this turn's scope. It already adopts D46 option W1 and marks DN-1..DN-3 as open, but it has not been synced to the staged format or checked against cleanup-map. It is not part of this turn's delivery and must not be reviewed as final. revision-01 fixed the four located contradictions D45-R01..R04 (fix_submitted); the remaining sections are still unsynced."},
+    {"path": "outputs/spec-delta.md", "status": "pending"},
+    {"path": "outputs/coverage.json", "status": "pending", "note": "88 AC IDs and 17 findings, each marked retain/transfer/replace/decision_required"},
+    {"path": "outputs/tasks.md", "status": "pending", "note": "H1 executable plan; tasks that depend on a decision stay blocked until the user decides"},
+    {"path": "outputs/validation.md", "status": "pending", "note": "All items planned; fake and real evidence kept separate"}
+  ],
+  "unresolved_decisions": [
+    {"id": "DN-1", "topic": "4h active limit while the coordinating session is offline", "affects": ["AC-D17", "S1-R09"], "recommended": "A", "status": "decision_required"},
+    {"id": "DN-2", "topic": "Evidence/state trust boundary without a self-built OS sandbox", "affects": ["AC-D02", "DUR-02 worker restriction", "AC-G04/G07 trust wording", "AC-G12 H2 pass criteria", "S1-R01", "S1-R13"], "recommended": "A", "status": "decision_required"},
+    {"id": "DN-3", "topic": "G3 when GitHub required-check rules return 403", "affects": ["AC-G13", "GAT-06", "H2 PR Pass", "S1-R14/R17 real verification"], "recommended": "B", "status": "decision_required"}
+  ],
+  "pending_confirmations": [
+    {"id": "WS-W1", "topic": "Attach loop-engineering-thin as a git worktree on branch delivery/thin-controller from an adopted-docs commit, then remove old src/tests in its first commit", "status": "proposed_not_executed", "note": "This is an operational action that needs user/collaborator confirmation. It is not a policy decision. No repository, branch or source change was made."}
+  ],
+  "findings_status": {"S1-R01..S1-R17": "all_open", "note": "Every finding has a planned new path. Removing old code does not close a finding; each one still needs new code, new tests and an independent re-review."},
+  "ready_for_implementation": false,
+  "product_gate_verdict": null,
+  "methods_used": [
+    {"method": "openspec-update-change (methods/openspec-update-change.md) plus artifact instructions (methods/openspec-*.json)", "use": "Read-and-reconcile approach used for planning; applied to the candidate outputs/ only, with no edits to the formal change"},
+    {"method": "Superpowers writing-plans 6.4.1 (methods/writing-plans.md)", "use": "Scope, file-structure and extraction thinking used in cleanup-map. The full task plan is pending."}
+  ],
+  "adaptations": [
+    "Candidate files are written under outputs/ instead of the OpenSpec change paths or docs/superpowers/plans; the formal artifacts are not modified.",
+    "The writing-plans Execution Handoff (subagent-driven-development or executing-plans) will not be invoked. After approval, orchestrate (the coordinator under D39 during bootstrap) will dispatch the work. This is a method adaptation, not an unmodified invocation of the original skill.",
+    "openspec-update-change asks for confirmation before each edit. This run writes candidates only and returns them for review, as the assignment requires.",
+    "Staged delivery at the coordinator's request: each Markdown file is kept to 150 lines or fewer, and the remaining artifacts are listed as pending."
+  ],
+  "constraints_observed": {
+    "modified_paths": ["outputs/**"],
+    "ran_src_or_tests": false,
+    "spawned_agents": false,
+    "github_changes": false,
+    "global_config_changes": false
+  },
+  "self_check": {
+    "cleanup_map_modules_listed": 21,
+    "cleanup_map_disposition_counts": {"reuse_extract": 10, "rewrite": 4, "not_carried": 7},
+    "decisions_count": 3,
+    "markdown_line_limit_150": true,
+    "no_policy_assumed_approved": true
+  }
+}

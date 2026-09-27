@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "revision_id": "design-03-rev-08",
+  "run_id": "herdr-design-d45",
+  "task_id": "thin-controller-design",
+  "attempt_id": "design-03",
+  "author": {"role": "implementer", "model_self_reported": "claude-opus-5-5"},
+  "input_review": {"source": "fix-03-residual.md (independent review-11 residual)", "residual": "D50-R02", "verified_by_reviewer": ["D50-R01", "D50-R03", "D50-R04", "D50-R05", "D50-R06", "D50-R07"]},
+  "scope": "Only the cross-purpose observation-order residual in outputs-03. No read-operation lifecycle and no permits. The six verified fixes are unchanged.",
+  "revised_artifact_sha256": null,
+  "revised_artifact_sha256_note": "Not computed: only Read/Write/Edit/Glob/Grep are allowed.",
+  "responses": [
+    {
+      "finding_id": "D50-R02",
+      "status": "fix_submitted",
+      "change": "A single feature-level watermark `version_seq` now covers shared version-bearing facts (head, base, merge_base, binding digests) across all purposes, including pr, pass and ci when they carry version facts. Only an observation with seq > version_seq may update those facts and advance the watermark. A late observation with seq <= version_seq, of any purpose, cannot rewrite shared facts or restore an old version. Per-purpose result caches stay separate: they update only within their own purpose, cannot redefine the shared version_key, and are usable by gates only when their observed version equals the current version. An explicit cross-purpose example is added: pass seq=10/H1 arriving after pr seq=11/H2 leaves the head at H2, and that pass result cannot establish Pass.",
+      "locations": ["outputs-03/design.md §5 read observations", "outputs-03/spec-delta.md §1 DUR-06", "outputs-03/tasks.md 6.1 cases", "outputs-03/validation.md V7", "outputs-03/coverage.md AC-G16"]
+    }
+  ],
+  "resolved_by_author": [],
+  "requested_action": "Independent recheck of D50-R02. No D11 approval or product gate is claimed.",
+  "s1_findings": "S1-R01..R17 remain open"
+}

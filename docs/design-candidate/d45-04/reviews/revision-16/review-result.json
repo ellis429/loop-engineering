@@ -1,0 +1,142 @@
+{
+  "schema_version": 1,
+  "review_type": "bounded_re_review",
+  "revision": "revision-16",
+  "reviewer": {
+    "model": "gpt-6-astra",
+    "effort": "xhigh"
+  },
+  "input_hashes_verified": 28,
+  "input_mismatches": [],
+  "verdict": "changes_requested",
+  "prior_findings": [
+    {
+      "id": "R15-01",
+      "status": "partial",
+      "evidence": "inputs/candidate/design.md §7 lines 220–225 adds activities, min(900 seconds, remaining active budget), process-group termination, evidence_timeout/Blocked, no redispatch and cleanup blockers; §10 lines 380–386 counts evidence intervals and unresolved intervals. validation.md g15 and b1 cover timeout, cleanup and interval accounting; d11-confirmation.md §3 E and validation §6.2 disclose the limit. However, T3.1 must pass g15(b)'s remaining-budget and next/stop assertion before T7.1 implements the active union and deadline routing; no earlier deadline interface or staged test boundary is specified. See new R16-01. The original runtime omission is substantially fixed, but its task/verification interaction is not yet dispatchable as written."
+    },
+    {
+      "id": "R15-02",
+      "status": "partial",
+      "evidence": "inputs/candidate/design.md §8 lines 245–252 now defines dispositions, correction responses, omission behavior and a common identity/version envelope; tasks.md lines 82, 89, 112 and cards 2.3/5.1 define the importer extension. validation.md r4/r6/r8 exercise partial closure, missing IDs, stale head and disputes through result import. r10 and design line 252 add immutable prior review/version and fix/commit references for correction assignments. The remaining review-assignment definition at design line 244 still lists only finding content/status/object digest and does not explicitly include those prior review/fix references; r10 still tests only the correction assignment. D45-02 FIN-03 (inputs/baseline-spec-delta-d45-02.md §4, line 284) requires them for both correction and re-review assignments. Apply the same immutable snapshot to review/dispute assignments and exercise that handoff before closing this finding."
+    },
+    {
+      "id": "R15-03",
+      "status": "verified",
+      "evidence": "inputs/candidate/tasks.md lines 115, 129–130 explicitly leaves CI/mergeability observation and wait-start recording with T6.1 and expiry/routing with T7.1. validation.md h13 now tests pending/trigger classification and delegates expiry to b4, where timeout yields G3 unknown/Blocked. The T6.1 -> T7.1 order remains forward. R16-01 concerns the separately added evidence-command boundary, not this repaired split."
+    },
+    {
+      "id": "R15-04",
+      "status": "verified",
+      "evidence": "inputs/candidate/validation.md §6.1 lines 271–285 and §6.2 required_checks specify two jobs, both running uv run pytest with the platform policy; ruff, mypy and dist-smoke move into unit-linux. t7 checks the job sequence and rejects missing pytest, wrong trigger and missing required-job variants; B1 supplies real G3 execution later. tasks.md T1.1 owns test_ci_workflow.py. design.md §8, coverage.md AC-G13, and d11-confirmation.md §3 D/§4 agree on the two-job proposal without weakening GAT-06. The stale rationale is separately R16-02."
+    },
+    {
+      "id": "R15-05",
+      "status": "verified",
+      "evidence": "inputs/candidate/tasks.md T1.1 owned paths (line 78), card (line 123), shared-file rule (line 111), and completion (line 141) require a newly generated uv.lock committed with pyproject.toml, a successful uv sync --frozen from a fresh clone, and paired updates by later dependency-changing tasks. T0.1 still excludes the legacy lockfile."
+    },
+    {
+      "id": "R15-06",
+      "status": "verified",
+      "evidence": "inputs/candidate/design.md §6 lines 178–183 obtains the native session directory, derives repo/worktree/branch from that directory, compares requested/actual placement, rejects input-accepted-only or absent native placement, and requires each receipt item independently. validation.md f6 supplies wrong worktree/branch and shell-cwd-only negatives; f5 independently varies denial and resource effects for all five probes, including gh and herdr. R1 retains the real receipt contract; tasks.md T1.1/T1.2 and coverage.md AC-D18 point to it. This verifies the planned contract, not runtime capability."
+    },
+    {
+      "id": "R15-07",
+      "status": "verified",
+      "evidence": "inputs/candidate/design.md §10 lines 396–399 makes extensions decision-ID-idempotent and preserves independent blockers/counters, assigning active/attempts/ci_wait to T7.1 and rounds to T5.1. validation.md b5 proves active:60 changes 4h to 5h once across replay/restart and cannot bypass unknown writer/unconfirmed stop; r14 proves exactly a fourth round, no fifth on replay, and no bypass of writer unknown; b6 tests target isolation and replay for unit/head-scoped extensions. d10 retains authorization negatives and points to these effect tests; tasks.md line 19 requires time-dependent cases through cli.main, and T7.1/T5.1 own the rows. coverage.md AC-D17/AC-F07 is updated."
+    },
+    {
+      "id": "R15-08",
+      "status": "verified",
+      "evidence": "inputs/candidate/validation.md h11 (line 161) now explicitly supplies the desired H on another ref or fork while the prepared target repo/ref lacks H, requiring no succeeded receipt, unknown/Blocked and zero resend. The prior wrong-SHA and non-fast-forward negatives remain. T6.1 and coverage.md AC-D13/AC-G17 retain h11 ownership/references."
+    },
+    {
+      "id": "R15-09",
+      "status": "verified",
+      "evidence": "inputs/candidate/spec-delta.md introduction and §1 lines 18–20 explicitly retain the authoritative completed/no-later-effect alternative and one human-authorized new readback; only the local-synchronous retry exception is removed from the spec retry list. design.md §4 line 95 distinguishes local temporary Green checkouts from external-write ops and subjects them to §7. d11-confirmation.md §3 A discloses the remaining narrowing. These are safe-retry permissions, not a requirement to automatically retry every permitted case; design's conservative retry subset does not itself create a spec violation."
+    },
+    {
+      "id": "R15-10",
+      "status": "verified",
+      "evidence": "inputs/candidate/spec-delta.md §12 line 187 explicitly replaces finding-resolution's remaining D40 Purpose phrase, updates old validation references, forbids current D40 approval claims in any composed Purpose/banner, and preserves approval.json as historical. tasks.md T0.1 retains source-map review and D11-before-adoption. No adoption or approval is asserted to have occurred."
+    }
+  ],
+  "new_findings": [
+    {
+      "id": "R16-01",
+      "location": "inputs/candidate/tasks.md T3.1/T7.1 execution rows (83–85), execution order (94), next.py ownership (105), task cards (128–130), and T3.1 completion (146); validation.md g15(b) (140); design.md §7 (222–225) and §10 (380–386)",
+      "problem": "The new g15(b) is a T3.1 completion requirement: compute/use the remaining active budget, time out at that bound, and have next prioritize the expired stop. T3.1 explicitly excludes active-union calculation, while T7.1 owns that calculation and next/safety deadline routing and depends on both T3.1 and T6.1. Consequently the prescribed T3.1 -> T6.1 -> T7.1 order cannot pass the T3.1 completion check within the stated ownership boundaries. No pre-T3.1 remaining-budget/deadline interface, fixture contract, or later integration-test ownership is provided. The explicit dependency column remains acyclic; the new acceptance criterion introduces the backward dependency.",
+      "basis": "The handoff's dispatch-plan contract requires each task to be independently assignable with explicit adjacent interfaces and dependency-satisfied verification. D12 covers required-verification gaps; D13/D47 and retained DUR-08/AC-D17 require the real active-budget/safety behavior. Unlike R15-03's former ambiguous split, the new cards explicitly exclude the needed calculation from T3.1 and assign routing to the later task.",
+      "expected_fix": "Define an earlier owned remaining-budget/deadline seam and test T3.1's local runner against that contract, with the public next/safety integration assertion owned by T7.1; alternatively split/reorder the budget work so its real prerequisite exists before T3.1. Update cards, shared-file ownership, dependencies, matrix ownership, completion conditions and coverage consistently. Preserve real coverage for retained elapsed time, the shorter remaining-budget bound, stop priority and zero new dispatch; do not merely stub the complete public-path assertion or add a reverse edge that creates a cycle.",
+      "blocking": true,
+      "severity": "major"
+    },
+    {
+      "id": "R16-02",
+      "location": "inputs/candidate/design.md §10 timeout rationale, line 395; compare validation.md §6.1 lines 271–278 and d11-confirmation.md §3 D",
+      "problem": "The timeout rationale still says CI has three jobs, each expected to finish within five minutes. Revision-16 removes the static job and puts its additional commands into unit-linux, leaving two jobs. The rationale therefore describes the superseded topology even though the operative job definitions and D11 choice agree on two.",
+      "basis": "The requested bounded diff review includes contradictions and D11 package consistency. This is a stale explanatory claim, not a weakened gate, an approved policy change, or a reason to alter the timeout itself.",
+      "expected_fix": "Update the rationale to describe the two proposed jobs and the extra unit-linux commands; keep any duration estimate explicitly an estimate pending real execution.",
+      "blocking": false,
+      "severity": "minor"
+    }
+  ],
+  "helper_partials": [
+    {
+      "id": "SS-02",
+      "status": "verified",
+      "note": "spec-delta §1 now explicitly retains the completed/no-later-effect and human-authorized re-observation wording and explains the temporary-checkout distinction; R15-09 is verified."
+    },
+    {
+      "id": "SS-09",
+      "status": "verified",
+      "note": "The two-job CI proposal now applies the test policy to both jobs, has t7 verification, and has a committed new-lockfile owner/fresh-clone condition (R15-04/05). Models, runners and policy remain proposed. R16-02 is a separate stale rationale."
+    },
+    {
+      "id": "SS-10",
+      "status": "partial",
+      "note": "Evidence commands are bounded and counted, and b5/r14 verify active/round extensions. The new evidence deadline assertion still depends backward on T7.1 without an earlier interface or staged verification split (R15-01/R16-01)."
+    },
+    {
+      "id": "PA-05",
+      "status": "verified",
+      "note": "design §8 supplies correction responses and the common envelope; tasks T2.3 -> T5.1 explicitly extends the assignments.py body-validation table while preserving identity checks."
+    },
+    {
+      "id": "PA-07",
+      "status": "verified",
+      "note": "T6.1 records CI wait start and mergeability/trigger state; T7.1 owns expiry and routing. h13 delegates the elapsed-time assertion to b4 (R15-03)."
+    },
+    {
+      "id": "PA-08",
+      "status": "verified",
+      "note": "b5 and r14 now verify the previously missing active/round extension effects, replay/restart idempotence, retained counters and writer/stop guards, with T7.1/T5.1 owners (R15-07)."
+    },
+    {
+      "id": "PA-11",
+      "status": "verified",
+      "note": "The previously missing review dispositions, versioned closure evidence, omission behavior and generic importer extension are explicit in design §8 and r4/r8. The remaining input-snapshot issue is tracked under PA-24/R15-02."
+    },
+    {
+      "id": "PA-22",
+      "status": "verified",
+      "note": "h11 now tests H existing only on another ref/fork, with unknown/Blocked and zero resend, while retaining wrong-SHA coverage; h10's G1-before-push guard remains (R15-08)."
+    },
+    {
+      "id": "PA-24",
+      "status": "partial",
+      "note": "r10 now tests immutable prior review/version and fix/commit references for correction assignments. The same required references are still not explicit in the review-assignment snapshot or a re-review assignment test; retained FIN-03 covers both (R15-02)."
+    },
+    {
+      "id": "PA-25",
+      "status": "verified",
+      "note": "f5 independently fails all five permission probes for missing denial or changed resources; f6 tests native placement and input-accepted-only failures. R1 requires the design §6 receipt and remains the real capability proof; R2 still requires G1 passed (R15-06)."
+    },
+    {
+      "id": "PA-27",
+      "status": "verified",
+      "note": "validation §4 line 250 adds the requested proof.md rubric negative for falsely claiming finding/fix/re-review completion after no finding or Blocked. T4.3 owns that rubric review; r1/R3 retain no fabricated blocker and incomplete-demo rules."
+    }
+  ],
+  "limits": "Bounded document re-review of the 28 hash-pinned inputs and the complete reviewed-r15 -> candidate diff. Earlier verified findings were not reopened except to inspect changed supporting text for regressions. The original helper reports are not supplied in this snapshot; helper statuses use the pinned revision-15 review's dispositions and stated gaps. Local inventory checks found 88 unique formal AC IDs, all present in 105 unique coverage rows, and 109 unique product-matrix row IDs (six added); the explicit task-dependency graph is acyclic, but this does not resolve R16-01's semantic backward dependency. The eight revision-16 before_sha256 claims also match the reviewed-r15 manifest entries. No product tests, runtime/model inference, permissions or placement probes, CI runs, GitHub operations, W1/adoption, merge or example execution were performed. External links, publication-manifest contents not supplied here, and historical native-model claims were not independently authenticated. The current run header in stdout.log reports model gpt-6-astra, reasoning effort xhigh, and session 01a0e40b-8274-7bd1-bdf7-5daa15200a48; only header metadata was inspected for reviewer identity. No candidate or other input was modified; only review.md and review-result.json were authored. All AC remain planned and 17 legacy S1 findings remain open. This review is not D11 approval."
+}

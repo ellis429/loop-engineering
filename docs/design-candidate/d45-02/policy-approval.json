@@ -1,0 +1,18 @@
+{
+  "user_response": "All ok",
+  "approved": {
+    "DN-1": "A",
+    "DN-2": "A",
+    "DN-3": "B"
+  },
+  "decision_ids": [
+    "D47",
+    "D48",
+    "D49"
+  ],
+  "scope": "policy boundaries only; not check-name set, full design approval, D11 or product gate",
+  "files": {
+    "decisions.md": "cfcd7995bd68edd7e6256e706ec80c78eef62fba23ff2620f7febf69ee962eff",
+    "project-intent.md": "6590e0fd0c2505941f3972e4dc8957d36507e1c622b74f3b73c7713646e3b779"
+  }
+}

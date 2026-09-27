@@ -1,0 +1,211 @@
+{
+  "schema_version": 1,
+  "revision": "revision-12",
+  "author": {"role": "document-author", "requested_model": "claude-opus-5-5", "self_reported_model": "claude-opus-5-5"},
+  "responds_to": "inputs/review.md (Opus 5.5 independent document review, 2026-09-28, verdict changes_requested)",
+  "status": "pending_independent_review",
+  "scope": "document-only; no code, tests, formal OpenSpec, historical snapshots, gigaxfer or GitHub changed",
+  "authority_note": "D11 not granted; no product check passed; revision-12 choices are proposals, not approved policies",
+  "limits": [
+    "Authority access: the first pass could not read the formal specs or the d45-02 baseline (file tools restricted to the working directory). The coordinator then supplied copies (inputs/delivery-gates-spec.md, delivery-orchestration-spec.md, durable-delivery-spec.md, finding-resolution-spec.md, baseline-spec-delta.md), described as exact copies of the authority files. The author read them in full and reconciled revision-12 against them. No new revision number was created for this access correction. The author did not recompute or compare hashes against the originals.",
+    "All test cases below are planned; nothing was executed."
+  ],
+  "authority_reconciliation": [
+    {"checked": "M2 grounding", "result": "consistent: formal GAT-03 requires Red to trace to the same task or later correction; baseline AC-G07 Blocks when the original Red is unavailable; formal FIN-03 and baseline Block on missing original Red"},
+    {"checked": "m3 N/A", "result": "consistent: formal GAT-04 and AC-G10 judge config, migration and test code by real behavior and reject file-type exemptions"},
+    {"checked": "m9 G2 blocked", "result": "consistent: formal AC-G03 requires G2 unknown and feature Blocked with no new round"},
+    {"checked": "M1/m6/m8 against GAT-06 and AC-G14", "result": "consistent with the baseline GAT-06 policy source, check identity, attempt ordering and head/base relation"},
+    {"checked": "AC-G17 (formal: CI reuse must record an applicability reason)", "result": "corrected: when H is unchanged and the base moves, G3 reuses H's head-only result and records the reason; a PR base retarget Blocks (design §8, §4; validation h7; spec-delta AC-G17)"},
+    {"checked": "FIN-03 (one batch per version after review/CI are collected)", "result": "corrected: base integration joins the same-version correction batch and waits for review instead of opening a competing batch (design §8; validation r12; spec-delta AC-G17)"},
+    {"checked": "Merge integration vs AC-O10 and GitHub permissions", "result": "corrected: integration is a local git merge commit in the Implementer worktree; the coordinator fetches the base tip read-only and pushes fast-forward; no GitHub merge API, no merge write kind and no PR merge permission (design §8; spec-delta §1; tasks general rules; validation r12)"},
+    {"checked": "ORC-05 Pass package contents", "result": "corrected: the package now also carries gate reasons, findings, limitations and publication status, and is human-readable (design §8; validation p1; spec-delta §9)"},
+    {"checked": "DUR-06 retry proof", "result": "tightened wording: --not-delivered requires authoritative evidence, matching baseline DUR-06 case 2"},
+    {"checked": "T0.1 adoption completeness (the candidate spec-delta depends on the unadopted d45-02 baseline)", "result": "corrected: D11 must name both deltas by sha256. T0.1 composes complete formal specs from the formal text, all d45-02 items not overridden (including the §0.1 banner), and the d45-04 overrides. It maps every requirement and AC to its source and has an independent reviewer check the result; any divergence returns to the user"},
+    {"checked": "Competing old plans after adoption", "result": "corrected: T0.1 step 2 supersedes the D40 formal design/tasks and the docs/validation/implement-delivery-loop.md referenced by the formal specs (if present); approval.json stays historical"},
+    {"checked": "AC-O23", "result": "confirmed: the formal THEN permits unaffected work to continue; the first slice declares that option deferred to S2 (spec-delta §9)"}
+  ],
+  "preserved": {
+    "ac_ids": 88,
+    "ac_state": "all planned; none passed",
+    "coverage_classes": {"core": 58, "workflow": 17, "future": 6, "rewritten": 3, "evidence_rule": 3, "historical": 1},
+    "s1_findings": "S1-R01..R17 all open",
+    "historical": "GPT review-15 closed D51-R01..R07 on an earlier revision; that closure is historical and separate from the 16 findings below"
+  },
+  "findings": [
+    {
+      "id": "M1",
+      "severity": "major",
+      "status": "fix_submitted",
+      "disposition": "fixed",
+      "summary": "G3 run selection could hide a failing run for the same head",
+      "rationale": "The workflow is triggered only by pull_request (opened/synchronize/reopened, expected base). Candidates must match app, workflow path, check name, event=pull_request, head_sha=H and the recorded PR number. A same-workflow run for H with another event or PR is unknown (unexpected_event_context), not ignored. Within a run the latest run_attempt wins, so earlier failed attempts are not required forever; across runs for the same H, the latest attempt of every run counts (all success required). The review's alternative of turning disagreement into unknown was partly not adopted: a failed or pending latest attempt keeps its real state, so a failure opens a correction batch instead of an infra Blocked. No new workflow layer.",
+      "why_no_false_pass": "PR-fail/push-success: push runs are not expected under the policy; if one appears it is unknown. Older PR run rerun after a newer run: it belongs to the same H, so its latest attempt (pending/failure) is counted and G3 cannot pass on the newer run alone.",
+      "affected_sections": ["design.md §8 Run/attempt selection, why no false pass, §12", "validation.md h4, h4a-h4e, §6", "spec-delta.md §6 AC-G14", "coverage.md AC-G14", "tasks.md 1.1, 6.1"],
+      "planned_tests": ["h4", "h4a", "h4b", "h4c", "h4d", "h4e"]
+    },
+    {
+      "id": "M2",
+      "severity": "major",
+      "status": "fix_submitted",
+      "disposition": "fixed",
+      "summary": "No Red rule for correction attempts or multi-attempt tasks",
+      "rationale": "Grounded in GAT-03/D01 (Red traces to the same task or later correction) and D26. Every behavior-changing correction attempt (pre_review_g1, G2/G3 batch, base-integration conflict resolution, human return) needs an original Red bound to task/attempt, finding ID(s) and batch ID, with the same three qualifications; each behavior-changing finding in a batch needs at least one Red naming it. Only attempts in H's lineage are eligible; a redo attempt captures its own Red. A unit with no eligible original Red fails G1 and Blocks with original_red_unavailable; replay or reverting code to recapture is not a substitute. Non-behavior corrections use N/A eligibility by actual behavior.",
+      "affected_sections": ["design.md §7 Red units, attempt eligibility, missing evidence; §9 Batch", "spec-delta.md §3 GAT-03", "validation.md g4, g10, g11, r10, r11, R3", "tasks.md general rules, 3.1, 5.1, 8.1", "coverage.md AC-G04/G06/G07, S1-R13"],
+      "planned_tests": ["g10", "g11", "g4", "r11", "R3"]
+    },
+    {
+      "id": "M3",
+      "severity": "major",
+      "status": "fix_submitted",
+      "disposition": "fixed",
+      "summary": "Rebase/force-push onto a new base breaks Red lineage",
+      "rationale": "The force-with-lease retry example is removed; the idempotent example is now a same-SHA ordinary fast-forward push. During a controlled active run the feature branch is updated only by fast-forward push. Base integration is a local merge commit in the Implementer worktree, not a GitHub PR merge and with no merge permission, so prior attempt commits stay ancestors of H. No rebase, squash or force-push; a non-FF rejection is failed and Blocked, never auto-rebased. If history is rewritten externally (new H not a descendant of the recorded head), lineage-based Red eligibility is invalidated and G1 Blocks with history_rewritten; no evidence is fabricated. This is a rule for the controlled run, not a repository-wide ban.",
+      "affected_sections": ["design.md §4 retry, Branch history; §7 history rewritten; §8 base integration", "spec-delta.md §1 Branch history, §3 GAT-03 and AC-G17", "validation.md g12, g13, h11", "tasks.md general rules, 3.1, 6.1", "coverage.md AC-G17"],
+      "planned_tests": ["g12", "g13", "h11"]
+    },
+    {
+      "id": "M4",
+      "severity": "major",
+      "status": "fix_submitted",
+      "disposition": "fixed",
+      "summary": "T2.3 tests depended on T6.1 interfaces",
+      "rationale": "T2.3 now creates src/loopctl/observe.py with seq, version watermark, read budget and observe worker|native, plus tests/test_observe.py; w5 and w8 use T2.3's own interface. T6.1 only extends observe.py with pr/ci. decisions.py is owned only by T2.2, which records resolve_read/resolve_operation; their effects live in observe.py/writes.py (T2.3). Shared files have an explicit sequential ownership table; dependencies run forward only, with no cycle. Integration batch creation (findings, T5.1) is tested in r12, so T6.1's h13 only asserts integration_required.",
+      "affected_sections": ["tasks.md execution table, shared files table, general rules, 2.2, 2.3, 6.1", "design.md §5", "validation.md M-OBS, w5, w8, d9, h13, r12, R2"],
+      "planned_tests": ["o1", "o2", "w5", "w8", "d9", "h8", "h13", "r12"]
+    },
+    {
+      "id": "M5",
+      "severity": "major",
+      "status": "fix_submitted",
+      "disposition": "fixed",
+      "summary": "CI jobs did not enforce the skip policy",
+      "rationale": "The same collection/skip/failure policy applies locally and in each CI job through test-only configuration owned by T1.1: pyproject pytest settings (--strict-markers, xfail_strict) and tests/conftest.py with a single only_on(platform) marker plus a session-finish check. Zero collected, any skip not produced by only_on on a non-owning platform, xfail/xpass, or a job platform mismatch fails the session. The skip reason text is never evidence, so the review's suggested reason-based check was not adopted. A Linux-owned case that skips on Linux fails the Linux job. No production hook and no registry.",
+      "affected_sections": ["design.md §11", "validation.md §0, M-TPOL, h2, §6", "spec-delta.md §6", "tasks.md 1.1, general rules", "cleanup-map.md header", "coverage.md AC-G13"],
+      "planned_tests": ["t1", "t2", "t3", "t4", "t5", "t6", "h2"]
+    },
+    {
+      "id": "M6",
+      "severity": "major",
+      "status": "fix_submitted",
+      "disposition": "fixed",
+      "summary": "pr_ensure could adopt the wrong PR",
+      "rationale": "Before the external call, the prepared op persists the expected identity (repo, head repo+branch, current head SHA, base repo+branch) and a unique operation marker. The pre-create query covers all open PRs for the head branch, with any base. Exactly one full match is reused and recorded as origin=existing, without claiming it was created. Any mismatch, including the same branch with a wrong base, Blocks with no new creation. Recovery after an unknown create needs marker plus full identity for origin=created. Marker without identity, or identity without marker, is Blocked for a human.",
+      "affected_sections": ["design.md §4 PR path", "spec-delta.md §1 PR ensure identity", "validation.md h10", "tasks.md 6.1", "coverage.md AC-G01/D12/D13"],
+      "planned_tests": ["h10"]
+    },
+    {
+      "id": "m1",
+      "severity": "minor",
+      "status": "fix_submitted",
+      "disposition": "fixed",
+      "summary": "Pass package undefined and untested",
+      "rationale": "The Pass package is a human-readable projection of feature state produced by assess. It is not a second authority and cannot pass on its own. Per formal ORC-05 it lists version_key, PR identity with origin, head/base, gate reasons and result IDs/digests, findings, limitations, the policy source (rules, or approved_policy with the workflow.yaml digest and policy_change ID), github_rules_verified, publication status and receipts, the pass observation seq, and acceptance=pending.",
+      "affected_sections": ["design.md §8 Pass package", "spec-delta.md §9 ORC-05", "validation.md p1", "tasks.md 6.2", "cleanup-map.md publication"],
+      "planned_tests": ["p1"]
+    },
+    {
+      "id": "m2",
+      "severity": "minor",
+      "status": "fix_submitted",
+      "disposition": "fixed",
+      "summary": "AC-O23 partial continuation deferred silently",
+      "rationale": "The first slice's scope_change stops the whole run (d4). Continuing only the unaffected work is explicitly deferred to S2 and does not count as complete. Coverage, spec-delta §9, design §1, the tasks deferred list and W-C now agree. The AC class stays WF, so counts are unchanged.",
+      "affected_sections": ["coverage.md AC-O23, AC-O07", "spec-delta.md §9", "design.md §1", "tasks.md deferred", "validation.md d4, W-C"],
+      "planned_tests": ["d4", "W-C"]
+    },
+    {
+      "id": "m3",
+      "severity": "minor",
+      "status": "fix_submitted",
+      "disposition": "fixed",
+      "summary": "N/A narrower than D26",
+      "rationale": "N/A eligibility follows the actual behavior of the diff, as judged by the independent Reviewer. There is no blanket ban by file name or type: comment-only config or test edits may be eligible, while changed config values, test assertions or migrations are not. spec-delta §4 states that D26 is not narrowed.",
+      "affected_sections": ["design.md §7 N/A", "spec-delta.md §4", "validation.md g7, g8", "coverage.md AC-G09/G10"],
+      "planned_tests": ["g7", "g8"]
+    },
+    {
+      "id": "m4",
+      "severity": "minor",
+      "status": "fix_submitted",
+      "disposition": "fixed",
+      "summary": "No task step owns the formal OpenSpec sync",
+      "rationale": "T0.1 step 1 runs after D11 and before commit B. It adopts a complete formal spec baseline rather than the candidate delta alone, because that delta relies on the unadopted d45-02 baseline. D11 names both deltas by sha256; the four formal specs are composed from the formal text, all d45-02 items not overridden, and these overrides. A per-requirement/AC source mapping is recorded, and an independent reviewer checks the result. Any semantic divergence returns to the user, with no self-approval. Step 2 supersedes the old D40 formal design/tasks/validation so they do not compete with the adopted plan. Assignments bind spec digests from B.",
+      "affected_sections": ["tasks.md 0.1", "README.md pending items", "spec-delta.md header", "result.json remaining_decisions"],
+      "planned_tests": ["T0.1 completion condition (document check)"]
+    },
+    {
+      "id": "m5",
+      "severity": "minor",
+      "status": "fix_submitted",
+      "disposition": "fixed_with_partial_non_adoption",
+      "summary": "Base integration trigger undefined",
+      "rationale": "Integration triggers are GitHub mergeable=false, a Reviewer finding of incompatibility, or a human revise decision. mergeable=null is treated as pending and Blocks at timeout. Integration joins the same-version correction batch (FIN-03; one round when dispatched). It is a local git merge commit in the Implementer worktree, not a GitHub PR merge, and needs no merge permission. When H is unchanged, G3 reuse records its applicability reason (formal AC-G17). Not adopted: dropping the head-only Green re-run when there is no trigger. That rebinding was closed under D51-R02, and the text now says plainly that it only rebinds the base and does not verify integration.",
+      "affected_sections": ["design.md §8 base row, integration trigger and method", "spec-delta.md §3 AC-G17", "validation.md h7, h13, r12", "coverage.md AC-G17"],
+      "planned_tests": ["h7", "h13", "r12", "g13"]
+    },
+    {
+      "id": "m6",
+      "severity": "minor",
+      "status": "fix_submitted",
+      "disposition": "fixed",
+      "summary": "Checks not tied to their own tested SHA",
+      "rationale": "Each job uploads a uniquely named artifact tested-sha-<job>-<run_attempt> holding run_id, run_attempt, job, check name and tested SHA. A check counts only if every field matches and the SHA equals H. A missing artifact or any mismatch is unknown and never passes.",
+      "affected_sections": ["design.md §8", "validation.md h5, h12, §6", "spec-delta.md §6", "tasks.md 1.1, B1"],
+      "planned_tests": ["h12", "h5"]
+    },
+    {
+      "id": "m7",
+      "severity": "minor",
+      "status": "fix_submitted",
+      "disposition": "fixed",
+      "summary": "resolve_operation undefined",
+      "rationale": "resolve_operation is record-only and performs no external write. --bind needs a fresh read that matches the persisted expected identity. --not-delivered needs human evidence of non-delivery, and an absent-query observation alone is rejected. Afterwards the bounded retry rules (at most 2 extra per op) still apply, and pr_ensure still runs its pre-create query.",
+      "affected_sections": ["design.md §4", "spec-delta.md §1", "validation.md d9, w10, h10", "tasks.md 2.2, 2.3, shared files", "coverage.md AC-D12/D13, S1-R02"],
+      "planned_tests": ["d9", "w10", "h10"]
+    },
+    {
+      "id": "m8",
+      "severity": "minor",
+      "status": "fix_submitted",
+      "disposition": "fixed",
+      "summary": "Policy file unnamed and unowned",
+      "rationale": "The policy file is the repo-root workflow.yaml, loopctl's gate policy file, which is distinct from the GitHub workflow .github/workflows/loopctl-ci.yml. It records the required checks, the GitHub workflow path and blob digest, source: head, empty exceptions and the evidence command IDs. T1.1 creates and owns it, and later changes need a new policy_change. The policy_change binds its digest, and a GitHub workflow digest mismatch at H is unknown and Blocked.",
+      "affected_sections": ["design.md §2, §8", "validation.md h1, §6", "spec-delta.md §6", "tasks.md 1.1, shared files, B1"],
+      "planned_tests": ["h1", "p1"]
+    },
+    {
+      "id": "m9",
+      "severity": "minor",
+      "status": "fix_submitted",
+      "disposition": "fixed",
+      "summary": "G2 blocked did not Block the feature",
+      "rationale": "Per AC-G03, a blocked verdict makes G2 unknown and Blocks the feature, with no correction round and no fix dispatch.",
+      "affected_sections": ["design.md §8 G2", "spec-delta.md §5", "validation.md r1", "tasks.md 5.1", "coverage.md AC-G03"],
+      "planned_tests": ["r1"]
+    },
+    {
+      "id": "m10",
+      "severity": "minor",
+      "status": "fix_submitted",
+      "disposition": "fixed",
+      "summary": "Contradictory status and revision labels",
+      "rationale": "README, design, tasks, validation, spec-delta, coverage, cleanup-map and result.json now say revision-12, fix_submitted, pending independent review. The README review table separates the current state from the historical Opus report and GPT review-15. Old reviews are left unchanged, and document-check and publication-manifest are marked as coordinator-produced for this revision.",
+      "affected_sections": ["README.md", "design.md header", "tasks.md header", "validation.md header", "spec-delta.md header", "coverage.md header", "cleanup-map.md header", "result.json"],
+      "planned_tests": ["document coherence check by re-reviewer"]
+    }
+  ],
+  "new_or_changed_cases_to_tasks": {
+    "T1.1": ["t1", "t2", "t3", "t4", "t5", "t6"],
+    "T2.2": ["d4 (whole-run stop wording)", "d9"],
+    "T2.3": ["o1", "o2", "w5 (own observe)", "w8 (own observe)", "w10"],
+    "T3.1": ["g4 (Blocked reason)", "g7 (comment-only config/test)", "g8 (behavior-based)", "g10", "g11", "g12", "g13"],
+    "T6.1": ["h7 (G3 reuse reason, PR base retarget)", "h1 (workflow digest)","h2 (policy job failure)", "h4a", "h4b", "h4c", "h4d", "h4e", "h10 (identity matrix)", "h11", "h12", "h13"],
+    "T5.1": ["r1 (feature Blocked)", "r10 (batch/finding IDs)", "r11", "r12"],
+    "T6.2": ["p1 (Pass package)"],
+    "T0.1": ["complete formal spec baseline adoption with source mapping and independent check", "supersede old D40 formal design/tasks/validation"],
+    "T8.1": ["R3 correction Red requirement"]
+  },
+  "unresolved_decisions": [
+    "None new beyond the existing D11 items (CI set and workflow.yaml content, reviewer model, presets, T8 feature, W1, spec adoption, B1 accept/merge). Two proposed choices the reviewer and D11 should confirm explicitly: counting every same-H PR run's latest attempt (M1), and a behavior-changing base-integration conflict resolution requiring its own Red (M2/M3)."
+  ]
+}

@@ -1,0 +1,1207 @@
+{
+  "execution_status": "completed",
+  "verdict": "ready_for_human_review",
+  "scope": "D51 document audit correction only: R03/R05/R07 residuals and immediate full diff against review14, four prior closures carried; not a new full architecture/product review",
+  "candidate_hashes": {
+    "result.json": "14c12f5a335b40aaa77bb60f709aef1e1334df75a4788f12566a2343f799c181",
+    "cleanup-map.md": "3e978d2c12d93e19238cd4e75c7aee6a8e1a54b09e6c76c340133c8f42949524",
+    "revision-11.json": "648581b72b260917327001ce7808e74a824bea0bf76bb192cd04cc3ce93aad0d",
+    "validation.md": "7982c8e86968fa7936f87e4f4d98e9b1eee07cd5483953522ca068c780458d02",
+    "spec-delta.md": "8e43d3ac3057820d132e8925aaa66d00f6c8b11a0fdef00331d76f35c1d1ca25",
+    "revision-10.json": "470679d10b7c613904cf91f544e219b9ee8bd8d5346977ec1747d21af5c23e96",
+    "tasks.md": "465450c29de2c69bea5c2227b1a2ecf5d3122296210f6245dde0e50f0b06473d",
+    "revision-09.json": "dc7283bf55827948aaae367097072c4d25f5e22ea33fb754e008ae924babf265",
+    "coverage.md": "891df6f82c8f7a197a384a5937330c618efe27da5ea0ad7dbe734b69618996c9",
+    "design.md": "2674e622e0a1509781abf3b1034c1142b2af3162366c0afabdd354e5e618c01f"
+  },
+  "manifest_sha256": "d03acfa30ca0345eb610de364e67116307914e980ae392d30bb8ba350a76d570",
+  "integrity": {
+    "manifest_hashes_verified": 10,
+    "coverage_unique_ids": 105,
+    "ac_ids": 88,
+    "historical_finding_ids": 17,
+    "ids_unchanged": true,
+    "changed_mapping_ids": [
+      "AC-G06",
+      "AC-G14",
+      "S1-R13"
+    ]
+  },
+  "finding_status": [
+    {
+      "id": "D51-R01",
+      "status": "verified_carried",
+      "reason": "Unknown PR creation cannot trigger another create; relevant live clauses unchanged."
+    },
+    {
+      "id": "D51-R02",
+      "status": "verified_carried",
+      "reason": "Actual-head Green and base-change invalidation retained; temporary-merge mechanism remains removed."
+    },
+    {
+      "id": "D51-R03",
+      "status": "verified",
+      "locations": [
+        "design.md:176",
+        "spec-delta.md:80",
+        "validation.md:94",
+        "coverage.md:73"
+      ],
+      "reason": "Workflow-scoped run_number then run_attempt determines order; run_id is identity only. Missing/ambiguous ordering is unknown; h4 covers inverted ID/sequence order and queued attempts."
+    },
+    {
+      "id": "D51-R04",
+      "status": "verified_carried",
+      "reason": "Already-implemented T8 candidate remains removed; genuinely new bounded behavior awaits D11 choice."
+    },
+    {
+      "id": "D51-R05",
+      "status": "verified",
+      "locations": [
+        "design.md:243",
+        "design.md:247",
+        "validation.md:15",
+        "validation.md:19",
+        "tasks.md:17"
+      ],
+      "reason": "Local suite completeness belongs to G1; remote required job/check completeness belongs to G3 after push/PR. No CI prerequisite cycle or restored registry/checker."
+    },
+    {
+      "id": "D51-R06",
+      "status": "verified_carried",
+      "reason": "Per-sample user signatures remain deleted; rubric results use the existing authorized review."
+    },
+    {
+      "id": "D51-R07",
+      "status": "verified",
+      "locations": [
+        "design.md:142",
+        "spec-delta.md:37",
+        "validation.md:79",
+        "tasks.md:63"
+      ],
+      "reason": "Red requires scope, capture-time task/attempt/worktree applicability with snapshot content/delta or history evidence, and attempt-to-head ancestry. Common-parent sibling case fails; valid uncommitted Red remains supported; replay stays diagnostic."
+    }
+  ],
+  "findings": [],
+  "residual_ids": [],
+  "ac_semantic_review": [
+    {
+      "id": "AC-O01",
+      "audit_note_read": true,
+      "audit_disposition": "W",
+      "candidate_stage": "S1、S1-W",
+      "planned_assertion_or_rubric": "d1；W-C",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": [
+        "D51-R06"
+      ]
+    },
+    {
+      "id": "AC-O02",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "s4；r1（沒有授權的 review 不進 G2）",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-O03",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "d6",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-O04",
+      "audit_note_read": true,
+      "audit_disposition": "W",
+      "candidate_stage": "S1-W",
+      "planned_assertion_or_rubric": "W-B",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": [
+        "D51-R06"
+      ]
+    },
+    {
+      "id": "AC-O05",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "d1、d2",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-O06",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "d3；R2",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-O07",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "d4",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-O08",
+      "audit_note_read": true,
+      "audit_disposition": "D",
+      "candidate_stage": "S2",
+      "planned_assertion_or_rubric": "第一片只驗 d8 的拒絕，不算覆蓋",
+      "assessment": "deferred_not_claimed",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-O09",
+      "audit_note_read": true,
+      "audit_disposition": "D",
+      "candidate_stage": "S2",
+      "planned_assertion_or_rubric": "同上",
+      "assessment": "deferred_not_claimed",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-O10",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "p6",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-O11",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "d7",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-O12",
+      "audit_note_read": true,
+      "audit_disposition": "W",
+      "candidate_stage": "S1-W",
+      "planned_assertion_or_rubric": "W-D；T8.0；自動化延到 S2",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": [
+        "D51-R06"
+      ]
+    },
+    {
+      "id": "AC-O13",
+      "audit_note_read": true,
+      "audit_disposition": "W",
+      "candidate_stage": "S1-W",
+      "planned_assertion_or_rubric": "W-D；T8.0",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": [
+        "D51-R06"
+      ]
+    },
+    {
+      "id": "AC-O14",
+      "audit_note_read": true,
+      "audit_disposition": "D",
+      "candidate_stage": "S2",
+      "planned_assertion_or_rubric": "Retro op 延後",
+      "assessment": "deferred_not_claimed",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-O15",
+      "audit_note_read": true,
+      "audit_disposition": "H",
+      "candidate_stage": "handoff",
+      "planned_assertion_or_rubric": "W-F（產品不做 P03 特判）",
+      "assessment": "historical_only",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-O16",
+      "audit_note_read": true,
+      "audit_disposition": "W",
+      "candidate_stage": "S1-W",
+      "planned_assertion_or_rubric": "W-E；T4.1 DOC",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": [
+        "D51-R06"
+      ]
+    },
+    {
+      "id": "AC-O17",
+      "audit_note_read": true,
+      "audit_disposition": "W",
+      "candidate_stage": "S1-W",
+      "planned_assertion_or_rubric": "W-E",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": [
+        "D51-R06"
+      ]
+    },
+    {
+      "id": "AC-O18",
+      "audit_note_read": true,
+      "audit_disposition": "D",
+      "candidate_stage": "S2",
+      "planned_assertion_or_rubric": "第一片只驗 d8 的拒絕",
+      "assessment": "deferred_not_claimed",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-O19",
+      "audit_note_read": true,
+      "audit_disposition": "W",
+      "candidate_stage": "S1、S1-W",
+      "planned_assertion_or_rubric": "d5；W-E",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": [
+        "D51-R06"
+      ]
+    },
+    {
+      "id": "AC-O20",
+      "audit_note_read": true,
+      "audit_disposition": "W",
+      "candidate_stage": "S1-W",
+      "planned_assertion_or_rubric": "W-A",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": [
+        "D51-R06"
+      ]
+    },
+    {
+      "id": "AC-O21",
+      "audit_note_read": true,
+      "audit_disposition": "W",
+      "candidate_stage": "S1-W",
+      "planned_assertion_or_rubric": "W-A",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": [
+        "D51-R06"
+      ]
+    },
+    {
+      "id": "AC-O22",
+      "audit_note_read": true,
+      "audit_disposition": "W",
+      "candidate_stage": "S1、S1-W",
+      "planned_assertion_or_rubric": "d2；W-C",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": [
+        "D51-R06"
+      ]
+    },
+    {
+      "id": "AC-O23",
+      "audit_note_read": true,
+      "audit_disposition": "W",
+      "candidate_stage": "S1-W",
+      "planned_assertion_or_rubric": "W-C（第一片 scope_change 全面停止；只停受影響者屬 S2）",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": [
+        "D51-R06"
+      ]
+    },
+    {
+      "id": "AC-O24",
+      "audit_note_read": true,
+      "audit_disposition": "W",
+      "candidate_stage": "S1-W",
+      "planned_assertion_or_rubric": "W-A",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": [
+        "D51-R06"
+      ]
+    },
+    {
+      "id": "AC-O25",
+      "audit_note_read": true,
+      "audit_disposition": "W",
+      "candidate_stage": "S1-W",
+      "planned_assertion_or_rubric": "W-B",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": [
+        "D51-R06"
+      ]
+    },
+    {
+      "id": "AC-O26",
+      "audit_note_read": true,
+      "audit_disposition": "W",
+      "candidate_stage": "S1、S1-W",
+      "planned_assertion_or_rubric": "d2；W-C",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": [
+        "D51-R06"
+      ]
+    },
+    {
+      "id": "AC-O27",
+      "audit_note_read": true,
+      "audit_disposition": "W",
+      "candidate_stage": "S1-W",
+      "planned_assertion_or_rubric": "W-B",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": [
+        "D51-R06"
+      ]
+    },
+    {
+      "id": "AC-O28",
+      "audit_note_read": true,
+      "audit_disposition": "W",
+      "candidate_stage": "S1-W",
+      "planned_assertion_or_rubric": "W-A",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": [
+        "D51-R06"
+      ]
+    },
+    {
+      "id": "AC-G01",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "p1、h10；R3",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": [
+        "D51-R01"
+      ]
+    },
+    {
+      "id": "AC-G02",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "p2",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-G03",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "r1",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-G04",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "g3、g3b",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping; immediate assertion rechecked_review15",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": [
+        "D51-R07"
+      ]
+    },
+    {
+      "id": "AC-G05",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "g5",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": [
+        "D51-R02"
+      ]
+    },
+    {
+      "id": "AC-G06",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "g1、g2、g3b（scope、對應到 attempt 的捕捉紀錄、attempt 到 H 的 lineage；兄弟 snapshot 無效）",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "changed_mapping_rechecked_review15",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": [
+        "D51-R07"
+      ]
+    },
+    {
+      "id": "AC-G07",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "g2、g4",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-G08",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "g6、g3b；Green 只在實際的 head 執行（h7）",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping; immediate assertion rechecked_review15",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": [
+        "D51-R02",
+        "D51-R07"
+      ]
+    },
+    {
+      "id": "AC-G09",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "g7",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-G10",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "g8",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-G11",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "r1；R1",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-G12",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "r1；R1（權限負例）",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-G13",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "h1、h2、h3、h9（check 集合待 D11）",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-G14",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "h4（依 workflow 的 `run_number`、再依 `run_attempt` 排序，`run_id` 只作識別；queued 的 attempt、其他 workflow、無法排序 → unknown；只有 commit status → unknown）",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "changed_mapping_rechecked_review15",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": [
+        "D51-R03"
+      ]
+    },
+    {
+      "id": "AC-G15",
+      "audit_note_read": true,
+      "audit_disposition": "R",
+      "candidate_stage": "S1（負例）／S2（正向）",
+      "planned_assertion_or_rubric": "第一片只驗 h5 的 unknown；映射能力延後，不算覆蓋",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-G16",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "h6",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-G17",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "h7（base 改變時在 H 重跑 Green；需要整合 → 新 head）",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": [
+        "D51-R02"
+      ]
+    },
+    {
+      "id": "AC-G18",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "p3",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-G19",
+      "audit_note_read": true,
+      "audit_disposition": "E",
+      "candidate_stage": "S1-W",
+      "planned_assertion_or_rubric": "`proof.md` rubric（§4）",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-G20",
+      "audit_note_read": true,
+      "audit_disposition": "E",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "R3（feature 待 D11 選定，必須是 B1 尚未實作的行為）；沒有真實 finding 或 Blocked → 維持 open",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": [
+        "D51-R04"
+      ]
+    },
+    {
+      "id": "AC-D01",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "s5（`status --human` 在 T2.1 實作，不再是 T8 的候選）",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": [
+        "D51-R04"
+      ]
+    },
+    {
+      "id": "AC-D02",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "s3（D48 邊界）",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-D03",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "s4",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-D04",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "w5；R1",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-D05",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "w6",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-D06",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "w8；R2",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-D07",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "u1",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-D08",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "w7",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-D09",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "s1、s2",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-D10",
+      "audit_note_read": true,
+      "audit_disposition": "R",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "s1、s2（對外語意；history-first 只是設計細節）",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-D11",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "s3",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-D12",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "w2、p5",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-D13",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "w1、w3",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-D14",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "u1；R3（中斷後接續）",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-D15",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "u2、h7",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-D16",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "w4、h8",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-D17",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "b1；R1",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-D18",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "f3、w6；R1",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-D19",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "f1；R1",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-D20",
+      "audit_note_read": true,
+      "audit_disposition": "D",
+      "candidate_stage": "S2",
+      "planned_assertion_or_rubric": "OpenCode-only，未覆蓋",
+      "assessment": "deferred_not_claimed",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-D21",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "w9",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-D22",
+      "audit_note_read": true,
+      "audit_disposition": "E",
+      "candidate_stage": "S1-W",
+      "planned_assertion_or_rubric": "`proof.md` rubric；只有 Herdr 兩條路徑，其他接法 none",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-D23",
+      "audit_note_read": true,
+      "audit_disposition": "R",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "f2（第一片未選的選配接入）；OpenCode-only 變體延到 S2",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-D24",
+      "audit_note_read": true,
+      "audit_disposition": "D",
+      "candidate_stage": "S2",
+      "planned_assertion_or_rubric": "同一 OpenCode 承載兩個角色；R1 不能證明",
+      "assessment": "deferred_not_claimed",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-F01",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "r2",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-F02",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "r3",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-F03",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "r4",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-F04",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "r4",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-F05",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "r5",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-F06",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "r6",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-F07",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "r7",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-F08",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "r8",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-F09",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "r8",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-F10",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "r8",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-F11",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "d7",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-F12",
+      "audit_note_read": true,
+      "audit_disposition": "W",
+      "candidate_stage": "S1-W",
+      "planned_assertion_or_rubric": "W-C",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": [
+        "D51-R06"
+      ]
+    },
+    {
+      "id": "AC-F13",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "p4",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-F14",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "p5、u1",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-F15",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "r9",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    },
+    {
+      "id": "AC-F16",
+      "audit_note_read": true,
+      "audit_disposition": "K",
+      "candidate_stage": "S1",
+      "planned_assertion_or_rubric": "r9",
+      "assessment": "planned_mapping_adequate_in_bounded_review_scope",
+      "execution_status": "not_executed",
+      "mapping_carry": "unchanged_mapping_carried_from_prior_88_note_review",
+      "note": "All D51 document findings verified; no executed AC proof and no historical S1 finding closed.",
+      "prior_related_findings": []
+    }
+  ],
+  "limits": [
+    "Document readiness only; no D11 or implementation authorization.",
+    "All tests planned and unexecuted; all17 historical S1 findings remain open.",
+    "Exact model, CI policy, presets, T8 selection, spec adoption and B1 acceptance/merge remain pending.",
+    "Prior full88-note assessment carried only for unchanged mappings; changed/affected assertions rechecked within residual scope.",
+    "First slice executable plan only; later slices outlines.",
+    "No product code/runtime/tests/repository GitHub actions or candidate edits."
+  ]
+}

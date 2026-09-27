@@ -34,4 +34,4 @@ Deep Modules 是來源建議的測試設計方向：以簡單介面包住複雜�
 | 視覺摘要 | 建議加入既有 PR Pass package，只在有助理解時畫圖，不為每個簡單修改新增文件 |
 | Retro 自動寫新規範 | 本機 Matt retro 實際先呈現候選，且為明確呼叫型；修改與驗證需按我們的 scope / policy 處理 |
 
-本機 retro 的來源、hash、呼叫限制與具體輸出見 [雙層 Retro 查核](dual-loop-retro.md)。我們的接入候選見 [品質層次與人工審查](../orchestrate-workflow-draft.md#品質層次與人工審查補充提案)，已確認政策仍以 [decisions.md](../decisions.md) 為準。
+本機 retro 的來源、hash、呼叫限制與具體輸出見 [雙層 Retro 查核](dual-loop-retro.md)。我們的接入候選見 [品質層次與人工審查](../workflow/history/orchestrate-workflow-draft.md#品質層次與人工審查補充提案)，已確認政策仍以 [decisions.md](../decisions.md) 為準。

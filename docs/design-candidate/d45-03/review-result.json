@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "execution_status": "succeeded",
+  "verdict": "ready_for_human_review",
+  "scope": "D50-R02 residual and immediate diff coherence only; six prior verified findings carried from review-11",
+  "artifact_hashes_sha256": {
+    "result.json": "a557447a1e3602ee9543851d4f408870abbfb4f58d88bc873a1a75b5bf78107d",
+    "cleanup-map.md": "a1578e44e5729672fbafc022fa7ce9bf9e7b6509dd486ef122a4264ddc7968cc",
+    "revision-07.json": "cf01c5ea016020319225a0e8ec1b5f66f5a17299bede3f74b37fb89a4b130956",
+    "validation.md": "2ed2200b6336e81f14a26f6fe8511c06161e139ba8295b19922718cf2afd1e1f",
+    "spec-delta.md": "0aad15670f5a1e88b4f9919549829cacb1790ee0f6bdbe579ac817f842032553",
+    "tasks.md": "fa53b8597b3b07ab049151f09c0252d76e1a08a43947ad92c5a9baa0013b0f03",
+    "revision-08.json": "294acf0e8710d1f3e17b58a5f9b32130d75cdf6935ccc43b145f73db4586e12a",
+    "coverage.md": "b24e6db1315656f74fb81691661a637368c3af0f7f4131d68714246d218971b1",
+    "design.md": "64c400fcd578b4661fe209ff436d3d7883fc8637d63f88da01ee2a1209115466"
+  },
+  "manifest_sha256": "757da1ebf076f1d20e236087b28bf742333b820ccaaa19fad7e9fe1e195aa931",
+  "manifest_verified": true,
+  "coverage_identity_check": {
+    "rows": 105,
+    "unique_rows": 105,
+    "ac_rows": 88,
+    "s1_finding_rows": 17,
+    "missing": [],
+    "duplicates": [],
+    "unexpected": []
+  },
+  "findings": [],
+  "residual_ids": [],
+  "verified_ids": [
+    "D50-R01",
+    "D50-R02",
+    "D50-R03",
+    "D50-R04",
+    "D50-R05",
+    "D50-R06",
+    "D50-R07"
+  ],
+  "newly_verified_ids": [
+    "D50-R02"
+  ],
+  "carried_verified_ids": [
+    "D50-R01",
+    "D50-R03",
+    "D50-R04",
+    "D50-R05",
+    "D50-R06",
+    "D50-R07"
+  ],
+  "carry_basis": "Complete artifact diffs against review-11; relevant clauses unchanged. Cleanup-map and revision-07 byte-identical.",
+  "ready_for_human_review": true,
+  "implementation_authorized": false,
+  "D11_approval": false,
+  "product_gate_verdict": null,
+  "author_execution_status": "succeeded (document production only)",
+  "s1_findings_status": "all_open",
+  "deferred_scope": "S2/S3 outlines only",
+  "policy_status": {
+    "D46-D50": "approved_directions",
+    "specific_check_set": "D11_pending",
+    "reviewer_model": "D11_pending",
+    "technical_presets": "D11_pending"
+  },
+  "limits": [
+    "Only final R02 residual and immediate coherence rechecked; no new full sweep.",
+    "All validations remain planned; no runtime or demonstration result.",
+    "No product implementation/tests, GitHub operations or candidate edits.",
+    "Human review readiness is not D11 or product-gate approval.",
+    "Prior review-09 remains valid for its frozen earlier candidate."
+  ]
+}

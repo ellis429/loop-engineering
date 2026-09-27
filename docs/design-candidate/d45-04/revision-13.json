@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "revision": "revision-13",
+  "author": {"role": "document-author", "requested_model": "claude-opus-5-5", "self_reported_model": "claude-opus-5-5"},
+  "responds_to": "inputs/review-01.md (independent review of revision-12, verdict changes_requested), bounded by fix-r13.md",
+  "status": "fix_submitted; the current review status is recorded only in README.md",
+  "scope": "document-only; the bounded batch touches only the three items below and two clarifications; revision-12.json and review snapshots are unchanged",
+  "authority_note": "D11 not granted; no product check passed; no tests executed",
+  "historical_review_01": "review-01 verified 15 of the 16 original Opus findings (M1-M4, M6, m1-m10). That is review-01's conclusion; the author does not re-approve those items or the candidate.",
+  "preserved": {
+    "ac_ids": 88,
+    "ac_state": "all planned; none passed",
+    "coverage_classes": {"core": 58, "workflow": 17, "future": 6, "rewritten": 3, "evidence_rule": 3, "historical": 1},
+    "s1_findings": "S1-R01..R17 all open",
+    "d11": "pending"
+  },
+  "findings": [
+    {
+      "id": "M5",
+      "source": "review-01 residual",
+      "status": "fix_submitted",
+      "disposition": "fixed",
+      "change": "The spec-delta §6 session-failure list now uses the design's exact predicate: any skip not produced by `only_on` on the non-owning platform. The allowed exception is therefore unambiguous in the adoption source.",
+      "affected_sections": ["spec-delta.md §6"],
+      "planned_tests": ["t1 (exit 0)", "t2", "t3"]
+    },
+    {
+      "id": "R12-01",
+      "source": "review-01 new, major, blocking for design",
+      "status": "fix_submitted",
+      "disposition": "fixed",
+      "change": "The integration requirement now has an explicit decision boundary for the current head H. Route 1 (collect normally) applies when G1 has passed on H and a dispatched review or a candidate CI run is actually in flight; results are collected within their timeouts and the integration finding joins that same-version batch (FIN-03). Route 2 applies otherwise, including G1 not passed, review not dispatched, a conflicted PR with no CI run for H, or in-flight work timed out or definitively unavailable. Route 2 immediately uses the existing pre_review_g1 mechanism with reason base_integration. It dispatches no new G2 on H, does not wait for conflict-suppressed CI, and records G3 on H as unknown(ci_unavailable_conflict), never success. Both routes use one writer, confirmed stopped per §6/D47 before dispatch (unknown means stop or Blocked). Both use one batch with one round counted on actual dispatch. Obsolete H results are kept as history and received findings are preserved. The new H needs fresh full G1/G2/G3. The integration finding (source=base_integration) has a stable ID from (base repo/branch, pinned base tip, H); it deduplicates repeated triggers into one open batch and is the Red binding target. Closure still follows F04. No new trigger, platform or lifecycle is added.",
+      "affected_sections": ["design.md §7 pre_review_g1, §8 integration finding/route/common rules, §9 Batch", "spec-delta.md §3 AC-G17", "validation.md h13, r12", "tasks.md 5.1", "coverage.md AC-G17"],
+      "planned_tests": ["r12 (a) ordinary in-flight collection", "r12 (b) pre-G1, conflicted PR, no CI: no premature G2, G3 unknown, one round", "r12 (c) active or unknown writer", "r12 (d) dedup", "r12 (e) full new-head gates", "r12 (f) round cap", "h13 (dedup, ci_unavailable_conflict)"]
+    },
+    {
+      "id": "R12-02",
+      "source": "review-01 new, major, blocking for design",
+      "status": "fix_submitted",
+      "disposition": "fixed",
+      "change": "The integration assignment pins the prior head H and the exact base tip B fetched read-only. It separately authorizes (1) unchanged import of B's changes relative to merge-base(H,B) and (2) author edits, limited to conflicted paths plus the batch findings' approved scope. The merge commit M must have parents exactly [H, B] with H first. The controller recomputes `git merge-tree --write-tree H B`, stores the auto-merge tree and conflicted paths in provenance, and classifies each path of M as unchanged import, authored conflict resolution, or authored extra edit. This uses existing git objects only, with no semantic-diff framework or per-file registry. Authored edits must stay in scope. An unrelated edit hidden in the import differs from the auto-merge result and is rejected, and an out-of-scope resolution goes to D11. Pure import needs no upstream Red and makes no N/A claim; prior task Reds stay traceable through first-parent lineage. A behavioral authored resolution needs an original Red bound to the integration finding and batch; a non-behavioral one uses N/A eligibility. The new H still needs Green/regression, full G2 and G3.",
+      "affected_sections": ["design.md §7 Red units and scope, §8 integration assignment and attempt check", "spec-delta.md §3 Red units, scope qualification, AC-G17", "validation.md ENV-F (git >= 2.38), g13", "tasks.md 3.1 owned paths and completion, 5.1", "coverage.md AC-G08, AC-G17"],
+      "planned_tests": ["g13 (a) clean baseline merge", "g13 (b) unrelated incoming path plus valid in-scope resolution with Red: executable", "g13 (c) extra out-of-scope authored edit hidden in import: rejected", "g13 (d) missing resolution Red: Blocked", "g13 (e) wrong parents or squash: rejected", "g13 (f) out-of-scope resolution: D11"]
+    }
+  ],
+  "clarifications_without_new_capability": [
+    {"topic": "per-job same-attempt artifacts", "change": "The conservative rule may require rerunning all jobs when only failed jobs were rerun. The artifact content is read and compared field by field. The controller adds no rerun feature.", "affected_sections": ["design.md §8 per-job tested SHA", "validation.md §6"]},
+    {"topic": "single status source", "change": "README holds the review status; the other document headers state only the author-submission revision and point to README.", "affected_sections": ["README.md", "headers of design, tasks, validation, spec-delta, coverage, cleanup-map", "result.json"]}
+  ],
+  "unresolved_decisions": ["None new beyond the existing D11 items."]
+}
