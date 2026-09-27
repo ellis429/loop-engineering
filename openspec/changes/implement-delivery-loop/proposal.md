@@ -1,3 +1,5 @@
+> **2026-09-28 D53**：design＋plan 已依 D11 採用（D45-04 revision-17，見 [design](design.md)、[tasks](tasks.md)）；四份 specs 已依 [source-map](adoption/source-map.md) 組成。下方為提案原文，其中「尚待 D11」等狀態字句已由 D53 取代。
+
 # Proposal
 
 > **2026-09-27：proposal 收斂方向已確認（D45）**。第一條實作路徑採 Herdr 原生功能＋orchestrate＋薄 controller。Specs／design／tasks／validation 尚待對齊、獨立審查及 D11 開工確認；本次確認不是產品實作授權。舊 D40 approval 與 S1 review 證據保留，不作本輪批准或通過證明。
