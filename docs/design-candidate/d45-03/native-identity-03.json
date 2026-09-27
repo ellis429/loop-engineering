@@ -1,0 +1,22 @@
+{
+  "session_id": "8c4fbb2f-2ae4-442f-ba3d-e1e9eced8df2",
+  "source": "/Users/johnson.chiang/.claude/projects/-Users-johnson-chiang-workspace-loop-engineering--delivery-bootstrap-herdr-design-d45-01/8c4fbb2f-2ae4-442f-ba3d-e1e9eced8df2.jsonl",
+  "records": [
+    {
+      "timestamp": "2026-09-27T14:40:39.345Z",
+      "model": "claude-opus-5-5",
+      "message_id": "msg_011CfU7mrUxzryGXD5hzBJo6"
+    },
+    {
+      "timestamp": "2026-09-27T14:40:40.646Z",
+      "model": "claude-opus-5-5",
+      "message_id": "msg_011CfU7mrUxzryGXD5hzBJo6"
+    },
+    {
+      "timestamp": "2026-09-27T14:40:47.947Z",
+      "model": "claude-opus-5-5",
+      "message_id": "msg_011CfU7ov2654gSHKwxdHiMJ"
+    }
+  ],
+  "note": "Native metadata only."
+}

@@ -19,7 +19,7 @@
 
 - 同步 Orca 推薦選配與公司直接 OpenCode 接入；移除現行總覽及 formal spec 對 Orca terminal／專有 IDs 的必要依賴。
 - DUR-09 增加 AC-D20–D22：無 Orca 部署、核心與原生身份映射、兩種接法各自驗證；保留原 AC IDs 與 G2 約束。
-- [Workflow §10.2](../workflow-design.md#102-建置-harness-本身與後續試用) 分開正式 bootstrap 與之後的完整試用：controller 實作需可追蹤 feature ticket，不依賴尚未完成的 controller 自己帶完自己；人工協調、fake tests、真實 adapter 及自動 E2E 分別留證據。
+- [Workflow §10.2](../workflow/overview.md#102-建置-harness-本身與後續試用) 分開正式 bootstrap 與之後的完整試用：controller 實作需可追蹤 feature ticket，不依賴尚未完成的 controller 自己帶完自己；人工協調、fake tests、真實 adapter 及自動 E2E 分別留證據。
 - D33 補記使用者最新確認；Q-RUNTIME／Q-PLATFORM 明列已提出而未回答的問題，未新增已確認模型或平台政策。
 
 ## Standards

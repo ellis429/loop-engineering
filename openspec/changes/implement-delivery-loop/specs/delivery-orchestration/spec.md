@@ -1,5 +1,7 @@
 # Spec Delta
 
+> **D41／D42：scope revision pending（2026-09-27）**。使用者已同意收斂為 orchestrate skill 呼叫薄 controller；舊 S1 修正已停止並保存。本文的 D40 技術內容／AC 是歷史核准基準，尚未完成新 scope 的逐項映射，不是繼續舊計畫的派工授權。三 gates、版本與 finding 覆核維持；新 design／plan 仍須 review 及 D11 確認。歷史 approval.json 保持原樣，不代表本次修訂已核准。最新 [產品目標及邊界](../../../../../docs/project-intent.md)、[決策 D41／D42](../../../../../docs/decisions.md)。
+
 ## Purpose
 
 讓使用者透過共同 orchestrate 入口，將單一 feature 從新建或既有成果接入交付流程，並在 project 層保有來源引用、人工接受、相依啟動與有證據的 Retro 候選。本文為本 change 的D40 已核准的規格；D 編號是既有決策來源，操作名稱及細部驗收為規格化提案，並非已實作 API。
@@ -146,7 +148,7 @@ Implementer SHALL 承接 feature spec／AC、project baseline 與高層設計，
 
 ### Requirement: ORC-12 Project Lead 的 Research 與 SA 階段契約
 
-系統 SHALL 在 project 需求準備、feature 需求準備或重開需求分析時，讓 Project Lead 依 [SA 階段契約](../../../../../docs/project-lead-sa.md) 工作，記錄層級、適用 baseline、需求／AC IDs、來源版本與待決影響。Project Lead SHALL 先查證，再每輪提出 1–3 個需使用者取捨的問題，區分事實、假設、建議與已確認需求；研究、CONTEXT、Spec 與 Design／ADR 各保存其責任內容，不建立同義權威副本。SA SHALL 以七項內容的實質充分性判斷能否進入 Design，交使用者確認適用版本；核心 scope／行為／驗收仍有阻擋或僅填滿模板時不得宣告 ready。已有適用來源與確認 SHALL 可沿用；此確認不得取代 D11 開工確認。SA 範圍 SHALL 不包含 detailed design、implementation plan 或產品程式碼修改；必要可行性查證可進行，prototype／環境變更先提出目的及範圍並依適用授權處理。工具候選不構成已選定或已驗證的方法。（來源：D19、D31、D32、D34；七項內容及交接語意由使用者 prompt 具體化）
+系統 SHALL 在 project 需求準備、feature 需求準備或重開需求分析時，讓 Project Lead 依 [SA 階段契約](../../../../../docs/workflow/project-lead-sa.md) 工作，記錄層級、適用 baseline、需求／AC IDs、來源版本與待決影響。Project Lead SHALL 先查證，再每輪提出 1–3 個需使用者取捨的問題，區分事實、假設、建議與已確認需求；研究、CONTEXT、Spec 與 Design／ADR 各保存其責任內容，不建立同義權威副本。SA SHALL 以七項內容的實質充分性判斷能否進入 Design，交使用者確認適用版本；核心 scope／行為／驗收仍有阻擋或僅填滿模板時不得宣告 ready。已有適用來源與確認 SHALL 可沿用；此確認不得取代 D11 開工確認。SA 範圍 SHALL 不包含 detailed design、implementation plan 或產品程式碼修改；必要可行性查證可進行，prototype／環境變更先提出目的及範圍並依適用授權處理。工具候選不構成已選定或已驗證的方法。（來源：D19、D31、D32、D34；七項內容及交接語意由使用者 prompt 具體化）
 
 #### Scenario: AC-O24 專案與功能的分析深度
 - **WHEN** Project Lead 準備 project roadmap，之後再準備其中一個 feature

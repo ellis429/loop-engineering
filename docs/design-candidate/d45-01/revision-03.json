@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "revision_id": "design-01-rev-03",
+  "run_id": "herdr-design-d45",
+  "task_id": "thin-controller-design",
+  "attempt_id": "design-01",
+  "author": {"role": "implementer", "model_self_reported": "claude-opus-5-5"},
+  "input_review": {
+    "source": "review-03/review.md and review-03/review-result.json",
+    "verdict": "changes_required (limited to two adjacent residuals)",
+    "reviewed_artifact_sha256": {
+      "design.md": "54ffa88e446f122e95f5ea8a5bce7cc0a2ed667bb7512810864de5add3a9a50e",
+      "revision-02.json": "7bb6f5faf63c68cde7031d9c98aed835f0942e887c1b9109eb8a713cd3013906"
+    },
+    "manifest_sha256": "b67ccf63e72cb894c6edd37abaeadf275400272e0e24fbcf7323af1384b3ae87",
+    "carried_verified": ["D45-R03", "D45-R04", "D45-R05", "D45-R06", "DN-1 no implicit fallback", "DN-2 clarification", "DN-3 clarification"]
+  },
+  "revised_artifact_sha256": null,
+  "revised_artifact_sha256_note": "Not computed: only Read/Write/Edit/Glob/Grep are allowed. The reviewer should hash the current outputs/design.md.",
+  "scope": "Only the two narrow residuals of D45-R01 and D45-R02 in outputs/design.md, plus the design.md status header. No new mechanism was added, and no other document or section was changed. DN-1..DN-3 remain pending.",
+  "responses": [
+    {
+      "finding_id": "D45-R01",
+      "status": "fix_submitted",
+      "residual_addressed": "Execution mode was restricted to operations with external side effects, which contradicted the rule that a first gh/herdr observe goes through begin.",
+      "change": "Execution/retry mode now covers the first execution of every registered operation, including read-only observation such as gh_observe and herdr observe, and every explicitly permitted retry. Each such execution consumes begin exactly once, and retry accounting is unchanged. Only a readback of an existing in_flight/outcome_unknown attempt bypasses begin, and it never reissues the original operation. The §6 begin description and the §17 orchestrate wording use the same definition. The CLI table rows for the modes were already consistent and are unchanged.",
+      "locations": ["outputs/design.md:84-85 (§2)", "outputs/design.md:148 (§6 begin)", "outputs/design.md:361-363 (§17)"]
+    },
+    {
+      "finding_id": "D45-R02",
+      "status": "fix_submitted",
+      "residual_addressed": "The due-stop priority branch did not cover a stop operation that was persisted as prepared but not yet sent.",
+      "change": "Each attempt has exactly one stop op with a fixed op_id, and the action follows its state. No stop op: prepare it once. prepared: execute the same op through begin, sending once; an existing op does not mean it was sent. in_flight/outcome_unknown: read back the same op with process-info and never resend. failed: retry the same op only if resending is proven safe and infra retries remain, otherwise Blocked for a human. succeeded: close the activity only with stop evidence; a contradicting observation means Blocked for checking, never a second stop. safety_actions and the §6 stop row were synced. A concrete verification case for crash-after-prepare followed by resume was added: the same op_id is executed ahead of an unrelated in-flight readback, fake Herdr send-keys is called exactly once, and a counter-case shows that a still-running process stays active and Blocked.",
+      "locations": ["outputs/design.md:160 (§6 stop row)", "outputs/design.md:238 (§9 safety_actions)", "outputs/design.md:243-266 (§9 stop branches and verification case)"]
+    }
+  ],
+  "decisions_status": {"DN-1": "unapproved", "DN-2": "unapproved", "DN-3": "unapproved"},
+  "resolved_by_author": [],
+  "requested_action": "Bounded re-review of D45-R01 and D45-R02 by the original reviewer. The author does not mark any finding resolved.",
+  "product_gate_verdict": null,
+  "s1_findings": "S1-R01..R17 remain open; this revision does not affect their status."
+}

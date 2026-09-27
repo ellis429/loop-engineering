@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "run_id": "herdr-design-d45",
+  "task_id": "thin-controller-design",
+  "attempt_id": "design-03",
+  "phase": "D50 compact reslicing candidate",
+  "requested_model": "claude-opus-5-5",
+  "self_reported_model": "claude-opus-5-5",
+  "inputs_used": ["prompt-03.md", "assignment-03.json", "inputs-03/decisions.md (D46-D50)", "inputs-03/overengineering.md (OE-01..06)", "review-09/ (spec-delta, cleanup-map, review.md)", "expected-coverage-02.json", "methods/writing-plans.md"],
+  "execution_status": "succeeded",
+  "document_review_status": "review-11 verified D50-R01 and R03..R07; the D50-R02 cross-purpose residual is fix_submitted in revision-08, independent recheck pending",
+  "revision": "outputs-03/revision-08.json",
+  "prior_revisions": ["outputs-03/revision-07.json"],
+  "implementation_authorized": false,
+  "product_gate_verdict": null,
+  "changed_files": [
+    "outputs-03/design.md",
+    "outputs-03/tasks.md",
+    "outputs-03/validation.md",
+    "outputs-03/spec-delta.md",
+    "outputs-03/coverage.md",
+    "outputs-03/cleanup-map.md",
+    "outputs-03/result.json",
+    "outputs-03/revision-07.json",
+    "outputs-03/revision-08.json"
+  ],
+  "size_note": "design+tasks+validation+spec-delta+cleanup is estimated at roughly 26-29 KB UTF-8 (not measured; CJK-heavy). Slightly above the 24 KB target; coverage completeness and safeguards were given priority.",
+  "accepted_d50_cuts": [
+    "One Implementer worktree per feature for serial tasks and fix attempts; independent Reviewer clone and session; per-attempt worktrees, the CAS integration log and cross-worktree integration removed for S1",
+    "Pure reads (CI, PR, worker status, native transcript) are plain bounded fetches recorded as ordered observations; no begin/readback lifecycle for reads",
+    "A finite set of external writes keeps register-once, single execution and readback-only recovery; not_found or a dead client never proves non-delivery",
+    "Original Red and current head Green remain mandatory; replay is diagnostic only on contradiction or risk",
+    "Formal runtime capability preflight (task 1.2) and a minimum orchestrate skill (task 4) come early, before large implementation",
+    "The first useful delivery is a real review→fix→re-review loop on a bounded feature (task 8); task does not equal PR",
+    "adopt, delegate, cross-feature dependency automation, Retro op, Project automation, parallel worktrees and OpenCode-only transport are deferred to S2/S3; unsupported entries are explicitly rejected",
+    "Extraction is traced per commit or rule (source commit/path, findings, reason, new verification); no per-symbol manifest and no module-caller hard gate"
+  ],
+  "preserved": ["D46-D49", "three gates with G1 before formal G2", "latest head/base/artifact version invalidation", "original Red required", "docs-only N/A via independent eligibility", "pre-review G1 correction route", "publication before a fresh Pass observation", "a newer pending-CI observation replaces the earlier one", "finite read and write retry budgets", "no worker argv executed with coordinator authority", "D47 stop and offline honesty", "unknown goes to a human with evidence", "bootstrap PR gates kept separate from self-hosting"],
+  "remaining_decisions": [
+    {"id": "D11-CI-SET", "topic": "Approve the loopctl-ci check set (unit-linux, unit-macos, static including dist-smoke; head-SHA checkout plus tested-sha), then record a policy_change binding", "impact": "G3 stays unknown for both the bootstrap PR (B1) and the product loop until approved"},
+    {"id": "D11-REVIEWER-MODEL", "topic": "Exact reviewer provider/model for Herdr+OpenCode", "impact": "Blocks the reviewer preflight (task 1.2) and G2"},
+    {"id": "D11-PRESETS", "topic": "45/30/30 min role timeouts and MAX readback/fetch = 3", "impact": "Budget and deadline tests use candidate values until confirmed"},
+    {"id": "D11-FEATURE", "topic": "Bounded real feature for task 8 (candidate: `loopctl status --human`); it starts only after B1 is accepted, merged and its baseline registered (D27, task 8.0)", "impact": "Scope and start point of the first useful delivery"},
+    {"id": "WS-W1", "topic": "Execute W1: preserve the existing loop-engineering-thin README.md and docs/ into .pre-w1, run `git worktree add` from base B, restore the candidate docs and verify their digests, then commit the old-code removal", "impact": "Prerequisite for any implementation"},
+    {"id": "B1-ACCEPT-MERGE", "topic": "Human acceptance and manual merge of the bootstrap PR; no automatic merge", "impact": "Gates the start of T8"},
+    {"id": "SPEC-ADOPTION", "topic": "Adopt the D50 spec-delta replacements (DUR-06, DUR-02, GAT-03, ORC-04/06/07 timing) on top of the review-09 baseline", "impact": "Without adoption, the formal specs still describe the begin-for-reads and per-attempt integration semantics"}
+  ],
+  "coverage_counts": {"ac": 88, "s1_findings": 17, "s1_slice_rows": "most controller ACs; deferred rows marked S2/S3/DOC and not labeled covered"},
+  "s1_findings_status": "S1-R01..R17 all open",
+  "no_actions_taken": ["no product code or tests", "no worktree or repo initialized", "no GitHub operations", "no workers dispatched", "old outputs, reviews and formal docs unchanged"]
+}

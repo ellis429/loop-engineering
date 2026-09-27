@@ -1,0 +1,17 @@
+{
+  "reason": "User steering during design; original input manifest stays immutable",
+  "files": [
+    {
+      "path": "steering-01.md",
+      "sha256": "96eaa14b5972994342d37b95cb45fc84c3573ed669bb7fca6004735c869448f7"
+    },
+    {
+      "path": "source-inventory.json",
+      "sha256": "2a188471a2398c5248bc131799855c889204da66979cf2c3e432da6ea56334b8"
+    },
+    {
+      "path": "steering-02.md",
+      "sha256": "df21869756e0613c2d74e5ad3817f9fbc5293a640e1b0628e95b19b995b8d047"
+    }
+  ]
+}

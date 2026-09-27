@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "revision_id": "design-02-rev-05",
+  "run_id": "herdr-design-d45",
+  "task_id": "thin-controller-design",
+  "attempt_id": "design-02",
+  "author": {"role": "implementer", "model_self_reported": "claude-opus-5-5"},
+  "input_reviews": [
+    {"source": "review-07/review.md and review-07/review-result.json", "verdict": "changes_required", "reviewed_sha256": {"tasks.md": "70d7d947b69abb003f4de8910a1b5b78a7e1864c47689607e831c48631b5dd8b", "validation.md": "3760415518de3bc0d4de01832550804994659b6f6c92e6b4955b3b9ea259f850"}, "manifest_sha256": "d42cefc991c55c9f76f96e46978671c1bd786af248ac80440cf4e91f8a888db5", "findings": ["D45-S07", "D45-S08", "D45-S09", "D45-S10"]},
+    {"source": "coordinator correction to the revision-04 D45-S03 response", "finding": "D45-S03", "note": "A local caller dying does not prove that a previously sent remote (GitHub) request cannot publish later"}
+  ],
+  "review_files_modified": false,
+  "revised_artifact_sha256": null,
+  "revised_artifact_sha256_note": "Not computed: only Read/Write/Edit/Glob/Grep are allowed. The reviewer should hash the current outputs-02 files.",
+  "scope": "Minimal corrections to outputs-02 only; no code, no new platform, no process supervisor, no new CI job. Prior fixes D45-R01..R06 and the revision-04 D45-S01..S06 fixes are preserved, except that the S03 retry-safety rule is made more conservative as described below.",
+  "responses": [
+    {
+      "finding_id": "D45-S07",
+      "status": "fix_submitted",
+      "change": "An installed-distribution smoke check (scripts/dist-smoke.sh) is added to the existing required `static` job and to the H1 completion criteria. It runs `uv build`, installs the wheel into a fresh venv without PYTHONPATH, and runs the installed `loopctl inspect --feature f-missing` outside the source checkout, which must exit 5 with valid JSON. It also confirms `import loopctl.tools` works from the installed package. The wheel sha256 and the command/exit are recorded, and a failure blocks H1. The check is owned by task 1.1 and re-run in 15.2.",
+      "locations": ["outputs-02/tasks.md 1.1 (verification, files), 15.2, dependency table", "outputs-02/validation.md V-DIST row, H1 completion, §4 static job", "outputs-02/design.md Migration Plan step 3"]
+    },
+    {
+      "finding_id": "D45-S08",
+      "status": "fix_submitted",
+      "change": "Checkout is now event-aware. PR builds check out `github.event.pull_request.head.sha` and push builds `github.sha`. After checkout the job verifies `git rev-parse HEAD` against the intended SHA (a mismatch fails the job) and uploads a `tested-sha` artifact. The G3 collector credits a check for `source: head` only when the check-run metadata head_sha==H and tested-sha==H; it does not assume checkout changes check-run metadata and never silently relabels a merge-commit M. An H≠M PR test case is added to the gates task and the gh observe tool task.",
+      "locations": ["outputs-02/validation.md §4 checkout row, V-H1-09, V-H1-13", "outputs-02/tasks.md 0.3, 9.1, 13.1", "outputs-02/design.md §15 check-to-tested-SHA mapping", "outputs-02/coverage.md AC-G15"]
+    },
+    {
+      "finding_id": "D45-S09",
+      "status": "fix_submitted",
+      "change": "Bootstrap delivery gates for the controller's own H1 PR (D39) are now separated from H2 self-hosting. Task 15.4 and validation §3a add a coordinator-assembled, independently reviewed record in docs/validation/h1/bootstrap-gates.md. G1 is judged on original Red/Green plus head CI Green, G2 on the independent review of the same head/base/doc digests, and G3 on the D11-approved set plus a policy_change binding, which may now be recorded during H1, with every check success and tested-sha==H. G3 is unknown only when approval, binding or valid check evidence is missing. Nothing is granted automatically. Claims about H2 runtime, capability and self-hosted E2E stay pending, and S1 closure stays with the reviewer. The check set remains unapproved today.",
+      "locations": ["outputs-02/tasks.md 15.2, 15.4, 16.5, dependency table", "outputs-02/validation.md §1, H1 completion note, §3a, §4 closing paragraph, V-H2-05", "outputs-02/design.md §20"]
+    },
+    {
+      "finding_id": "D45-S10",
+      "status": "fix_submitted",
+      "change": "Task 6.1 now keeps only the local decision/provenance transition assertions: approval bound to the registered digest, provenance saved, phase change, and mismatched-digest rejection. These can be completed before CP-1. The public CLI regression init-feature→claim→register→decide approve_plan→inspect, whose next_action must be the first worktree_create with no mocked engine, moves to task 12.1 and validation V-H1-12. The regression is kept; CP-1 is not relaxed.",
+      "locations": ["outputs-02/tasks.md 6.1, 12.1", "outputs-02/validation.md V-H1-06, V-H1-12"]
+    },
+    {
+      "finding_id": "D45-S03",
+      "status": "fix_submitted",
+      "supersedes": "The worktree/publish row in the revision-04 D45-S03 response",
+      "change": "The retry-safety rule is made conservative for remote operations. For gh_pr_ensure and gh_publish_*, a dead local process plus an absent marker is not proof, because a previously sent GitHub request can still publish later. Retry is allowed only when the begin owner recorded definite non-delivery, or when a native idempotency guarantee has been confirmed against the real API in H2 (not assumed before then). Otherwise the result is outcome_unknown, Blocked for a human. Cessation plus absence stays valid only for local synchronous worktree_create. The DUR-06 spec text, a gh_publish test case in tasks 4.1, and the V-H1-13 threshold are updated. No process supervisor is added.",
+      "locations": ["outputs-02/design.md §6 retry-safety table", "outputs-02/spec-delta.md DUR-06", "outputs-02/tasks.md 4.1", "outputs-02/validation.md V-H1-13"]
+    }
+  ],
+  "resolved_by_author": [],
+  "requested_action": "Bounded re-review of D45-S07..S10 and of the tightened D45-S03 rule. The author does not mark any finding resolved.",
+  "policy_status": {"D47": "approved", "D48": "approved", "D49": "approved", "specific_check_set": "not_approved (D11 candidate in validation.md §4)"},
+  "product_gate_verdict": null,
+  "s1_findings": "S1-R01..R17 remain open"
+}

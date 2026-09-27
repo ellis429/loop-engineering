@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "review_type": "bounded_re_review",
+  "revision": "revision-17",
+  "reviewer": {
+    "model": "gpt-6-astra",
+    "effort": "xhigh"
+  },
+  "input_hashes_verified": 29,
+  "input_mismatches": [],
+  "verdict": "clean",
+  "prior_findings": [
+    {
+      "id": "R15-01",
+      "status": "verified",
+      "evidence": "inputs/candidate/design.md §7 lines 220–225 preserves Red/Green activity accounting, min(evidence_call_s, budget.remaining), process-group termination, invalid/non-passing evidence, Blocked/no automatic retry and cleanup handoff. §10 lines 376–386 retains interval-union and unresolved-time accounting. validation.md g15 line 140 tests local timeout and retained elapsed time; b0/b1/b7 lines 209–216 cover the early calculation and later safety routing. The remaining task-order gap is resolved by the T2.3 -> T3.1 -> T7.1 ownership and verification split detailed under R16-01."
+    },
+    {
+      "id": "R15-02",
+      "status": "verified",
+      "evidence": "inputs/candidate/design.md §8 line 244 explicitly applies the correction-snapshot format from line 252 to review and dispute-review assignments: full finding content/status, prior review result ID/version, prior fix commits/evidence and immutable snapshot digest; disputes additionally carry counterevidence. validation.md r10 line 178 now exercises correction, re-review and dispute-review assignment snapshots after registry mutations and new evidence, retaining references and digests. tasks.md T5.1 lines 89, 135 and 155 retains ownership and completion; validation §1.5 assigns M-REV to T5.1. This addresses the residual D45-02 FIN-03 requirement at inputs/baseline-spec-delta-d45-02.md line 284. Existing result-envelope and disposition checks are preserved."
+    },
+    {
+      "id": "R16-01",
+      "status": "verified",
+      "evidence": "inputs/candidate/design.md §10 line 380 assigns active_used(state, now) and remaining(state, now) to T2.3, and §7 line 222 consumes that early contract. tasks.md rows 2.3/3.1/7.1 (82–85), shared-file row 112, cards 128–131 and completion criteria 146–151 consistently assign b0 to T2.3, the local evidence timeout g15 to T3.1, and public next/safety integration b7 to T7.1. validation.md §1.5 lines 39/42 matches those owners; g15(b) line 140 uses a store-backed consumed-budget fixture and retains the shorter bound and elapsed-time record, while b7 line 216 checks subsequent routing, zero dispatch and retained usage. b1 line 210 preserves stop priority and interval accounting. coverage.md AC-D17 line 102 and cleanup-map.md budget row line 40 reference the new split. The explicit task order remains forward and the former semantic backward dependency is removed without stubbing the public integration assertion."
+    },
+    {
+      "id": "R16-02",
+      "status": "verified",
+      "evidence": "inputs/candidate/design.md §10 line 395 now describes two jobs, identifies unit-linux's additional ruff/mypy/dist-smoke commands, and expressly labels the revised duration estimate as an estimate subject to actual execution. It agrees with validation.md §6.1 lines 273–280 and d11-confirmation.md §3 D line 33. Operative timeout values and pending-D11 status remain unchanged."
+    },
+    {
+      "id": "SS-10",
+      "status": "verified",
+      "evidence": "The remaining evidence-budget task-order interaction is resolved by the earlier pure calculation and staged verification: inputs/candidate/design.md §7/§10; tasks.md T2.3/T3.1/T7.1 and shared budget.py row; validation.md b0, g15, b1 and b7. These preserve bounded execution, activity accounting, stop priority, elapsed-time retention and zero redispatch. Previously verified extension checks b5/b6 and r14 remain unchanged (validation.md lines 214–215 and 183); design.md §10 lines 396–399 retains decision-ID idempotence, target isolation and independent-blocker guards."
+    },
+    {
+      "id": "PA-24",
+      "status": "verified",
+      "evidence": "inputs/candidate/design.md §8 line 244 and validation.md r10 line 178 now explicitly extend the immutable prior-review/version and fix/commit evidence snapshot to full re-review and dispute-review assignments, with counterevidence for disputes. r10 checks all three assignment kinds after registry changes. coverage.md AC-F08 line 122 adds r10; the existing S1-R12/r10 mapping remains. This closes the correction-only gap identified by the pinned revision-16 review."
+    }
+  ],
+  "new_findings": [
+    {
+      "id": "R17-01",
+      "location": "inputs/candidate/design.md line 3; compare line 1, README.md lines 3/9, and d11-confirmation.md line 30",
+      "problem": "The revision-17 design title and revised opening paragraph identify the new candidate, but the opening author-submission label still says revision-16. The same file therefore carries conflicting author-version labels.",
+      "basis": "The bounded diff review includes contradictions and version/reference drift. README.md line 3 explicitly says other documents' opening labels identify their submitted author revision. This is an editorial inconsistency: the pinned bytes, title and pending-review/D11 statements still identify the candidate, and no gate or approval rule is weakened.",
+      "expected_fix": "Change the opening author-submission version label in design.md from revision-16 to revision-17, keeping the historical revision explanation and pending-D11 status.",
+      "blocking": false,
+      "severity": "minor"
+    }
+  ],
+  "limits": "Bounded document re-review of 29 hash-pinned inputs, the six requested prior items, every common-file reviewed-r16 -> candidate diff, and new revision-17 metadata. All seven author before_sha256 claims match the reviewed-r16 snapshot. Seven common documents changed; spec-delta.md and revision-16.json are unchanged. Inventory checks found 88 unique formal AC IDs, all in 105 unique coverage rows, and 111 unique product-matrix rows (b0/b7 added, none removed). Numeric task dependencies respect the prescribed execution order; semantic ownership and staged verification were also checked. b7's stop/human alternatives are read with retained b1 and design §10 stop-priority requirements, not as permission to bypass a required stop. Earlier verified items were inspected only where changed supporting text could affect them. Original helper reports are absent, so SS-10/PA-24 use the pinned revision-16 review's stated gaps. revision-15.json is supplied only under reviewed-r16 while revision-17 metadata calls it unchanged; candidate omission is a snapshot limitation, not proof of author deletion. External links, absent publication manifests and historical native-model claims were not independently authenticated. This run's stdout.log header reports gpt-6-astra, xhigh, session 01a0e415-5c66-7141-be1f-a73a21c49591; only header metadata was used for identity. No product tests, runtime inference, permission/placement probes, CI runs, GitHub writes, W1/adoption, merge or example execution occurred. Only review.md and review-result.json were authored; inputs were not modified. All ACs remain planned and 17 legacy S1 findings remain open. This review is not D11 approval."
+}

@@ -1,6 +1,6 @@
 # OpenCode 本機準備與無推論驗證
 
-日期：2026-09-27。此紀錄只證明安裝與部分 runtime API 能力，沒有模型推論、agent 任務完成或產品 gate 結論。
+日期：2026-09-27。本頁保留早期安裝與無推論 API 查核；以下認證／能力敘述為當時快照。後續 ChatGPT OAuth、GPT-6 Luna 真實交接與明確 session resume 已通過，見 [Herdr H0](herdr-setup.md)。Claude 本機接法另依 D44 使用 Herdr＋Claude Code；未取得產品 gate 結論。
 
 ## 安裝
 

@@ -1,0 +1,46 @@
+{
+  "base_manifest_sha256": "486c7941e30830499350043060dd1ab6c44e3b39730c9933dc8eecf395cd749c",
+  "files": [
+    {
+      "path": "assignment-02.json",
+      "sha256": "a998649cc241adf4c0b5cf0ff9191acd856b2a18482e5da330cf9e15f2d57761"
+    },
+    {
+      "path": "stage-02a.md",
+      "sha256": "8e7073a9994a42104fec0e64aba18f5aa701ca24e48a15ce5ab4ce4d25094773"
+    },
+    {
+      "path": "stage-02b.md",
+      "sha256": "d18e53f1e72b5f3bc74a93639ac9028bbce9102054f2d403fb15959c9ab98372"
+    },
+    {
+      "path": "reviewer-simplification-02.md",
+      "sha256": "50f5fac9f5da5895be7c615fff4b5ae01f1c26ebf67cebefbbbd73fa04195ac6"
+    },
+    {
+      "path": "policy-approved-20260927/approval.json",
+      "sha256": "77080eacb88f2b144e706216ba6c7087dc24f1a0520004910a3d25985d5311ef"
+    },
+    {
+      "path": "policy-approved-20260927/decisions.md",
+      "sha256": "cfcd7995bd68edd7e6256e706ec80c78eef62fba23ff2620f7febf69ee962eff"
+    },
+    {
+      "path": "review-05/manifest.json",
+      "sha256": "3c92b0d44d6a87a88365142d5535a2f94b21fce8ff10c0cec771e46d2e048750"
+    },
+    {
+      "path": "review-06/manifest.json",
+      "sha256": "cd0be3a4170066b53afac650fad3d92051570bf3969ed6b6dce84d43e721bae4"
+    },
+    {
+      "path": "review-07/manifest.json",
+      "sha256": "d42cefc991c55c9f76f96e46978671c1bd786af248ac80440cf4e91f8a888db5"
+    },
+    {
+      "path": "review-08/manifest.json",
+      "sha256": "df697a7cbd2ead5798afc3a20252d5cf56805cb7f62a79d73f8b8044c14ed68d"
+    }
+  ],
+  "scope": "candidate document work only; product_implementation_authorized=false"
+}

@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "revision_id": "design-01-rev-01",
+  "run_id": "herdr-design-d45",
+  "task_id": "thin-controller-design",
+  "attempt_id": "design-01",
+  "author": {"role": "implementer", "model_self_reported": "claude-opus-5-5"},
+  "input_review": {
+    "source": "review-01/review.md and review-01/result.json",
+    "verdict": "changes_required",
+    "reviewed_candidate_sha256": {
+      "design.md": "e531b9636041152ff9bce29a8fde94417ca53fc10da84a3f3704541c30229c69",
+      "cleanup-map.md": "685d63e6ff019bc9463e96c4846bb4fb79b905cb241bb8e507ddde9b1084c05f",
+      "decisions-needed.md": "7d0634c13b780fd152018908221fd8ca5546274442b34cf22e015a56a4065f45"
+    },
+    "supplemental_evidence": {"../ci-policy-recheck.json": "7db389a03c65920b52066e25c9b373d18e4233b4d87997073d90b9a51b5d08c4"},
+    "input_manifest_sha256": "486c7941e30830499350043060dd1ab6c44e3b39730c9933dc8eecf395cd749c"
+  },
+  "revised_artifact_sha256": null,
+  "revised_artifact_sha256_note": "Not computed: only Read/Write/Edit/Glob/Grep are allowed. The reviewer should hash the current outputs/ files before re-review.",
+  "scope": "Six review findings and the reviewer's DN-2/DN-3 wording clarifications only. No new platform mechanisms were added. tasks, spec-delta, validation and coverage were not expanded. DN-1..DN-3 remain undecided.",
+  "responses": [
+    {
+      "finding_id": "D45-R01",
+      "status": "fix_submitted",
+      "change": "The execution permission is consumed in one place only. orchestrate calls prepare and then one `loopctl tool … --op` command. That tool alone calls api.begin, executes once when it gets execute:true, and then calls api.record. There is no begin/record CLI command. The behavior is verified through the public CLI with two concurrent tool callers; an AST check cannot establish it.",
+      "locations": ["outputs/design.md:82 (§2)", "outputs/design.md:139 (§6)", "outputs/design.md:170 (§7 CLI table)", "outputs/design.md:329 (§17)"]
+    },
+    {
+      "finding_id": "D45-R02",
+      "status": "fix_submitted",
+      "change": "Blockers now stop only normal work. Readback reconciliation of in-flight operations and deadline/budget stop of known active attempts stay available through permitted_while_blocked, and prepare accepts those action IDs. A stop that cannot be confirmed leaves the attempt active and blocked; it is never treated as stopped. No supervisor was added.",
+      "locations": ["outputs/design.md:229 (§9)", "outputs/design.md:233-237 (§9 ordering)", "outputs/design.md:290 (§13)", "outputs/decisions-needed.md:25 (DN-1 note)"]
+    },
+    {
+      "finding_id": "D45-R03",
+      "status": "fix_submitted",
+      "change": "Stale assignment results (a non-current version_key or lease) are kept as history only and cannot authorize current gates. A fresh external observation is ordered by its existing after_revision. When it shows different facts, it updates observed facts and invalidates gates and the current Pass through the version matrix. Only an observation proven superseded by a later recorded observation is ignored. No new authority was added.",
+      "locations": ["outputs/design.md:259-263 (§10)", "outputs/design.md:275 (§11)"]
+    },
+    {
+      "finding_id": "D45-R04",
+      "status": "fix_submitted",
+      "change": "In checking, when all three gates pass, the engine first drains the pending gh_publish_pr, then the dependent gh_publish_issue, and only after both succeed issues gh_observe(purpose=pass). Retry and readback target the original operations, and there is no extra queue. Pending publications are also listed alongside a correction batch.",
+      "locations": ["outputs/design.md:241-247 (§9 checking)", "outputs/design.md:316 (§15)"]
+    },
+    {
+      "finding_id": "D45-R05",
+      "status": "fix_submitted",
+      "change": "The mandatory rewrite of all old tests is replaced with case-by-case evaluation: retained contract, known defects, and platform coupling. Sound behavioral cases may be selectively extracted and adapted, with source test::name, file sha256 and modifications recorded in the extraction manifest. Platform-specific cases retire, and new CLI regressions are added. Old pass counts are never reused as evidence.",
+      "locations": ["outputs/cleanup-map.md §4 rule on old tests", "outputs/cleanup-map.md:80-91 (§5)", "outputs/cleanup-map.md §6 item 3"]
+    },
+    {
+      "finding_id": "D45-R06",
+      "status": "fix_submitted",
+      "change": "The CLI fact is corrected: the old CLI never drove the delivery loop, but cmd_decide (cli.py:141-160), _abandon (cli.py:165-181) and _reconcile_local via resume/reconcile (cli.py:223-239) do commit state. Each of those behaviors is explicitly replaced in the new tree. The document now states that static references do not prove execution, and actual paths are verified by public-CLI behavior tests.",
+      "locations": ["outputs/cleanup-map.md:9 (§1)", "outputs/cleanup-map.md:49 (§3 row 14)", "outputs/cleanup-map.md:102 (§6 item 2)"]
+    }
+  ],
+  "clarifications": [
+    {"topic": "DN-2", "status": "fix_submitted", "change": "The original historical Red (raw output, exit code, task/attempt, snapshot, provenance) remains mandatory under every option. Coordinator replay and transcript review only supplement it. Accepting a same-UID threat boundary does not authorize a reconstructed Red. Option B is not a default fallback.", "locations": ["outputs/decisions-needed.md:52-57"]},
+    {"topic": "DN-3", "status": "fix_submitted", "change": "Option B is a repo-scoped, versioned human policy exception, labeled separately from verified GitHub rules. A 403 response never falls back to it automatically, and `test` is only an example name. Until the decision exists, G3 stays unknown and Blocked. The ci-policy-recheck 403 finding and the limits of old CI and sandbox evidence are recorded.", "locations": ["outputs/decisions-needed.md:84-89"]},
+    {"topic": "DN-1", "status": "fix_submitted", "change": "B and C are stated not to be default fallbacks, because they add platform responsibility.", "locations": ["outputs/decisions-needed.md:23"]}
+  ],
+  "decisions_status": {"DN-1": "unapproved", "DN-2": "unapproved", "DN-3": "unapproved"},
+  "resolved_by_author": [],
+  "requested_action": "Re-review by the original reviewer. The author does not mark any finding resolved.",
+  "product_gate_verdict": null,
+  "s1_findings": "S1-R01..R17 remain open; this revision does not affect their status."
+}

@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "execution_status": "succeeded",
+  "verdict": "changes_required",
+  "scope": "Final bounded recheck of R01/R02 residuals and immediate adjacent contracts; prior statuses carried after unchanged-source checks",
+  "artifact_hashes_sha256": {
+    "result.json": "7d3f234d0e7a6375e6e5822ffef452324a47e91303b769c9a6bfbee33f82adc5",
+    "cleanup-map.md": "79d0b7fe204b4c5aaf4804207881b933b7298553e142642545f8fef42202aaa2",
+    "decisions-needed.md": "3cf509c855f756796410c1a705278c9760fe641fc5ca10d9b5c14d09de0e2270",
+    "design.md": "54ffa88e446f122e95f5ea8a5bce7cc0a2ed667bb7512810864de5add3a9a50e",
+    "revision-02.json": "7bb6f5faf63c68cde7031d9c98aed835f0942e887c1b9109eb8a713cd3013906"
+  },
+  "manifest_sha256": "b67ccf63e72cb894c6edd37abaeadf275400272e0e24fbcf7323af1384b3ae87",
+  "manifest_verified": true,
+  "unchanged_documents_from_review_02": {
+    "cleanup-map.md": true,
+    "decisions-needed.md": true
+  },
+  "unchanged_design_sections_from_review_02": {
+    "R03_version_and_pass_sections": true,
+    "R04_checking_path": true,
+    "R04_publication_section": true
+  },
+  "findings": [
+    {
+      "id": "D45-R01",
+      "status": "residual",
+      "severity": "medium",
+      "blocking": true,
+      "locations": [
+        "design.md:84-85",
+        "design.md:163",
+        "design.md:184",
+        "design.md:188"
+      ],
+      "prior_counterexample": "verified_fixed",
+      "residual": "Initial read-only operations inconsistently excluded from execution mode."
+    },
+    {
+      "id": "D45-R02",
+      "status": "residual",
+      "severity": "high",
+      "blocking": true,
+      "locations": [
+        "design.md:243-245"
+      ],
+      "prior_counterexample": "verified_fixed",
+      "residual": "Prepared but unsent stop operation has no specified priority action."
+    },
+    {
+      "id": "D45-R03",
+      "status": "verified",
+      "carried_from": "review-02",
+      "blocking": false
+    },
+    {
+      "id": "D45-R04",
+      "status": "verified",
+      "carried_from": "review-02",
+      "blocking": false
+    },
+    {
+      "id": "D45-R05",
+      "status": "verified",
+      "carried_from": "review-02",
+      "blocking": false
+    },
+    {
+      "id": "D45-R06",
+      "status": "verified",
+      "carried_from": "review-02",
+      "blocking": false
+    }
+  ],
+  "clarifications": {
+    "DN-2": "verified_carried",
+    "DN-3": "verified_carried",
+    "DN-1_no_implicit_fallback": "verified_carried"
+  },
+  "policy_decisions": {
+    "DN-1": "unapproved",
+    "DN-2": "unapproved",
+    "DN-3": "unapproved"
+  },
+  "full_design_verdict": null,
+  "product_gate_verdict": null,
+  "limits": [
+    "Only two residuals and adjacent text rechecked; no full-design clean claim.",
+    "No product execution, tests, GitHub operations or S1 closure.",
+    "Draft remains pending synchronization; policy/tasks/coverage/spec-delta/validation remain pending."
+  ]
+}

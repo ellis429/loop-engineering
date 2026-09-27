@@ -8,7 +8,7 @@
 
 本文合併重複內容、調整標題層級，移除對話式推薦尾句；保留來源的工作流程主張與明示檔名，不是逐字逐句的原文存檔。來源中的 immutable / living document、修改 spec、清除 context、merge 等說法均保留為參考觀點，尚未全部採納為本專案政策。
 
-我們的分析與候選改進見 [Orchestrate 流程草案](../orchestrate-workflow-draft.md#外部-spec-driven-development-流程對照2026-09-26)；已確認政策見 [決策紀錄](../decisions.md)。本文的步驟不授權任何 agent 直接執行、修改既有規格或合併 PR。
+我們的分析與候選改進見 [Orchestrate 流程草案](../workflow/history/orchestrate-workflow-draft.md#外部-spec-driven-development-流程對照2026-09-26)；已確認政策見 [決策紀錄](../decisions.md)。本文的步驟不授權任何 agent 直接執行、修改既有規格或合併 PR。
 
 ## 一、整體模式
 
@@ -126,7 +126,7 @@ Replanning 是修改既有憲章與 roadmap 的階段；來源沒有規定一定
 - 將探索性想法、資料庫評估等研究放到獨立 research files / backlog；未指定固定檔名。
 - 來源提到 `agents.md`、Agent Skills 與 ACP 作為跨 agent / IDE 協作標準，目標是在 Claude Code、Codex、OpenCode 等環境維持相同工作流程。
 
-以上為來源主張的收錄。CLI / MCP 的取捨、ACP 實際範圍，以及它們和我們 controller / gates 的關係，已在 [流程草案的比較段落](../orchestrate-workflow-draft.md#外部-spec-driven-development-流程對照2026-09-26) 另作分析。
+以上為來源主張的收錄。CLI / MCP 的取捨、ACP 實際範圍，以及它們和我們 controller / gates 的關係，已在 [流程草案的比較段落](../workflow/history/orchestrate-workflow-draft.md#外部-spec-driven-development-流程對照2026-09-26) 另作分析。
 
 
 ## 六、使用者補充：課程定位與涵蓋程度
@@ -143,4 +143,4 @@ Replanning 是修改既有憲章與 roadmap 的階段；來源沒有規定一定
 | Milestone | 將多個 roadmap 項目組成一次 MVP 實驗並驗證 | 正式整合 demo 規範、接受人與跨 feature 整合測試定義 |
 | Replanning | 在 feature 間以獨立 branch 更新憲章、roadmap 或架構標準 | ADR 與「維持 baseline 不變」的簽核流程自動化 |
 
-此表補充來源範圍，不代表本專案應全部增加右欄規範。MVP 的取捨另見 [流程對照與 MVP 取捨](../workflow-gap-review.md)。
+此表補充來源範圍，不代表本專案應全部增加右欄規範。MVP 的取捨另見 [流程對照與 MVP 取捨](../research/2026-09-26/workflow-gap-review.md)。

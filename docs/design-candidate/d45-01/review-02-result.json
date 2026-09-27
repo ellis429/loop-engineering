@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "execution_status": "succeeded",
+  "verdict": "changes_required",
+  "scope": "Bounded re-review of D45-R01..R06 and DN2/DN3 clarifications; formative draft review only",
+  "artifact_hashes_sha256": {
+    "revision-01.json": "c8ef80daddfc342278363e83e2b11e21abc115ea103c148010e20f8b7b89795a",
+    "result.json": "b9daedd99f9000a6d81dcc42c7e57323edd790c53c41a2d2bb0a55f95d027983",
+    "cleanup-map.md": "79d0b7fe204b4c5aaf4804207881b933b7298553e142642545f8fef42202aaa2",
+    "decisions-needed.md": "3cf509c855f756796410c1a705278c9760fe641fc5ca10d9b5c14d09de0e2270",
+    "design.md": "789473dfad86d4ab6a0a46704df513781a653299c7ab8a2b4adb4b0124f924ae"
+  },
+  "manifest_sha256": "aee1a7180aceef9ae8171d2609aa3ca959c5e1456f93738e7f5290a27a594d30",
+  "manifest_verified": true,
+  "findings": [
+    {
+      "id": "D45-R01",
+      "status": "residual",
+      "blocking": true,
+      "blocking_scope": "eventual_design_readiness",
+      "locations": [
+        "design.md:82",
+        "design.md:139",
+        "design.md:141",
+        "design.md:329"
+      ],
+      "detail": "review.md"
+    },
+    {
+      "id": "D45-R02",
+      "status": "residual",
+      "blocking": true,
+      "blocking_scope": "eventual_design_readiness",
+      "locations": [
+        "design.md:229",
+        "design.md:234-236",
+        "design.md:290"
+      ],
+      "detail": "review.md"
+    },
+    {
+      "id": "D45-R03",
+      "status": "verified",
+      "blocking": false,
+      "blocking_scope": null,
+      "locations": [
+        "design.md:259-263",
+        "design.md:275"
+      ],
+      "detail": "review.md"
+    },
+    {
+      "id": "D45-R04",
+      "status": "verified",
+      "blocking": false,
+      "blocking_scope": null,
+      "locations": [
+        "design.md:242-247",
+        "design.md:274",
+        "design.md:316"
+      ],
+      "detail": "review.md"
+    },
+    {
+      "id": "D45-R05",
+      "status": "verified",
+      "blocking": false,
+      "blocking_scope": null,
+      "locations": [
+        "cleanup-map.md:74",
+        "cleanup-map.md:80-91",
+        "cleanup-map.md:103"
+      ],
+      "detail": "review.md"
+    },
+    {
+      "id": "D45-R06",
+      "status": "verified",
+      "blocking": false,
+      "blocking_scope": null,
+      "locations": [
+        "cleanup-map.md:9",
+        "cleanup-map.md:49",
+        "cleanup-map.md:102"
+      ],
+      "detail": "review.md"
+    }
+  ],
+  "clarifications": {
+    "DN-2": "verified",
+    "DN-3": "verified",
+    "DN-1_no_implicit_fallback": "verified"
+  },
+  "policy_decisions": {
+    "DN-1": "unapproved",
+    "DN-2": "unapproved",
+    "DN-3": "unapproved"
+  },
+  "full_design_verdict": null,
+  "product_gate_verdict": null,
+  "limits": [
+    "No scope expansion beyond prior six findings and policy clarifications.",
+    "Document verification only; no product execution, tests or GitHub calls.",
+    "Draft remains pending synchronization; no implementation authorization or S1 closure.",
+    "Pending spec-delta/tasks/validation/coverage excluded."
+  ]
+}

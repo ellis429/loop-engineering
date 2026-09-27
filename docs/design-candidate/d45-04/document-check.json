@@ -1,0 +1,13 @@
+{
+  "scope": "revision-17 publication",
+  "coverage_rows": 105,
+  "unique_ids": 105,
+  "ac_rows": 88,
+  "old_findings": 17,
+  "matrix_rows": 111,
+  "unique_matrix_rows": 111,
+  "checked_local_links": 42,
+  "broken_local_links": [],
+  "product_tests_executed": false,
+  "D11_approved": false
+}

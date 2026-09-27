@@ -1,0 +1,657 @@
+{
+  "observed_at": "2026-09-27T10:58:02.869501+00:00",
+  "status": "passed_for_sonnet_claude_handoff",
+  "requested_model": "claude-sonnet-5",
+  "observed_models": [
+    "claude-sonnet-5"
+  ],
+  "runtime": "Claude Code 2.1.283",
+  "auth_method": "claude.ai",
+  "subscription_type": "max",
+  "native_session_id": "a548ce24-b7d8-4ecc-ac89-60d3e7f76815",
+  "head": "7dfc7be5a721787bd49cf036c3119caeb7857db9",
+  "assignment": {
+    "schema_version": "h0-agent-probe-v1",
+    "run_id": "herdr-h0-544w2nok",
+    "task_id": "sonnet-claude-file-handoff",
+    "attempt_id": "sonnet-claude-02",
+    "requested_model": "claude-sonnet-5",
+    "worktree": "/private/tmp/le-herdr-h0-544w2nok/worktree",
+    "head_sha": "7dfc7be5a721787bd49cf036c3119caeb7857db9",
+    "allowed_write_paths": [
+      "sonnet-claude-result.json"
+    ],
+    "input": {
+      "values": [
+        3,
+        5,
+        8
+      ],
+      "expected_operation": "sum"
+    },
+    "acceptance": [
+      "Read assignment from disk",
+      "Read current git HEAD using a tool; report it as observed_head_sha",
+      "Read README.md and return its first heading",
+      "Compute the sum of input values",
+      "Write only sonnet-claude-result.json; do not commit or change tracked files"
+    ],
+    "output_schema": {
+      "run_id": "copy",
+      "task_id": "copy",
+      "attempt_id": "copy",
+      "execution_status": "succeeded or blocked",
+      "observed_head_sha": "actual git head",
+      "readme_heading": "actual first heading",
+      "sum": "number",
+      "summary": "short string"
+    },
+    "result_path": "sonnet-claude-result.json",
+    "runtime": "claude-code"
+  },
+  "result": {
+    "run_id": "herdr-h0-544w2nok",
+    "task_id": "sonnet-claude-file-handoff",
+    "attempt_id": "sonnet-claude-02",
+    "execution_status": "succeeded",
+    "observed_head_sha": "7dfc7be5a721787bd49cf036c3119caeb7857db9",
+    "readme_heading": "# Herdr H0 fixture",
+    "sum": 16,
+    "summary": "Read assignment, verified HEAD and README heading, computed sum of [3,5,8]."
+  },
+  "result_sha256": "1e801273050af069dff4796b4d9fc09ad82b7804e25717e863a410d6dbee47fb",
+  "native_messages": [
+    {
+      "sessionId": "a548ce24-b7d8-4ecc-ac89-60d3e7f76815",
+      "timestamp": "2026-09-27T10:56:56.030Z",
+      "type": "user",
+      "message": {
+        "role": "user",
+        "content": "H0 Sonnet file handoff probe sonnet-claude-02. Read ./sonnet-claude-assignment.json and complete exactly its acceptance criteria using your tools. Write ./sonnet-claude-result.json in the requested JSON format. Do not run probe.py, change tracked files, create a commit, access credentials, or call other agents. After saving the file, reply briefly with H0_SONNET_CLAUDE_RESULT_SAVED. This is a small transport test, not product implementation."
+      }
+    },
+    {
+      "sessionId": "a548ce24-b7d8-4ecc-ac89-60d3e7f76815",
+      "timestamp": "2026-09-27T10:56:58.193Z",
+      "type": "assistant",
+      "message": {
+        "role": "assistant",
+        "model": "claude-sonnet-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 13675,
+          "cache_read_input_tokens": 0,
+          "output_tokens": 86,
+          "output_tokens_details": {
+            "thinking_tokens": 0
+          },
+          "server_tool_use": {
+            "web_search_requests": 0,
+            "web_fetch_requests": 0
+          },
+          "service_tier": "standard",
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 13675,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "inference_geo": "not_available",
+          "iterations": [
+            {
+              "input_tokens": 2,
+              "output_tokens": 86,
+              "cache_read_input_tokens": 0,
+              "cache_creation_input_tokens": 13675,
+              "cache_creation": {
+                "ephemeral_5m_input_tokens": 0,
+                "ephemeral_1h_input_tokens": 13675
+              },
+              "type": "message"
+            }
+          ],
+          "speed": "standard"
+        },
+        "stop_reason": "tool_use",
+        "id": "msg_011CfTpkKVtZoLv6YpgzMZRd",
+        "content": [
+          {
+            "type": "tool_use",
+            "id": "toolu_01UCXGtoNVG7BoT3GMYzjUNW",
+            "name": "Read",
+            "input": {
+              "file_path": "/private/tmp/le-herdr-h0-544w2nok/worktree/sonnet-claude-assignment.json"
+            },
+            "caller": {
+              "type": "direct"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "sessionId": "a548ce24-b7d8-4ecc-ac89-60d3e7f76815",
+      "timestamp": "2026-09-27T10:56:58.225Z",
+      "type": "user",
+      "message": {
+        "role": "user",
+        "content": [
+          {
+            "tool_use_id": "toolu_01UCXGtoNVG7BoT3GMYzjUNW",
+            "type": "tool_result",
+            "content": "1\t{\n2\t  \"schema_version\": \"h0-agent-probe-v1\",\n3\t  \"run_id\": \"herdr-h0-544w2nok\",\n4\t  \"task_id\": \"sonnet-claude-file-handoff\",\n5\t  \"attempt_id\": \"sonnet-claude-02\",\n6\t  \"requested_model\": \"claude-sonnet-5\",\n7\t  \"worktree\": \"/private/tmp/le-herdr-h0-544w2nok/worktree\",\n8\t  \"head_sha\": \"7dfc7be5a721787bd49cf036c3119caeb7857db9\",\n9\t  \"allowed_write_paths\": [\n10\t    \"sonnet-claude-result.json\"\n11\t  ],\n12\t  \"input\": {\n13\t    \"values\": [\n14\t      3,\n15\t      5,\n16\t      8\n17\t    ],\n18\t    \"expected_operation\": \"sum\"\n19\t  },\n20\t  \"acceptance\": [\n21\t    \"Read assignment from disk\",\n22\t    \"Read current git HEAD using a tool; report it as observed_head_sha\",\n23\t    \"Read README.md and return its first heading\",\n24\t    \"Compute the sum of input values\",\n25\t    \"Write only sonnet-claude-result.json; do not commit or change tracked files\"\n26\t  ],\n27\t  \"output_schema\": {\n28\t    \"run_id\": \"copy\",\n29\t    \"task_id\": \"copy\",\n30\t    \"attempt_id\": \"copy\",\n31\t    \"execution_status\": \"succeeded or blocked\",\n32\t    \"observed_head_sha\": \"actual git head\",\n33\t    \"readme_heading\": \"actual first heading\",\n34\t    \"sum\": \"number\",\n35\t    \"summary\": \"short string\"\n36\t  },\n37\t  \"result_path\": \"sonnet-claude-result.json\",\n38\t  \"runtime\": \"claude-code\"\n39\t}\n40\t"
+          }
+        ]
+      }
+    },
+    {
+      "sessionId": "a548ce24-b7d8-4ecc-ac89-60d3e7f76815",
+      "timestamp": "2026-09-27T10:57:00.284Z",
+      "type": "assistant",
+      "message": {
+        "role": "assistant",
+        "model": "claude-sonnet-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 722,
+          "cache_read_input_tokens": 13675,
+          "output_tokens": 95,
+          "output_tokens_details": {
+            "thinking_tokens": 0
+          },
+          "server_tool_use": {
+            "web_search_requests": 0,
+            "web_fetch_requests": 0
+          },
+          "service_tier": "standard",
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 722,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "inference_geo": "not_available",
+          "iterations": [
+            {
+              "input_tokens": 2,
+              "output_tokens": 95,
+              "cache_read_input_tokens": 13675,
+              "cache_creation_input_tokens": 722,
+              "cache_creation": {
+                "ephemeral_5m_input_tokens": 0,
+                "ephemeral_1h_input_tokens": 722
+              },
+              "type": "message"
+            }
+          ],
+          "speed": "standard"
+        },
+        "stop_reason": "tool_use",
+        "id": "msg_011CfTpkUiGBhy1g1vkRhfQU",
+        "content": [
+          {
+            "type": "tool_use",
+            "id": "toolu_016AmRCvJHbPF3rqMc8m4nkN",
+            "name": "Bash",
+            "input": {
+              "command": "git rev-parse HEAD; head -5 README.md",
+              "description": "Get git HEAD and README heading"
+            },
+            "caller": {
+              "type": "direct"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "sessionId": "a548ce24-b7d8-4ecc-ac89-60d3e7f76815",
+      "timestamp": "2026-09-27T10:57:01.978Z",
+      "type": "user",
+      "message": {
+        "role": "user",
+        "content": [
+          {
+            "tool_use_id": "toolu_016AmRCvJHbPF3rqMc8m4nkN",
+            "type": "tool_result",
+            "content": "7dfc7be5a721787bd49cf036c3119caeb7857db9\n# Herdr H0 fixture\nTemporary transport probe; no model inference or delivery gate.",
+            "is_error": false
+          }
+        ]
+      }
+    },
+    {
+      "sessionId": "a548ce24-b7d8-4ecc-ac89-60d3e7f76815",
+      "timestamp": "2026-09-27T10:57:04.995Z",
+      "type": "assistant",
+      "message": {
+        "role": "assistant",
+        "model": "claude-sonnet-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 199,
+          "cache_read_input_tokens": 14397,
+          "output_tokens": 292,
+          "output_tokens_details": {
+            "thinking_tokens": 0
+          },
+          "server_tool_use": {
+            "web_search_requests": 0,
+            "web_fetch_requests": 0
+          },
+          "service_tier": "standard",
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 199,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "inference_geo": "not_available",
+          "iterations": [
+            {
+              "input_tokens": 2,
+              "output_tokens": 292,
+              "cache_read_input_tokens": 14397,
+              "cache_creation_input_tokens": 199,
+              "cache_creation": {
+                "ephemeral_5m_input_tokens": 0,
+                "ephemeral_1h_input_tokens": 199
+              },
+              "type": "message"
+            }
+          ],
+          "speed": "standard"
+        },
+        "stop_reason": "tool_use",
+        "id": "msg_011CfTpkkih69K7KkZsf1eES",
+        "content": [
+          {
+            "type": "tool_use",
+            "id": "toolu_013D11cicKkMSfH1LiD3HZi2",
+            "name": "Write",
+            "input": {
+              "file_path": "/private/tmp/le-herdr-h0-544w2nok/worktree/sonnet-claude-result.json",
+              "content": "{\n  \"run_id\": \"herdr-h0-544w2nok\",\n  \"task_id\": \"sonnet-claude-file-handoff\",\n  \"attempt_id\": \"sonnet-claude-02\",\n  \"execution_status\": \"succeeded\",\n  \"observed_head_sha\": \"7dfc7be5a721787bd49cf036c3119caeb7857db9\",\n  \"readme_heading\": \"# Herdr H0 fixture\",\n  \"sum\": 16,\n  \"summary\": \"Read assignment, verified HEAD and README heading, computed sum of [3,5,8].\"\n}\n"
+            },
+            "caller": {
+              "type": "direct"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "sessionId": "a548ce24-b7d8-4ecc-ac89-60d3e7f76815",
+      "timestamp": "2026-09-27T10:57:05.028Z",
+      "type": "user",
+      "message": {
+        "role": "user",
+        "content": [
+          {
+            "tool_use_id": "toolu_013D11cicKkMSfH1LiD3HZi2",
+            "type": "tool_result",
+            "content": "File created successfully at: /private/tmp/le-herdr-h0-544w2nok/worktree/sonnet-claude-result.json (file state is current in your context — no need to Read it back)"
+          }
+        ]
+      }
+    },
+    {
+      "sessionId": "a548ce24-b7d8-4ecc-ac89-60d3e7f76815",
+      "timestamp": "2026-09-27T10:57:06.696Z",
+      "type": "assistant",
+      "message": {
+        "role": "assistant",
+        "model": "claude-sonnet-5",
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 398,
+          "cache_read_input_tokens": 14596,
+          "output_tokens": 26,
+          "output_tokens_details": {
+            "thinking_tokens": 0
+          },
+          "server_tool_use": {
+            "web_search_requests": 0,
+            "web_fetch_requests": 0
+          },
+          "service_tier": "standard",
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 398,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "inference_geo": "not_available",
+          "iterations": [
+            {
+              "input_tokens": 2,
+              "output_tokens": 26,
+              "cache_read_input_tokens": 14596,
+              "cache_creation_input_tokens": 398,
+              "cache_creation": {
+                "ephemeral_5m_input_tokens": 0,
+                "ephemeral_1h_input_tokens": 398
+              },
+              "type": "message"
+            }
+          ],
+          "speed": "standard"
+        },
+        "stop_reason": "end_turn",
+        "id": "msg_011CfTpkyry4g8ekDj1m5fia",
+        "content": [
+          {
+            "type": "text",
+            "text": "H0_SONNET_CLAUDE_RESULT_SAVED"
+          }
+        ]
+      }
+    }
+  ],
+  "tracked_files_unchanged": true,
+  "prior_attempts": [
+    {
+      "runtime": "OpenCode",
+      "model": "google-vertex-anthropic/claude-sonnet-5@default",
+      "native_session_id": "ses_f1d840380ffeMTeXSDyZEIkI2m",
+      "outcome": "invalid_grant",
+      "result_created": false
+    },
+    {
+      "runtime": "Claude Code",
+      "native_session_id": "2895856b-5588-4e28-95e6-d88dbe7b44eb",
+      "outcome": "ECONNREFUSED to user-configured localhost API endpoint; interrupted",
+      "assistant_model_messages": false,
+      "result_created": false
+    }
+  ],
+  "successful_launch_settings": {
+    "safe_mode": true,
+    "setting_sources": [],
+    "effort": "low",
+    "tools": [
+      "Read",
+      "Write",
+      "Bash"
+    ],
+    "observed_permission_mode": "auto",
+    "custom_config_files_modified": false
+  },
+  "scope": "one completed Sonnet task; no Sonnet resume or product gates",
+  "server_stopped": true,
+  "worktree_retained": true,
+  "herdr_commands": [
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok agent start h0-claude-sonnet --kind claude --pane w3:p1 --timeout 20000 -- --model claude-sonnet-5 --effort low --safe-mode --session-id 2895856b-5588-4e28-95e6-d88dbe7b44eb --tools Read,Write,Bash --allowedTools Read Write 'Bash(git rev-parse HEAD)'",
+      "result": {
+        "chunk_id": "f61db0",
+        "wall_time_seconds": 1.002115625,
+        "session_id": 62628,
+        "original_token_count": 0,
+        "output": ""
+      }
+    },
+    {
+      "poll_session": 62628,
+      "result": {
+        "chunk_id": "fbdbb4",
+        "wall_time_seconds": 3.2333e-05,
+        "exit_code": 1,
+        "original_token_count": 38,
+        "output": "{\"error\":{\"code\":\"agent_not_ready\",\"message\":\"agent h0-claude-sonnet is blocked during startup and is not ready for prompts\"},\"id\":\"cli:agent:start\"}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok agent read h0-claude-sonnet --source visible",
+      "result": {
+        "chunk_id": "3e9b34",
+        "wall_time_seconds": 1.1583e-05,
+        "exit_code": 0,
+        "original_token_count": 378,
+        "output": "sh-3.2$ opencode --pure --model google-vertex-anthropic/claude-sonnet-5@default\n                                   ▄\n  █▀▀█ █▀▀█ █▀▀█ █▀▀▄ █▀▀▀ █▀▀█ █▀▀█ █▀▀█\n  █  █ █  █ █▀▀▀ █  █ █    █  █ █  █ █▀▀▀\n  ▀▀▀▀ █▀▀▀ ▀▀▀▀ ▀▀▀▀ ▀▀▀▀ ▀▀▀▀ ▀▀▀▀ ▀▀▀▀\n\n  Session   New session - 2026-09-27T10:49:31.519Z\n  Continue  opencode -s ses_f1d840380ffeMTeXSDyZEIkI2m\n\nsh-3.2$ claude --model claude-sonnet-5 --effort low --safe-mode --session-id 2895856b-5588-4e28-95e6-d88dbe7b44eb --too\nls Read,Write,Bash --allowedTools Read Write 'Bash(git rev-parse HEAD)'\n\n───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────\n Accessing workspace:\n\n /private/tmp/le-herdr-h0-544w2nok/worktree\n\n Quick safety check: Is this a project you created or one you trust? (Like your own code, a well-known open source\n project, or work from your team). If not, take a moment to review what's in this folder first.\n\n Claude Code'll be able to read, edit, and execute files here.\n\n Security guide\n\n ❯ No, exit\n   Yes, I trust this folder\n\n Enter to confirm · Esc to cancel\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok agent send-keys h0-claude-sonnet down enter",
+      "result": {
+        "chunk_id": "7f0598",
+        "wall_time_seconds": 1.0791e-05,
+        "exit_code": 0,
+        "original_token_count": 13,
+        "output": "{\"id\":\"cli:agent:send-keys\",\"result\":{\"type\":\"ok\"}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok agent wait h0-claude-sonnet --timeout 15000",
+      "result": {
+        "chunk_id": "5489d6",
+        "wall_time_seconds": 8.625e-06,
+        "exit_code": 0,
+        "original_token_count": 103,
+        "output": "{\"id\":\"cli:agent:wait\",\"result\":{\"agent\":{\"agent\":\"claude\",\"agent_status\":\"blocked\",\"cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"focused\":false,\"foreground_cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"launch_pending\":true,\"name\":\"h0-claude-sonnet\",\"pane_id\":\"w3:p1\",\"revision\":2,\"state_change_seq\":5,\"tab_id\":\"w3:t1\",\"terminal_id\":\"term_65c74b2e62f672\",\"workspace_id\":\"w3\"},\"type\":\"agent_info\"}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok agent read h0-claude-sonnet --source visible",
+      "result": {
+        "chunk_id": "720cee",
+        "wall_time_seconds": 1.25e-05,
+        "exit_code": 0,
+        "original_token_count": 350,
+        "output": "\n ▐▛███▛█   Claude Code v2.1.283\n▝▜██████▀  Sonnet 5 with low effort · Claude Max\n ▝▝   ▝▝   /private/tmp/le-herdr-h0-544w2nok/worktree\n\n⚠ Safe mode: all customizations are disabled (CLAUDE.md, skills, plugins, hooks, MCP, agents, and more)\n  Restart without --safe-mode to re-enable\n\n▎ ※ You've been granted a $250 bonus credit for cloud sessions, on top of your plan limits · /claim-credit\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n                                                                                                      ○ low · /effort\n───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────\n❯ Try \"how do I log an error?\"\n───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────\n  ⏵⏵ auto mode on (shift+tab to cycle) · ← for agents\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok agent get h0-claude-sonnet",
+      "result": {
+        "chunk_id": "ffe821",
+        "wall_time_seconds": 9.083e-06,
+        "exit_code": 0,
+        "original_token_count": 121,
+        "output": "{\"id\":\"cli:agent:get\",\"result\":{\"agent\":{\"agent\":\"claude\",\"agent_status\":\"idle\",\"cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"focused\":false,\"foreground_cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"interactive_ready\":true,\"name\":\"h0-claude-sonnet\",\"pane_id\":\"w3:p1\",\"revision\":3,\"state_change_seq\":6,\"tab_id\":\"w3:t1\",\"terminal_id\":\"term_65c74b2e62f672\",\"terminal_title\":\"✳ Claude Code\",\"terminal_title_stripped\":\"Claude Code\",\"workspace_id\":\"w3\"},\"type\":\"agent_info\"}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok agent prompt h0-claude-sonnet 'H0 Sonnet file handoff probe sonnet-claude-01. Read ./sonnet-claude-assignment.json and complete exactly its acceptance criteria using your tools. Write ./sonnet-claude-result.json in the requested JSON format. Do not run probe.py, change tracked files, create a commit, access credentials, or call other agents. After saving the file, reply briefly with H0_SONNET_CLAUDE_RESULT_SAVED. This is a small transport test, not product implementation.' --wait --timeout 45000",
+      "result": {
+        "chunk_id": "cd9242",
+        "wall_time_seconds": 1.002633208,
+        "session_id": 1898,
+        "original_token_count": 0,
+        "output": ""
+      }
+    },
+    {
+      "poll_session": 1898,
+      "result": {
+        "chunk_id": "8386a4",
+        "wall_time_seconds": 5.001961375,
+        "session_id": 1898,
+        "original_token_count": 0,
+        "output": ""
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok agent read h0-claude-sonnet --source visible",
+      "result": {
+        "chunk_id": "037233",
+        "wall_time_seconds": 1.1167e-05,
+        "exit_code": 0,
+        "original_token_count": 459,
+        "output": "\n ▐▛███▛█   Claude Code v2.1.283\n▝▜██████▀  Sonnet 5 with low effort · Claude Max\n ▝▝   ▝▝   /private/tmp/le-herdr-h0-544w2nok/worktree\n\n⚠ Safe mode: all customizations are disabled (CLAUDE.md, skills, plugins, hooks, MCP, agents, and more)\n  Restart without --safe-mode to re-enable\n\n▎ ※ You've been granted a $250 bonus credit for cloud sessions, on top of your plan limits · /claim-credit\n\n❯ H0 Sonnet file handoff probe sonnet-claude-01. Read ./sonnet-claude-assignment.json and complete exactly its\n  acceptance criteria using your tools. Write ./sonnet-claude-result.json in the requested JSON format. Do not run\n  probe.py, change tracked files, create a commit, access credentials, or call other agents. After saving the file,\n  reply briefly with H0_SONNET_CLAUDE_RESULT_SAVED. This is a small transport test, not product implementation.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n✻ Connection refused — a firewall or proxy may be blocking it (ECONNREFUSED) · Retrying in 16s · attempt 6/10\n\n───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────\n❯\n───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────\n  ⏵⏵ auto mode on (shift+tab to cycle) · esc to interrupt · ← for agents\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok agent send-keys h0-claude-sonnet esc",
+      "result": {
+        "chunk_id": "ed3995",
+        "wall_time_seconds": 9.708e-06,
+        "exit_code": 0,
+        "original_token_count": 13,
+        "output": "{\"id\":\"cli:agent:send-keys\",\"result\":{\"type\":\"ok\"}}\n"
+      }
+    },
+    {
+      "poll_session": 1898,
+      "result": {
+        "chunk_id": "418e37",
+        "wall_time_seconds": 0.101972792,
+        "exit_code": 0,
+        "original_token_count": 123,
+        "output": "{\"id\":\"cli:agent:prompt\",\"result\":{\"agent\":{\"agent\":\"claude\",\"agent_status\":\"done\",\"cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"focused\":false,\"foreground_cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"interactive_ready\":true,\"name\":\"h0-claude-sonnet\",\"pane_id\":\"w3:p1\",\"revision\":3,\"state_change_seq\":8,\"tab_id\":\"w3:t1\",\"terminal_id\":\"term_65c74b2e62f672\",\"terminal_title\":\"✳ Claude Code\",\"terminal_title_stripped\":\"Claude Code\",\"workspace_id\":\"w3\"},\"type\":\"agent_prompted\"}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok agent send-keys h0-claude-sonnet ctrl+c",
+      "result": {
+        "chunk_id": "9f3d1e",
+        "wall_time_seconds": 1.1166e-05,
+        "exit_code": 0,
+        "original_token_count": 13,
+        "output": "{\"id\":\"cli:agent:send-keys\",\"result\":{\"type\":\"ok\"}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok agent read h0-claude-sonnet --source visible",
+      "result": {
+        "chunk_id": "1c74c7",
+        "wall_time_seconds": 1.0709e-05,
+        "exit_code": 0,
+        "original_token_count": 304,
+        "output": "\n ▐▛███▛█   Claude Code v2.1.283\n▝▜██████▀  Sonnet 5 with low effort · Claude Max\n ▝▝   ▝▝   /private/tmp/le-herdr-h0-544w2nok/worktree\n\n⚠ Safe mode: all customizations are disabled (CLAUDE.md, skills, plugins, hooks, MCP, agents, and more)\n  Restart without --safe-mode to re-enable\n\n▎ ※ You've been granted a $250 bonus credit for cloud sessions, on top of your plan limits · /claim-credit\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────\n❯\n───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────\n  Press Ctrl-C again to exit\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok agent send-keys h0-claude-sonnet ctrl+c",
+      "result": {
+        "chunk_id": "a6e390",
+        "wall_time_seconds": 1.0166e-05,
+        "exit_code": 0,
+        "original_token_count": 13,
+        "output": "{\"id\":\"cli:agent:send-keys\",\"result\":{\"type\":\"ok\"}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok pane process-info --pane w3:p1",
+      "result": {
+        "chunk_id": "acdad1",
+        "wall_time_seconds": 9.334e-06,
+        "exit_code": 0,
+        "original_token_count": 250,
+        "output": "{\"id\":\"cli:pane:process_info\",\"result\":{\"process_info\":{\"foreground_process_group_id\":13895,\"foreground_processes\":[{\"argv\":[\"ssh\",\"-T\",\"-o\",\"BatchMode=yes\",\"-o\",\"ConnectTimeout=2\",\"-o\",\"StrictHostKeyChecking=yes\",\"git@github.com\"],\"argv0\":\"ssh\",\"cmdline\":\"ssh -T -o BatchMode=yes -o ConnectTimeout=2 -o StrictHostKeyChecking=yes git@github.com\",\"cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"name\":\"ssh\",\"pid\":15992},{\"argv\":[\"claude\",\"--model\",\"claude-sonnet-5\",\"--effort\",\"low\",\"--safe-mode\",\"--session-id\",\"2895856b-5588-4e28-95e6-d88dbe7b44eb\",\"--tools\",\"Read,Write,Bash\",\"--allowedTools\",\"Read\",\"Write\",\"Bash(git rev-parse HEAD)\"],\"argv0\":\"claude\",\"cmdline\":\"claude --model claude-sonnet-5 --effort low --safe-mode --session-id 2895856b-5588-4e28-95e6-d88dbe7b44eb --tools Read,Write,Bash --allowedTools Read Write Bash(git rev-parse HEAD)\",\"cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"name\":\"2.1.283\",\"pid\":13895}],\"pane_id\":\"w3:p1\",\"shell_pid\":9094},\"type\":\"pane_process_info\"}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok pane process-info --pane w3:p1",
+      "result": {
+        "chunk_id": "60790c",
+        "wall_time_seconds": 1.1125e-05,
+        "exit_code": 0,
+        "original_token_count": 876,
+        "output": "{\"id\":\"cli:pane:process_info\",\"result\":{\"process_info\":{\"foreground_process_group_id\":13895,\"foreground_processes\":[{\"argv\":[\"/Library/Developer/CommandLineTools/usr/libexec/git-core/git\",\"--shallow-file\",\"/Users/johnson.chiang/.claude/plugins/marketplaces/claude-code-plugins..clone/.git/shallow.lock\",\"index-pack\",\"--stdin\",\"--fix-thin\",\"--keep=fetch-pack 16095 on MacBook-Air-3.local\"],\"argv0\":\"git\",\"cmdline\":\"/Library/Developer/CommandLineTools/usr/libexec/git-core/git --shallow-file /Users/johnson.chiang/.claude/plugins/marketplaces/claude-code-plugins..clone/.git/shallow.lock index-pack --stdin --fix-thin --keep=fetch-pack 16095 on MacBook-Air-3.local\",\"cwd\":\"/Users/johnson.chiang/.claude/plugins/marketplaces\",\"name\":\"git\",\"pid\":16114},{\"argv\":[\"/Library/Developer/CommandLineTools/usr/libexec/git-core/git-remote-https\",\"origin\",\"https://github.com/anthropics/claude-code.git\"],\"argv0\":\"git-remote-https\",\"cmdline\":\"/Library/Developer/CommandLineTools/usr/libexec/git-core/git-remote-https origin https://github.com/anthropics/claude-code.git\",\"cwd\":\"/Users/johnson.chiang/.claude/plugins/marketplaces\",\"name\":\"git-remote-http\",\"pid\":16097},{\"argv\":[\"/Library/Developer/CommandLineTools/usr/libexec/git-core/git\",\"remote-https\",\"origin\",\"https://github.com/anthropics/claude-code.git\"],\"argv0\":\"git\",\"cmdline\":\"/Library/Developer/CommandLineTools/usr/libexec/git-core/git remote-https origin https://github.com/anthropics/claude-code.git\",\"cwd\":\"/Users/johnson.chiang/.claude/plugins/marketplaces\",\"name\":\"git\",\"pid\":16096},{\"argv\":[\"/Library/Developer/CommandLineTools/usr/bin/git\",\"-c\",\"core.fsmonitor=\",\"-c\",\"core.hooksPath=/dev/null\",\"-c\",\"core.askPass=\",\"-c\",\"submodule.recurse=false\",\"-c\",\"log.showSignature=false\",\"-c\",\"gc.auto=0\",\"-c\",\"maintenance.auto=false\",\"-c\",\"core.sshCommand=ssh -o BatchMode=yes -o StrictHostKeyChecking=yes\",\"-c\",\"protocol.ext.allow=never\",\"-c\",\"protocol.fd.allow=never\",\"-c\",\"protocol.git.allow=never\",\"-c\",\"protocol.ftp.allow=never\",\"-c\",\"protocol.ftps.allow=never\",\"clone\",\"--depth\",\"1\",\"--recurse-submodules\",\"--shallow-submodules\",\"--\",\"https://github.com/anthropics/claude-code.git\",\"/Users/johnson.chiang/.claude/plugins/marketplaces/claude-code-plugins..clone\"],\"argv0\":\"git\",\"cmdline\":\"/Library/Developer/CommandLineTools/usr/bin/git -c core.fsmonitor= -c core.hooksPath=/dev/null -c core.askPass= -c submodule.recurse=false -c log.showSignature=false -c gc.auto=0 -c maintenance.auto=false -c core.sshCommand=ssh -o BatchMode=yes -o StrictHostKeyChecking=yes -c protocol.ext.allow=never -c protocol.fd.allow=never -c protocol.git.allow=never -c protocol.ftp.allow=never -c protocol.ftps.allow=never clone --depth 1 --recurse-submodules --shallow-submodules -- https://github.com/anthropics/claude-code.git /Users/johnson.chiang/.claude/plugins/marketplaces/claude-code-plugins..clone\",\"cwd\":\"/Users/johnson.chiang/.claude/plugins/marketplaces\",\"name\":\"git\",\"pid\":16095},{\"argv\":[\"claude\",\"--model\",\"claude-sonnet-5\",\"--effort\",\"low\",\"--safe-mode\",\"--session-id\",\"2895856b-5588-4e28-95e6-d88dbe7b44eb\",\"--tools\",\"Read,Write,Bash\",\"--allowedTools\",\"Read\",\"Write\",\"Bash(git rev-parse HEAD)\"],\"argv0\":\"claude\",\"cmdline\":\"claude --model claude-sonnet-5 --effort low --safe-mode --session-id 2895856b-5588-4e28-95e6-d88dbe7b44eb --tools Read,Write,Bash --allowedTools Read Write Bash(git rev-parse HEAD)\",\"cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"name\":\"2.1.283\",\"pid\":13895}],\"pane_id\":\"w3:p1\",\"shell_pid\":9094},\"type\":\"pane_process_info\"}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok agent send-keys h0-claude-sonnet ctrl+c ctrl+c",
+      "result": {
+        "chunk_id": "74ffd9",
+        "wall_time_seconds": 9.958e-06,
+        "exit_code": 0,
+        "original_token_count": 13,
+        "output": "{\"id\":\"cli:agent:send-keys\",\"result\":{\"type\":\"ok\"}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok pane process-info --pane w3:p1",
+      "result": {
+        "chunk_id": "81009c",
+        "wall_time_seconds": 1.05e-05,
+        "exit_code": 0,
+        "original_token_count": 78,
+        "output": "{\"id\":\"cli:pane:process_info\",\"result\":{\"process_info\":{\"foreground_process_group_id\":9094,\"foreground_processes\":[{\"argv\":[\"/bin/sh\"],\"argv0\":\"sh\",\"cmdline\":\"/bin/sh\",\"cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"name\":\"bash\",\"pid\":9094}],\"pane_id\":\"w3:p1\",\"shell_pid\":9094},\"type\":\"pane_process_info\"}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok agent start h0-claude-sonnet-direct --kind claude --pane w3:p1 --timeout 20000 -- --model claude-sonnet-5 --effort low --safe-mode --setting-sources '' --session-id a548ce24-b7d8-4ecc-ac89-60d3e7f76815 --tools Read,Write,Bash --allowedTools Read Write 'Bash(git rev-parse HEAD)'",
+      "result": {
+        "chunk_id": "d7396c",
+        "wall_time_seconds": 1.001261125,
+        "session_id": 24080,
+        "original_token_count": 0,
+        "output": ""
+      }
+    },
+    {
+      "poll_session": 24080,
+      "result": {
+        "chunk_id": "284212",
+        "wall_time_seconds": 2.9333e-05,
+        "exit_code": 0,
+        "original_token_count": 185,
+        "output": "{\"id\":\"cli:agent:start\",\"result\":{\"agent\":{\"agent\":\"claude\",\"agent_status\":\"idle\",\"cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"focused\":false,\"foreground_cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"interactive_ready\":true,\"name\":\"h0-claude-sonnet-direct\",\"pane_id\":\"w3:p1\",\"revision\":5,\"state_change_seq\":10,\"tab_id\":\"w3:t1\",\"terminal_id\":\"term_65c74b2e62f672\",\"terminal_title\":\"✳ Claude Code\",\"terminal_title_stripped\":\"Claude Code\",\"workspace_id\":\"w3\"},\"argv\":[\"claude\",\"--model\",\"claude-sonnet-5\",\"--effort\",\"low\",\"--safe-mode\",\"--setting-sources\",\"\",\"--session-id\",\"a548ce24-b7d8-4ecc-ac89-60d3e7f76815\",\"--tools\",\"Read,Write,Bash\",\"--allowedTools\",\"Read\",\"Write\",\"Bash(git rev-parse HEAD)\"],\"type\":\"agent_started\"}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok agent read h0-claude-sonnet-direct --source visible",
+      "result": {
+        "chunk_id": "0ca199",
+        "wall_time_seconds": 9.75e-06,
+        "exit_code": 0,
+        "original_token_count": 554,
+        "output": "sh-3.2$ opencode --pure --model google-vertex-anthropic/claude-sonnet-5@default\n                                   ▄\n  █▀▀█ █▀▀█ █▀▀█ █▀▀▄ █▀▀▀ █▀▀█ █▀▀█ █▀▀█\n  █  █ █  █ █▀▀▀ █  █ █    █  █ █  █ █▀▀▀\n  ▀▀▀▀ █▀▀▀ ▀▀▀▀ ▀▀▀▀ ▀▀▀▀ ▀▀▀▀ ▀▀▀▀ ▀▀▀▀\n\n  Session   New session - 2026-09-27T10:49:31.519Z\n  Continue  opencode -s ses_f1d840380ffeMTeXSDyZEIkI2m\n\nsh-3.2$ claude --model claude-sonnet-5 --effort low --safe-mode --session-id 2895856b-5588-4e28-95e6-d88dbe7b44eb --too\nls Read,Write,Bash --allowedTools Read Write 'Bash(git rev-parse HEAD)'\n\nResume this session with:\nclaude --resume 2895856b-5588-4e28-95e6-d88dbe7b44eb\nsh-3.2$ claude --model claude-sonnet-5 --effort low --safe-mode --setting-sources '' --session-id a548ce24-b7d8-4ecc-ac\n89-60d3e7f76815 --tools Read,Write,Bash --allowedTools Read Write 'Bash(git rev-parse HEAD)'\n ▐▛███▛█   Claude Code v2.1.283\n▝▜██████▀  Sonnet 5 with low effort · Claude Max\n ▝▝   ▝▝   /private/tmp/le-herdr-h0-544w2nok/worktree\n\n⚠ Safe mode: all customizations are disabled (CLAUDE.md, skills, plugins, hooks, MCP, agents, and more)\n  Restart without --safe-mode to re-enable\n\n───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────\n❯ Try \"write a test for <filepath>\"\n───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────\n  ⏵⏵ auto mode on (shift+tab to cycle) · ← for agents                                                 ○ low · /effort\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok agent prompt h0-claude-sonnet-direct 'H0 Sonnet file handoff probe sonnet-claude-02. Read ./sonnet-claude-assignment.json and complete exactly its acceptance criteria using your tools. Write ./sonnet-claude-result.json in the requested JSON format. Do not run probe.py, change tracked files, create a commit, access credentials, or call other agents. After saving the file, reply briefly with H0_SONNET_CLAUDE_RESULT_SAVED. This is a small transport test, not product implementation.' --wait --timeout 45000",
+      "result": {
+        "chunk_id": "055af0",
+        "wall_time_seconds": 1.001584417,
+        "session_id": 37539,
+        "original_token_count": 0,
+        "output": ""
+      }
+    },
+    {
+      "poll_session": 37539,
+      "result": {
+        "chunk_id": "5c1b16",
+        "wall_time_seconds": 1.6167e-05,
+        "exit_code": 0,
+        "original_token_count": 133,
+        "output": "{\"id\":\"cli:agent:prompt\",\"result\":{\"agent\":{\"agent\":\"claude\",\"agent_status\":\"done\",\"cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"focused\":false,\"foreground_cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"interactive_ready\":true,\"name\":\"h0-claude-sonnet-direct\",\"pane_id\":\"w3:p1\",\"revision\":6,\"state_change_seq\":12,\"tab_id\":\"w3:t1\",\"terminal_id\":\"term_65c74b2e62f672\",\"terminal_title\":\"✳ H0 Sonnet file handoff probe\",\"terminal_title_stripped\":\"H0 Sonnet file handoff probe\",\"workspace_id\":\"w3\"},\"type\":\"agent_prompted\"}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok agent read h0-claude-sonnet-direct --source visible",
+      "result": {
+        "chunk_id": "5693e3",
+        "wall_time_seconds": 1.3417e-05,
+        "exit_code": 0,
+        "original_token_count": 596,
+        "output": " ▝▝   ▝▝   /private/tmp/le-herdr-h0-544w2nok/worktree\n\n⚠ Safe mode: all customizations are disabled (CLAUDE.md, skills, plugins, hooks, MCP, agents, and more)\n  Restart without --safe-mode to re-enable\n\n❯ H0 Sonnet file handoff probe sonnet-claude-02. Read ./sonnet-claude-assignment.json and complete exactly its\n  acceptance criteria using your tools. Write ./sonnet-claude-result.json in the requested JSON format. Do not run\n  probe.py, change tracked files, create a commit, access credentials, or call other agents. After saving the file,\n  reply briefly with H0_SONNET_CLAUDE_RESULT_SAVED. This is a small transport test, not product implementation.\n\n  Read 1 file (ctrl+o to expand)\n\n⏺ Bash(git rev-parse HEAD; head -5 README.md)\n  ⎿  7dfc7be5a721787bd49cf036c3119caeb7857db9\n     # Herdr H0 fixture\n     Temporary transport probe; no model inference or delivery gate.\n  ⎿  Allowed by auto mode classifier\n\n⏺ Write(sonnet-claude-result.json)\n  ⎿  Wrote 10 lines to sonnet-claude-result.json\n       1 {\n       2   \"run_id\": \"herdr-h0-544w2nok\",\n       3   \"task_id\": \"sonnet-claude-file-handoff\",\n       4   \"attempt_id\": \"sonnet-claude-02\",\n       5   \"execution_status\": \"succeeded\",\n       6   \"observed_head_sha\": \"7dfc7be5a721787bd49cf036c3119caeb7857db9\",\n       7   \"readme_heading\": \"# Herdr H0 fixture\",\n       8   \"sum\": 16,\n       9   \"summary\": \"Read assignment, verified HEAD and README heading, computed sum of [3,5,8].\"\n      10 }\n\n⏺ H0_SONNET_CLAUDE_RESULT_SAVED\n\n✻ Crunched for 10s · done 6:57 PM\n\n───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────\n❯ check the assignment json for a resume variant\n───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────\n  ⏵⏵ auto mode on (shift+tab to cycle) · ← for agents\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok agent send-keys h0-claude-sonnet-direct ctrl+c ctrl+c",
+      "result": {
+        "chunk_id": "60f52b",
+        "wall_time_seconds": 8.917e-06,
+        "exit_code": 0,
+        "original_token_count": 13,
+        "output": "{\"id\":\"cli:agent:send-keys\",\"result\":{\"type\":\"ok\"}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok pane process-info --pane w3:p1",
+      "result": {
+        "chunk_id": "548547",
+        "wall_time_seconds": 9.416e-06,
+        "exit_code": 0,
+        "original_token_count": 71,
+        "output": "{\"id\":\"cli:pane:process_info\",\"result\":{\"process_info\":{\"foreground_process_group_id\":16747,\"foreground_processes\":[{\"argv0\":\"claude\",\"cwd\":\"/private/tmp/le-herdr-h0-544w2nok/worktree\",\"name\":\"2.1.283\",\"pid\":16747}],\"pane_id\":\"w3:p1\",\"shell_pid\":9094},\"type\":\"pane_process_info\"}}\n"
+      }
+    },
+    {
+      "cmd": "/Users/johnson.chiang/.local/bin/herdr --session le-h0-544w2nok server stop",
+      "result": {
+        "chunk_id": "c83067",
+        "wall_time_seconds": 0.028764167,
+        "exit_code": 0,
+        "original_token_count": 0,
+        "output": ""
+      }
+    }
+  ]
+}

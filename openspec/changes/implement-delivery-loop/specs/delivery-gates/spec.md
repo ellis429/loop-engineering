@@ -1,5 +1,7 @@
 # Spec Delta
 
+> **D41／D42：scope revision pending（2026-09-27）**。使用者已同意收斂為 orchestrate skill 呼叫薄 controller；舊 S1 修正已停止並保存。本文的 D40 技術內容／AC 是歷史核准基準，尚未完成新 scope 的逐項映射，不是繼續舊計畫的派工授權。三 gates、版本與 finding 覆核維持；新 design／plan 仍須 review 及 D11 確認。歷史 approval.json 保持原樣，不代表本次修訂已核准。最新 [產品目標及邊界](../../../../../docs/project-intent.md)、[決策 D41／D42](../../../../../docs/decisions.md)。
+
 ## Purpose
 
 以可讀取且適用交付版本的證據分別判定實作/TDD、獨立 review 與必要 CI，只有三 gates 一致成立才提供 PR Pass。本文是本 change 的D40 已核准的規格；D 編號標示既有決策，細部 evidence/check 核對方式取自設計契約提案，測試 seam 以 design 的提案為準，已隨 D40 一次確認。

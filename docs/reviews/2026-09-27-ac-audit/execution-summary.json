@@ -1,0 +1,68 @@
+{
+  "kind": "audit observation summary; derived from tool returns, not original gate/Red evidence",
+  "head": "4ce111011fde83c3a2784402cea111e52a954b3c",
+  "legacy_suite": {
+    "command": "PATH=/usr/bin:/bin:/usr/sbin:/sbin:/Users/johnson.chiang/.local/bin uv run --offline pytest -q",
+    "exit_code": 1,
+    "passed": 226,
+    "failed": 1,
+    "skipped": 1,
+    "duration_seconds": 79.82,
+    "failure": "gh CLI absent from audit PATH; tests/os/test_sandbox_credentials.py:46"
+  },
+  "targeted_rerun": {
+    "command": "PATH=/usr/bin:/bin:/usr/sbin:/sbin:/Users/johnson.chiang/.local/bin:/usr/local/bin uv run --offline pytest tests/os/test_sandbox_credentials.py::test_credential_probes_denied_while_control_succeeds -q -rs",
+    "exit_code": 0,
+    "passed": 1,
+    "duration_seconds": 0.43
+  },
+  "skip": {
+    "test": "tests/test_store_crash.py::test_blob_and_dir_fsync_precede_snapshot_rename",
+    "reason": "syscall ordering is verified with strace on Linux CI only",
+    "locally_verified": false
+  },
+  "counterexample": {
+    "finding": "S1-R11",
+    "inputs": "empty tasks; synthetic current-head Green with producer controller-runner",
+    "actual": {
+      "status": "passed",
+      "reasons": [],
+      "tasks": {}
+    },
+    "expected": "not passed",
+    "real_gate_evidence": false
+  },
+  "github_read": {
+    "repo": "yschiang/loop-engineering",
+    "pr": 2,
+    "state": "OPEN",
+    "headRefOid": "4ce111011fde83c3a2784402cea111e52a954b3c",
+    "mergedAt": null,
+    "observed_checks": [
+      "linux SUCCESS",
+      "linux SUCCESS",
+      "macos SUCCESS",
+      "macos SUCCESS",
+      "test SUCCESS",
+      "test SUCCESS"
+    ],
+    "workflow_run_ids": [
+      36299562478,
+      36299356938
+    ],
+    "new_product_g3": false
+  },
+  "new_product": {
+    "source_present": false,
+    "tests_present": false,
+    "orchestrate_skill_present": false,
+    "real_delivery_e2e": false
+  },
+  "scope_limits": [
+    "No product source or formal specs changed",
+    "No new agent inference",
+    "No Linux tests executed this audit",
+    "No fresh GitHub review performed; old 17 open findings read from saved independent result",
+    "Local suite counts do not establish AC acceptance"
+  ]
+}

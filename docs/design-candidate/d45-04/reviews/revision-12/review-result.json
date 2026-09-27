@@ -1,0 +1,397 @@
+{
+  "schema_version": 1,
+  "review_type": "independent_document_correction_review",
+  "revision": "revision-12",
+  "verdict": "changes_requested",
+  "scope": "The 16 original Opus findings and affected cross-document interactions only; not a full implementation or all-88-AC sufficiency audit.",
+  "original_findings": [
+    {
+      "id": "M1",
+      "status": "verified",
+      "rationale": "The original hidden-run failures are covered: PR-only event identity, every same-head run’s latest attempt, queued attempts and all pages; no fallback to another run’s success.",
+      "evidence": [
+        "design.md §8 Run/attempt (191–202)",
+        "validation.md h4, h4a–h4e",
+        "spec-delta.md §6 AC-G14"
+      ]
+    },
+    {
+      "id": "M2",
+      "status": "verified",
+      "rationale": "Behavior-changing correction attempts now need original Red bound to finding and batch. Abandoned-attempt Red is not transferred; missing original evidence Blocks. Integration-specific scope interaction is separately R12-02.",
+      "evidence": [
+        "design.md §7 (150–163), §9 Batch",
+        "validation.md g10–g11, r11",
+        "spec-delta.md §3"
+      ]
+    },
+    {
+      "id": "M3",
+      "status": "verified",
+      "rationale": "The original rebase/force-push lineage defect is repaired by local merge commits, ordinary fast-forward push and explicit history_rewritten blocking. Executability of that replacement is separately R12-01/R12-02.",
+      "evidence": [
+        "design.md §4 (74–77), §7 (163), §8 (219–223)",
+        "validation.md g12–g13, h11",
+        "spec-delta.md §1 Branch history"
+      ]
+    },
+    {
+      "id": "M4",
+      "status": "verified",
+      "rationale": "T2.3 now owns generic observation and worker/native reads, so w5/w8 no longer depend on T6.1. T2.2 records recovery decisions, while T2.3 applies their effects; d9 explicitly does no fetch. Shared observe/gates ownership and the stated execution order are acyclic.",
+      "evidence": [
+        "tasks.md execution table (55–68), shared files (72–81)",
+        "validation.md d9, o1–o2, w5, w8, w10, h13, r12"
+      ]
+    },
+    {
+      "id": "M5",
+      "status": "still_open",
+      "rationale": "Design and planned tests close the Linux-skipped-everywhere hole, but spec-delta §6 line 92 names “非所屬平台 marker 產生的 skip” among mandatory session failures. That conflicts with the allowed non-owning-platform skip in design §11 and the exit-0 assertion in t1. The adoption source must carry the same unambiguous negation as the design.",
+      "evidence": [
+        "design.md §11 (284–295)",
+        "validation.md §0, t1–t6, h2",
+        "spec-delta.md §6 (92)"
+      ]
+    },
+    {
+      "id": "M6",
+      "status": "verified",
+      "rationale": "PR expected repo/head/base/SHA identity and marker are persisted before creation; wrong-base or wrong-SHA existing PRs Block without creation. Unknown-create readback requires marker plus identity; explicit human binding records origin=existing.",
+      "evidence": [
+        "design.md §4 (78–95)",
+        "validation.md h10",
+        "spec-delta.md §1"
+      ]
+    },
+    {
+      "id": "m1",
+      "status": "verified",
+      "rationale": "The package is a state projection containing versions, gate reasons/evidence, findings, limitations, policy source and github_rules_verified, publication receipts and pending acceptance. p1 asserts both rules and approved-policy cases.",
+      "evidence": [
+        "design.md §8 Pass package (230–239)",
+        "validation.md p1",
+        "tasks.md T6.2",
+        "spec-delta.md §9 ORC-05"
+      ]
+    },
+    {
+      "id": "m2",
+      "status": "verified",
+      "rationale": "O23 partial continuation is explicitly proposed for S2 in all relevant lists and the delta; whole-run stopping is the first-slice behavior and is not claimed as full O23 completion.",
+      "evidence": [
+        "design.md §1 (28)",
+        "tasks.md deferred (115)",
+        "spec-delta.md §9 (123)",
+        "coverage.md AC-O23",
+        "validation.md d4, W-C"
+      ]
+    },
+    {
+      "id": "m3",
+      "status": "verified",
+      "rationale": "N/A follows actual behavior and independent eligibility, including comment-only config/test files. Behavioral edits remain ineligible; G2/G3 are not waived.",
+      "evidence": [
+        "design.md §7 N/A (168–172)",
+        "validation.md g7–g8",
+        "spec-delta.md §4"
+      ]
+    },
+    {
+      "id": "m4",
+      "status": "verified",
+      "rationale": "T0.1 owns full formal-spec composition from formal text plus both pinned deltas, per-requirement/all-88-AC mapping, independent document verification, replacement of competing old design/tasks/validation and commit B before assignments.",
+      "evidence": [
+        "tasks.md T0.1 (27–46)",
+        "README.md pending adoption",
+        "spec-delta.md header",
+        "result.json SPEC-ADOPTION"
+      ]
+    },
+    {
+      "id": "m5",
+      "status": "verified",
+      "rationale": "The previously absent triggers are now explicit: mergeable=false, an incompatibility finding, or human revise; null waits with a bound. The new scheduling interaction is R12-01, so verification of this definition is not approval of the integration route.",
+      "evidence": [
+        "design.md §8 (213–223)",
+        "validation.md h13, r12",
+        "spec-delta.md §3 AC-G17"
+      ]
+    },
+    {
+      "id": "m6",
+      "status": "verified",
+      "rationale": "Each job has an attempt-specific tested-SHA artifact with run, attempt, job, check and SHA equality checks; missing, stale or mismatched artifacts cannot pass.",
+      "evidence": [
+        "design.md §8 (200)",
+        "validation.md h12, §6 (230–233)",
+        "spec-delta.md §6 (90)",
+        "tasks.md T1.1, B1"
+      ]
+    },
+    {
+      "id": "m7",
+      "status": "verified",
+      "rationale": "Recovery records decisions and performs no external write. Bind requires a fresh identity check; not-delivered requires authoritative evidence, query absence is rejected, and any later retry retains the operation budget and PR pre-query.",
+      "evidence": [
+        "design.md §4 (93–95)",
+        "validation.md d9, w10, h10",
+        "spec-delta.md §1 (20)",
+        "tasks.md T2.2/T2.3"
+      ]
+    },
+    {
+      "id": "m8",
+      "status": "verified",
+      "rationale": "Repo-root workflow.yaml is clearly distinct from the GitHub workflow, is owned by T1.1, pins that workflow’s blob digest and requires policy_change for changes; digest mismatch Blocks.",
+      "evidence": [
+        "design.md §8 (185)",
+        "tasks.md T1.1, shared files (79)",
+        "validation.md h1, §6 (234–235)",
+        "spec-delta.md §6"
+      ]
+    },
+    {
+      "id": "m9",
+      "status": "verified",
+      "rationale": "G2 blocked now makes the feature Blocked without opening another correction round; r1 checks the feature state and absence of dispatch.",
+      "evidence": [
+        "design.md §8 (180)",
+        "validation.md r1",
+        "spec-delta.md §5 (76)",
+        "tasks.md T5.1"
+      ]
+    },
+    {
+      "id": "m10",
+      "status": "verified",
+      "rationale": "Current headers and status consistently say revision-12, fix_submitted and pending review. Historical GPT/D51 closure and the original Opus review are identified separately, and D11/product evidence remain pending.",
+      "evidence": [
+        "README.md status/review table",
+        "all candidate Markdown headers",
+        "result.json",
+        "revision-12.json"
+      ]
+    }
+  ],
+  "original_counts": {
+    "verified": 15,
+    "still_open": 1,
+    "total": 16
+  },
+  "new_findings": [
+    {
+      "id": "R12-01",
+      "severity": "major",
+      "blocking_for_design": true,
+      "title": "Base integration can wait for the review/CI that it must precede",
+      "affected_original_findings": [
+        "M1",
+        "M3",
+        "m5"
+      ],
+      "evidence": [
+        "candidate/design.md:19",
+        "candidate/design.md:207",
+        "candidate/design.md:220",
+        "candidate/design.md:253",
+        "candidate/validation.md:107",
+        "candidate/validation.md:137",
+        "candidate/validation.md:154",
+        "candidate/spec-delta.md:66",
+        "inputs/baseline-spec-delta.md:284"
+      ],
+      "scenario": "H is valid against B0. Before the next formal review, base advances to B1 and authoritative observation sets integration_required (for example mergeable=false). The G1 version table requires integration and a new H for the triggered branch; G2 for B1 is invalidated and cannot be dispatched before applicable G1. But the integration rule/r12 waits for that same-version review/CI before it creates the only correction batch. If the PR first opens or synchronizes in conflict, the PR-only workflow also cannot run until the conflict is resolved.",
+      "impact": "An ordinary, in-scope base conflict has no stated permitted next step except waiting to timeout/Blocked. The new unconditional integration batching rule conflicts with the retained pre_review_g1 exception; keeping G1-before-G2 and normal bounded correction both requires an explicit ordering rule.",
+      "smallest_compatible_fix": "Use the existing pre_review_g1 correction mechanism with an explicit base_integration reason when an authoritative conflict/human trigger is known before applicable G1/checking can complete. Preserve one writer and one batch, include already known same-version problems, and count once on dispatch. State how any obsolete in-flight work is invalidated/stopped before correction; do not wait for an unstartable review or a conflict-suppressed CI run. When applicable G1 has already passed and review/CI are genuinely in progress, retain normal collection into one batch. After the local merge, require full G1, G2 and G3 on the new real head. Do not mark missing CI successful or introduce a new workflow trigger/platform.",
+      "planned_validation_needed": [
+        "Extend h13/r12 with base conflict before current-version G1/G2 and no CI run: exactly one bounded integration correction, zero premature G2, no missing-CI success, then latest-head G1/G2/G3.",
+        "Retain a separate checking-phase case where an existing applicable review is pending: no competing batch and one round when the collected batch dispatches."
+      ],
+      "external_source": {
+        "title": "GitHub Actions events: pull_request",
+        "url": "https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#pull_request",
+        "fact_checked": "pull_request workflows do not run while the PR has a merge conflict."
+      }
+    },
+    {
+      "id": "R12-02",
+      "severity": "major",
+      "blocking_for_design": true,
+      "title": "The required merge has no compatible owned scope and Red boundary",
+      "affected_original_findings": [
+        "M2",
+        "M3",
+        "m5"
+      ],
+      "evidence": [
+        "candidate/design.md:152",
+        "candidate/design.md:155",
+        "candidate/design.md:221",
+        "candidate/design.md:223",
+        "candidate/spec-delta.md:45",
+        "candidate/spec-delta.md:48",
+        "candidate/validation.md:104",
+        "candidate/validation.md:114",
+        "candidate/validation.md:154",
+        "inputs/durable-delivery-spec.md:27"
+      ],
+      "scenario": "A correction finding owns files A and its regression test. The pinned new base also changes unrelated file B. The prescribed git merge must bring B into the worktree and merge commit even if the Implementer only authors an in-scope resolution to A. The assignment only promises a base tip and the batch finding scope; the Red rule requires the entire attempt commit scope to be inside it. The same ambiguity makes g13(a), a clean merge that imports upstream behavior, collide with the general every-behavior-changing-attempt Red rule.",
+      "impact": "The honest merge is either rejected for out-of-scope writes/Red scope, or the implementation must silently exempt arbitrary merge contents. Preserving ancestor commits alone does not make the replacement merge route executable or evidence-valid.",
+      "smallest_compatible_fix": "Bind the integration assignment to its old feature head and exact adopted base tip. Explicitly authorize importing that pinned base and distinguish its unchanged incoming changes from Implementer-authored conflict/fix edits. Keep those authored edits and their regression tests within the approved batch scope; behavior-changing resolutions need genuine original Red bound to a stable integration finding/reason and batch. Define that mechanical adoption of the pinned baseline does not require manufacturing Red for already-existing upstream behavior, while any additional authored change remains checked. If an authored resolution exceeds scope, return through D11. Keep both parents/lineage and new-head Green/review/CI; no general semantic-diff framework is needed.",
+      "planned_validation_needed": [
+        "Extend g13/r12 with an unrelated incoming base path plus an in-scope behavior-changing resolution with its original Red: valid after the declared scope separation.",
+        "Add an extra Implementer-authored out-of-scope edit to the same merge: rejected.",
+        "Check a clean baseline-only merge does not demand a fabricated original Red, and a behavioral resolution with missing Red still Blocks."
+      ]
+    }
+  ],
+  "new_blocking_for_design_count": 2,
+  "original_residual_fix": {
+    "id": "M5",
+    "smallest_compatible_fix": "In spec-delta.md §6 replace the skip failure clause with the exact design rule: 任何不是由 only_on 在非所屬平台產生的 skip. Keep validation t1 exit 0 and t2/t3 failure; then confirm the adoption source and design agree."
+  },
+  "input_verification": {
+    "manifest": "input-manifest.json",
+    "manifest_sha256": "1bc64daa5952ac1abe28ec36db7d5cef04ee7788f9d7b2734917e239747a16ce",
+    "algorithm": "sha256",
+    "input_count": 17,
+    "all_unchanged": true,
+    "files": [
+      {
+        "path": "candidate/result.json",
+        "expected_sha256": "19c133530dedd603f3534ae1e4e0737fe80ce03a821ac4a366f591c7eb4079c2",
+        "actual_sha256": "19c133530dedd603f3534ae1e4e0737fe80ce03a821ac4a366f591c7eb4079c2",
+        "unchanged": true
+      },
+      {
+        "path": "candidate/cleanup-map.md",
+        "expected_sha256": "71abeccb5fef62826ec44fef5822815a6490f33c6efe4055b0c082c7b30e1db8",
+        "actual_sha256": "71abeccb5fef62826ec44fef5822815a6490f33c6efe4055b0c082c7b30e1db8",
+        "unchanged": true
+      },
+      {
+        "path": "candidate/validation.md",
+        "expected_sha256": "833a4efe882c36d3037548c194948f1e1ec6c6eee43fdbf9cdf91b2caba521f4",
+        "actual_sha256": "833a4efe882c36d3037548c194948f1e1ec6c6eee43fdbf9cdf91b2caba521f4",
+        "unchanged": true
+      },
+      {
+        "path": "candidate/spec-delta.md",
+        "expected_sha256": "d5765b3529a1482e134be1fa51697c5ac7e48f8cef6cb425b170a446d80f990b",
+        "actual_sha256": "d5765b3529a1482e134be1fa51697c5ac7e48f8cef6cb425b170a446d80f990b",
+        "unchanged": true
+      },
+      {
+        "path": "candidate/README.md",
+        "expected_sha256": "2e7e309a8128332aa18358547e9742539b2b12c7f997ea53e5c08e960018e9d0",
+        "actual_sha256": "2e7e309a8128332aa18358547e9742539b2b12c7f997ea53e5c08e960018e9d0",
+        "unchanged": true
+      },
+      {
+        "path": "candidate/tasks.md",
+        "expected_sha256": "8a2027649ab022fb9f0795b26808823e16b960a3f296ab0c493ef20077be182e",
+        "actual_sha256": "8a2027649ab022fb9f0795b26808823e16b960a3f296ab0c493ef20077be182e",
+        "unchanged": true
+      },
+      {
+        "path": "candidate/revision-12.json",
+        "expected_sha256": "aef0db2c5b1cfbd0a2191117a782fcbbf96cdc29e38636a78c47b08a77273974",
+        "actual_sha256": "aef0db2c5b1cfbd0a2191117a782fcbbf96cdc29e38636a78c47b08a77273974",
+        "unchanged": true
+      },
+      {
+        "path": "candidate/coverage.md",
+        "expected_sha256": "5a9977d768df1a1f468d8d15da879455ebb8f67fd09f1904657b771996355e0c",
+        "actual_sha256": "5a9977d768df1a1f468d8d15da879455ebb8f67fd09f1904657b771996355e0c",
+        "unchanged": true
+      },
+      {
+        "path": "candidate/design.md",
+        "expected_sha256": "fbcd8c72a1232aa6b535bee76bc9e2431d5eb25aed060d990b38805cdf6ee60f",
+        "actual_sha256": "fbcd8c72a1232aa6b535bee76bc9e2431d5eb25aed060d990b38805cdf6ee60f",
+        "unchanged": true
+      },
+      {
+        "path": "inputs/delivery-gates-spec.md",
+        "expected_sha256": "a8d68b7c03e45a55da796f8b223d7534266010af534e8c0506f36f66b0218d91",
+        "actual_sha256": "a8d68b7c03e45a55da796f8b223d7534266010af534e8c0506f36f66b0218d91",
+        "unchanged": true
+      },
+      {
+        "path": "inputs/finding-resolution-spec.md",
+        "expected_sha256": "2f37c77709d526b2259b2285c99617fe8d4a2768cb318ccf860dec8a8b6c8629",
+        "actual_sha256": "2f37c77709d526b2259b2285c99617fe8d4a2768cb318ccf860dec8a8b6c8629",
+        "unchanged": true
+      },
+      {
+        "path": "inputs/delivery-orchestration-spec.md",
+        "expected_sha256": "a54c18f808079dfe8d2c032a574eda5411916566124909ca4149fa4a46161c25",
+        "actual_sha256": "a54c18f808079dfe8d2c032a574eda5411916566124909ca4149fa4a46161c25",
+        "unchanged": true
+      },
+      {
+        "path": "inputs/durable-delivery-spec.md",
+        "expected_sha256": "f873aae0d549f5f8e11cfcca801cf78610aa970d071c09fcd5776f814ca5a9f6",
+        "actual_sha256": "f873aae0d549f5f8e11cfcca801cf78610aa970d071c09fcd5776f814ca5a9f6",
+        "unchanged": true
+      },
+      {
+        "path": "inputs/project-intent.md",
+        "expected_sha256": "15965737acb1d0343c9067187fe553a9abec235658a3780e1b9ef20e328208a5",
+        "actual_sha256": "15965737acb1d0343c9067187fe553a9abec235658a3780e1b9ef20e328208a5",
+        "unchanged": true
+      },
+      {
+        "path": "inputs/baseline-spec-delta.md",
+        "expected_sha256": "7ebd8d014f5765cc35767a6a4372f4871d70f1af4ef72c3cb940da11a2c18565",
+        "actual_sha256": "7ebd8d014f5765cc35767a6a4372f4871d70f1af4ef72c3cb940da11a2c18565",
+        "unchanged": true
+      },
+      {
+        "path": "inputs/review.md",
+        "expected_sha256": "a85d35aa42bd048714bf13ae10138033f71a69a864dd13a5679e8680198c5849",
+        "actual_sha256": "a85d35aa42bd048714bf13ae10138033f71a69a864dd13a5679e8680198c5849",
+        "unchanged": true
+      },
+      {
+        "path": "inputs/decisions.md",
+        "expected_sha256": "99abe0270cd108610d2fde6e4baf43f8c38d5e90e9dbb81e934e4a1db50f9377",
+        "actual_sha256": "99abe0270cd108610d2fde6e4baf43f8c38d5e90e9dbb81e934e4a1db50f9377",
+        "unchanged": true
+      }
+    ],
+    "authority_original_comparison": "Not independently repeated by this reviewer. Coordinator reports the five supplied spec/baseline authority copies match originals byte-for-byte."
+  },
+  "actual_checks": [
+    "Read all 17 pinned inputs in full (seven candidate Markdown documents, candidate result/revision JSON, original review, decisions, project intent, four formal specs, baseline delta).",
+    "Independently recomputed all 17 SHA-256 input hashes against input-manifest.json.",
+    "Checked exactly M1..M6 and m1..m10 in the author response and this review.",
+    "Checked 105 unique coverage rows: 88 AC and 17 historical S1 findings, with no pass/closure claimed.",
+    "Traced changed task dependency order, sequential owned files, Red/correction/merge rules, G1/G2/G3 ordering, PR identity/recovery, CI run/attempt/job artifact rejection, N/A and full formal adoption ownership.",
+    "Checked public official GitHub documentation for PR conflict triggering, partial job reruns and artifact retrieval; no repository API or product runtime used."
+  ],
+  "nonblocking_limits": [
+    {
+      "topic": "Partial GitHub job reruns",
+      "assessment": "GitHub supports rerunning a subset of jobs. The proposed latest-attempt/every-job artifact policy can conservatively reject a partial rerun if required matching artifacts are absent. That does not create a false pass and is not a new blocker in this review. A full rerun/new head is available; no new rerun orchestration is requested.",
+      "sources": [
+        "https://docs.github.com/en/actions/how-tos/manage-workflow-runs/re-run-workflows-and-jobs",
+        "https://docs.github.com/en/rest/actions/artifacts"
+      ]
+    }
+  ],
+  "product_gate_verdict": null,
+  "d11_status": "pending",
+  "implementation_authorized": false,
+  "product_tests_executed": false,
+  "ac_status": "All 88 remain planned; none passed.",
+  "old_s1_findings_status": "All 17 S1-R01..R17 remain open.",
+  "historical_d51_status": "Historical D51-R01..R07 review closure is distinct from these 16 Opus findings and not reassessed or reused as current approval.",
+  "limits": [
+    "No product code read or changed; no product tests, runtime probes, GitHub repository operations, branch/worktree actions or formal-spec adoption performed.",
+    "Only review.md and review-result.json are written by this reviewer.",
+    "Independent verification here concerns document corrections and affected interactions; it does not establish that all 88 AC have sufficient tests or that the product passes any gate.",
+    "Declared deferrals and narrowing remain proposals pending D11, not already adopted formal-spec changes."
+  ]
+}

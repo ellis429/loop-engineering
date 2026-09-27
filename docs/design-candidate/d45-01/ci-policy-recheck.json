@@ -1,0 +1,35 @@
+{
+  "checked_at": "2026-09-27",
+  "observations": [
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "11bc1b",
+        "wall_time_seconds": 0.427380958,
+        "exit_code": 1,
+        "original_token_count": 76,
+        "output": "gh: Upgrade to GitHub Pro or make this repository public to enable this feature. (HTTP 403)\n{\"message\":\"Upgrade to GitHub Pro or make this repository public to enable this feature.\",\"documentation_url\":\"https://docs.github.com/rest/branches/branch-protection#get-status-checks-protection\",\"status\":\"403\"}"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "ae0e07",
+        "wall_time_seconds": 0.424911417,
+        "exit_code": 1,
+        "original_token_count": 72,
+        "output": "{\"message\":\"Upgrade to GitHub Pro or make this repository public to enable this feature.\",\"documentation_url\":\"https://docs.github.com/rest/repos/rules#get-all-repository-rulesets\",\"status\":\"403\"}gh: Upgrade to GitHub Pro or make this repository public to enable this feature. (HTTP 403)\n"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "5a801c",
+        "wall_time_seconds": 0.640243416,
+        "exit_code": 0,
+        "original_token_count": 782,
+        "output": "name: ci\non:\n  push:\n  pull_request:\njobs:\n  linux:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: astral-sh/setup-uv@v6\n      - run: sudo apt-get update && sudo apt-get install -y strace\n      - run: uv sync --locked\n      - run: uv run ruff check src tests\n      - run: uv run mypy src\n      - run: uv run pytest -q -rs --junitxml=junit-linux.xml\n        env:\n          DELIVERY_REQUIRE_LINUX_CHECKS: \"1\"\n      - run: uv build\n      - uses: actions/upload-artifact@v4\n        if: always()\n        with:\n          name: junit-linux\n          path: junit-linux.xml\n  macos:\n    runs-on: macos-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: astral-sh/setup-uv@v6\n      - run: uv sync --locked\n      - run: uv run pytest -q -rs -m os tests/os --junitxml=junit-macos.xml\n      - uses: actions/upload-artifact@v4\n        if: always()\n        with:\n          name: junit-macos\n          path: junit-macos.xml\n  # Required check. Fails unless both verification jobs succeeded (failure, cancel or skip all fail it).\n  test:\n    needs: [linux, macos]\n    if: always()\n    runs-on: ubuntu-latest\n    steps:\n      - run: |\n          echo \"linux=${{ needs.linux.result }} macos=${{ needs.macos.result }}\"\n          test \"${{ needs.linux.result }}\" = success\n          test \"${{ needs.macos.result }}\" = success\n{\"headRefOid\":\"4ce111011fde83c3a2784402cea111e52a954b3c\",\"state\":\"OPEN\",\"statusCheckRollup\":[{\"__typename\":\"CheckRun\",\"completedAt\":\"2026-09-27T06:16:35Z\",\"conclusion\":\"SUCCESS\",\"detailsUrl\":\"https://github.com/yschiang/loop-engineering/actions/runs/36299562478/job/108564579788\",\"name\":\"linux\",\"startedAt\":\"2026-09-27T06:15:36Z\",\"status\":\"COMPLETED\",\"workflowName\":\"ci\"},{\"__typename\":\"CheckRun\",\"completedAt\":\"2026-09-27T06:12:18Z\",\"conclusion\":\"SUCCESS\",\"detailsUrl\":\"https://github.com/yschiang/loop-engineering/actions/runs/36299356938/job/108564011077\",\"name\":\"linux\",\"startedAt\":\"2026-09-27T06:11:22Z\",\"status\":\"COMPLETED\",\"workflowName\":\"ci\"},{\"__typename\":\"CheckRun\",\"completedAt\":\"2026-09-27T06:15:54Z\",\"conclusion\":\"SUCCESS\",\"detailsUrl\":\"https://github.com/yschiang/loop-engineering/actions/runs/36299562478/job/108564579671\",\"name\":\"macos\",\"startedAt\":\"2026-09-27T06:15:40Z\",\"status\":\"COMPLETED\",\"workflowName\":\"ci\"},{\"__typename\":\"CheckRun\",\"completedAt\":\"2026-09-27T06:11:37Z\",\"conclusion\":\"SUCCESS\",\"detailsUrl\":\"https://github.com/yschiang/loop-engineering/actions/runs/36299356938/job/108564011182\",\"name\":\"macos\",\"startedAt\":\"2026-09-27T06:11:24Z\",\"status\":\"COMPLETED\",\"workflowName\":\"ci\"},{\"__typename\":\"CheckRun\",\"completedAt\":\"2026-09-27T06:16:40Z\",\"conclusion\":\"SUCCESS\",\"detailsUrl\":\"https://github.com/yschiang/loop-engineering/actions/runs/36299562478/job/108564718695\",\"name\":\"test\",\"startedAt\":\"2026-09-27T06:16:37Z\",\"status\":\"COMPLETED\",\"workflowName\":\"ci\"},{\"__typename\":\"CheckRun\",\"completedAt\":\"2026-09-27T06:12:27Z\",\"conclusion\":\"SUCCESS\",\"detailsUrl\":\"https://github.com/yschiang/loop-engineering/actions/runs/36299356938/job/108564143315\",\"name\":\"test\",\"startedAt\":\"2026-09-27T06:12:22Z\",\"status\":\"COMPLETED\",\"workflowName\":\"ci\"}]}\n"
+      }
+    }
+  ]
+}

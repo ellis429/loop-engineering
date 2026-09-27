@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "execution_status": "succeeded",
+  "verdict": "ready_for_human_review",
+  "scope": "Final bounded S03/S06/S07 residual recheck with immediate coherence; prior verified fixes carried by artifact diffs",
+  "artifact_hashes_sha256": {
+    "cleanup-map.md": "93f40005c0fe05c90ad5299278a528dea8d51330541fd1005ccfce24dc58d46c",
+    "coverage.md": "d43942163de3339fa7c76c0531db1a3a10e52a40a3a7d2e6d9b6c0d56fd63d97",
+    "design.md": "bfb0f0341fc7d1b483b456e50a93270b90d83311926cbb5db9e129123282186f",
+    "result-02a.json": "33668da146481bc1817acf053b1fcd24b4cabf5355250bb8c4d2527c6add372c",
+    "result-02b.json": "0e4008169057b1df14c1389a83114c995047f84d5f2e3587fe58d4d904da5ab6",
+    "revision-04.json": "c0272621e65d18c646b1157e0982dec63e9a3a3e04f7e325ee15583646e1b9bd",
+    "revision-05.json": "b65a400de74f51027a7bdd0b932e2a6327b5167b9682a5fed2f1278479123755",
+    "revision-06.json": "58969a068603b8c1a33c1edb5d230e9cc8f90784fb045e9a0fbd6621545dd21f",
+    "spec-delta.md": "7ebd8d014f5765cc35767a6a4372f4871d70f1af4ef72c3cb940da11a2c18565",
+    "tasks.md": "7aa1a49036e81c5fb909031a9df72cecfc574889f4e6a98ad825c0a8dac2804e",
+    "validation.md": "c1aecd0b867f6d1199cda71ca80b21ad1b3cd50f3f327f25d2af8f455b379b20"
+  },
+  "manifest_sha256": "70b7402933c9552be351b5d8aec75cf6852e88e4ad2802f0a3084949e3c697f8",
+  "manifest_verified": true,
+  "coverage_identity_check": {
+    "rows": 105,
+    "unique_rows": 105,
+    "ac_rows": 88,
+    "s1_finding_rows": 17,
+    "same_ids_as_review_08": true
+  },
+  "findings": [],
+  "residual_ids": [],
+  "verified_ids": [
+    "D45-S01",
+    "D45-S02",
+    "D45-S03",
+    "D45-S04",
+    "D45-S05",
+    "D45-S06",
+    "D45-S07",
+    "D45-S08",
+    "D45-S09",
+    "D45-S10"
+  ],
+  "newly_verified_ids": [
+    "D45-S03",
+    "D45-S06",
+    "D45-S07"
+  ],
+  "carried_verified_ids": [
+    "D45-S01",
+    "D45-S02",
+    "D45-S04",
+    "D45-S05",
+    "D45-S08",
+    "D45-S09",
+    "D45-S10"
+  ],
+  "prior_verified_fixes": {
+    "ids": [
+      "D45-R01",
+      "D45-R02",
+      "D45-R03",
+      "D45-R04",
+      "D45-R05",
+      "D45-R06"
+    ],
+    "status": "preserved_no_regression_in_diff"
+  },
+  "unchanged_from_review_08": [
+    "cleanup-map.md",
+    "result-02a.json",
+    "revision-04.json",
+    "revision-05.json"
+  ],
+  "ready_for_human_review": true,
+  "ready_for_implementation": false,
+  "plan_scope": {
+    "H1": "executable_plan_candidate",
+    "H2": "outline_only",
+    "H3": "outline_only"
+  },
+  "full_e2e_plan_complete": false,
+  "product_gate_verdict": null,
+  "D11_approval": false,
+  "policy_status": {
+    "D47": "approved",
+    "D48": "approved",
+    "D49": "approved",
+    "specific_check_set": "not_approved",
+    "technical_presets": "D11_pending",
+    "reviewer_model": "D11_pending"
+  },
+  "s1_findings_status": "all_open",
+  "limits": [
+    "Only three residuals and immediate affected coherence rechecked; no new full sweep.",
+    "Other verified findings carried by complete artifact diff against review-08.",
+    "No product implementation/tests, GitHub operations or candidate edits.",
+    "Human review readiness is not D11, product G2 or implementation authorization."
+  ]
+}

@@ -1,5 +1,7 @@
 # Design：implement-delivery-loop Controller（核准基準 v3）
 
+> **D41／D42：scope revision pending（2026-09-27）**。使用者已同意收斂為 orchestrate skill 呼叫薄 controller；舊 S1 修正已停止並保存。本文的 D40 技術內容／AC 是歷史核准基準，尚未完成新 scope 的逐項映射，不是繼續舊計畫的派工授權。三 gates、版本與 finding 覆核維持；新 design／plan 仍須 review 及 D11 確認。歷史 approval.json 保持原樣，不代表本次修訂已核准。最新 [產品目標及邊界](../../../docs/project-intent.md)、[決策 D41／D42](../../../docs/decisions.md)。
+
 > D11 已依 D40 取得使用者確認（2026-09-27）；三個 PR 分段交付，S1 可開始。技術本文沿用已覆核 v3；本文內的建議預設已核准，明列替代方案不代表選用，平台待實測仍需證據。
 > 來源：[v3 候選及完整審查](../../../docs/reviews/2026-09-27-controller-detailed-design.md)；核准 hashes 與狀態標記變更見 [approval.json](approval.json)。這是正式 design；候選保留為不可變歷史。
 > 本輪僅更新核准狀態、已選 repository 與待決清單；未改寫三 gates、技術算法或已驗證範圍。

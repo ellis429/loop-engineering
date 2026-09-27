@@ -1,0 +1,55 @@
+{
+  "source_snapshot": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/review-15",
+  "artifacts": {
+    "result.json": {
+      "source_sha256": "14c12f5a335b40aaa77bb60f709aef1e1334df75a4788f12566a2343f799c181",
+      "published_sha256": "14c12f5a335b40aaa77bb60f709aef1e1334df75a4788f12566a2343f799c181",
+      "transform": "none"
+    },
+    "cleanup-map.md": {
+      "source_sha256": "3e978d2c12d93e19238cd4e75c7aee6a8e1a54b09e6c76c340133c8f42949524",
+      "published_sha256": "3e978d2c12d93e19238cd4e75c7aee6a8e1a54b09e6c76c340133c8f42949524",
+      "transform": "none"
+    },
+    "revision-11.json": {
+      "source_sha256": "648581b72b260917327001ce7808e74a824bea0bf76bb192cd04cc3ce93aad0d",
+      "published_sha256": "648581b72b260917327001ce7808e74a824bea0bf76bb192cd04cc3ce93aad0d",
+      "transform": "none"
+    },
+    "validation.md": {
+      "source_sha256": "7982c8e86968fa7936f87e4f4d98e9b1eee07cd5483953522ca068c780458d02",
+      "published_sha256": "7982c8e86968fa7936f87e4f4d98e9b1eee07cd5483953522ca068c780458d02",
+      "transform": "none"
+    },
+    "spec-delta.md": {
+      "source_sha256": "8e43d3ac3057820d132e8925aaa66d00f6c8b11a0fdef00331d76f35c1d1ca25",
+      "published_sha256": "bc7eb65bbc2745eddaa6f78bbb0342ee99c140307342d002df1cb8ac3fe93070",
+      "transform": "readable baseline link only"
+    },
+    "revision-10.json": {
+      "source_sha256": "470679d10b7c613904cf91f544e219b9ee8bd8d5346977ec1747d21af5c23e96",
+      "published_sha256": "470679d10b7c613904cf91f544e219b9ee8bd8d5346977ec1747d21af5c23e96",
+      "transform": "none"
+    },
+    "tasks.md": {
+      "source_sha256": "465450c29de2c69bea5c2227b1a2ecf5d3122296210f6245dde0e50f0b06473d",
+      "published_sha256": "465450c29de2c69bea5c2227b1a2ecf5d3122296210f6245dde0e50f0b06473d",
+      "transform": "none"
+    },
+    "revision-09.json": {
+      "source_sha256": "dc7283bf55827948aaae367097072c4d25f5e22ea33fb754e008ae924babf265",
+      "published_sha256": "dc7283bf55827948aaae367097072c4d25f5e22ea33fb754e008ae924babf265",
+      "transform": "none"
+    },
+    "coverage.md": {
+      "source_sha256": "891df6f82c8f7a197a384a5937330c618efe27da5ea0ad7dbe734b69618996c9",
+      "published_sha256": "891df6f82c8f7a197a384a5937330c618efe27da5ea0ad7dbe734b69618996c9",
+      "transform": "none"
+    },
+    "design.md": {
+      "source_sha256": "2674e622e0a1509781abf3b1034c1142b2af3162366c0afabdd354e5e618c01f",
+      "published_sha256": "2674e622e0a1509781abf3b1034c1142b2af3162366c0afabdd354e5e618c01f",
+      "transform": "none"
+    }
+  }
+}

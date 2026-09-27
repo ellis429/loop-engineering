@@ -1,0 +1,80 @@
+{
+  "status": "ready_for_human_review; D11 pending; no product gates",
+  "source_snapshot": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/review-12",
+  "files": [
+    {
+      "file": "result.json",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/review-12/result.json",
+      "source_sha256": "a557447a1e3602ee9543851d4f408870abbfb4f58d88bc873a1a75b5bf78107d",
+      "published_sha256": "a557447a1e3602ee9543851d4f408870abbfb4f58d88bc873a1a75b5bf78107d",
+      "link_only_transformations": []
+    },
+    {
+      "file": "cleanup-map.md",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/review-12/cleanup-map.md",
+      "source_sha256": "a1578e44e5729672fbafc022fa7ce9bf9e7b6509dd486ef122a4264ddc7968cc",
+      "published_sha256": "b9f7bed4997b3701df48bc3daaafc0a0e4eaa65fa46a944a2ac3359988f69f89",
+      "link_only_transformations": [
+        {
+          "from": "`review-09/cleanup-map.md`",
+          "to": "[D45-02 cleanup map](../d45-02/cleanup-map.md)"
+        }
+      ]
+    },
+    {
+      "file": "revision-07.json",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/review-12/revision-07.json",
+      "source_sha256": "cf01c5ea016020319225a0e8ec1b5f66f5a17299bede3f74b37fb89a4b130956",
+      "published_sha256": "cf01c5ea016020319225a0e8ec1b5f66f5a17299bede3f74b37fb89a4b130956",
+      "link_only_transformations": []
+    },
+    {
+      "file": "validation.md",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/review-12/validation.md",
+      "source_sha256": "2ed2200b6336e81f14a26f6fe8511c06161e139ba8295b19922718cf2afd1e1f",
+      "published_sha256": "2ed2200b6336e81f14a26f6fe8511c06161e139ba8295b19922718cf2afd1e1f",
+      "link_only_transformations": []
+    },
+    {
+      "file": "spec-delta.md",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/review-12/spec-delta.md",
+      "source_sha256": "0aad15670f5a1e88b4f9919549829cacb1790ee0f6bdbe579ac817f842032553",
+      "published_sha256": "1b40d5f5574552f3326fde32a8866c70225a8d3cbf09c0de3729616d922b2a39",
+      "link_only_transformations": [
+        {
+          "from": "`review-09/spec-delta.md`",
+          "to": "[D45-02 spec-delta](../d45-02/spec-delta.md)"
+        }
+      ]
+    },
+    {
+      "file": "tasks.md",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/review-12/tasks.md",
+      "source_sha256": "fa53b8597b3b07ab049151f09c0252d76e1a08a43947ad92c5a9baa0013b0f03",
+      "published_sha256": "fa53b8597b3b07ab049151f09c0252d76e1a08a43947ad92c5a9baa0013b0f03",
+      "link_only_transformations": []
+    },
+    {
+      "file": "revision-08.json",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/review-12/revision-08.json",
+      "source_sha256": "294acf0e8710d1f3e17b58a5f9b32130d75cdf6935ccc43b145f73db4586e12a",
+      "published_sha256": "294acf0e8710d1f3e17b58a5f9b32130d75cdf6935ccc43b145f73db4586e12a",
+      "link_only_transformations": []
+    },
+    {
+      "file": "coverage.md",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/review-12/coverage.md",
+      "source_sha256": "b24e6db1315656f74fb81691661a637368c3af0f7f4131d68714246d218971b1",
+      "published_sha256": "b24e6db1315656f74fb81691661a637368c3af0f7f4131d68714246d218971b1",
+      "link_only_transformations": []
+    },
+    {
+      "file": "design.md",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/.delivery/bootstrap/herdr-design-d45-01/review-12/design.md",
+      "source_sha256": "64c400fcd578b4661fe209ff436d3d7883fc8637d63f88da01ee2a1209115466",
+      "published_sha256": "64c400fcd578b4661fe209ff436d3d7883fc8637d63f88da01ee2a1209115466",
+      "link_only_transformations": []
+    }
+  ],
+  "review_sha256": "4ce5916a88e23f860b142c5539526bbed1707ede8a7c6a08afd3e5615a0ab8b5"
+}

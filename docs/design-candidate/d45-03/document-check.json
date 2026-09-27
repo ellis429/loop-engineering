@@ -1,0 +1,13 @@
+{
+  "published_hash_mismatches": [],
+  "coverage_rows": 105,
+  "coverage_unique": 105,
+  "coverage_ids_match": true,
+  "source_test_formal_spec_files_checked": 67,
+  "modified_source_test_formal_specs": [],
+  "candidate_broken_links": [],
+  "historical_document_broken_links": 0,
+  "product_tests_run": false,
+  "D11_approval": false,
+  "document_verdict": "ready_for_human_review"
+}

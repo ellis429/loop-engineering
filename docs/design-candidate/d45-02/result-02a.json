@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "run_id": "herdr-design-d45",
+  "task_id": "thin-controller-design",
+  "attempt_id": "design-02",
+  "stage": "02A approved policy reconciliation",
+  "requested_model": "claude-opus-5-5",
+  "self_reported_model": "claude-opus-5-5",
+  "input_manifest_sha256": "486c7941e30830499350043060dd1ab6c44e3b39730c9933dc8eecf395cd749c",
+  "additional_inputs": {
+    "stage-02a.md": null,
+    "assignment-02.json": null,
+    "policy-approved-20260927/approval.json": null,
+    "policy-approved-20260927/decisions.md": "cfcd7995bd68edd7e6256e706ec80c78eef62fba23ff2620f7febf69ee962eff",
+    "review-04/manifest.json": null,
+    "review-04/design.md": "68398aefd5a512461311dbd6335d33eb13bcf465998f84308ffce673564a81ef",
+    "review-04/cleanup-map.md": "79d0b7fe204b4c5aaf4804207881b933b7298553e142642545f8fef42202aaa2",
+    "review-04/review.md": null,
+    "note": "Digests are copied from approval.json and review-04/manifest.json. A null value means the digest was not computed, because only Read/Write/Edit/Glob/Grep are allowed."
+  },
+  "execution_status": "succeeded",
+  "execution_scope": "Bounded Stage 02A candidate documents only",
+  "summary": "spec-delta.md gives concrete replacement wording for the four existing specs. All 88 AC IDs and requirement names are kept, and no AC is added or deleted. Each change is labeled as unchanged, moved responsibility, superseded platform promise, policy revision (D47/D48/D49) or added constraint. The changes cover: the offline 4h rule (DUR-08, AC-D17); the trusted local boundary and mandatory original Red (GAT-02, GAT-03, DUR-02, AC-D02); the repo-scoped CI policy source for yschiang/loop-engineering (GAT-06, AC-G13, FIN-03); the split between orchestrate and controller; D46 single entry and old evidence not counting (DUR-01, GAT-08); an independent reviewer bound to current version digests; and a permit consumed once with readback never re-issuing the operation. coverage.md maps all 88 ACs and all 17 S1 findings, one row each, with disposition, new owner/contract and planned H1/H2/H3/DOC/UNCOV validation. Every validation is planned only; no test evidence is claimed.",
+  "artifacts": [
+    {"path": "outputs-02/spec-delta.md", "status": "delivered_candidate"},
+    {"path": "outputs-02/coverage.md", "status": "delivered_candidate", "counts": {"ac": 88, "orchestration": 28, "gates": 20, "durable": 24, "findings_ac": 16, "s1_findings": 17}},
+    {"path": "outputs-02/result-02a.json", "status": "delivered"}
+  ],
+  "policy_status": {
+    "D46": "approved: isolated rebuild",
+    "D47": "approved: DN-1 A (online bounded stop, offline recovery handled honestly)",
+    "D48": "approved: DN-2 A (trusted local collaboration; original Red mandatory)",
+    "D49": "approved: DN-3 B (repo-scoped, human-approved, versioned CI policy source)",
+    "not_approved": ["specific required check names/app/workflow", "full design", "plan/tasks", "D11 start confirmation", "any product gate"]
+  },
+  "preserved_review_corrections": "D45-R01..R06, verified in review-04, are kept as constraints for the next design sync: a single begin owner including first read-only observations; readback never consumes begin; due stop takes priority including the prepared-stop case; stale results are kept separate from fresh observations; publications are drained before the final Pass observation; selective test extraction; the corrected CLI mutation facts.",
+  "remaining_work": [
+    "Independent review of spec-delta.md and coverage.md",
+    "Apply the approved spec-delta to the formal specs (only after user adoption)",
+    "Sync design.md with D47-D49 (remove the DN placeholders) while keeping D45-R01..R06",
+    "Specify the concrete required check set and the new CI coverage for D11 (D49)",
+    "Write tasks.md (H1 executable plan) and validation.md (AC to method/environment/pass criteria/evidence)",
+    "D11 start confirmation before any product implementation"
+  ],
+  "s1_findings_status": "S1-R01..R17 all open",
+  "ready_for_implementation": false,
+  "product_gate_verdict": null,
+  "constraints_observed": {"modified_paths": ["outputs-02/**"], "ran_src_or_tests": false, "github_changes": false, "spawned_agents": false}
+}

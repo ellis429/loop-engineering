@@ -1,0 +1,31 @@
+{
+  "revision": "revision-14",
+  "author_role": "coordinator",
+  "basis": "Opus revision-13",
+  "reason": "Independent reviewer confirmed overlap in R12-01 predicate; bounded correction authorized by user step 1",
+  "findings": [
+    {
+      "id": "R12-01",
+      "status": "fix_submitted",
+      "change": "Unavailable/obsolete required evidence takes precedence; normal collection requires applicable G1 and each G2/G3 terminal or genuinely in-flight; budget/safety/blockers remain guards",
+      "planned_tests": [
+        "r12",
+        "r12b",
+        "h13"
+      ]
+    }
+  ],
+  "d11_status": "pending",
+  "product_tests_executed": false,
+  "before_sha256": {
+    "README.md": "3fb0c6acbb8f7398dcf933109ae7bfab3fdbefa6f8391e0ee949854b40d8036f",
+    "design.md": "4094848e246e87c2703fe58f4e9b57840516d9b36a8fc39802a76d9e3a02f3a8",
+    "validation.md": "2145d7d10c606f87eb266a64b4c003a97c03abae636f922f5bace5ecf833660b",
+    "spec-delta.md": "2cebc04d068a55f1081be1c3003d72b1d17ee596c3ad1923fefa11b59e103823",
+    "result.json": "6a499be3a413a6db2d7bf7007a8361f814ef0bc9501801eee5d43572269cd0eb"
+  },
+  "historical_revisions_unchanged": [
+    "revision-12.json",
+    "revision-13.json"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "revision_id": "design-04-rev-11",
+  "task": "ac-audit-revision-04 (fix-04-residual)",
+  "author": {"role": "document-author", "model_self_reported": "claude-opus-5-5"},
+  "input_review": {"source": "fix-04-residual.md (coordinator-relayed review-14 residuals)", "residuals": ["D51-R03", "D51-R05", "D51-R07"], "closed_by_reviewer_and_preserved": ["D51-R01", "D51-R02", "D51-R04", "D51-R06"]},
+  "scope": "Only three residuals. No new mechanism. revision-09 and revision-10 are kept as history. No code, runtime, GitHub or formal OpenSpec changes.",
+  "revised_artifact_sha256": null,
+  "revised_artifact_sha256_note": "Not computed: only Read/Write/Edit/Glob/Grep are allowed.",
+  "responses": [
+    {"id": "D51-R03", "status": "fix_submitted", "supersedes": "The revision-10 wording that ordered attempts by run_id then run_attempt", "change": "Runs of the selected workflow are ordered by the workflow-scoped run_number, and reruns by run_attempt. run_id is used for identity only, never for chronology, and started_at is not used, so a queued attempt still counts as latest. Missing or ambiguous identifiers or order yield unknown, with no fallback to an old success. h4 adds a smaller-run_id-but-larger-run_number case, missing run_number/run_attempt, and a duplicate run_number.", "locations": ["design.md §8 attempt selection", "spec-delta.md §5 AC-G14", "validation.md h4", "coverage.md AC-G14", "cleanup-map.md gates row"]},
+    {"id": "D51-R05", "status": "fix_submitted", "change": "Validation is split by timing. For local validation and G1, the applicable local suite must be completely collected and pass, with skips allowed only when explained by a platform condition; G1 never requires or waits for remote CI. Whether the required GitHub CI jobs and checks are complete and successful belongs to G3, after push and PR. The deletion of the per-test registry, custom checker and sign-offs is preserved.", "locations": ["design.md §11", "validation.md §0", "tasks.md general rules", "cleanup-map.md §1"]},
+    {"id": "D51-R07", "status": "fix_submitted", "change": "Snapshot-parent ancestry alone is no longer sufficient. Red eligibility now requires three things. First, scope. Second, a recorded original snapshot-to-attempt applicability: capture provenance carrying the task/attempt from that attempt's worktree, plus the snapshot's test content or delta appearing in the attempt commits, or the snapshot commit lying on the attempt history. Third, attempt-to-current-head ancestry. An uncommitted original Red is accepted through the recorded mapping. Red and Green need not share a SHA, replay is not mandatory, and no literal ancestry of every snapshot is required. g3b adds a sibling-snapshot counterexample (common parent, valid raw/producer, no mapping), an attempt-not-ancestor case and a positive uncommitted-Red case, alongside out-of-scope. A successful diagnostic replay never substitutes.", "locations": ["design.md §7", "spec-delta.md §3 GAT-03", "validation.md g3b", "tasks.md 3.1", "coverage.md AC-G06, S1-R13", "cleanup-map.md gates row"]}
+  ],
+  "coverage_ids": "All 88 AC and 17 S1 finding IDs are unchanged and remain planned; all 17 S1 findings remain open.",
+  "resolved_by_author": [],
+  "requested_action": "Independent recheck of the three residuals. The author does not claim them closed.",
+  "product_gate_verdict": null
+}

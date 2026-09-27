@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "revision_id": "design-01-rev-02",
+  "run_id": "herdr-design-d45",
+  "task_id": "thin-controller-design",
+  "attempt_id": "design-01",
+  "author": {"role": "implementer", "model_self_reported": "claude-opus-5-5"},
+  "input_review": {
+    "source": "review-02/review.md and review-02/review-result.json",
+    "verdict": "changes_required (bounded re-review)",
+    "reviewed_artifact_sha256": {
+      "design.md": "789473dfad86d4ab6a0a46704df513781a653299c7ab8a2b4adb4b0124f924ae",
+      "revision-01.json": "c8ef80daddfc342278363e83e2b11e21abc115ea103c148010e20f8b7b89795a"
+    },
+    "manifest_sha256": "aee1a7180aceef9ae8171d2609aa3ca959c5e1456f93738e7f5290a27a594d30",
+    "verified_by_reviewer": ["D45-R03", "D45-R04", "D45-R05", "D45-R06", "DN-1 no implicit fallback", "DN-2 clarification", "DN-3 clarification"]
+  },
+  "revised_artifact_sha256": null,
+  "revised_artifact_sha256_note": "Not computed: only Read/Write/Edit/Glob/Grep are allowed. The reviewer should hash the current outputs/design.md.",
+  "scope": "Only the adjacent residuals of D45-R01 and D45-R02 in outputs/design.md. No other content was changed except the design.md status header. No new platform mechanism was added and no new plan was expanded. DN-1..DN-3 remain pending.",
+  "responses": [
+    {
+      "finding_id": "D45-R01",
+      "status": "fix_submitted",
+      "residual_addressed": "begin applies only to execution with side effects or to an explicit retry. Reconcile reads the external state of an existing operation without calling begin and without consuming or replaying its execution permit; the readback is saved through the API.",
+      "change": "The tool protocol now has two modes. Execution/retry mode (`tool … --op`) calls api.begin, makes one external call, then api.record. Readback mode (`tool … reconcile --op`) makes read-only queries and saves them through api.record_readback, which converges the operation to succeeded, failed(proven_absent) or outcome_unknown. There is no begin/record/record_readback CLI command. Planned public-CLI verification adds a case where a completed effect with a lost receipt converges through readback without any additional side-effect call.",
+      "locations": ["outputs/design.md:82-92 (§2)", "outputs/design.md:148, 150 (§6)", "outputs/design.md:179, 184-188 (§7 CLI table)", "outputs/design.md:342-346 (§17)"]
+    },
+    {
+      "finding_id": "D45-R02",
+      "status": "fix_submitted",
+      "residual_addressed": "A due stop for a known active attempt now takes priority over any unrelated in-flight reconcile, whether or not the feature is Blocked. Once a stop has been sent, the original stop is read back and not re-sent. An unknown state is never treated as stopped.",
+      "change": "The first rule in §9 is now the due stop: if the attempt has no stop op, issue one stop (sent once); if a stop op already exists, reconcile that op through process-info. Unrelated in-flight reconciliation comes second. Every response always carries a safety_actions list (due stops, stop readbacks, in-flight readbacks) regardless of blocker status, and prepare accepts those IDs. This replaces permitted_while_blocked. The stop row in §6 and the online-execution rule in §13 were updated to match.",
+      "locations": ["outputs/design.md:160 (§6 stop row)", "outputs/design.md:169 (§7 output shape)", "outputs/design.md:238 (§9 intro)", "outputs/design.md:242-249 (§9 ordering)", "outputs/design.md:303 (§13)", "outputs/design.md:342 (§17)"]
+    }
+  ],
+  "decisions_status": {"DN-1": "unapproved", "DN-2": "unapproved", "DN-3": "unapproved"},
+  "resolved_by_author": [],
+  "requested_action": "Bounded re-review of D45-R01 and D45-R02 by the original reviewer. The author does not mark any finding resolved.",
+  "product_gate_verdict": null,
+  "s1_findings": "S1-R01..R17 remain open; this revision does not affect their status."
+}

@@ -1,0 +1,201 @@
+{
+  "runtime": "claude-code",
+  "session_id": "8c4fbb2f-2ae4-442f-ba3d-e1e9eced8df2",
+  "source_path": "/Users/johnson.chiang/.claude/projects/-Users-johnson-chiang-workspace-loop-engineering--delivery-bootstrap-herdr-design-d45-01/8c4fbb2f-2ae4-442f-ba3d-e1e9eced8df2.jsonl",
+  "messages": [
+    {
+      "id": "msg_011CfTrJQ4UmxsbzCW6k7egj",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:17:21.378Z"
+    },
+    {
+      "id": "msg_011CfTrJfvTe9RyZPFQ5Nne2",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:17:25.254Z"
+    },
+    {
+      "id": "msg_011CfTrJvu7gHALzvX6jLFNx",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:17:27.790Z"
+    },
+    {
+      "id": "msg_011CfTrK7h1YX8hHGf6kS3Aq",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:17:30.507Z"
+    },
+    {
+      "id": "msg_011CfTrKKRT15iNoKhvpJHZC",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:17:33.326Z"
+    },
+    {
+      "id": "msg_011CfTrKXLp4F1jc73JaQt3s",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:17:38.106Z"
+    },
+    {
+      "id": "msg_011CfTrKskeaVthwq9hm9SzU",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:17:41.146Z"
+    },
+    {
+      "id": "msg_011CfTrL6sg3GTYfhpVCDYX6",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:17:44.014Z"
+    },
+    {
+      "id": "msg_011CfTrLLWUSnrEVVdhK1nFr",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:17:46.660Z"
+    },
+    {
+      "id": "msg_011CfTrLWNoJKk2mpGizoJ7P",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:17:49.137Z"
+    },
+    {
+      "id": "msg_011CfTrLh6i8C4Q1MZRwwzBd",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:17:54.777Z"
+    },
+    {
+      "id": "msg_011CfTrM7KVx6zUG3YYzQe8y",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:17:58.443Z"
+    },
+    {
+      "id": "msg_011CfTrMNu7oMnS8r9ZQ5cdG",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:18:01.652Z"
+    },
+    {
+      "id": "msg_011CfTrMceMLy9nXkG6UfUsF",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:18:03.856Z"
+    },
+    {
+      "id": "msg_011CfTrMoirra2hdfREYdARM",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:18:07.689Z"
+    },
+    {
+      "id": "msg_011CfTrN5j2joYyfxQpVCjAL",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:18:13.432Z"
+    },
+    {
+      "id": "msg_011CfTrNUwHTLh5uLDwXJTH4",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:18:17.839Z"
+    },
+    {
+      "id": "msg_011CfTrNop6EFmipoysZYsik",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:18:22.760Z"
+    },
+    {
+      "id": "msg_011CfTrPAqdqLSE7KdaybtwH",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:18:27.489Z"
+    },
+    {
+      "id": "msg_011CfTrPX2KK5LCnFcNzNH2J",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:18:31.473Z"
+    },
+    {
+      "id": "msg_011CfTrpghghHA4p9YbvUVUT",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:24:12.475Z"
+    },
+    {
+      "id": "msg_011CfTrpx6PV2hPz2aqK3Avt",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:24:17.884Z"
+    },
+    {
+      "id": "msg_011CfTrqMVK8ZNenes1wHvhD",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:24:21.231Z"
+    },
+    {
+      "id": "msg_011CfTrqdLZKgmu78ECqBEHm",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:24:34.561Z"
+    },
+    {
+      "id": "msg_011CfTrraVvWXQKbLNUseAnX",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:28:05.247Z"
+    },
+    {
+      "id": "msg_011CfTs87vhth8Mgff1DCD5q",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:34:24.367Z"
+    },
+    {
+      "id": "msg_011CfTsdSumccBspcs565PAM",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:36:07.336Z"
+    },
+    {
+      "id": "msg_011CfTsjejbK3j7VJejyoVwh",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:36:48.300Z"
+    },
+    {
+      "id": "msg_011CfTsng441etN4bD96K6CB",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:37:13.675Z"
+    },
+    {
+      "id": "msg_011CfTspYF4JKgvQjuCo3rQW",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:37:23.760Z"
+    },
+    {
+      "id": "msg_011CfTsqH6zuQ5yNpG5BBbZj",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:37:36.403Z"
+    },
+    {
+      "id": "msg_011CfTt4k8oqAkERgFHzCZ5n",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:40:28.501Z"
+    },
+    {
+      "id": "msg_011CfTt4u2MiNehNVseJB17S",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:40:31.186Z"
+    },
+    {
+      "id": "msg_011CfTt56SCjG375hMjC2sWp",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:40:35.683Z"
+    },
+    {
+      "id": "msg_011CfTt5RhaVePSNs2yWpcyR",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:40:38.717Z"
+    },
+    {
+      "id": "msg_011CfTt5ecxgiF4xvTXuGaNu",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:40:46.881Z"
+    },
+    {
+      "id": "msg_011CfTt6FVSJkXdmuFSGgvJa",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:40:59.083Z"
+    },
+    {
+      "id": "msg_011CfTt79gUFe3HnRENd8nzc",
+      "model": "claude-opus-5-5",
+      "timestamp": "2026-09-27T11:41:12.184Z"
+    }
+  ],
+  "actual_models": [
+    "claude-opus-5-5"
+  ],
+  "claim_scope": "Native model identity only; not product G2 or OS isolation proof"
+}

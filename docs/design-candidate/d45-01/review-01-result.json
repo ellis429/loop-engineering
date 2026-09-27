@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "execution_status": "succeeded",
+  "verdict": "changes_required",
+  "review_scope": "Independent document review: delivered cleanup/policy documents; formative design review, not product G2 or ready-design rejection",
+  "candidate_sha256": "e531b9636041152ff9bce29a8fde94417ca53fc10da84a3f3704541c30229c69",
+  "artifact_hashes_sha256": {
+    "design.md": "e531b9636041152ff9bce29a8fde94417ca53fc10da84a3f3704541c30229c69",
+    "cleanup-map.md": "685d63e6ff019bc9463e96c4846bb4fb79b905cb241bb8e507ddde9b1084c05f",
+    "decisions-needed.md": "7d0634c13b780fd152018908221fd8ca5546274442b34cf22e015a56a4065f45",
+    "author-result.json": "8186b77798c629e5a75e356be46fa328b7ef19b10ff94c874b35966b9ac1a001"
+  },
+  "input_manifest_sha256": "486c7941e30830499350043060dd1ab6c44e3b39730c9933dc8eecf395cd749c",
+  "findings": [
+    {
+      "id": "D45-R01",
+      "severity": "high",
+      "blocking": true,
+      "blocking_scope": "eventual_design_readiness",
+      "locations": [
+        "design.md:78",
+        "design.md:137",
+        "design.md:319"
+      ],
+      "summary": "Use one begin/execute/record owner.",
+      "detail": "review.md"
+    },
+    {
+      "id": "D45-R02",
+      "severity": "high",
+      "blocking": true,
+      "blocking_scope": "eventual_design_readiness",
+      "locations": [
+        "design.md:228",
+        "design.md:232-235",
+        "design.md:280"
+      ],
+      "summary": "Permit deadline stop despite unrelated blockers.",
+      "detail": "review.md"
+    },
+    {
+      "id": "D45-R03",
+      "severity": "high",
+      "blocking": true,
+      "blocking_scope": "eventual_design_readiness",
+      "locations": [
+        "design.md:253",
+        "design.md:265"
+      ],
+      "summary": "Fresh external versions must invalidate stale gates.",
+      "detail": "review.md"
+    },
+    {
+      "id": "D45-R04",
+      "severity": "high",
+      "blocking": true,
+      "blocking_scope": "eventual_design_readiness",
+      "locations": [
+        "design.md:241",
+        "design.md:264",
+        "design.md:306"
+      ],
+      "summary": "Schedule required publications before final Pass observation.",
+      "detail": "review.md"
+    },
+    {
+      "id": "D45-R05",
+      "severity": "medium",
+      "blocking": false,
+      "blocking_scope": null,
+      "locations": [
+        "cleanup-map.md:71-73",
+        "cleanup-map.md:79-86"
+      ],
+      "summary": "Replace mandatory test rewrites with selective behavioral reuse.",
+      "detail": "review.md"
+    },
+    {
+      "id": "D45-R06",
+      "severity": "medium",
+      "blocking": false,
+      "blocking_scope": null,
+      "locations": [
+        "cleanup-map.md:48",
+        "cleanup-map.md:92-95"
+      ],
+      "summary": "Correct CLI state-writing inventory and verify actual paths.",
+      "detail": "review.md"
+    }
+  ],
+  "human_decisions": {
+    "DN-1": "unapproved",
+    "DN-2": "unapproved; preserve original historical Red explicitly",
+    "DN-3": "unapproved"
+  },
+  "limits": [
+    "Draft design is pending synchronization; not claimed final by author.",
+    "Pending spec-delta/tasks/validation/coverage are intentionally excluded.",
+    "Read-only source inspection; no product execution, tests, GitHub calls or additional agents.",
+    "No runtime capability attestation, product gate verdict, policy approval or S1 finding closure."
+  ],
+  "supplemental_evidence": {
+    "../ci-policy-recheck.json": "7db389a03c65920b52066e25c9b373d18e4233b4d87997073d90b9a51b5d08c4"
+  }
+}

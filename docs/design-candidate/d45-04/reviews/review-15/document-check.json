@@ -1,0 +1,13 @@
+{
+  "scope": "document-only AC audit correction",
+  "preserved_inputs": 88,
+  "unexpected_changes": [],
+  "coverage_rows": 105,
+  "unique_ids": 105,
+  "ac_rows": 88,
+  "old_findings": 17,
+  "product_tests_executed": false,
+  "D11_approved": false,
+  "checked_local_links": 95,
+  "broken_local_links": []
+}

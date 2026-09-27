@@ -1,0 +1,1800 @@
+{
+  "scope": "D50 AC necessity, semantic validation coverage, local implementation status; not a product gate",
+  "date": "2026-09-27",
+  "head": "4ce111011fde83c3a2784402cea111e52a954b3c",
+  "author": "current coordinating agent; no new subagent or native model run",
+  "counts": {
+    "ac": 88,
+    "disposition": {
+      "W": 17,
+      "K": 58,
+      "D": 6,
+      "H": 1,
+      "R": 3,
+      "E": 3
+    },
+    "validation": {
+      "G": 38,
+      "P": 27,
+      "W": 13,
+      "D": 5,
+      "H": 1,
+      "X": 4
+    }
+  },
+  "source_hashes": {
+    "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-gates/spec.md": "a8d68b7c03e45a55da796f8b223d7534266010af534e8c0506f36f66b0218d91",
+    "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md": "a54c18f808079dfe8d2c032a574eda5411916566124909ca4149fa4a46161c25",
+    "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md": "f873aae0d549f5f8e11cfcca801cf78610aa970d071c09fcd5776f814ca5a9f6",
+    "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/finding-resolution/spec.md": "2f37c77709d526b2259b2285c99617fe8d4a2768cb318ccf860dec8a8b6c8629",
+    "/Users/johnson.chiang/workspace/loop-engineering-thin/docs/design-candidate/d45-03/design.md": "64c400fcd578b4661fe209ff436d3d7883fc8637d63f88da01ee2a1209115466",
+    "/Users/johnson.chiang/workspace/loop-engineering-thin/docs/design-candidate/d45-03/tasks.md": "fa53b8597b3b07ab049151f09c0252d76e1a08a43947ad92c5a9baa0013b0f03",
+    "/Users/johnson.chiang/workspace/loop-engineering-thin/docs/design-candidate/d45-03/validation.md": "2ed2200b6336e81f14a26f6fe8511c06161e139ba8295b19922718cf2afd1e1f",
+    "/Users/johnson.chiang/workspace/loop-engineering-thin/docs/design-candidate/d45-03/spec-delta.md": "1b40d5f5574552f3326fde32a8866c70225a8d3cbf09c0de3729616d922b2a39",
+    "/Users/johnson.chiang/workspace/loop-engineering-thin/docs/design-candidate/d45-03/coverage.md": "b24e6db1315656f74fb81691661a637368c3af0f7f4131d68714246d218971b1",
+    "/Users/johnson.chiang/workspace/loop-engineering-thin/docs/design-candidate/d45-03/review.md": "086b69bfb316a4dae431c6439e073cf65105e474ccc5ffe0726964bf8665a2b8",
+    "/Users/johnson.chiang/workspace/loop-engineering-thin/docs/design-candidate/d45-02/spec-delta.md": "7ebd8d014f5765cc35767a6a4372f4871d70f1af4ef72c3cb940da11a2c18565"
+  },
+  "rows": [
+    {
+      "id": "AC-O01",
+      "title": "直接與 Implementer 協作",
+      "original_scenario": "- **WHEN** 使用者直接交付已選定的 feature 給 Implementer\n- **THEN** 系統允許進入 design/plan 準備，保留 feature owner 與 controller identity，不要求經 Project Lead 轉達，也不因此取得開工確認或 scope 變更權限",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+      "line": 17,
+      "disposition": "W",
+      "disposition_label": "Workflow／人工契約",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "直接交付應可進 design/plan；V3 只驗沒有批准不派工，缺正向入口與不要求 Project Lead 轉達。",
+      "candidate_mapping": {
+        "owner": "C＋H",
+        "slice": "S1",
+        "planned_reference": "V3 沒有 D11 就 0 次派工；R3"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": true,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-O02",
+      "title": "拒絕第二個外層 loop",
+      "original_scenario": "- **WHEN** Implementer 的 skill、Project Lead 或另一個 session 請求派發同一 feature 的外層實作／正式 review\n- **THEN** 系統只接受經 controller 核對 plan、scope、依賴與預算的 assignment；局部 review 不可更新 G2 或繞過 controller",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+      "line": 21,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "P",
+      "validation_label": "主要情境明列",
+      "note": "保留唯一外層協調與正式 review 授權；V2、V6 主要負例合理。",
+      "candidate_mapping": {
+        "owner": "C＋S",
+        "slice": "S1",
+        "planned_reference": "V2 單一 owner；V6 未經許可的 review 不進 G2"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-O03",
+      "title": "引用既有文件",
+      "original_scenario": "- **WHEN** feature 使用 issue 內文與 `docs/superpowers/plans/P03-ingest.md` 等既有原生文件\n- **THEN** 交接保留實際位置與適用版本，能讀回採用內容；不因採用 OpenSpec 而把舊成果重新命名或把 task 各自建立為 PR",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+      "line": 37,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "保留原生 locator/version；T2.2 只列 digest，須驗讀回原生文件、不改名及 task 不另成 PR。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "T2.2 binding digest"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-O04",
+      "title": "權威來源衝突",
+      "original_scenario": "- **WHEN** project spec 與 feature spec 對同一行為互相矛盾，或必要引用不可讀取\n- **THEN** 系統列出衝突／缺口與所見版本並停止依該歧義派工，交使用者裁決；不依檔案時間或工具名稱自動選勝方",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+      "line": 41,
+      "disposition": "W",
+      "disposition_label": "Workflow／人工契約",
+      "validation_assessment": "W",
+      "validation_label": "文件驗收待具體化",
+      "note": "引用缺失可程式核對，語意矛盾由 agent／人判斷；需一個衝突交接案例，不能只測 hash。",
+      "candidate_mapping": {
+        "owner": "H＋C",
+        "slice": "S1",
+        "planned_reference": "T2.2 來源衝突 → Blocked（fake）"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": true,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-O05",
+      "title": "新 feature 尚未批准",
+      "original_scenario": "- **WHEN** design/plan 已準備但沒有適用版本的明確使用者確認\n- **THEN** 狀態顯示等待開工確認及待確認版本，不派 implementation worker；沉默、timeout 或 agent 同意不視為批准",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+      "line": 49,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "P",
+      "validation_label": "主要情境明列",
+      "note": "版本化開工批准必要；V3 明列草案／沉默／agent 身分不構成批准。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V3"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-O06",
+      "title": "核准後按 plan 前進",
+      "original_scenario": "- **WHEN** 使用者確認 design+plan 版本，且 scope、依賴與預算符合要求\n- **THEN** controller 可依序派 task，交接每項 AC ID 與驗法；正常 finding 修正不逐 task 再要求批准",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+      "line": 53,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "除了批准紀錄，需正向測 approve→首次合法 assignment，含 AC／驗法及修正無逐 task 重批。",
+      "candidate_mapping": {
+        "owner": "C＋S",
+        "slice": "S1",
+        "planned_reference": "T2.2、R2"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-O07",
+      "title": "需求變更不混入修正",
+      "original_scenario": "- **WHEN** 修正需要改 AC、spec 或已核准設計，或使用者提出範圍外想法\n- **THEN** 系統保存未完成項與影響，提出獨立 feature 候選或版本化 scope 決策；取得適用確認後才依新契約派工",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+      "line": 57,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "P",
+      "validation_label": "主要情境明列",
+      "note": "scope/AC 變更回人合理；T2.2、V3 明列失效批准與停止。",
+      "candidate_mapping": {
+        "owner": "C＋H",
+        "slice": "S1",
+        "planned_reference": "V3 scope_change"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-O08",
+      "title": "已實作 pre-PR 接入",
+      "original_scenario": "- **WHEN** 原 owner 已交接，版本固定，既有 design/plan 有適用確認，程式已完成而 G1 尚待核對\n- **THEN** 系統從 G1 驗證開始；若 G1 已證明適用則核對／建立 PR 並進 checking，不重跑初始研究與實作派工",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+      "line": 65,
+      "disposition": "D",
+      "disposition_label": "後續能力",
+      "validation_assessment": "D",
+      "validation_label": "延期未覆蓋",
+      "note": "舊 feature adopt 合理但首片延期；unsupported 只驗拒絕，不能算 adopt 成功。",
+      "candidate_mapping": {
+        "owner": "S＋H",
+        "slice": "S2",
+        "planned_reference": "S1 unsupported（V3）；adopt 在 S2 實作"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-O09",
+      "title": "Adopt 缺口",
+      "original_scenario": "- **WHEN** 接入資料缺 D11 確認、歷史 Red、固定 base，或有相關未提交內容／未知 writer\n- **THEN** 系統分別顯示需補的確認／證據／版本／ownership；缺確認回 planning 或 awaiting approval，其他無法安全續行項目 Blocked，不能以 pre-PR ready 通知判 G1 通過",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+      "line": 69,
+      "disposition": "D",
+      "disposition_label": "後續能力",
+      "validation_assessment": "D",
+      "validation_label": "延期未覆蓋",
+      "note": "adopt 缺口路由隨 adopt 延後；保留不補造 Red／不接未知 writer 原則。",
+      "candidate_mapping": {
+        "owner": "S＋H",
+        "slice": "S2",
+        "planned_reference": "同上；unsupported 不繞過 G1／D11"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-O10",
+      "title": "Pass 尚未接受或 merge",
+      "original_scenario": "- **WHEN** 目前版本三 gates 已通過而使用者尚未接受\n- **THEN** 系統呈現 PR Pass / ready for human acceptance 與 acceptance pending；merge 仍依真實 GitHub 事實呈現，不執行 merge/close/release/deploy",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+      "line": 77,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "Pass≠accept≠merge；V8 缺零 merge/close/release/deploy 副作用及 acceptance pending 斷言。",
+      "candidate_mapping": {
+        "owner": "C＋H",
+        "slice": "S1",
+        "planned_reference": "V8"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-O11",
+      "title": "接受後的新版本",
+      "original_scenario": "- **WHEN** 使用者已接受版本 V1，之後 PR head、適用 spec 或 design 改成 V2\n- **THEN** 保存 V1 的接受歷史，V2 的 acceptance 為 pending 並重評相關 gates；不把 V1 accepted 移植到 V2",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+      "line": 81,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "需要 V1 accepted→V2 pending 的正反案例；目前只寫 acceptance 綁定版本。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V8"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-O12",
+      "title": "上游 accepted 但未 merge",
+      "original_scenario": "- **WHEN** 上游已 accepted，PR 仍 open\n- **THEN** 系統允許下游準備 spec/design，顯示等待 merge，且不派依賴該成果的實作",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+      "line": 89,
+      "disposition": "W",
+      "disposition_label": "Workflow／人工契約",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "D27 必須保留；T8.0 有人工核對，還需 accepted 未 merged 時零下游派工的操作紀錄。",
+      "candidate_mapping": {
+        "owner": "S＋H",
+        "slice": "S2",
+        "planned_reference": "S1 由 skill／人依 D27 核對：T8 的前置是 B1 已 accepted、已 merge、baseline 已登記（tasks 8.0），不自動 merge；controller 的依賴等待自動化在 S2"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": true,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-O13",
+      "title": "Merge 與 baseline 都適用",
+      "original_scenario": "- **WHEN** 上游指定版本已接受及 merge，本次 baseline 可核對含有所依賴成果\n- **THEN** 系統解除相依等待；下游仍依其自身 D11 確認、ownership 與預算才派工",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+      "line": 93,
+      "disposition": "W",
+      "disposition_label": "Workflow／人工契約",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "人工／skill 解除相依等待足夠；需驗已 merge 但 baseline 不含成果仍拒絕、適用時仍核對自身 D11。",
+      "candidate_mapping": {
+        "owner": "S＋H",
+        "slice": "S2",
+        "planned_reference": "同上"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": true,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-O14",
+      "title": "重複接受事件",
+      "original_scenario": "- **WHEN** 同一 acceptance identity／版本被重送或於 restart 後讀到\n- **THEN** 系統查回同一 Retro operation/result，不重複產出；輸出明列證據與尚未涵蓋階段，變更是否落地仍依既有決策權限",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+      "line": 101,
+      "disposition": "D",
+      "disposition_label": "後續能力",
+      "validation_assessment": "D",
+      "validation_label": "延期未覆蓋",
+      "note": "Retro 候選與去重是後續 workflow 能力；不必強迫做 controller Retro operation。",
+      "candidate_mapping": {
+        "owner": "S＋H",
+        "slice": "S2",
+        "planned_reference": "Retro 候選由 skill 產生；controller 以 op 去重的部分在 S2"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-O15",
+      "title": "暫停的 P03 試用",
+      "original_scenario": "- **WHEN** 使用者只查看流程／此規格，尚未明確開始 P03 Retro 或恢復 PR trial，也未回答 Q-TARGET\n- **THEN** 系統不接管 P03、不啟動 Retro 或 PR gating；保留待確認 feature/session、交接版本與原 owner 資訊",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+      "line": 105,
+      "disposition": "H",
+      "disposition_label": "歷史限制",
+      "validation_assessment": "H",
+      "validation_label": "歷史，不作產品測項",
+      "note": "P03/session/Q-TARGET 是歷史限制；建議留 handoff，通用規則併入未授權不接管，勿寫產品特判。",
+      "candidate_mapping": {
+        "owner": "S",
+        "slice": "S1",
+        "planned_reference": "DOC（skill 不自行啟動 P03）"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": true,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-O16",
+      "title": "Skills 交回 controller",
+      "original_scenario": "- **WHEN** plan、TDD 或局部 review 方法完成一個工作單位\n- **THEN** 結果與 evidence 交 controller 核對並記錄，不由 skill 自訂 feature Pass 或另啟排程；自動 Retro 不在背景呼叫 user-only 原版 skill",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+      "line": 113,
+      "disposition": "W",
+      "disposition_label": "Workflow／人工契約",
+      "validation_assessment": "W",
+      "validation_label": "文件驗收待具體化",
+      "note": "skill 不另起 loop 合理；尚無 orchestrate SKILL 或實際 handoff，需 DOC 清單與一次結果交接。",
+      "candidate_mapping": {
+        "owner": "S＋C",
+        "slice": "S1",
+        "planned_reference": "T4.1 DOC；結果只能經匯入生效（V4）"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": true,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-O17",
+      "title": "另一 repo 的規則混入草稿",
+      "original_scenario": "- **WHEN** 產出的 spec 將其他 repo 的工程規則標為本次已確認政策，卻沒有適用來源或使用者決策\n- **THEN** 審查指出來源與狀態差異，交接列為待澄清提案，controller 不把它加入核准 policy 或據此派工；保留原來源，不以 cwd 或角色名稱推定適用",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+      "line": 121,
+      "disposition": "W",
+      "disposition_label": "Workflow／人工契約",
+      "validation_assessment": "W",
+      "validation_label": "文件驗收待具體化",
+      "note": "規則來源歸屬合理；需跨 repo 規則混入的審查樣本與拒絕採用紀錄。",
+      "candidate_mapping": {
+        "owner": "H＋S",
+        "slice": "DOC",
+        "planned_reference": "審查清單"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": true,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-O18",
+      "title": "授權 Project Lead 協調與委派",
+      "original_scenario": "- **WHEN** 使用者明確授權 Project Lead 在指定 roadmap／feature 範圍內協調順序與委派工作\n- **THEN** Project Lead 可在該範圍提出帶授權來源的安排，controller 核對核准 plan、依賴、scope 與預算後派發；Implementer 接收 spec／AC 與依賴、交回成果及待決事項，授權不代替 D11 開工確認或最終接受",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+      "line": 25,
+      "disposition": "D",
+      "disposition_label": "後續能力",
+      "validation_assessment": "D",
+      "validation_label": "延期未覆蓋",
+      "note": "Project Lead 授權委派保留為後續能力；首片 delegate unsupported 不能算已驗收委派。",
+      "candidate_mapping": {
+        "owner": "H＋S",
+        "slice": "S2",
+        "planned_reference": "delegate 在 S1 unsupported"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-O19",
+      "title": "入口與 runtime 關係不授予決策權",
+      "original_scenario": "- **WHEN** agents 使用相同入口，或 runtime 將 Project Lead 與 Implementer 顯示為父子 sessions\n- **THEN** 系統仍依角色責任與使用者明確授權判定可執行動作，不從入口／父子標記新增委派權或 scope 變更權，也不因此要求使用者直接交付的 feature 先經 Project Lead；正式 Reviewer 仍符合 G2 獨立契約",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+      "line": 29,
+      "disposition": "W",
+      "disposition_label": "Workflow／人工契約",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "角色／runtime 父子关系不授權；V2 只驗 claim，沒有角色權限負例。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V2"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": true,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-O20",
+      "title": "從 project 分析拆出 features",
+      "original_scenario": "- **WHEN** 使用者與 Project Lead 準備新 project 或接手既有 project，安排近期交付\n- **THEN** 產物可追溯研究來源、domain／SA 結論、高層設計與待決事項，並說明 milestone 成果、feature slices、順序及依賴；roadmap、milestone、feature 與 implementation task 的身份分開，不由 task 清單取代需求與架構分析",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+      "line": 129,
+      "disposition": "W",
+      "disposition_label": "Workflow／人工契約",
+      "validation_assessment": "W",
+      "validation_label": "文件驗收待具體化",
+      "note": "Project research→milestone→features 是 workflow 產出物驗收，非 controller 功能；需成果樣本與人工 rubric。",
+      "candidate_mapping": {
+        "owner": "H",
+        "slice": "S3",
+        "planned_reference": "DOC＋示範"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": true,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-O21",
+      "title": "單一 feature 的聚焦分析與交接",
+      "original_scenario": "- **WHEN** 選定 feature 引用既有 project baseline，且相關研究與設計部分仍適用\n- **THEN** Project Lead 引用適用內容、補查本 feature 的差異與未知，再交出 spec／AC、必要高層設計及限制；不強制重做整個 project，會改變 scope／AC／架構的重要未知先回人，不由 Implementer 默默決定需求",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+      "line": 133,
+      "disposition": "W",
+      "disposition_label": "Workflow／人工契約",
+      "validation_assessment": "W",
+      "validation_label": "文件驗收待具體化",
+      "note": "feature 聚焦分析及沿用 baseline 合理；需差異／未決交接樣本，不能用模板存在驗收。",
+      "candidate_mapping": {
+        "owner": "H",
+        "slice": "S3",
+        "planned_reference": "DOC＋示範"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": true,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-O22",
+      "title": "Project Lead 提供初步 tasks",
+      "original_scenario": "- **WHEN** Project Lead 交出 feature spec 與初步工作包，Implementer 研究後發現需要合併、補充或重排任務\n- **THEN** Implementer 在需求與設計邊界內校準，保存最終 tasks／介面／依賴／AC 驗法及版本，再依 D11 一次確認；controller 不依尚未確認的草案提前派工，也不另建一份 Project Lead 的執行計畫",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+      "line": 141,
+      "disposition": "W",
+      "disposition_label": "Workflow／人工契約",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "Implementer 校準唯一 plan 合理；V3 草案拒絕只驗一半，缺 tasks 來源與校準後交接。",
+      "candidate_mapping": {
+        "owner": "H＋C",
+        "slice": "S1",
+        "planned_reference": "V3 草案 plan 被拒"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": true,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-O23",
+      "title": "詳細設計發現跨 feature 影響",
+      "original_scenario": "- **WHEN** Implementer 發現任務調整需要改 AC、突破高層設計限制或改變其他 feature 依賴的契約\n- **THEN** 保存具體影響與待決事項，交 Project Lead 分析並回使用者裁決；未取得適用決策前不依該變更派工，核准範圍內未受影響的工作可依現有計畫繼續",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+      "line": 145,
+      "disposition": "W",
+      "disposition_label": "Workflow／人工契約",
+      "validation_assessment": "W",
+      "validation_label": "文件驗收待具體化",
+      "note": "跨 feature 影響回人保留；局部繼續的自動化可延期，不能把需求裁決本身移出首片。",
+      "candidate_mapping": {
+        "owner": "H＋C",
+        "slice": "S2",
+        "planned_reference": "S1 的 scope_change 讓全部派工停止（保守）；只停受影響的 task、其他繼續，留在 S2"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": true,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-O24",
+      "title": "專案與功能的分析深度",
+      "original_scenario": "- **WHEN** Project Lead 準備 project roadmap，之後再準備其中一個 feature\n- **THEN** project SA 形成足以支持高層設計及 milestone 成果的需求基線，不先細化全部 features；選定 feature 的 SA 引用 baseline／milestone，補齊其關鍵情境、規則、重要例外及穩定 AC，保留來源與適用版本",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+      "line": 153,
+      "disposition": "W",
+      "disposition_label": "Workflow／人工契約",
+      "validation_assessment": "W",
+      "validation_label": "文件驗收待具體化",
+      "note": "Project／feature SA 深度不同合理，與 O20/O21 可共用同一驗收樣本，避免重複文件。",
+      "candidate_mapping": {
+        "owner": "H",
+        "slice": "S3",
+        "planned_reference": "DOC"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": true,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-O25",
+      "title": "文件齊全但需求仍有阻擋",
+      "original_scenario": "- **WHEN** 七項內容已填入文件，但仍有會改變核心 scope、行為或驗收的未決問題，或使用者尚未確認可進入 Design\n- **THEN** 交接列出實際阻擋或等待確認、證據與下一位 owner，不以模板完整、沉默或 agent 自述當作 ready；不受影響的研究可繼續",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+      "line": 157,
+      "disposition": "W",
+      "disposition_label": "Workflow／人工契約",
+      "validation_assessment": "W",
+      "validation_label": "文件驗收待具體化",
+      "note": "文件齊不等於 SA ready；需要未決問題仍存在時拒絕交接的人工／skill 樣本。",
+      "candidate_mapping": {
+        "owner": "H",
+        "slice": "DOC",
+        "planned_reference": "審查清單"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": true,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-O26",
+      "title": "適用 SA 確認與開工確認分開",
+      "original_scenario": "- **WHEN** 當前 SA 已滿足完成條件且有適用使用者確認，或引用的既有成果與確認經核對仍適用\n- **THEN** 保存 readiness 理由、版本及確認來源並交下一階段，不重做已確認的完整 grill；controller 仍須在 feature design＋plan 完成後核對 D11，不能依 SA 確認直接派 implementation worker",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+      "line": 161,
+      "disposition": "W",
+      "disposition_label": "Workflow／人工契約",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "SA 確認≠D11 合理；V3 沒有只給 SA 確認仍拒絕 implementation 的對照案例。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V3"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": true,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-O27",
+      "title": "研究發現與使用者描述衝突",
+      "original_scenario": "- **WHEN** code、文件與使用者描述對同一行為有差異，或可行性查證需要 prototype／環境變更\n- **THEN** Project Lead 提供可追溯依據、區分現況與需求並提出需人決定的影響；必要 prototype／環境變更先提出目的與範圍，依授權執行，不自行把現有 bug 或推論升為已確認規格",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+      "line": 165,
+      "disposition": "W",
+      "disposition_label": "Workflow／人工契約",
+      "validation_assessment": "W",
+      "validation_label": "文件驗收待具體化",
+      "note": "現況與需求衝突應保留裁決；要看來源／影響／owner，不要求 controller 理解業務語意。",
+      "candidate_mapping": {
+        "owner": "H",
+        "slice": "DOC",
+        "planned_reference": "審查清單"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": true,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-O28",
+      "title": "功能驗收與業務成果分開",
+      "original_scenario": "- **WHEN** 功能行為已可用 AC 驗證，但業務改善尚無量測結果或目標未確認\n- **THEN** Spec 與交接分開記錄功能符合要求與業務成功條件，未確認目標及未執行證據保留其狀態，不以測試通過代替業務改善達成，也不捏造數字補齊模板",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md",
+      "line": 169,
+      "disposition": "W",
+      "disposition_label": "Workflow／人工契約",
+      "validation_assessment": "W",
+      "validation_label": "文件驗收待具體化",
+      "note": "功能驗收與業務成果分開合理；需文件樣本，不需新增產品 gate。",
+      "candidate_mapping": {
+        "owner": "H",
+        "slice": "S3",
+        "planned_reference": "DOC"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": true,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-G01",
+      "title": "正常交付",
+      "original_scenario": "- **WHEN** G1 通過後，獨立 review 與必要 CI 的適用結果都通過\n- **THEN** controller 核對當前版本並保存三 gates 的證據／理由後才記錄 PR Pass；此前不因任一 task completed 放行",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-gates/spec.md",
+      "line": 17,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "P",
+      "validation_label": "主要情境明列",
+      "note": "三 gates 合取與新鮮版本是核心；V8＋R3 主要成功路徑合理，尚未實跑。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V8；R3"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-G02",
+      "title": "單一 gate 失敗",
+      "original_scenario": "- **WHEN** review clean 但 CI fail，或 CI success 但 review changes_required\n- **THEN** 不產生 PR Pass，分別保留成功與失敗 gate 的實際結果，將適用問題交同一版本的 correction 流程",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-gates/spec.md",
+      "line": 21,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "必須補 review clean/CI fail 與 review fail/CI green 兩個獨立矩陣案例；V8 目前只有發布與 push。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V8"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-G03",
+      "title": "Review 執行成功但無法裁決",
+      "original_scenario": "- **WHEN** reviewer task succeeded，品質 verdict 卻是 blocked\n- **THEN** G2 保持 unknown 並令 feature Blocked，保留待決問題；不以 task 成功判 clean，不僅因 blocked verdict 新增 correction round",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-gates/spec.md",
+      "line": 25,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "P",
+      "validation_label": "主要情境明列",
+      "note": "task succeeded 不等於品質 clean；V6 已明列 blocked→unknown、不得開修正輪。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V6"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-G04",
+      "title": "摘要與證據不一致",
+      "original_scenario": "- **WHEN** result 宣稱測試通過但原始 log 缺失、hash 不符、exit code 失敗或 snapshot 不適用\n- **THEN** gate 不通過，逐項顯示缺失／衝突及 producer；不以摘要、測試總數或 plan 的預期輸出替代",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-gates/spec.md",
+      "line": 33,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "P",
+      "validation_label": "主要情境明列",
+      "note": "逐項 raw/exit/digest/snapshot/producer 核對必要；V5＋design 已列主要污染情境。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V5"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-G05",
+      "title": "驗證與程式分離引用",
+      "original_scenario": "- **WHEN** 最終程式版本的 evidence 在 runner result 中綁定實際 snapshot，tracked 驗收文件引用該 result\n- **THEN** 系統可核對程式版本與證據關係，不要求文件以自身 commit SHA 自我引用；後續只改文件仍須保存差異與證據適用理由",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-gates/spec.md",
+      "line": 37,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "合理地避免文件 SHA 自我引用；V5 未驗 evidence 外置、文件後補 commit 的適用性。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V5"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-G06",
+      "title": "不同 SHA 的有效 Red 與 Green",
+      "original_scenario": "- **WHEN** task 的 Red snapshot R 因目標行為缺失而失敗，修正／整合 lineage 可追至目前 head H，且 H 的必要驗證為 Green\n- **THEN** G1 可採用 R 的歷史 Red 與 H 的 Green，不要求兩者同 SHA 或重新製造 Red",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-gates/spec.md",
+      "line": 45,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "P",
+      "validation_label": "主要情境明列",
+      "note": "原始 Red 早於 head、目前 Green 合理；正常不 replay 與矛盾診斷路徑已明列。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V5：正常路徑不做 replay 也能通過；矛盾路徑以 replay 作診斷（基準版的 replay 句子已刪除）。R2"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-G07",
+      "title": "缺歷史或錯誤的 Red",
+      "original_scenario": "- **WHEN** 既有 feature 只有當前綠燈，或所稱 Red 只是語法／環境錯誤，或事後 replay 被稱作原始 test-first\n- **THEN** G1 明列 missing／invalid；可補證據就補，無法取得歷史 Red 則 Blocked 待裁決；事後 replay 清楚標示其性質，不能冒充原始歷史",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-gates/spec.md",
+      "line": 49,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "P",
+      "validation_label": "主要情境明列",
+      "note": "缺歷史／錯誤 Red 不接受；V5 明列 replay 不能補造原始 Red。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V5（replay 不能補造原始 Red）"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-G08",
+      "title": "整合回歸失敗",
+      "original_scenario": "- **WHEN** 個別 task 都成功，但整合 head 的必要 regression 失敗\n- **THEN** G1 不通過，保存 task commit 到 integration commit 的對應與實際失敗，要求修正整合版本",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-gates/spec.md",
+      "line": 53,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "P",
+      "validation_label": "主要情境明列",
+      "note": "單一 worktree 仍須 head regression；V5 的 pre_review_g1 修正路由合理。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V5（attempt 的 commit 範圍→整合 head；pre_review_g1）"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-G09",
+      "title": "純文件 N/A 通過",
+      "original_scenario": "- **WHEN** 獨立 Reviewer 對固定 diff 確認沒有行為影響，必要檢查可讀且通過\n- **THEN** 系統保存 eligibility 決定、版本、理由與證據，依適用 N/A 完成 G1 後才正式 G2；G2 仍未自動通過",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-gates/spec.md",
+      "line": 61,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "N/A eligibility 合理；應補正向 eligibility→G1，但 G2/G3 未自動通過的案例。",
+      "candidate_mapping": {
+        "owner": "C＋H",
+        "slice": "S1",
+        "planned_reference": "V5"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-G10",
+      "title": "行為變更或待核對的 N/A",
+      "original_scenario": "- **WHEN** Implementer 對設定行為變更自行宣告 N/A，或 eligibility 尚未完成／被拒絕\n- **THEN** G1 不因此通過，依拒絕原因補 TDD／證據或轉 Blocked；不能將「檔案類型是設定」視為豁免",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-gates/spec.md",
+      "line": 65,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "T3.1 只寫獨立 eligibility，需明列 self/pending/rejected/錯 model／行為設定等負例。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V5"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-G11",
+      "title": "有效獨立 review",
+      "original_scenario": "- **WHEN** controller 派出符合核准 runtime/model 與隔離限制的 Reviewer，結果已驗證且沒有未解除 blocking finding\n- **THEN** 只有適用目前版本的 clean verdict 可使 G2 通過，並保存 assignment/session、完整 review、覆核 evidence 與版本",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-gates/spec.md",
+      "line": 73,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "P",
+      "validation_label": "主要情境明列",
+      "note": "V6 已補 full diff/current/clean/獨立身份，正式 R1 能力仍未執行。",
+      "candidate_mapping": {
+        "owner": "C＋S",
+        "slice": "S1",
+        "planned_reference": "V6：只有完整範圍、目前版本、`clean` 才通過；`changes_required`、缺 verdict、只審部分 diff 都不通過。R1"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-G12",
+      "title": "局部 review 或隔離無法證明",
+      "original_scenario": "- **WHEN** 提供的是 Implementer 呼叫的 review subagent 結果，或 Reviewer 的工具可改作者 branch，或獨立性／隔離尚無可核對證據\n- **THEN** 不採為 G2；顯示獨立性或 adapter 能力缺口，不默默放寬權限，也不因只禁用 edit 工具便聲稱所有工具安全",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-gates/spec.md",
+      "line": 77,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "P",
+      "validation_label": "主要情境明列",
+      "note": "V6＋R1 權限負例方向合理；clone 及異模型本身不算隔離證明。",
+      "candidate_mapping": {
+        "owner": "C＋S",
+        "slice": "S1",
+        "planned_reference": "V6；R1（runtime 權限負例）"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-G13",
+      "title": "非成功 check 與空集合",
+      "original_scenario": "- **WHEN** required 集合未設定／為空，或任一 required check missing、pending、cancelled、timed-out、failed、unknown、stale\n- **THEN** G3 不通過並逐項顯示原因；skipped/neutral 無明確接受 policy 時也不通過",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-gates/spec.md",
+      "line": 85,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "X",
+      "validation_label": "矛盾或錯配",
+      "note": "D49 允許特定 repo 的人工政策，但 design 寫「403 或政策 unknown→Blocked」；須改成沒有適用政策才 Blocked，並補 required 全狀態矩陣。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V7（check 集合待 D11）"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-G14",
+      "title": "舊成功不能蓋過新 attempt",
+      "original_scenario": "- **WHEN** 同名 check 的舊 attempt success，但目前適用 attempt pending/failed，或同名結果來自未知 provider\n- **THEN** G3 採目前適用 attempt 與核准來源，不以舊 success 或名稱相同的其他來源放行",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-gates/spec.md",
+      "line": 89,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "目前只驗 observation 順序；還須同 check 舊 success／新 pending、不同 app、分頁與最新 attempt 選擇。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V7"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-G15",
+      "title": "衍生整合 snapshot",
+      "original_scenario": "- **WHEN** CI 使用不同於 PR head 的 integration snapshot\n- **THEN** 只有可驗證的 head/base 映射與適用接受規則成立才採用；不能只比名稱或因 SHA 字串不同一概接受／拒絕，無法確認時為 unknown",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-gates/spec.md",
+      "line": 93,
+      "disposition": "R",
+      "disposition_label": "改寫／下移細節",
+      "validation_assessment": "X",
+      "validation_label": "矛盾或錯配",
+      "note": "原 AC 保留可驗證 integration SHA 映射；新版一律要求 check/head/tested SHA 相等。須明定首片 head-only 並延期映射，或補映射支援，不能宣稱現測項已覆蓋。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V7（`tested-sha`）"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-G16",
+      "title": "舊結果晚到",
+      "original_scenario": "- **WHEN** 目前為 H2，而 H1 的 review、CI 或 result 才送達\n- **THEN** 保存 H1 的歷史證據但不拿來放行 H2；H2 從需要重評的 G1 或 G2/G3 續行，不重置 finding／budget",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-gates/spec.md",
+      "line": 101,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "P",
+      "validation_label": "主要情境明列",
+      "note": "跨 purpose 的版本順序與晚到結果案例已明列，屬必要判定。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V7（feature 層級的 `version_seq` 跨 purpose 共用；晚到的舊觀察不論 purpose 都不能恢復舊版本；新 head 仍會生效）、V8"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-G17",
+      "title": "Base 或規格改變",
+      "original_scenario": "- **WHEN** head 相同但 base/merge-base 或適用 spec/design/AC 改變\n- **THEN** 系統重建 diff／整合風險或驗法並要求 Reviewer 讀新契約；CI 若沿用須保存適用理由，需人工確認時停止依舊版本派工",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-gates/spec.md",
+      "line": 105,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "V7 主要只測 head；需 head 不變時 base/spec/AC/plan/skill/controller 版本改變的失效／批准案例。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "T2.2、V7"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-G18",
+      "title": "Pass 前後發生 push",
+      "original_scenario": "- **WHEN** Pass 前重新讀到的 head/base/artifacts 不一致，或已保存 Pass 後出現新 push\n- **THEN** 前者放棄本次 Pass 並 reconcile；後者保存舊 Pass 版本及觀察時間而失效當前結論，重新驗證；不宣稱跨外部多次讀取具全域 transaction",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-gates/spec.md",
+      "line": 109,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "P",
+      "validation_label": "主要情境明列",
+      "note": "發布後新觀察、Pass 前後 push 失效已明列，不需全域 transaction。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V8"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-G19",
+      "title": "模擬通過但 adapter 缺證據",
+      "original_scenario": "- **WHEN** 可控制測試通過，但 Codex native completion、Reviewer 全工具隔離或正確 workspace placement 尚未驗證\n- **THEN** 報告保留個別能力缺口，不聲稱 V4 或完整 E2E 通過，不以較強權限 workaround 補寫成功",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-gates/spec.md",
+      "line": 117,
+      "disposition": "E",
+      "disposition_label": "驗收證據規則",
+      "validation_assessment": "W",
+      "validation_label": "文件驗收待具體化",
+      "note": "這是驗收報告誠實性要求；需按 profile 區分 probe、權限、E2E 證據，不是多一個產品 gate。",
+      "candidate_mapping": {
+        "owner": "H",
+        "slice": "S1",
+        "planned_reference": "DOC（報告區分 fake 與 real）"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": true,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-G20",
+      "title": "真實 review 沒有 finding",
+      "original_scenario": "- **WHEN** 已授權真實試用的 review clean，沒有成立的 finding 可供修正\n- **THEN** 如實保存 clean 結果並把 finding → fix → re-review 驗收列為未覆蓋，不虛構 blocker；本規格與測試條件不自行啟動 trial",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/delivery-gates/spec.md",
+      "line": 121,
+      "disposition": "E",
+      "disposition_label": "驗收證據規則",
+      "validation_assessment": "P",
+      "validation_label": "主要情境明列",
+      "note": "沒有 finding 不捏造，demo 缺覆蓋就維持 open；R3 已正確區分安全 Blocked 與成功展示。",
+      "candidate_mapping": {
+        "owner": "H＋S",
+        "slice": "S1",
+        "planned_reference": "R3；附證據的 Blocked 或沒有真實 finding → 維持 open，不算示範完成"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": true,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-D01",
+      "title": "直接檢視狀態",
+      "original_scenario": "- **WHEN** 使用者打開目前 run 的狀態檔或請求 status\n- **THEN** 可辨識當前進度、適用版本、gate/evidence 理由、需人或外部解決的項目及下一步，無須從整份歷史猜測目前結論",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md",
+      "line": 17,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "可讀狀態必要；V2 沒有斷言使用者可見 gate 原因／blocker／下一步，R3 human status 仍只是候選。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V2；R3（`status --human`）"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-D02",
+      "title": "手動修改不是決策",
+      "original_scenario": "- **WHEN** 設定已變更或有人手改 gate 為 passed，但沒有可核對的 evidence／人工決策\n- **THEN** 系統核對新設定 schema/版本並重評受影響結果，不把手改值當批准；合法 decision 經可驗證操作保存來源與理由",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md",
+      "line": 21,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "P",
+      "validation_label": "主要情境明列",
+      "note": "可信本機前提下偵測可核對手改合理，V2 有負例；不擴張為惡意同 UID 防偽。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V2（D48 邊界）"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-D03",
+      "title": "兩個 run 搶同一 feature",
+      "original_scenario": "- **WHEN** 兩個 controller 以不同 run IDs 同時 start/adopt 同一 repo+feature\n- **THEN** 最多一方取得派工權，另一方可讀狀態但不得派 writer；衝突及現有 owner 可查",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md",
+      "line": 29,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "P",
+      "validation_label": "主要情境明列",
+      "note": "同 feature 只有一個 owner／budget 必要；V2 同時 claim/commit 有主要反例。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V2"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-D04",
+      "title": "Worker 狀態 unknown",
+      "original_scenario": "- **WHEN** worker 超時且 runtime／接入服務無法查詢，或只見 terminal idle／缺少 status\n- **THEN** 保存 unknown、原 dispatch identity 與需查明事項，不派競爭 writer；確認停止或有效 fencing 的證據存在後才允許替代 attempt",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md",
+      "line": 33,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "V4 不派競爭 writer 正確；design 的「idle」需限定權威 runtime 完成／停止證據，不能退回 terminal idle 即可接手。",
+      "candidate_mapping": {
+        "owner": "C＋S",
+        "slice": "S1",
+        "planned_reference": "V4；R1"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-D05",
+      "title": "結果未符合派工",
+      "original_scenario": "- **WHEN** result 的 repo/workspace、attempt、snapshot 或 scope 與 assignment 不符\n- **THEN** 系統保留原件並拒絕作適用 gate evidence，顯示具體身份／版本差異，不因 worker 宣稱完成就匯入成功",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md",
+      "line": 41,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "P",
+      "validation_label": "主要情境明列",
+      "note": "V4＋design 有身份、cwd/head/scope 拒收並保留原件。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V4"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-D06",
+      "title": "只有原生 assistant message",
+      "original_scenario": "- **WHEN** runtime 完成輸出只能由 adapter 讀 native messages，且 notification 未到\n- **THEN** adapter 保存原文與來源 identity，controller 可據完整 result/evidence 核對成果；原生 lifecycle／停止證據不足就如實記未確認，不捏造 Orca worker_done 或其他 runtime 的完成證據",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md",
+      "line": 45,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "R2 仍走一般 fixture result；需 native-message-only 且通知缺失的擷取／來源保存案例。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V4（fake）；R2"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-D07",
+      "title": "結果存在但通知遺失",
+      "original_scenario": "- **WHEN** result 已完整保存但 worker 通知遺失，或 controller 在匯入前 crash\n- **THEN** resume/reconcile 核對 assignment、versions、digests 與 evidence 後匯入一次，保留原 attempt，不因漏通知重派",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md",
+      "line": 53,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "V4 的重複／unknown 寫入不能代替漏通知後發現已保存結果；缺公開接續入口的案例。",
+      "candidate_mapping": {
+        "owner": "C＋S",
+        "slice": "S1",
+        "planned_reference": "V4"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-D08",
+      "title": "重複與衝突結果",
+      "original_scenario": "- **WHEN** 同一 result 重複到達，或同一 attempt 帶不同 bytes 的結果\n- **THEN** 同內容只喚醒 reconcile、不重複 state transition／派工／發布；不同內容保留雙方證據並 Blocked 待裁決",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md",
+      "line": 57,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "P",
+      "validation_label": "主要情境明列",
+      "note": "T2.3 有相同結果去重及衝突保留／Blocked，方向合理。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V4"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-D09",
+      "title": "State 提交前後 crash",
+      "original_scenario": "- **WHEN** controller 在更新 state 提交前或提交後被中斷，再次 resume\n- **THEN** 讀到完整舊版或新版；已提交版本可恢復，未引用 evidence 不自動成為已接受結果，且不發出未先持久登記的外部操作",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md",
+      "line": 65,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "V2 的「中斷不重複」太籠統；要分提交前／已提交後並驗完整舊或新版及不丟已確認 state。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V2"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-D10",
+      "title": "歷史尚未完成",
+      "original_scenario": "- **WHEN** 現行 state 已提交但歷史尚未完整保存，或存在已保存事件的重複重放\n- **THEN** 系統從已持久化事件 identity 補齊歷史且不重複生效；若採 append-only 歷史，損壞尾筆保留診斷原文並安全恢復，中段損壞或同 ID 衝突則 Blocked",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md",
+      "line": 69,
+      "disposition": "R",
+      "disposition_label": "改寫／下移細節",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "持久一致的目的合理；候選改為 history-first 寫入順序，這是設計／回歸約束，可與 D09 共驗，不必成通用產品承諾。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V2"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-D11",
+      "title": "無法信任的 state",
+      "original_scenario": "- **WHEN** resume 遇到 run state 缺失、無法解析、schema 不相容或衝突\n- **THEN** 顯示具體原因與現存檔案，停止派工且保留原資料，不建立空 run 以抹去歷史／budget；未驗證的共享磁碟或多主機 writer 不宣稱受支援",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md",
+      "line": 73,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "應明列 missing/malformed/unknown schema/conflict、不清 budget 且零派工；V2 目前主要只有手改。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V2"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-D12",
+      "title": "發文成功但回應遺失",
+      "original_scenario": "- **WHEN** GitHub 已接受發文，controller 未收到回應而 restart\n- **THEN** 依原 marker 查回內容／URL並保存 receipt，更新同一 outbox operation，不再貼一份；review 不重做",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md",
+      "line": 81,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "V8 只列未知不重貼；要驗 GitHub 已接受但 receipt 遺失後查回原 URL、單次內容且不重 review。",
+      "candidate_mapping": {
+        "owner": "C＋S",
+        "slice": "S1",
+        "planned_reference": "V8"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-D13",
+      "title": "Unknown 無法安全重試",
+      "original_scenario": "- **WHEN** 外部請求結果 unknown，查不到 marker 且無法證明未執行或可去重\n- **THEN** 保留 outcome unknown 與查詢證據並 Blocked，不盲目再派或再貼；明確失敗時只在原操作 retry budget 內恢復",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md",
+      "line": 85,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "P",
+      "validation_label": "主要情境明列",
+      "note": "V4 包含 delayed effect/not_found 不足以重試及零重送，必要且合理。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V4"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-D14",
+      "title": "Controller restart",
+      "original_scenario": "- **WHEN** controller 重啟時部分 worker 已完成、某 review 已保存、issue 發布仍 pending\n- **THEN** 核對並匯入完成結果，保留適用 review，只恢復 pending 發布及必要工作；不重派完成 task、不清空 findings 或 budget",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md",
+      "line": 93,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "V9 是預算停止，不是恢復完成 worker＋既存 review＋pending issue 發布；R3 一次中斷也未指定此狀態。",
+      "candidate_mapping": {
+        "owner": "C＋S",
+        "slice": "S1",
+        "planned_reference": "V9；R3（中斷後接續）"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-D15",
+      "title": "恢復時版本已改",
+      "original_scenario": "- **WHEN** resume 發現外部 head/base/spec 與保存版本不一致\n- **THEN** 保存所見版本及失效原因，依 delivery-gates 重評並選擇允許的下一步；不能沿用舊 Pass 或舊 human acceptance 放行",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md",
+      "line": 97,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "版本失效本身有 V7；需 resume 入口組合案例，確認不沿用 acceptance／不重新初始化。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V7"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-D16",
+      "title": "Infra retry 用盡",
+      "original_scenario": "- **WHEN** 同一 infra operation 初次失敗及兩次額外重試均無法完成\n- **THEN** 保存三次 attempts 與 evidence 並 Blocked；不把診斷出的程式／測試缺陷繼續包裝成 infra retry，改回受三輪限制的 correction 流程",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md",
+      "line": 107,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "寫入 attempts/readback 有上限，但純 fetch 只寫每次呼叫三次；需耗盡→Blocked 且新 seq/session 不洗掉同一失敗預算。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V4"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-D17",
+      "title": "Active budget 到限與恢復",
+      "original_scenario": "- **WHEN** 依已核准的計時政策累計主動時間達 4h，或 restart 後讀回已到限 run\n- **THEN** 不再派新工作，保存存活 worker／未知 interval 與 Blocked 原因；需調整預算時保存明確使用者裁決，不以等待後自動歸零",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md",
+      "line": 111,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "P",
+      "validation_label": "主要情境明列",
+      "note": "D47 線上停止／離線保守核算合理；V9 有主要反例，R1 單次 stop 不能單獨驗本 AC。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V9（在任何真實 writer 之前完成，tasks 7.1→4.2）；R1"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-D18",
+      "title": "正確 workspace 與設定",
+      "original_scenario": "- **WHEN** adapter 的 requested workspace/model 與回傳 identity 或實際執行設定不一致，或只有 input_accepted\n- **THEN** 不宣稱派工／工作成功，保存差異與原生 IDs；不能從 shell cwd、`current` 或角色名稱推定實際 placement/model",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md",
+      "line": 119,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "P",
+      "validation_label": "主要情境明列",
+      "note": "V4 身份比對＋R1 native model/marker/workspace；仍只是計畫，H0 不替代正式 profile。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V4；R1"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-D19",
+      "title": "能力缺口與替換",
+      "original_scenario": "- **WHEN** 目前 adapter 不能在核准隔離條件下取得可信結果／lifecycle，而候選 runtime 尚未核准\n- **THEN** 系統顯示具體 Blocked 與最小能力需求，保留已取得成果；替換工具仍須符合既有 gates 與獨立 Codex 政策，不把研究報告當成成功實證",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md",
+      "line": 123,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "P",
+      "validation_label": "主要情境明列",
+      "note": "能力不足就 Blocked、不默換 runtime 合理；V1/R1 有基本判斷。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V1；R1"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-D20",
+      "title": "僅有 OpenCode 的部署",
+      "original_scenario": "- **WHEN** 環境沒有 Orca、Codex CLI、Claude Code 的程式、設定或服務，而已配置並核准 OpenCode、適用模型與必要工具\n- **THEN** controller 可直接啟動／resume、派發及核對 OpenCode 任務、回收結果並管理隔離工作區；相同版本、ownership、gates、budget 與持久恢復規則仍成立，不暗中呼叫 Orca、Codex CLI 或 Claude Code",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md",
+      "line": 127,
+      "disposition": "D",
+      "disposition_label": "後續能力",
+      "validation_assessment": "D",
+      "validation_label": "延期未覆蓋",
+      "note": "公司 OpenCode-only 需求合理，D50 首片延期且未驗收；保留 future owner，不要求首片打造全平台。",
+      "candidate_mapping": {
+        "owner": "S",
+        "slice": "S2",
+        "planned_reference": "未覆蓋（OpenCode-only transport）"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-D21",
+      "title": "Runtime 身份不取代共用身份",
+      "original_scenario": "- **WHEN** 同一 controller 核心分別接收 Orca dispatch 或 OpenCode session/message 的原生識別\n- **THEN** 結果可對回自己的 run/task/attempt 與來源 runtime，保留原生回執，不為 OpenCode 補造 Orca ID；通知或任一 runtime 的 idle 狀態仍不能放行 gate",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md",
+      "line": 131,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "共用 identity 與外部 handles 分欄必要；需兩種 native handle 的 round-trip，不只一般 result 身份拒收。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "T2.3"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-D22",
+      "title": "兩種接法分別驗證",
+      "original_scenario": "- **WHEN** Orca 接法已驗證通過，但公司 OpenCode 的模型、隔離或 lifecycle 尚未驗證，或反之\n- **THEN** 報告按接法保存可用能力與缺口，不共用成功標記；不能藉替換 runtime 自動放寬獨立 Codex review 政策或冒稱完整 E2E 已完成",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md",
+      "line": 135,
+      "disposition": "E",
+      "disposition_label": "驗收證據規則",
+      "validation_assessment": "W",
+      "validation_label": "文件驗收待具體化",
+      "note": "不同接法分別報告合理；既有 H0 報告有示例，尚無正式 profiles 驗收，不能共用 passed。",
+      "candidate_mapping": {
+        "owner": "H",
+        "slice": "DOC",
+        "planned_reference": "各接法分開報告；S1 只有 Herdr"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": true,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-D23",
+      "title": "未選用的接入故障",
+      "original_scenario": "- **WHEN** run 選用已核准且可用的 OpenCode profile，而未選用的 Orca、Codex 或 Claude Code 不存在、未登入或連線失敗\n- **THEN** controller 不以該選配接入失敗阻斷核心或 OpenCode 路徑，仍按原 profile 核對版本、gates 與預算；不能自動改派其他 runtime/model",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md",
+      "line": 139,
+      "disposition": "R",
+      "disposition_label": "改寫／下移細節",
+      "validation_assessment": "X",
+      "validation_label": "矛盾或錯配",
+      "note": "要求未選接入失敗不阻斷合理；現文綁 OpenCode 單獨部署，V1 缺 profile 測試不等價。首片改成已選兩路中未選選配故障／明列 OpenCode-only 延期。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V1"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-D24",
+      "title": "同一 runtime 的不同角色與模型",
+      "original_scenario": "- **WHEN** Implementer 與 Reviewer 都透過 OpenCode，但各有符合核准角色政策的 provider/model 與獨立 assignment/session\n- **THEN** 系統分別保存 runtime 與 requested/actual model 身份，不要求 Claude model 經 Claude Code 或 OpenAI model 經 Codex CLI；只有 Reviewer 模型、完整工具隔離及結果契約均可核對才接受 G2，不能因 runtime 相同就拒絕，也不能因 model 不同就自動宣告獨立",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md",
+      "line": 143,
+      "disposition": "D",
+      "disposition_label": "後續能力",
+      "validation_assessment": "X",
+      "validation_label": "矛盾或錯配",
+      "note": "同 OpenCode 的雙角色配置不是首片 Claude Code Implementer＋OpenCode Reviewer；R1 無法證明該情境，應延期或增加專屬 profile，勿標 S1 已規劃覆蓋。",
+      "candidate_mapping": {
+        "owner": "C＋S",
+        "slice": "S1",
+        "planned_reference": "R1"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-F01",
+      "title": "分類 review 意見",
+      "original_scenario": "- **WHEN** Reviewer 提出一項具證據的 AC 缺陷與一項命名偏好\n- **THEN** registry 將前者記 blocking、後者記 nonblocking，severity 只影響優先順序；各項都有可追溯依據與穩定 ID",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/finding-resolution/spec.md",
+      "line": 17,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "blocking 與 severity 分離必要；V6 缺 AC bug vs 命名偏好的分類對照。",
+      "candidate_mapping": {
+        "owner": "C＋H",
+        "slice": "S1",
+        "planned_reference": "V6"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-F02",
+      "title": "保持 identity",
+      "original_scenario": "- **WHEN** 相同問題隨修正移動行號、改名或進入新輪次\n- **THEN** 沿用 finding ID 並保存歷史；相同位置的不同問題或文字相近的問題不由 controller 自動合併，語意判斷由 Reviewer／適用人工裁決支持",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/finding-resolution/spec.md",
+      "line": 21,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "stable ID 必要；需同問題移行仍同 ID、同位置不同問題不得合併，不能只寫 matches。",
+      "candidate_mapping": {
+        "owner": "C＋H",
+        "slice": "S1",
+        "planned_reference": "V6"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-F03",
+      "title": "修正尚未覆核",
+      "original_scenario": "- **WHEN** Implementer 提交修正 commit，並在 GitHub 將 thread resolved\n- **THEN** registry 保留 blocking，等待獨立覆核；新 head 先完成適用 G1 再取得新的 review/CI",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/finding-resolution/spec.md",
+      "line": 29,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "P",
+      "validation_label": "主要情境明列",
+      "note": "T5.1 明列 GitHub resolved 不代表 closure；Implementer 不可自解 blocker。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V6"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-F04",
+      "title": "有證據解除",
+      "original_scenario": "- **WHEN** Reviewer 對適用版本確認修正，或使用者明確裁決指定 finding／版本\n- **THEN** registry 保存 closure actor、來源、版本、理由與 evidence，才解除該 blocker；G2 仍須滿足其餘所有 finding 與適用 review 條件",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/finding-resolution/spec.md",
+      "line": 33,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "需要 closure actor/version/evidence 的完整正反例；V6 的 clean 不等於已測 closure 授權。",
+      "candidate_mapping": {
+        "owner": "C＋H",
+        "slice": "S1",
+        "planned_reference": "V6"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-F05",
+      "title": "CI 先失敗仍收齊 review",
+      "original_scenario": "- **WHEN** CI fail 已知、同版本 Reviewer 尚未完成，且尚未到適用 timeout 或明確中止條件\n- **THEN** 系統可收集診斷但不先派競爭修正；review 完成後把兩邊問題組同一 batch，首次派修增加一輪",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/finding-resolution/spec.md",
+      "line": 41,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "P",
+      "validation_label": "主要情境明列",
+      "note": "T5.1 同版本收齊再開 batch，文件缺陷可修、policy unknown 不開輪，主要規則合理。",
+      "candidate_mapping": {
+        "owner": "C＋S",
+        "slice": "S1",
+        "planned_reference": "V6（文件缺陷可修；policy unknown 不構成修正項）"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-F06",
+      "title": "完整回應批次",
+      "original_scenario": "- **WHEN** correction result 對 batch 內部分 finding 缺少 fix_submitted 或 disputed 回應\n- **THEN** result 視為不完整，列出未回應 ID，不能據此解除 findings 或判 clean",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/finding-resolution/spec.md",
+      "line": 45,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "V6 未列 batch 兩 finding 只回一項的拒收；要回報 missing IDs、保留全部阻擋。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V6"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-F07",
+      "title": "三輪已用完",
+      "original_scenario": "- **WHEN** 同一 run 已派三輪 correction，仍有待修缺陷或人工退回\n- **THEN** 保存已做修正、未解 findings、evidence 與待決問題並 Blocked，不派第四輪；明確追加預算須保存使用者裁決而非偷偷重建 run",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/finding-resolution/spec.md",
+      "line": 49,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "P",
+      "validation_label": "主要情境明列",
+      "note": "V6 第四輪零派工與 V9 保留 budget 為必要案例。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V6、V9"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-F08",
+      "title": "Reviewer 接受反證",
+      "original_scenario": "- **WHEN** 同一 blocker 首次 disputed，反證可重現且獨立 Reviewer 接受\n- **THEN** 保存反證與覆核依據，依 FIN-02 更新 finding；沿用原 batch，correction round 不因釐清增加",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/finding-resolution/spec.md",
+      "line": 57,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "一次反證只是上限；缺接受反證解除條件與不多計一輪的正向案例。",
+      "candidate_mapping": {
+        "owner": "C＋S",
+        "slice": "S1",
+        "planned_reference": "V6"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-F09",
+      "title": "爭議仍在或重送",
+      "original_scenario": "- **WHEN** 一次覆核後仍有 blocking 爭議，或 restart 後又收到同一反證\n- **THEN** 顯示雙方依據及已使用的覆核，Blocked 交人，不另派第二次來重抽結論；基礎設施故障僅使用原操作的有界 infra retries",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/finding-resolution/spec.md",
+      "line": 61,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "缺反證不被接受／restart 重送不再派第二次覆核的組合案例。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V6"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-F10",
+      "title": "反證伴隨新 head",
+      "original_scenario": "- **WHEN** disputed 回應同時帶有程式修正造成新 head\n- **THEN** 先取得新 head 的適用 G1，再將反證覆核與必要最新 review 合併；不以舊版本反證免除最新 review/CI",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/finding-resolution/spec.md",
+      "line": 65,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "缺 dispute 同時新 head→先 G1→最新 review/CI，不得拿舊反證免新 gate 的案例。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V6"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-F11",
+      "title": "首次驗收退回",
+      "original_scenario": "- **WHEN** PR Pass 仍 acceptance pending，使用者指出原 AC 缺陷\n- **THEN** 保存版本化退回與 finding，核對剩餘 correction 預算後才派修，解除仍須 Reviewer 覆核或明確人工裁決",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/finding-resolution/spec.md",
+      "line": 73,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "V8 acceptance 綁定不等於 pending 驗收時人工退回；缺 source=human_acceptance、同預算、失效 Pass 的案例。",
+      "candidate_mapping": {
+        "owner": "C＋H",
+        "slice": "S1",
+        "planned_reference": "T2.2、V8"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-F12",
+      "title": "新需求或規格錯誤",
+      "original_scenario": "- **WHEN** 人工回饋是原 scope 外的新想法或 spec/design 自身錯誤\n- **THEN** 交 Project Lead 整理影響並由使用者選擇新 feature 或修訂版本；不當成普通修正默默降低 AC",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/finding-resolution/spec.md",
+      "line": 77,
+      "disposition": "W",
+      "disposition_label": "Workflow／人工契約",
+      "validation_assessment": "W",
+      "validation_label": "文件驗收待具體化",
+      "note": "新需求／spec 錯誤回 Project Lead 合理；Blocked 是第一步，還需交接影響及裁決紀錄。",
+      "candidate_mapping": {
+        "owner": "H",
+        "slice": "S1",
+        "planned_reference": "T2.2 路由到 Blocked"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": true,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-F13",
+      "title": "完整 review 與摘要",
+      "original_scenario": "- **WHEN** 適用 review 結果已保存，發布操作成功並可 read-back\n- **THEN** PR 可讀到完整 findings/verdict，issue 可讀到需採取的動作與連結，兩者可追溯同一結果／版本；registry 仍是 finding authority",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/finding-resolution/spec.md",
+      "line": 85,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "發布順序有 V8，但需 read-back 核对完整 review、issue 動作摘要、同 result/head/finding IDs 與連結。",
+      "candidate_mapping": {
+        "owner": "C＋S",
+        "slice": "S1",
+        "planned_reference": "V8"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-F14",
+      "title": "發文失敗",
+      "original_scenario": "- **WHEN** PR 或 issue 發文失敗，或回應 outcome unknown\n- **THEN** 保存原 review 與個別 operation 的狀態，依 durable-delivery 的 outbox/reconcile 規則只恢復發布；不重做 review、重派修正或聲稱內容已上線",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/finding-resolution/spec.md",
+      "line": 89,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "G",
+      "validation_label": "驗法部分／缺情境",
+      "note": "unknown 不重貼有測項；還缺已保存 review 不重跑，只恢復失敗的那一處發布。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V8"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-F15",
+      "title": "連續修正仍留下同一 blocker",
+      "original_scenario": "- **WHEN** 同一 finding 經不同 correction batches 的有效修正與獨立 re-review，仍未解除，並達到核准 policy 的反覆閾值\n- **THEN** Controller 在下一次派修前 Blocked，顯示每輪 commit／覆核證據與尚餘總預算，要求診斷／裁決；不以換 ID、session 或 reviewer 重新起算",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/finding-resolution/spec.md",
+      "line": 97,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "P",
+      "validation_label": "主要情境明列",
+      "note": "T5.1 定義 recurrence 與上限，V6 有提前 Blocked；實作時須驗重送不計數。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V6"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    },
+    {
+      "id": "AC-F16",
+      "title": "已解除的 blocker 再次出現",
+      "original_scenario": "- **WHEN** Reviewer 在新版本辨識到先前已確認解除的同一語意缺陷再次出現\n- **THEN** 保存穩定 identity 的 reopen lineage，依 recurrence policy 提前 Blocked；新位置的新問題不得僅因文字相似被錯算為舊問題，語意關聯須有 Reviewer 依據",
+      "source": "/Users/johnson.chiang/workspace/loop-engineering/openspec/changes/implement-delivery-loop/specs/finding-resolution/spec.md",
+      "line": 101,
+      "disposition": "K",
+      "disposition_label": "保留核心行為",
+      "validation_assessment": "P",
+      "validation_label": "主要情境明列",
+      "note": "reopen→Blocked 有主要案例；是否同語意問題由 reviewer 證據支援，與 F02 共驗。",
+      "candidate_mapping": {
+        "owner": "C",
+        "slice": "S1",
+        "planned_reference": "V6"
+      },
+      "new_product_status": "not_implemented_or_operationally_accepted",
+      "workflow_document_exists": false,
+      "legacy_evidence_transferable": false
+    }
+  ]
+}
