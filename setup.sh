@@ -113,16 +113,26 @@ install_skills() {
   done
 }
 
-# Hash of a folder's file names and contents; identifies a copy this script made.
+# Fingerprint of a folder: every path with its type, symlink target, executable bit and content.
 tree_hash() {
-  (cd "$1" && find . -type f -print | LC_ALL=C sort | while IFS= read -r f; do printf '%s\n' "$f"; shasum < "$f"; done) | shasum | cut -d' ' -f1
+  (cd "$1" && find . -print | LC_ALL=C sort | while IFS= read -r p; do
+    if [ -L "$p" ]; then printf 'l %s %s\n' "$p" "$(readlink "$p")"
+    elif [ -d "$p" ]; then printf 'd %s\n' "$p"
+    else printf 'f %s %s %s\n' "$p" "$([ -x "$p" ] && echo x || echo -)" "$(shasum < "$p" | cut -d' ' -f1)"
+    fi
+  done) | shasum | cut -d' ' -f1
 }
 
+# Unique scratch folders of the current skill; removed on any exit so no half-made copy is left.
+STAGE=""
+BACKUP=""
+cleanup_project() { [ -z "$STAGE" ] || rm -rf "$STAGE"; [ -z "$BACKUP" ] || rm -rf "$BACKUP"; }
+
 # Copies each skill folder into the product repo. A folder is replaced only when the manifest this
-# script wrote lists it with the same content hash, so a folder someone else put there or changed
-# since is left alone unless --force. Each copy is staged first and swapped in by rename.
+# script wrote lists it with the same fingerprint, so a folder someone else put there or changed
+# since is left alone unless --force. The old folder is moved aside and restored if the swap fails.
 install_project() {
-  local repo dest name src commit recorded entries rel stage
+  local repo dest name src commit recorded entries rel manifest_tmp
   repo="$(cd "$PROJECT" 2>/dev/null && git rev-parse --show-toplevel 2>/dev/null)" \
     || { echo "not a git repository: $PROJECT" >&2; exit 2; }
   repo="$(cd "$repo" && pwd -P)"
@@ -130,11 +140,12 @@ install_project() {
   if [ -n "$(git -C "$ROOT" status --porcelain -- skills)" ]; then
     commit="$commit+uncommitted"; echo "WARN     skills/ has uncommitted changes; recorded as $commit"
   fi
+  trap cleanup_project EXIT
   for rel in .claude/skills .agents/skills; do
     dest="$repo/$rel"
-    # Nothing is created or deleted through a symlink: checked before mkdir, so no folder appears outside.
-    if [ -L "$repo/${rel%%/*}" ] || [ -L "$dest" ]; then
-      echo "refusing to write $dest: part of the path is a symlink" >&2; exit 1
+    # Nothing is created, written or deleted through a symlink: checked before mkdir.
+    if [ -L "$repo/${rel%%/*}" ] || [ -L "$dest" ] || [ -L "$dest/$MANIFEST" ]; then
+      echo "refusing to write $dest: part of the path or its manifest is a symlink" >&2; exit 1
     fi
     mkdir -p "$dest"
     entries=""
@@ -150,17 +161,25 @@ install_project() {
           echo "SKIP     $dest/$name (not an unchanged copy from this script; use --force)"; continue
         fi
       fi
-      stage="$dest/.$name.setup-new"
-      rm -rf "$stage"
-      cp -R "$src" "$stage"
-      rm -rf "${dest:?}/$name"
-      mv "$stage" "$dest/$name"
+      STAGE="$(mktemp -d "$dest/.setup-stage.XXXXXX")"
+      cp -R "$src" "$STAGE/$name"
+      if [ -e "$dest/$name" ]; then
+        BACKUP="$(mktemp -d "$dest/.setup-old.XXXXXX")"
+        mv "$dest/$name" "$BACKUP/$name"
+      fi
+      if ! mv "$STAGE/$name" "$dest/$name"; then
+        [ -z "$BACKUP" ] || mv "$BACKUP/$name" "$dest/$name"
+        echo "failed to install $dest/$name; the previous copy is kept" >&2; exit 1
+      fi
+      cleanup_project; STAGE=""; BACKUP=""
       entries="$entries$name $(tree_hash "$dest/$name")
 "
       echo "copied   $dest/$name"
     done
+    manifest_tmp="$(mktemp "$dest/.setup-manifest.XXXXXX")"
     { echo "# Copied by loop-engineering setup.sh --project from commit $commit. Edit in loop-engineering, then re-run."
-      printf '%s' "$entries"; } > "$dest/$MANIFEST"
+      printf '%s' "$entries"; } > "$manifest_tmp"
+    mv -f "$manifest_tmp" "$dest/$MANIFEST"
   done
 }
 
