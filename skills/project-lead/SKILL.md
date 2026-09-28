@@ -48,7 +48,7 @@ Share a short summary early and deepen only where a decision needs it. Done when
 - After each round, write each answer into the document that owns it: requirements and acceptance into the requirement input at project level, or into the change's spec delta for the chosen feature; open items into the proposal (or the decisions log at project level); and only shared domain definitions into `CONTEXT.md`. Then tell the human what changed and what still blocks.
 - Silence is not agreement. Keep proposals, assumptions, and open items labelled as such.
 
-Use `grill-with-docs`, `grilling`, or `domain-modeling` when available and appropriate; say so when they are not. Done when every key choice has a traceable decision or a labelled open item.
+Use `grilling` or `domain-modeling` when available and appropriate; say so when they are not. `grill-with-docs` cannot be invoked by an agent; when a deeper interview would help, suggest that the human start it with `/grill-with-docs`. Done when every key choice has a traceable decision or a labelled open item.
 
 ## 4. Write the spec where it belongs
 

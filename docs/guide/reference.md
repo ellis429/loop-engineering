@@ -488,13 +488,13 @@ Orchestrate 按授權工作，controller 核對狀態與證據。每個基礎設
 
 feature loop 回來的結果只有兩種：
 
-- **PR Pass 驗收包**：交給驗收人（預設是你）；內容見[交接](#交接)。
-- **Blocked**：如果原因是需求或 scope，你和 Project Lead Agent 分析影響、更新 spec 並記錄決策，再把新版本交回去。
+- **PR Pass 驗收包**：交給驗收人（預設是 Project Lead）；內容見[交接](#交接)。
+- **Blocked**：如果原因是需求或 scope，Project Lead 和 Project Lead Agent 分析影響、更新 spec 並記錄決策，再把新版本交回去。
 
-你接受之後，Project Lead Agent 會：
+驗收人接受之後，Project Lead Agent 會：
 
 1. **整理 Retro 候選**：只挑 1–3 個有證據的改善，寫明來源、原因、改善、owner 與驗法。沒有證據就不寫。
-2. **提出下一個 feature**：更新 roadmap、檢查依賴，讓你在確認 roadmap 時選。
+2. **提出下一個 feature**：更新 roadmap、檢查依賴，讓 Project Lead 在確認 roadmap 時選。
 
 確認 PR 已 merge 之後，再：
 
@@ -533,7 +533,7 @@ Demo 結束時，觀眾應能沿一條路徑找到：「目標 → Milestone →
 | Project 層與 Feature 準備 | skill [project-lead](../../skills/project-lead/SKILL.md)（草稿） |
 | 研究現況 | skill [research-codebase](../../skills/research-codebase/SKILL.md)，改寫自 HumanLayer；只記錄現況，不批准需求或決定設計 |
 | 看懂大的 codebase | skill graphify（[Graphify-Labs/graphify](https://github.com/Graphify-Labs/graphify)，Apache-2.0）：把程式與文件建成知識圖，產出在 `graphify-out/`。不在 `setup.sh` 裡，另外安裝：`uv tool install graphifyy==0.9.71`，再執行 `graphify install`（Codex 加 `--platform codex`）；安裝程式若建立了 `~/.claude/CLAUDE.md`，看過內容再決定要不要留 |
-| SA 問答、領域語言 | skill [grill-with-docs](../../skills/third-party/mattpocock/engineering/grill-with-docs/SKILL.md)、[grilling](../../skills/third-party/mattpocock/productivity/grilling/SKILL.md)、[domain-modeling](../../skills/third-party/mattpocock/engineering/domain-modeling/SKILL.md)（Matt Pocock），由 project-lead 按需叫用 |
+| SA 問答、領域語言 | skill [grilling](../../skills/third-party/mattpocock/productivity/grilling/SKILL.md)、[domain-modeling](../../skills/third-party/mattpocock/engineering/domain-modeling/SKILL.md)（Matt Pocock），由 project-lead 按需叫用；[grill-with-docs](../../skills/third-party/mattpocock/engineering/grill-with-docs/SKILL.md) 只能由人輸入 `/grill-with-docs` 啟動 |
 | 規格 | OpenSpec CLI 1.13.1（[指令說明](https://github.com/Fission-AI/OpenSpec/blob/main/docs/cli.md)）；它的 skills 由 `openspec init` 產生 |
 | 單一 Feature 的 loop | skill orchestrate 呼叫薄 controller，第一片實作中 |
 | TDD | skill [test-driven-development](../../skills/third-party/superpowers/test-driven-development/SKILL.md)（Superpowers）；每個行為 task 保存可追溯證據 |

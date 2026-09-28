@@ -6,7 +6,7 @@
 
 > 手冊有兩份：這份講流程，照著做就好；每一步的細節（需求怎麼問、spec 怎麼寫、交接要看什麼、gates 要哪些證據、常見問題）在 **[參考手冊](reference.md)**，順序跟流程相同。每張卡片最後的「**細節**」連到對應的小節。
 
-就是熟悉的 SDLC，只是大部分工作由 Agent 做，人負責做決定。**Feature** 是能單獨驗收的一次交付；**Milestone** 是幾個 Feature 合起來、可以展示的成果。縮寫：SA 是需求分析，AC 是驗收條件，ADR 是架構決策紀錄，ADE 是讓 Agent 工作的開發環境。
+就是熟悉的 SDLC，只是大部分工作由 Agent 做，人負責做決定。**Feature** 是能單獨驗收的一次交付；**Milestone** 是幾個 Feature 合起來、可以展示的成果。縮寫：SA 是需求分析，AC 是驗收條件，ADR 是架構決策紀錄，ADE 是讓 Agent 工作的開發環境，TDD 是先寫會失敗的測試、再實作到通過。
 
 ## 大圈包小圈
 
@@ -16,13 +16,14 @@ flowchart LR
     direction LR
     A1["Analyze<br/>釐清目的與需求"] --> A2["Architect<br/>設計方案"] --> A3["Roadmap<br/>安排交付"] --> A4["Specify<br/>開 Feature"]
     A4 -->|交接| F((("Feature ↻<br/>Implement → Validate")))
-    F -->|Retro & Replan| A3
+    F -->|接受| A5["Retro<br/>歸檔與回顧"]
+    A5 -->|Replan| A3
   end
   style Project fill:#eff6ff,stroke:#2563eb,color:#172554
   style F fill:#fff7ed,stroke:#c2410c,color:#431407
 ```
 
-外圈 Project 決定要做什麼：**Analyze**（釐清目的與需求）→ **Architect**（設計方案）→ **Roadmap**（安排交付，選下一個 Feature）→ **Specify**（開 Feature：寫成可驗收的 spec，交接出去）。內圈 Feature 把它做出來並證明是對的：**Implement**（寫實作 plan、交給 agent 執行）→ **Validate**（Review 與 CI、驗收）。接受後，**Retro & Replan** 把經驗帶回 Roadmap，再選下一個。Agent 做大部分工作，人在關鍵點確認。
+外圈 Project 決定要做什麼：**Analyze**（釐清目的與需求）→ **Architect**（設計方案）→ **Roadmap**（安排交付，選下一個 Feature）→ **Specify**（開 Feature：寫成可驗收的 spec，交接出去）。內圈 Feature 把它做出來並證明是對的：**Implement**（寫實作 plan、交給 agent 執行）→ **Validate**（Review 與 CI、驗收）。接受後進 **Retro**（歸檔與回顧），把經驗帶回 Roadmap，再選下一個。Agent 做大部分工作，人在關鍵點確認。
 
 ## 誰做什麼
 
@@ -92,7 +93,7 @@ flowchart LR
   A1["A1 Analyze<br/>釐清目的與需求"] -->|◆確認目的與需求| A2["A2 Architect<br/>設計方案"]
   A2 -->|◆確認設計方案| A3["A3 Roadmap<br/>安排交付"]
   A3 -->|◆確認 roadmap<br/>選下一個 Feature| A4["A4 Specify<br/>開 Feature"]
-  A4 -->|◆確認 spec<br/>交接包| IN[["內圈：Implement → Validate"]]
+  A4 -->|◆確認 spec<br/>兼任時併入 ◆確認開工<br/>交接包| IN[["內圈：Implement → Validate"]]
   IN -->|◆驗收：接受| A5["A5 Retro<br/>歸檔與回顧"]
   A5 -->|Replan| A3
   style IN fill:#fff7ed,stroke:#c2410c,color:#431407
@@ -172,7 +173,7 @@ flowchart LR
 1. **提出設計**
    - 怎麼做：有既有設計時，把它複製進 `docs/design/` 與 `docs/adr/`，記下來源與版本，只標出要改的地方；沒有時，比較每個方案的優缺點並給建議。
    - 完成：`docs/design/` 的高層設計寫齊
-     - [ ] 元件與責任：每個能力都對到一個元件
+     - [ ] 元件與責任：每個能力寫明由哪些元件負責、邊界在哪
      - [ ] 主要資料流
      - [ ] 對外介面
      - [ ] 技術選擇；還沒決定的，列成要選的方案
@@ -197,7 +198,7 @@ flowchart LR
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
 | 1 | Agent | 提出 Milestone：<br>• 可以展示的成果<br>• 完成條件 | skill [project-lead](../../skills/project-lead/SKILL.md) | roadmap（[範例](https://github.com/yschiang/cross-node-root/blob/main/docs/roadmap.md)） |
-| 2 | Agent | 切 Feature：<br>• 切法有依據：把當前 Milestone 切成 Feature<br>• 沒有依據：先只列交付能力 | skill [project-lead](../../skills/project-lead/SKILL.md) | roadmap 的 Feature 表 |
+| 2 | Agent | 切 Feature：<br>• 切法有依據：把當前 Milestone 切成 Feature<br>• 沒有依據：先列交付能力，但至少切出下一個能單獨驗收的 Feature | skill [project-lead](../../skills/project-lead/SKILL.md) | roadmap 的 Feature 表 |
 | 3 | Project Lead | 排順序、決定範圍，標出接下來要做的 1–2 個 | — | 決策紀錄 |
 | 4 | Project Lead | ◆確認 roadmap：<br>• 選定下一個 Feature<br>• 指定誰做 Feature spec、誰是 Engineer | — | 決策紀錄 |
 
@@ -210,7 +211,7 @@ flowchart LR
      - [ ] 完成條件
      - [ ] 交付的能力
 2. **切 Feature**
-   - 怎麼做：切法有依據（已經有實作、設計穩定）才切；沒有依據先只列交付能力。
+   - 怎麼做：切法有依據（已經有實作、設計穩定）就整個 Milestone 切；沒有依據就先列交付能力，但至少切出下一個能單獨驗收的 Feature，第 4 步才有得選。
    - 完成：Feature 表每一列都有
      - [ ] 名稱與一句範圍
      - [ ] 依賴
@@ -241,7 +242,7 @@ flowchart LR
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
 | 1 | Project Lead 或 Engineer | 交代要準備的 Feature | 開一個 Agent session，貼上：「請用 project-lead skill 準備〈Feature〉：補足 spec、AC、必要高層設計與依賴，引用 project intent、高層設計與 roadmap 的版本。」 | — |
-| 2 | Agent | 開 Feature：<br>• 在 root repo 建立 spec 的位置<br>• 開 ticket，或連上既有的<br>• 專案第一次用時，先執行 `openspec init` | • 指令 `openspec new change <id>`（[說明](https://github.com/Fission-AI/OpenSpec/blob/main/docs/cli.md)）<br>• skill [project-lead](../../skills/project-lead/SKILL.md) | • Feature 資料夾（[範例](https://github.com/yschiang/cross-node-root/tree/main/openspec/changes/project-skeleton)）<br>• ticket（[範例](https://github.com/yschiang/cross-node-root/issues/1)） |
+| 2 | Agent | 開 Feature：<br>• 在 root repo 建立 spec 的位置<br>• 開 ticket，或連上既有的<br>• 專案第一次用時，先執行 `openspec init --tools claude,codex` | • 指令 `openspec new change <id>`（[說明](https://github.com/Fission-AI/OpenSpec/blob/main/docs/cli.md)）<br>• skill [project-lead](../../skills/project-lead/SKILL.md) | • Feature 資料夾（[範例](https://github.com/yschiang/cross-node-root/tree/main/openspec/changes/project-skeleton)）<br>• ticket（[範例](https://github.com/yschiang/cross-node-root/issues/1)） |
 | 3 | Project Lead 或 Engineer ⇄ Agent | Research：讀<br>• 需求輸入<br>• project intent<br>• 高層設計與 roadmap<br>• 這次會碰到的程式 | • skill [research-codebase](../../skills/research-codebase/SKILL.md)<br>• 有 `graphify-out/` 時，先用 `/graphify query` 查 | 研究報告：`docs/research/<日期>-<主題>.md`（[範例](../research/2026-09-25/integration-gaps.md)） |
 | 4 | Project Lead 或 Engineer ⇄ Agent | 由上往下問，每輪 1–3 題：<br>• 流程<br>• 規則<br>• 例外<br>• 驗收 | skill [project-lead](../../skills/project-lead/SKILL.md) | — |
 | 5 | Agent | 寫 proposal 與 spec；新的設計邊界寫進設計文件或 ADR | • skill [project-lead](../../skills/project-lead/SKILL.md)<br>• 指令 `openspec validate <id>`（[說明](https://github.com/Fission-AI/OpenSpec/blob/main/docs/cli.md)） | • proposal（[範例](https://github.com/yschiang/cross-node-root/blob/main/openspec/changes/project-skeleton/proposal.md)）<br>• spec（[範例](https://github.com/yschiang/cross-node-root/blob/main/openspec/changes/project-skeleton/specs/engineering-baseline/spec.md)） |
@@ -278,7 +279,7 @@ flowchart LR
    - 怎麼做：新的高層邊界寫進設計文件或 ADR，由 proposal 引用。
    - 完成：`openspec/changes/<id>/` 裡都寫好，沒有一項還標「假設」
      - [ ] `proposal.md`：為什麼做、改了什麼、不做什麼
-     - [ ] `proposal.md` 的待決：沒有一條會改變範圍、行為或驗收
+     - [ ] `proposal.md` 的待決與依賴：每條寫明是否擋住設計與 owner；沒有一條會改變範圍、行為或驗收
      - [ ] `specs/<能力>/spec.md`：每條需求都有 ID，至少一個帶 ID 的 Scenario（也就是 AC）
      - [ ] Scenario 涵蓋主流程與每個例外
      - [ ] `openspec validate <id>` 通過
@@ -295,10 +296,13 @@ flowchart LR
 8. **交接**
    - 怎麼做：照參考手冊的[交接](reference.md#交接)清單組。
    - 完成：交接包有
-     - [ ] spec 版本
-     - [ ] 各 repo 的起點
-     - [ ] 依賴
-     - [ ] 待決與決策者
+     - [ ] change ID 與 spec 的檔案版本
+     - [ ] ◆確認 spec 的紀錄，或「併入確認開工」的註記
+     - [ ] 引用的 project intent、高層設計、roadmap 版本
+     - [ ] spec／AC 與設計邊界
+     - [ ] 每個受影響 repo 的 base branch、commit 與預定要開的 PR
+     - [ ] 依賴：上游的版本與狀態
+     - [ ] 待決、決策者與下一位 owner
      - [ ] 開工確認人與驗收人
      - [ ] ticket 狀態是就緒
 9. **核對交接包**
@@ -339,8 +343,8 @@ flowchart LR
 2. **更新 roadmap**
    - 怎麼做：重看切法、依賴與順序。
    - 完成：
-     - [ ] 下一個候選標為「近期」
-     - [ ] 回到 A3 ◆確認 roadmap
+     - [ ] roadmap 草稿已更新，下一個候選標為「近期」
+     - [ ] A5 做完後回到 A3 ◆確認 roadmap
 3. **併入現況**
    - 怎麼做：先確認每個受影響 repo 的 PR 都已 merge，再在 root repo 執行。
    - 完成：
@@ -386,7 +390,7 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
 
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
-| 1 | Engineer | 啟動這個 Feature 的 loop | skill orchestrate（實作中，可用前由人協調）：開一個 Agent session，貼上：「請用 orchestrate 承接〈Feature〉。先由 Implementer 讀取它引用的 project intent、roadmap、spec／AC 與高層設計，提出 detailed design、可執行 tasks 及 AC 驗證方式，交我確認後開工。保留 worktree 與證據；終點是 PR Pass，等待人驗收。」 | — |
+| 1 | Engineer，或獲授權的 Project Lead Agent | 啟動這個 Feature 的 loop | skill orchestrate（實作中，可用前由人協調）：開一個 Agent session，貼上：「請用 orchestrate 承接〈Feature〉。先由 Implementer 讀取它引用的 project intent、roadmap、spec／AC 與高層設計，提出 detailed design、可執行 tasks 及 AC 驗證方式，交我確認後開工。保留 worktree 與證據；終點是 PR Pass，等待人驗收。」 | — |
 | 2 | Implementer | 寫詳細設計 | 指令 `openspec instructions design --change <id>` | design |
 | 3 | Implementer | • 拆 tasks，每個 task 一個 session 做得完<br>• 寫每條 AC 的驗法 | 指令 `openspec instructions tasks --change <id>` | • tasks<br>• AC 驗法：寫在 validation 文件或 tasks 的明確段落 |
 | 4 | 交接時指定的人 | ◆確認開工（兼任時連 spec 一起確認） | skill orchestrate（實作中，可用前由人協調），記成 ticket 留言 | 開工確認紀錄 |
@@ -394,7 +398,9 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
 **每一步怎麼做、怎樣算完成**
 
 1. **啟動 loop**
-   - 怎麼做：把〈Feature〉換成 change 的 id。
+   - 怎麼做：
+     - 手動：Engineer 貼上 prompt，把〈Feature〉換成 change 的 id
+     - 授權：Project Lead Agent 在 Project Lead 核准的範圍內啟動，見參考手冊的[控制方向與自主程度](reference.md#控制方向與自主程度)
    - 完成：
      - [ ] Implementer 讀完交接包，沒有要退回的問題
 2. **寫詳細設計**
@@ -407,10 +413,11 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
      - 每個 task 一個 session 做得完，註明改哪個 repo
      - 每條 AC 寫：怎麼驗、在哪驗、何謂通過、證據放哪
    - 完成：
+     - [ ] tasks 有 ID、順序與依賴，每個 task 註明改哪個 repo、對到哪些 AC
      - [ ] 每條 AC 都有驗法
-     - [ ] 每個 task 都對到 AC
+     - [ ] scope、必要環境、風險與執行限制都寫明
 4. **◆確認開工**
-   - 怎麼做：看 design、tasks 與驗法；兼任時連 spec 一起看。
+   - 怎麼做：看 design、tasks、驗法、scope、環境、風險與執行限制；兼任時連 spec 一起看。
    - 完成：
      - [ ] ticket 留言記下誰、何時、原話和確認的版本
 
@@ -436,10 +443,12 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
 2. **局部 review**
    - 怎麼做：只審這個 task 的 commit，對照 spec 與 design。
    - 完成：
+     - [ ] Reviewer 是另一個模型、新開的 session
      - [ ] review 結果貼成 ticket 留言
 3. **修正**
    - 怎麼做：修掉 blocking 後交 Reviewer 覆核；不同意的 finding，附證據交 Reviewer 再看一次。
    - 完成：
+     - [ ] 每個 blocking 的修正都經 Reviewer 覆核
      - [ ] 局部 review 沒有未解的 blocking
 
 **細節**：參考手冊的[做出來：Engineer 的細節](reference.md#做出來engineer-的細節)。
@@ -483,6 +492,9 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
    - 完成：
      - [ ] 三個 gates 都在目前版本通過
      - [ ] 每條 AC 都有結果與證據
+     - [ ] 每個受影響 repo 的 PR、base／head commit、CI 與 review 連結
+     - [ ] 風險與已知限制
+     - [ ] run ID
      - [ ] 驗收包貼成 ticket 留言
 
 **細節**：參考手冊的[做出來：Engineer 的細節](reference.md#做出來engineer-的細節)：gates 的證據與 review-fix loop。
@@ -495,7 +507,7 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
 | --- | --- | --- | --- | --- |
 | 1 | 驗收人 | 看驗收包和 demo，逐條對照 AC | — | — |
 | 2 | 驗收人 | ◆驗收：<br>• AC 沒達成：退回修正<br>• 需求要改：回 A4 | — | 接受或退回紀錄（ticket 留言） |
-| 3 | 人 | merge：<br>• 接受、而且版本仍適用時才 merge<br>• 多個 PR 照依賴順序，提供方先 | GitHub | merge |
+| 3 | 人 | merge：<br>• 接受、而且版本仍適用時才 merge<br>• 多個 PR 照依賴順序，提供方先<br>• 每個 PR 單獨 merge 都要安全（向後相容） | GitHub | merge |
 
 **每一步怎麼做、怎樣算完成**
 
@@ -509,8 +521,9 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
      - [ ] 接受或退回記成 ticket 留言：誰、何時、原話、版本
      - [ ] 退回附理由
 3. **merge**
-   - 怎麼做：多個 PR 照依賴順序，提供方先。
+   - 怎麼做：多個 PR 照依賴順序，提供方先；每個 PR merge 前確認它單獨 merge 也安全（向後相容）。
    - 完成：
+     - [ ] 每個 PR 都確認過單獨 merge 是安全的
      - [ ] PR Pass、接受、merge 分開記錄
      - [ ] 接著到 A5
 

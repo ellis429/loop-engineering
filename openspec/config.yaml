@@ -8,8 +8,8 @@ context: |
 # Per-artifact rules (D54, D57-D59)
 rules:
   proposal:
-    - "Written by the Project Lead. Besides Why, What Changes, Capabilities and Impact, include a 「不做」 list (non-goals) and a 「待決與依賴」 section (open questions, dependencies, whether each blocks Design, owner)."
-    - "Record the human's 「可進入 Design」 confirmation in a short section: who, when, their words, and the confirmed version. When one person holds both the Lead and Feature Builder roles, write instead that the confirmation is folded into the design-and-plan approval (D59)."
+    - "Drafted by the Project Lead Agent with the Project Lead, or with the Engineer when the Engineer prepares the feature (D64); the Project Lead confirms it. Besides Why, What Changes, Capabilities and Impact, include a 「不做」 list (non-goals) and a 「待決與依賴」 section (open questions, dependencies, whether each blocks Design, owner)."
+    - "Record the human's 「可進入 Design」 confirmation in a short section: who, when, their words, and the confirmed version. When one person holds both the Project Lead and Engineer roles, write instead that the confirmation is folded into the design-and-plan approval (D59)."
   specs:
     - "One capability is a set of behaviours that change together, not a component, page, or feature. Cross-feature constraints form their own capability."
     - "Requirement IDs use one prefix per capability (for example ING-01); each Scenario is an acceptance condition with its own ID (for example AC-I01). IDs are never reused and do not change on archive."

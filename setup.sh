@@ -15,6 +15,18 @@ OPENSPEC_VERSION="1.13.1"
 TARGETS=("$HOME/.claude/skills" "$HOME/.agents/skills" "$HOME/.codex/skills")
 FORCE=0
 
+# A vendored folder moved aside during --update is put back if the new one did not arrive,
+# whatever interrupted the swap; the staging directory is removed afterwards.
+restore_and_clean() {
+  local old name
+  for old in "$TMP"/old-*; do
+    [ -e "$old" ] || continue
+    name="${old##*/old-}"
+    [ -e "$ROOT/skills/third-party/$name" ] || mv "$old" "$ROOT/skills/third-party/$name"
+  done
+  rm -rf "$TMP"
+}
+
 update_third_party() {
   local sources="$ROOT/skills/third-party/SOURCES.md" tp
   tp="$(cd "$ROOT/skills/third-party" && pwd -P)"
@@ -23,13 +35,13 @@ update_third_party() {
   fi
   # Staging lives inside the repository so the final swap is a rename on the same filesystem.
   TMP="$(mktemp -d "$ROOT/.setup-update.XXXXXX")"
-  trap 'rm -rf "$TMP"' EXIT
+  trap restore_and_clean EXIT
   # Rows: | name | repo | upstream path | local path | commit | license |
   grep -E '^\| (mattpocock|superpowers) \|' "$sources" | while IFS='|' read -r _ name repo upath lpath commit _; do
     name="$(echo "$name" | xargs)"; repo="$(echo "$repo" | xargs)"; upath="$(echo "$upath" | xargs)"
     lpath="$(echo "$lpath" | xargs)"; commit="$(echo "$commit" | xargs)"
-    if ! [[ "$lpath" =~ ^skills/third-party/[A-Za-z0-9_-][A-Za-z0-9._-]*$ ]]; then
-      echo "refusing to replace '$lpath': local path must be one folder directly under skills/third-party/" >&2; exit 1
+    if ! [[ "$name" =~ ^[A-Za-z0-9_-]+$ ]] || [ "$lpath" != "skills/third-party/$name" ]; then
+      echo "refusing to replace '$lpath': the local path of source '$name' must be skills/third-party/$name" >&2; exit 1
     fi
     echo "update $name: $repo@${commit:0:12} $upath -> $lpath"
     git clone -q --filter=blob:none --no-checkout "https://github.com/$repo.git" "$TMP/$name"
@@ -54,9 +66,13 @@ check_openspec() {
 }
 
 superpowers_plugin_enabled() {
-  # Enabled plugins are listed in the user settings as "superpowers@<marketplace>": true.
-  grep -Eqs '"superpowers@[^"]+"[[:space:]]*:[[:space:]]*true' \
-    "$HOME/.claude/settings.json" "$HOME/.claude/settings.local.json"
+  # Claude Code reports the effective state; run outside any project so only user scope applies,
+  # which is the scope of the ~/.claude/skills links this script manages.
+  command -v claude >/dev/null 2>&1 || return 1
+  (cd "$HOME" && claude plugin list --json 2>/dev/null) | python3 -c '
+import json, sys
+plugins = json.load(sys.stdin)
+sys.exit(0 if any(p["id"].startswith("superpowers@") and p.get("enabled") for p in plugins) else 1)' 2>/dev/null
 }
 
 link_skill() {
