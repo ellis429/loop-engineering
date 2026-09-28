@@ -451,7 +451,7 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
 | --- | --- | --- | --- | --- |
 | 1 | Engineer | 開始寫設計與計畫 | skill [spec-to-plan](../../skills/spec-to-plan/SKILL.md)：開一個 Agent session，貼上：`/spec-to-plan 準備〈Feature〉的設計與計畫：讀交接包，寫 design.md 與 tasks.md，交另一個模型審到 clean，停在確認開工。` | — |
 | 2 | Agent | 寫詳細設計 | • skill [spec-to-plan](../../skills/spec-to-plan/SKILL.md)<br>• 指令 `openspec instructions design --change <id>` | design |
-| 3 | Agent | • 拆 tasks，每個 task 一個 session 做得完<br>• 需要共用的測試骨架時，排成第一個 task<br>• 每個 task 列出要寫的測試，寫明 Red 應該失敗在哪個斷言<br>• 每個 task 標出 Implementer 與 Reviewer 的 effort<br>• 寫每條 AC 的驗法<br>• 交另一個模型審計畫到 clean | • 指令 `openspec instructions tasks --change <id>`<br>• 寫法參考 skill [writing-plans](../../skills/third-party/superpowers/writing-plans/SKILL.md)（Superpowers），但不放實作碼 | • tasks<br>• AC 驗法：寫在 validation 文件或 tasks 的明確段落 |
+| 3 | Agent | • 垂直切 tasks：每個 task 走完一條完整路徑、能單獨驗證、一個 session 做得完<br>• 先做讓後面好做的整理；需要共用的測試骨架時，排成第一個 task<br>• 每個 task 寫明依賴哪些 task、從它們拿到的介面與不變式<br>• 每個 task 列出要寫的測試，寫明 Red 應該失敗在哪個斷言<br>• 每個 task 標出 Implementer 與 Reviewer 的 effort<br>• 寫每條 AC 的驗法<br>• 交另一個模型審計畫到 clean | • 指令 `openspec instructions tasks --change <id>`<br>• 切法參考 skill [to-tickets](../../skills/third-party/mattpocock/engineering/to-tickets/SKILL.md)（Matt Pocock）的垂直切片規則，不放實作碼 | • tasks<br>• AC 驗法：寫在 validation 文件或 tasks 的明確段落 |
 | 4 | 交接時指定的人 | ◆確認開工（兼任時連 spec 一起確認） | skill [spec-to-plan](../../skills/spec-to-plan/SKILL.md) 停在這裡，記成 ticket 留言 | 開工確認紀錄 |
 
 **每一步怎麼做、怎樣算完成**
@@ -468,12 +468,16 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
      - [ ] 超出邊界的問題已回報 Project Lead
 3. **拆 tasks、寫 AC 驗法**
    - 怎麼做：
-     - 每個 task 一個 session 做得完，註明改哪個 repo
+     - 垂直切：每個 task 從公開入口走完一條完整路徑，能單獨驗證；不切只做一層的 task
+     - 每個 task 一個 session 做得完，註明改哪個 repo；太小、無法單獨審查的就合併
+     - 每個 task 只列真正要先完成的 task，並寫出從它們拿到的介面：簽名、不變式、順序限制與錯誤情況
+     - 一次牽動所有呼叫端的大範圍改動（例如改名），改用先加新的、分批遷移、再刪舊的順序
      - 不放實作碼，實作方式留給 Implementer；但每個 task 列出要寫的測試：名稱、斷言的可觀察行為、Red 應該失敗在哪個斷言、Green 的預期結果、執行指令
      - 好幾個 task 都要用到的 fixture、setup、指令入口或回傳合理值的 stub，排成第一個 task 先做，後面每個 Red 才走得到要測的行為
      - 每條 AC 寫：怎麼驗、在哪驗、何謂通過、證據放哪
    - 完成：
-     - [ ] tasks 有 ID、順序與依賴，每個 task 註明改哪個 repo、對到哪些 AC
+     - [ ] tasks 有 ID、交付什麼、依賴與介面，每個 task 註明改哪個 repo、對到哪些 AC
+     - [ ] 每個 task 都能單獨驗證，沒有只做一層的 task
      - [ ] 每個 task 列出要寫的測試，每個測試寫明斷言、Red 應失敗的位置、Green 預期與指令
      - [ ] 共用的測試骨架排在第一個 task；不需要時寫明理由
      - [ ] 每條 AC 都有驗法
@@ -481,7 +485,7 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
      - [ ] scope、必要環境、風險與執行限制都寫明
      - [ ] 另一個模型審過計畫，結果 clean，紀錄在 change 裡
 4. **◆確認開工**
-   - 怎麼做：看 Agent 給的一頁摘要：tasks 與 effort、每個 Red 證明什麼、風險、計畫審查結果、要你決定的事；兼任時連 spec 一起看。effort 可以在這裡調整。
+   - 怎麼做：看 Agent 給的一頁摘要：tasks 各交付什麼、依賴與 effort，粒度是否太粗或太細、每個 Red 證明什麼、風險、計畫審查結果、要你決定的事；兼任時連 spec 一起看。effort 可以在這裡調整。
    - 完成：
      - [ ] ticket 留言記下誰、何時、原話和確認的版本
      - [ ] ticket 狀態「開發中」

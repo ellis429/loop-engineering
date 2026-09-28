@@ -543,7 +543,7 @@ Demo 結束時，觀眾應能沿一條路徑找到：「目標 → Milestone →
 | --- | --- | --- |
 | A4 Specify | `proposal.md`、`specs/<能力>/spec.md` | feature-to-spec：由上往下問（Matt Pocock 的 grilling） |
 | B1 Design | `design.md` | 在 A2 的邊界內決定；方案要比較時，借 Superpowers brainstorming 的做法 |
-| B1 Plan | `tasks.md` | Superpowers writing-plans 的寫法：每個 task 列測試與預期的 Red，不放實作碼（D68） |
+| B1 Plan | `tasks.md` | 切法照 Matt Pocock `to-tickets` 的垂直切片（D71）；每個 task 列測試與預期的 Red，不放實作碼（D68） |
 | B2 Build | 程式與測試；勾 `tasks.md` | Superpowers test-driven-development；要分派多個 Agent 時用 subagent-driven-development |
 | B3 Verify | PR、ticket 留言 | 另一個模型的獨立 Reviewer |
 | A5 Retro | `openspec archive` → `openspec/specs/` | OpenSpec |
@@ -591,6 +591,7 @@ loop-engineering 自己開發 controller 時，預設 Opus 5.5 實作、GPT 審�
 | 準備 Feature 的 skill 獨立成 feature-to-spec | D66 |
 | 內圈的三個 skill 與依複雜度決定 effort | D69 |
 | 修正額度：三輪與到限後的追加 | D13、D70 |
+| Feature 怎麼切成 tasks | D71、D68 |
 | 每個 Feature 一條 feature branch；薄 ticket 的格式 | D67 |
 | 計畫列出測試與預期的 Red；共用測試骨架先做；Superpowers 的方法寫進 OpenSpec 的檔案 | D68 |
 | 有依賴的 Feature 等上游接受並 merge | D27 |

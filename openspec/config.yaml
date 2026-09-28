@@ -20,7 +20,7 @@ rules:
     - "Each affected repo gets one reviewable PR (D61). If a part can be accepted on its own, or a repo's PR is too large to review, propose splitting it into another feature with its own change (D57)."
   tasks:
     - "This file is the only implementation plan; do not write a separate docs/superpowers/plans file. No implementation code: each task lists the tests to write, each with the asserted observable behaviour, the assertion its Red must fail on, the expected Green and the command; shared fixtures, setup, entry points and stubs come first as their own task (D68)."
-    - "Owned by the Implementer. In a multi-repo product, each task names the repo it changes (D61). Each task fits one session and needs no ticket. Commit per task (one or a few commits, each green). After each task an independent reviewer (different model, new session) reviews its commits; this does not replace G2 (D57)."
+    - "Owned by the Implementer. Tasks are vertical slices, each verifiable on its own through a public entry point, naming the tasks it depends on and the interface (with invariants) it takes from each (D71). In a multi-repo product, each task names the repo it changes (D61). Each task fits one session and needs no ticket. Commit per task (one or a few commits, each green). After each task an independent reviewer (different model, new session) reviews its commits; this does not replace G2 (D57)."
 
 # Add custom rules for specific artifacts.
 # Example:
