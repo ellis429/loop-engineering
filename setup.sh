@@ -23,6 +23,11 @@ update_third_party() {
   grep -E '^\| (mattpocock|superpowers) \|' "$sources" | while IFS='|' read -r _ name repo upath lpath commit _; do
     name="$(echo "$name" | xargs)"; repo="$(echo "$repo" | xargs)"; upath="$(echo "$upath" | xargs)"
     lpath="$(echo "$lpath" | xargs)"; commit="$(echo "$commit" | xargs)"
+    case "$lpath" in
+      *..*) echo "refusing to replace '$lpath': local path must not contain '..'" >&2; exit 1 ;;
+      skills/third-party/?*) ;;
+      *) echo "refusing to replace '$lpath': local path must be under skills/third-party/" >&2; exit 1 ;;
+    esac
     echo "update $name: $repo@${commit:0:12} $upath -> $lpath"
     git clone -q --filter=blob:none --no-checkout "https://github.com/$repo.git" "$tmp/$name"
     git -C "$tmp/$name" sparse-checkout set --no-cone "/$upath/" "/LICENSE"
