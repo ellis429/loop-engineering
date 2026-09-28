@@ -14,7 +14,7 @@ Read repository instructions first; they override this skill. Commit and test co
 - The start-of-work approval is recorded (ticket comment with the plan's commit) and the ticket state is `開發中`, or `Blocked：correction limit` with a later recorded human decision adding rounds (then set the state back to `開發中` with 下一步 naming the batch, and continue). It must be the latest approval: no later comment supersedes it, `design.md` is unchanged since the approved commit, and `tasks.md` differs from it only in ticked boxes and regression tests added for findings. Without it, stop.
 - Fixes sent back by `to-pr` (G1 or G3 failures, G2 findings) or by an acceptor's rejection (defects against acceptance IDs) are fixes to the task that owns the affected paths, handled as in step 3. They come as one batch, handled in this order:
   1. A batch on the ticket without a result comment is unfinished: continue it under its ID. If it is marked dispatched it already counts; if it is still pending, dispatch it as in step 3.
-  2. Otherwise count the dispatched batches on the ticket. If they have reached the limit (three plus any rounds the human's recorded decisions added, D70), set `Blocked：correction limit` with 下一步 the human who decides, and stop.
+  2. Otherwise count the dispatched batches on the ticket. If they have reached the limit (three plus any rounds the human's recorded decisions added, D70), set `Blocked：correction limit` with 下一步 the human who decides, post one Blocked comment: the run id (or who ran it by hand), the change id and the commits it applies to, the problem, what was tried with its evidence, the options, and who decides, and stop.
   3. Otherwise post one ticket comment for the new batch, marked pending (a batch ID, its source, the findings or defects, its round number). When its first Implementer session starts, edit the comment to mark it dispatched with the time; from then on it counts.
   4. When the batch is done, post its result comment (commits and evidence per finding).
 - Every upstream feature this one depends on is accepted and merged, at the version the handoff package names (D27); otherwise stop, because only preparation may run ahead of it.
@@ -42,7 +42,7 @@ Before any review:
 - Every listed test exists, and every Red fails on its planned assertion. A Red that stops in setup, import, a missing command or a stub does not count, in the harness task too (D68).
 - Evidence files exist for every Red and Green.
 
-Any miss sends the task to a new attempt with the concrete reasons. At most three attempts per task. When they are used up, set the ticket to `Blocked：<task and reason>`, set 下一步 to the human who decides, post the attempts and their evidence as one comment, and stop.
+Any miss sends the task to a new attempt with the concrete reasons. At most three attempts per task. When they are used up, set the ticket to `Blocked：<task and reason>`, set 下一步 to the human who decides, post one Blocked comment: the run id (or who ran it by hand), the change id and the commits it applies to, the problem, what was tried with its evidence, the options, and who decides (the attempts with their evidence), and stop.
 
 ## 3. Per-task review
 
