@@ -475,6 +475,7 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
      - 計畫寫死要證明什麼，怎麼寫程式留給 Implementer：不放實作碼，但每個 task 列出要寫的測試：名稱、斷言的可觀察行為、Red 應該失敗在哪個斷言、Green 的預期結果、執行指令（為什麼這樣分，見參考手冊的[為什麼計畫不寫程式碼](reference.md#為什麼計畫不寫程式碼)）
      - 好幾個 task 都要用到的 fixture、setup、指令入口或回傳合理值的 stub，排成第一個 task 先做，後面每個 Red 才走得到要測的行為
      - 每條 AC 寫：怎麼驗、在哪驗、何謂通過、證據放哪
+     - 需要時，替某個 task 多一層程式碼層級的計畫（例如 legacy 上 PBI 大小的 task）：用 writing-plans 寫進 change 的 `task-plans/<task>.md`，從 tasks.md 連過去；其他都不變
    - 完成：
      - [ ] tasks 有 ID、交付什麼、依賴與介面，每個 task 註明改哪個 repo、對到哪些 AC
      - [ ] 每個 task 都能單獨驗證，沒有只做一層的 task

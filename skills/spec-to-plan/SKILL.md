@@ -62,6 +62,8 @@ Mode per task (D72), written on the task with its effort:
 
 The Reviewer is always a strong model from another vendor (D52).
 
+**Code-level plan, on request.** When the Engineer asks for one on a task (typically a PBI-sized task on legacy code), write that task's plan down to code with `writing-plans` into `openspec/changes/<id>/task-plans/<task-id>.md` and link it from the task: its steps, code and commands, starting with characterization tests when the paths have none. `tasks.md` stays the plan of record; the plan review covers the task plan too. Nothing else changes for that task: the cut, its tests and expected Reds, the per-task review, `to-pr`.
+
 Red flags, each a sign the plan is not ready:
 
 | In the plan | Why it fails | Fix |

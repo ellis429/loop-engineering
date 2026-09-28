@@ -471,7 +471,9 @@ Task 是 PR 內的工作單位，一個 session 做得完，不開 ticket。一�
 | legacy，或領域規則藏在程式碼裡（例如 SECS/GEM、CORBA、VB） | 設計層；強模型先實際讀 code | 強模型；要改的地方沒有測試保護時，第一個 task 先補特性測試（實際執行程式記下現有行為，不靠推測） |
 | 有測試保護的機械性工作（改名、補樣板、分批遷移） | 不需要 | 便宜模型單做 |
 
-Reviewer 不論哪種模式都用強模型，而且是另一家的（D52）。在 legacy 上，省錢的關鍵不是換便宜的 coder，而是先補測試：測試補起來之後，才有越來越多工作可以安全地交給便宜模型。
+Reviewer 不論哪種模式都用強模型，而且是另一家的（D52）。
+
+Engineer 也可以替某個 task 多要一層程式碼層級的計畫，例如 legacy 上 PBI 大小的 task：`spec-to-plan` 用 Superpowers `writing-plans` 寫進 change 的 `task-plans/<task>.md`，沒有測試保護時從特性測試開始；`tasks.md` 仍是唯一的權威，計畫審查一併審它。差別只在多這一層規劃，切法、逐 task 審查與 `to-pr` 都不變。在 legacy 上，省錢的關鍵不是換便宜的 coder，而是先補測試：測試補起來之後，才有越來越多工作可以安全地交給便宜模型。
 
 A/B/C 重跑的 C 組（Superpowers 原版：Opus 寫到接近逐行的計畫、Sonnet 實作）是第一個資料點：T2.2 一次通過收件，獨立審查仍找到 2 個 major，Claude 部分約 19.6 美元。這是新 code，只有一題，還不足以改動預設。
 
