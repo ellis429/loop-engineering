@@ -5,6 +5,9 @@
 #                         and ~/.codex/skills; check the OpenSpec CLI
 #   ./setup.sh --force    also re-point links that currently point somewhere else
 #   ./setup.sh --update   re-fetch skills/third-party at the commits in skills/third-party/SOURCES.md
+#   ./setup.sh --project <repo>
+#                         copy the workflow's skills into <repo>/.claude/skills and <repo>/.agents/skills,
+#                         so sessions started in that repository have them without any install
 #
 # Existing real folders are never touched. Superpowers skills are not linked into ~/.claude/skills
 # when the Superpowers Claude Code plugin is enabled, to avoid duplicates.
@@ -14,6 +17,11 @@ ROOT="$(cd "$(dirname "$0")" && pwd)"
 OPENSPEC_VERSION="1.13.1"
 TARGETS=("$HOME/.claude/skills" "$HOME/.agents/skills" "$HOME/.codex/skills")
 FORCE=0
+PROJECT=""
+# Skills a product repository needs to run the workflow; copied, not linked, by --project.
+PROJECT_SKILLS=(project-lead feature-to-spec research-codebase grilling domain-modeling grill-with-docs
+                test-driven-development)
+MANIFEST=".loop-engineering-skills"
 
 # A vendored folder moved aside during --update is put back if the new one did not arrive,
 # whatever interrupted the swap; the staging directory is removed afterwards.
@@ -105,13 +113,50 @@ install_skills() {
   done
 }
 
-for arg in "$@"; do
-  case "$arg" in
+# Copies each skill folder into the product repo. A folder that exists but is not listed in the
+# manifest this script wrote was put there by someone else and is left alone unless --force.
+install_project() {
+  local repo dest name src commit copied
+  repo="$(cd "$PROJECT" 2>/dev/null && git rev-parse --show-toplevel 2>/dev/null)" \
+    || { echo "not a git repository: $PROJECT" >&2; exit 2; }
+  commit="$(git -C "$ROOT" rev-parse --short HEAD)"
+  if [ -n "$(git -C "$ROOT" status --porcelain -- skills)" ]; then
+    commit="$commit+uncommitted"; echo "WARN     skills/ has uncommitted changes; recorded as $commit"
+  fi
+  for dest in "$repo/.claude/skills" "$repo/.agents/skills"; do
+    mkdir -p "$dest"
+    copied=()
+    for name in "${PROJECT_SKILLS[@]}"; do
+      src="$(find "$ROOT/skills" -type f -name SKILL.md -path "*/$name/SKILL.md" -exec dirname {} \; | head -1)"
+      [ -n "$src" ] || { echo "missing skill in this repository: $name" >&2; exit 1; }
+      if [ -e "$dest/$name" ] && ! grep -qx "$name" "$dest/$MANIFEST" 2>/dev/null && [ "$FORCE" -eq 0 ]; then
+        echo "SKIP     $dest/$name (not installed by this script; use --force)"; continue
+      fi
+      rm -rf "${dest:?}/$name"
+      cp -R "$src" "$dest/$name"
+      copied+=("$name")
+      echo "copied   $dest/$name"
+    done
+    # Only folders this script copied are listed, so a skipped folder stays protected next time.
+    { echo "# Copied by loop-engineering setup.sh --project from commit $commit. Edit in loop-engineering, then re-run."
+      [ ${#copied[@]} -eq 0 ] || printf '%s\n' "${copied[@]}"; } > "$dest/$MANIFEST"
+  done
+}
+
+while [ $# -gt 0 ]; do
+  case "$1" in
     --force) FORCE=1 ;;
     --update) update_third_party; exit 0 ;;
-    *) echo "unknown option: $arg" >&2; exit 2 ;;
+    --project) [ $# -ge 2 ] || { echo "--project needs a repository path" >&2; exit 2; }; PROJECT="$2"; shift ;;
+    *) echo "unknown option: $1" >&2; exit 2 ;;
   esac
+  shift
 done
+
+if [ -n "$PROJECT" ]; then
+  install_project
+  exit 0
+fi
 
 install_skills
 check_openspec

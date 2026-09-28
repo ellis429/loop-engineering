@@ -92,7 +92,7 @@ A feature that depends on another may be prepared now; its implementation starts
 Use this when the change already exists: a requirement changed while the feature was in the loop, the loop returned Blocked on scope, or the acceptor sent it back because the requirement changed.
 
 1. Work in the feature's existing branch and worktree; update the default-branch base only if the Project Lead asks. Never open a second change or ticket.
-2. Update the proposal and the spec delta, run `openspec validate <id>`, commit, and name what changed.
+2. Update the proposal and the spec delta (the `openspec-update-change` skill keeps them coherent when it is installed; leave `design.md` and `tasks.md` to the Implementer), run `openspec validate <id>`, commit, and name what changed.
 3. The Project Lead confirms the new spec (or record the fold note); record the confirmed commit in `proposal.md`, then commit and push so the branch holds it.
 4. Post a new handoff comment that lists what changed, names the pushed commit, and supersedes the earlier one; relink it from the ticket. Rebuild the ticket's 驗收 list from the new spec: add new IDs, remove deleted ones, update renamed titles, and untick every ID whose scenario changed.
 5. A changed spec voids the start-of-work approval for the design and tasks it affects: set the state to `就緒（可設計）` and 下一步 to the Engineer, who revises the plan and gets a new start approval (D11).
