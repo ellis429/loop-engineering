@@ -24,6 +24,17 @@ flowchart LR
 
 ## 誰做什麼
 
+Agent 做大部分工作；人只在六個確認點做決定，Agent 不做確認：
+
+| 確認點 | 確認什麼 | 誰確認 | 在哪一步 |
+| --- | --- | --- | --- |
+| ① | 方向清楚，可以進入設計 | Project Lead | [A1](#a1-analyzeproject-sa) |
+| ② | 專案基準與 roadmap | Project Lead | [A3](#a3-roadmap排-milestone-與-feature) |
+| ③ | 下一個做哪個 Feature | Project Lead | [B1](#b1-open開-feature) |
+| ④ | 這個 Feature 的 spec 清楚 | Project Lead | [B2](#b2-specifyfeature-sa) |
+| ⑤ | 設計與計畫可以開工 | 被授權的人，通常是 Engineer | [B4](#b4-design設計與計畫engineer) |
+| ⑥ | 接受或退回交付 | 驗收人 | [B7](#b7-accept驗收與-merge) |
+
 | 誰 | 做什麼 | 確認哪幾個 |
 | --- | --- | --- |
 | Project Lead | 給目標與限制、回答問題、選下一個 Feature | ①②③④ |
@@ -37,17 +48,30 @@ flowchart LR
 ## 人、Agent 與工具的分層
 
 ```text
-人          Project Lead 或 Engineer             做決定：方向、順序、spec、開工、驗收
- │ 用自然語言交代、確認
-ADE         Herdr、OpenCode、Claude Code（Orca 選配）   開 session 與 worktree，讓多個 Agent 並排工作
- │
-Skills      project-lead、orchestrate、research-codebase、TDD、OpenSpec   告訴 Agent 照什麼方法做
- │
-Agents      Project Lead Agent ⇄ Implementer ⇄ Reviewer（不同模型）      做實際的分析、實作與審查
- │
-紀錄與核對  共用的狀態：人和 Agent 靠它交接，不靠聊天
-            ├ 核對：controller 檢查版本、證據與三個 gates（第一片實作中）
-            └ 保存：Git branch／worktree、OpenSpec 檔案、GitHub Issue／PR／CI
+┌─ Human ──────────────────────────────────┐
+│ Project Lead / Engineer                  │  做決定：方向、順序、spec、開工、驗收
+└────────────────────┬─────────────────────┘
+                     │ 用自然語言交代、確認
+┌─ ADE ──────────────▼─────────────────────┐
+│ Herdr / OpenCode / Claude Code           │  開 session 與 worktree，讓多個 Agent 並排工作
+│ Orca (optional)                          │
+└────────────────────┬─────────────────────┘
+                     │
+┌─ Skills ───────────▼─────────────────────┐
+│ project-lead / orchestrate /             │  告訴 Agent 照什麼方法做
+│ research-codebase / TDD / OpenSpec       │
+└────────────────────┬─────────────────────┘
+                     │
+┌─ Agents ───────────▼─────────────────────┐
+│ Project Lead Agent <-> Implementer       │  做實際的分析、實作與審查；
+│ <-> Reviewer                             │  Reviewer 用不同模型
+└────────────────────┬─────────────────────┘
+                     │ 讀寫
+┌─ Records & checks ─▼─────────────────────┐
+│ Git branch / worktree, OpenSpec files,   │  共用的狀態：人和 Agent 靠它交接，不靠聊天
+│ GitHub Issue / PR / CI                   │
+│ controller                               │  核對版本、證據與三個 gates（第一片實作中）
+└──────────────────────────────────────────┘
 ```
 
 **Workflow** 是 Project、Feature 兩層的步驟與規則，貫穿所有層；**Harness** 是讓這些規則真的被執行的 ADE、skills 和 controller。
@@ -57,7 +81,7 @@ Agents      Project Lead Agent ⇄ Implementer ⇄ Reviewer（不同模型）   
 每個活動一張卡：一句**目的**，一張表，再加**完成的樣子**。表照做事的順序排：
 
 - **Step**：第幾步。
-- **Who**：誰做。「你」是 Project Lead；◆ 是要你確認的點。
+- **Who**：誰做。「你」是 Project Lead；◆ 標出確認點，編號見[誰做什麼](#誰做什麼)。
 - **Do**：做什麼。
 - **How**：用什麼。skill 會連到 repo 裡它的 `SKILL.md`；指令連到說明文件。第一次使用前，在 loop-engineering 執行 `./setup.sh` 安裝這些 skills。
 - **Output**：產出什麼。示範專案已經有的，附上範例連結；示範還沒走到的步驟先不放，示範專案推上 GitHub 之前，部分連結會打不開。
