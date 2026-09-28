@@ -78,7 +78,7 @@ Agent 把確認後的骨架寫成這個 Feature 的 proposal 與 spec（需求�
 
 ### 開始與接續一次 SA
 
-有三個時機會進入 SA：開新專案或匯入既有專案、選定下一個 feature、新證據推翻原本的需求。開一個 agent session，這樣說：
+有三個時機會進入 SA：開新專案或匯入既有專案、選定要做的 feature、新證據推翻原本的需求。開一個 agent session，這樣說：
 
 > 請用 project-lead skill，做〈project／某個 feature〉的 SA。Repo 在〈路徑〉，既有資料在〈位置〉。我想解決的問題是〈一兩句〉。
 
@@ -508,7 +508,7 @@ feature loop 回來的結果只有兩種：
 
 ## 給一個 goal，推進多個 Feature
 
-現在能做的：把 goal 拆成多個 Feature，照依賴一個接一個推進；有依賴的 Feature 等上游接受並 merge 後才開始實作。Stacked PR（下游以還沒合併的上游 PR 為 base）還沒決定、也還沒實作，它的目標情境記在[設計文件](../workflow/stacked-pr.md)。
+現在能做的：把 goal 拆成多個 Feature，沒有依賴的同時進行，有依賴的照順序推進；有依賴的 Feature 等上游接受並 merge 後才開始實作。Stacked PR（下游以還沒合併的上游 PR 為 base）還沒決定、也還沒實作，它的目標情境記在[設計文件](../workflow/stacked-pr.md)。
 
 ## 查進度
 
@@ -522,7 +522,7 @@ feature loop 回來的結果只有兩種：
 2. **專案骨架（第一個 Feature）**：repo 骨架、CI 與工程規則。它沒有產品行為，但「乾淨 clone 能建置測試、PR 有必要 checks」可以單獨驗收，寫成工程能力（例如 `engineering-baseline`）的 spec，常稱 Sprint 0 或 bootstrap。在 orchestrate 可用前可以手動協調，歷程標明「人工協調」，再由人驗收。
 3. **交付第一個產品 Feature（A4、B1–B3）**：Project Lead Agent 準備 spec 與交接包，Project Lead 確認，Engineer 帶 Implementer 完成 PR；另一個 session 的 Reviewer 審查。
 4. **驗證修正循環**：有真實 blocking finding 時，留下 finding → fix → re-review 的歷程。review 沒找到問題就如實記錄，不製造缺陷湊演示。
-5. **驗收與收尾（B4、A5）**：驗收人接受後，Project Lead Agent 整理 Retro 候選、提出下一個 Feature；確認 merge 後再把 spec 併入現況。
+5. **驗收與收尾（B4、A5）**：驗收人接受後，Project Lead Agent 整理 Retro 候選、提出接下來的 Feature；確認 merge 後再把 spec 併入現況。
 6. **接續下一個 Feature**：核對依賴、人工接受、merge，以及下一個 Feature 引用的文件版本；保存各 Feature 的 branch／worktree、文件與交付證據。
 7. **展示 Milestone（C）**：執行跨 Feature 的整合情境。真正的 stacked PR 展示，要等 stacked PR 的規則決定、能力驗證之後再加入。
 
@@ -560,7 +560,7 @@ loop-engineering 自己開發 controller 時，預設 Opus 5.5 實作、GPT 審�
 | 手動階段的交付紀錄放 ticket 留言 | D60 |
 | 多 repo 的 root 結構與跨 repo 的 Feature | D61 |
 | 驗收人預設是誰 | D62 |
-| 外圈三步各有一次確認；在確認 roadmap 時選下一個 Feature | D63 |
+| 外圈三步各有一次確認；在確認 roadmap 時選接下來的 Feature，沒有依賴的可以並行 | D63、D27 |
 | Feature 以 use case 或共用元件為單位；Milestone 加上時間；切法是循環的 | D65 |
 | Feature spec 屬於外圈；內圈是 Implement → Validate | D64 |
 | 有依賴的 Feature 等上游接受並 merge | D27 |

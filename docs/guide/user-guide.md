@@ -2,7 +2,7 @@
 
 > 草案：流程已定，自動化還在做，現在可以照著人工演練。見[目前進度](../README.md)。
 
-**先決定要什麼，再一次交付一個 Feature；每交付一個，就回頭調整計畫。**
+**先決定要什麼，再切成能單獨驗收的 Feature 交付，沒有依賴的可以同時進行；每交付一個，就回頭調整計畫。**
 
 > 手冊有兩份：這份講流程，照著做就好；每一步的細節（需求怎麼問、spec 怎麼寫、交接要看什麼、gates 要哪些證據、常見問題）在 **[參考手冊](reference.md)**，順序跟流程相同。每張卡片最後的「**細節**」連到對應的小節。
 
@@ -23,7 +23,7 @@ flowchart LR
   style F fill:#fff7ed,stroke:#c2410c,color:#431407
 ```
 
-外圈 Project 決定要做什麼：**Analyze**（釐清目的與需求）→ **Architect**（設計方案）→ **Roadmap**（安排交付，選下一個 Feature）→ **Specify**（開 Feature：寫成可驗收的 spec，交接出去）。內圈 Feature 把它做出來並證明是對的：**Implement**（寫實作 plan、交給 agent 執行）→ **Validate**（Review 與 CI、驗收）。接受後進 **Retro**（歸檔與回顧），把經驗帶回 Roadmap，再選下一個。Agent 做大部分工作，人在關鍵點確認。
+外圈 Project 決定要做什麼：**Analyze**（釐清目的與需求）→ **Architect**（設計方案）→ **Roadmap**（安排交付，選接下來要做的 Feature）→ **Specify**（開 Feature：寫成可驗收的 spec，交接出去）。每個 Feature 各走自己的內圈，沒有依賴的可以同時進行；內圈把它做出來並證明是對的：**Implement**（寫實作 plan、交給 agent 執行）→ **Validate**（Review 與 CI、驗收）。接受後進 **Retro**（歸檔與回顧），把經驗帶回 Roadmap，再選下一個。Agent 做大部分工作，人在關鍵點確認。
 
 ## 誰做什麼
 
@@ -31,7 +31,7 @@ Agent 做大部分工作；人在六個 ◆ 確認點做決定：
 
 | 誰 | 做什麼（◆ 是他要確認的點） |
 | --- | --- |
-| Project Lead | • [釐清目的與需求](#a1-analyze釐清目的與需求)（先研究 codebase）◆確認目的與需求<br>• [設計方案](#a2-architect設計方案) ◆確認設計方案<br>• [安排交付](#a3-roadmap安排交付)：排 roadmap、選下一個 Feature ◆確認 roadmap<br>• [開 Feature](#a4-specify開-feature)：寫 Feature spec、交接 ◆確認 spec<br>• [歸檔與回顧](#a5-retro歸檔與回顧) |
+| Project Lead | • [釐清目的與需求](#a1-analyze釐清目的與需求)（先研究 codebase）◆確認目的與需求<br>• [設計方案](#a2-architect設計方案) ◆確認設計方案<br>• [安排交付](#a3-roadmap安排交付)：排 roadmap、選接下來要做的 Feature ◆確認 roadmap<br>• [開 Feature](#a4-specify開-feature)：寫 Feature spec、交接 ◆確認 spec<br>• [歸檔與回顧](#a5-retro歸檔與回顧) |
 | Engineer | • [寫實作 plan](#b1-design寫實作-plan) ◆確認開工<br>• [交給 agent 執行](#b2-build交給-agent-執行)<br>• [Review 與 CI](#b3-verifyreview-與-ci)<br>• 中小型 Feature 也常自己[開 Feature](#a4-specify開-feature) |
 | 驗收人：預設是 Project Lead；需求由別人提出時，是提出的人 | • [驗收](#b4-accept驗收)：看每條 AC 的證據與 demo ◆驗收：接受或退回 |
 | Agent：Project Lead Agent、Implementer、Reviewer | • 研究、寫文件、實作、審查<br>• 不做確認 |
@@ -92,7 +92,7 @@ Agent 寫 ticket 或 PR 留言之前，會先問人，或照人事先給的授�
 flowchart LR
   A1["A1 Analyze<br/>釐清目的與需求"] -->|◆確認目的與需求| A2["A2 Architect<br/>設計方案"]
   A2 -->|◆確認設計方案| A3["A3 Roadmap<br/>安排交付"]
-  A3 -->|◆確認 roadmap<br/>選下一個 Feature| A4["A4 Specify<br/>開 Feature"]
+  A3 -->|◆確認 roadmap<br/>選接下來的 Feature| A4["A4 Specify<br/>開 Feature"]
   A4 -->|◆確認 spec<br/>兼任時併入 ◆確認開工<br/>交接包| IN[["內圈：Implement → Validate"]]
   IN -->|◆驗收：接受| A5["A5 Retro<br/>歸檔與回顧"]
   A5 -->|Replan| A3
@@ -193,7 +193,7 @@ flowchart LR
 
 ### A3 Roadmap：安排交付
 
-**目的**：決定先做什麼、什麼時候交，讓每次只交出一個 Feature。
+**目的**：決定先做什麼、什麼時候交：切成能單獨交付、單獨驗收的 Feature，沒有依賴的可以同時進行。
 
 切法是一個循環：切 Feature → 分組成 Milestone、加上時間 → 時間放不下就回頭重切。每個 Feature 收尾後（A5）也回到這裡再切一次。
 
@@ -205,7 +205,7 @@ flowchart LR
 | 1 | Project Lead ⇄ Agent | 切 Feature：<br>• 一個 use case，或一個共用元件，切成一個 Feature<br>• 切法有依據：把能力清單整批切<br>• 沒有依據：先列交付能力，但至少切出下一個能單獨驗收的 Feature | skill [project-lead](../../skills/project-lead/SKILL.md) | roadmap 的 Feature 表 |
 | 2 | Project Lead ⇄ Agent | 排 Milestone：<br>• 把 Feature 分組，加上目標日期<br>• 時間放不下，回第 1 步拆小或延後 | skill [project-lead](../../skills/project-lead/SKILL.md) | roadmap（[範例](https://github.com/yschiang/cross-node-root/blob/main/docs/roadmap.md)） |
 | 3 | Project Lead ⇄ Agent | 排順序、決定範圍，標出接下來要做的 1–2 個 | — | 決策紀錄 |
-| 4 | Project Lead | ◆確認 roadmap：<br>• 選定下一個 Feature<br>• 指定誰做 Feature spec、誰是 Engineer | — | 決策紀錄 |
+| 4 | Project Lead | ◆確認 roadmap：<br>• 選定接下來要做的 Feature；沒有依賴的可以同時選幾個<br>• 指定誰做 Feature spec、誰是 Engineer | — | 決策紀錄 |
 
 **每一步怎麼做、怎樣算完成**
 
@@ -235,12 +235,12 @@ flowchart LR
    - 完成：
      - [ ] 接下來要做的 1–2 個已標出
      - [ ] 順序與範圍的決定記進決策紀錄
-4. **◆確認 roadmap、選下一個 Feature**
-   - 怎麼做：從「近期」選一個，決定 Feature spec 由 Project Lead 或 Engineer 做。
+4. **◆確認 roadmap、選接下來的 Feature**
+   - 怎麼做：從「近期」選；彼此沒有依賴的可以同時選幾個，各走自己的內圈、各開自己的 worktree。每個選中的 Feature，決定 spec 由 Project Lead 或 Engineer 做。
    - 完成：
      - [ ] 決策紀錄寫下確認、選中的 Feature 與負責的人
 
-每個 Feature 收尾後都回到這裡：只看變動的部分，重切必要的 Feature、調整 Milestone 的日期，再 ◆確認 roadmap、選下一個。
+每個 Feature 收尾後都回到這裡：只看變動的部分，重切必要的 Feature、調整 Milestone 的日期，再 ◆確認 roadmap、選接下來的 Feature。
 
 **細節**：參考手冊的[Roadmap 要切多細](reference.md#roadmap-要切多細)、[工作層級](reference.md#工作層級milestonefeaturetask)。
 
@@ -342,7 +342,7 @@ flowchart LR
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
 | 1 | Agent | 接受後，整理 1–3 個有證據的改善建議 | skill [project-lead](../../skills/project-lead/SKILL.md) | Retro 候選（ticket 留言） |
-| 2 | Agent | 更新 roadmap，提出下一個 Feature 的候選 | skill [project-lead](../../skills/project-lead/SKILL.md) | roadmap |
+| 2 | Agent | 更新 roadmap，提出接下來的 Feature 候選 | skill [project-lead](../../skills/project-lead/SKILL.md) | roadmap |
 | 3 | Agent | 所有 PR 都 merge 後，把 spec 併入現況 | 指令 `openspec archive <id> --yes`（[說明](https://github.com/Fission-AI/OpenSpec/blob/main/docs/cli.md)） | • 現況 spec<br>• 封存的 Feature 資料夾 |
 
 **每一步怎麼做、怎樣算完成**
