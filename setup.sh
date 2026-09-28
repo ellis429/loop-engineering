@@ -114,14 +114,21 @@ install_skills() {
 }
 
 # Fingerprint of a folder: every path with its permission string, symlink target and content.
+# Fails (non-zero) when any entry cannot be read or a name contains a newline, so the caller
+# treats the folder as changed instead of trusting a partial fingerprint.
 tree_hash() {
-  (cd "$1" && find . -print | LC_ALL=C sort | while IFS= read -r p; do
-    mode="$(ls -ld "$p" | cut -d' ' -f1)"
-    if [ -L "$p" ]; then printf '%s %s %s\n' "$mode" "$p" "$(readlink "$p")"
-    elif [ -d "$p" ]; then printf '%s %s\n' "$mode" "$p"
-    else printf '%s %s %s\n' "$mode" "$p" "$(shasum < "$p" | cut -d' ' -f1)"
-    fi
-  done) | shasum | cut -d' ' -f1
+  local nl
+  nl="$(printf '\nx')"; nl="${nl%x}"
+  (cd "$1" || exit 1
+   [ -z "$(find . -name "*$nl*" -print)" ] || exit 1
+   find . -print | LC_ALL=C sort | while IFS= read -r p; do
+     mode="$(ls -ld "$p")" || exit 1
+     mode="${mode%% *}"
+     if [ -L "$p" ]; then target="$(readlink "$p")" || exit 1; printf '%s %s %s\n' "$mode" "$p" "$target"
+     elif [ -d "$p" ]; then printf '%s %s\n' "$mode" "$p"
+     else sum="$(shasum < "$p")" || exit 1; printf '%s %s %s\n' "$mode" "$p" "${sum%% *}"
+     fi
+   done) | shasum | cut -d' ' -f1
 }
 
 # Unique scratch folders of the skill being swapped. On any exit, including an interrupt, the old copy is
@@ -145,7 +152,7 @@ cleanup_project() {
 # script wrote lists it with the same fingerprint, so a folder someone else put there or changed
 # since is left alone unless --force. The old folder is moved aside and restored if the swap fails.
 install_project() {
-  local repo dest name src commit recorded entries rel manifest_tmp
+  local repo dest name src commit recorded current entries rel manifest_tmp hash
   repo="$(cd "$PROJECT" 2>/dev/null && git rev-parse --show-toplevel 2>/dev/null)" \
     || { echo "not a git repository: $PROJECT" >&2; exit 2; }
   repo="$(cd "$repo" && pwd -P)"
@@ -161,6 +168,9 @@ install_project() {
     if [ -L "$repo/${rel%%/*}" ] || [ -L "$dest" ] || [ -L "$dest/$MANIFEST" ]; then
       echo "refusing to write $dest: part of the path or its manifest is a symlink" >&2; exit 1
     fi
+    if [ -e "$dest/$MANIFEST" ] && [ ! -f "$dest/$MANIFEST" ]; then
+      echo "refusing to write $dest: $MANIFEST is not a regular file" >&2; exit 1
+    fi
     mkdir -p "$dest"
     entries=""
     for name in "${PROJECT_SKILLS[@]}"; do
@@ -170,9 +180,10 @@ install_project() {
         echo "SKIP     $dest/$name (a symlink; remove it to install a copy)"; continue
       fi
       if [ -e "$dest/$name" ] && [ "$FORCE" -eq 0 ]; then
-        recorded=""
-        [ ! -f "$dest/$MANIFEST" ] || recorded="$(awk -v n="$name" '$1 == n { print $2 }' "$dest/$MANIFEST")"
-        if [ -z "$recorded" ] || [ "$(tree_hash "$dest/$name")" != "$recorded" ]; then
+        # An unreadable manifest or fingerprint counts as no record: the folder is skipped, never replaced.
+        recorded="$(awk -v n="$name" '$1 == n { print $2 }' "$dest/$MANIFEST" 2>/dev/null || true)"
+        current="$(tree_hash "$dest/$name" 2>/dev/null || true)"
+        if [ -z "$recorded" ] || [ -z "$current" ] || [ "$current" != "$recorded" ]; then
           echo "SKIP     $dest/$name (not an unchanged copy from this script; use --force)"; continue
         fi
       fi
@@ -187,7 +198,8 @@ install_project() {
         echo "failed to install $TARGET" >&2; exit 1
       fi
       cleanup_project
-      entries="$entries$name $(tree_hash "$dest/$name")
+      hash="$(tree_hash "$dest/$name")" || { echo "cannot fingerprint $dest/$name" >&2; exit 1; }
+      entries="$entries$name $hash
 "
       echo "copied   $dest/$name"
     done
