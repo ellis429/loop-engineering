@@ -149,8 +149,10 @@ cleanup_project() {
 # Copies each skill folder into the product repo. A folder is replaced only when the manifest this
 # script wrote lists it with the same fingerprint, so a folder someone else put there or changed
 # since is left alone unless --force. The old folder is moved aside and restored if the swap fails.
+# The manifest keeps the record of every folder not replaced in this run, so a skipped folder is
+# still known as this script's copy, changed since, on the next run.
 install_project() {
-  local repo dest name src commit recorded current entries rel manifest_tmp hash
+  local repo dest name src commit recorded current entries rel manifest_tmp hash copied
   repo="$(cd "$PROJECT" 2>/dev/null && git rev-parse --show-toplevel 2>/dev/null)" \
     || { echo "not a git repository: $PROJECT" >&2; exit 2; }
   repo="$(cd "$repo" && pwd -P)"
@@ -170,7 +172,7 @@ install_project() {
       echo "refusing to write $dest: $MANIFEST is not a regular file" >&2; exit 1
     fi
     mkdir -p "$dest"
-    entries=""
+    entries=""; copied=" "
     for name in "${PROJECT_SKILLS[@]}"; do
       src="$(find "$ROOT/skills" -type f -name SKILL.md -path "*/$name/SKILL.md" -exec dirname {} \; | head -1)"
       [ -n "$src" ] || { echo "missing skill in this repository: $name" >&2; exit 1; }
@@ -202,10 +204,14 @@ install_project() {
       cleanup_project
       entries="$entries$name $hash
 "
+      copied="$copied$name "
       echo "copied   $dest/$name"
     done
     manifest_tmp="$(mktemp "$dest/.setup-manifest.XXXXXX")"
-    { echo "# Copied by loop-engineering setup.sh --project from commit $commit. Edit in loop-engineering, then re-run."
+    { echo "# Written by loop-engineering setup.sh --project, last run from commit $commit. Each line: a skill it copied and that copy's fingerprint. Edit skills in loop-engineering, then re-run."
+      if [ -f "$dest/$MANIFEST" ]; then
+        awk -v c="$copied" '!/^#/ && NF == 2 && index(c, " " $1 " ") == 0' "$dest/$MANIFEST" 2>/dev/null || true
+      fi
       printf '%s' "$entries"; } > "$manifest_tmp"
     mv -f "$manifest_tmp" "$dest/$MANIFEST"
   done
