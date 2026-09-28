@@ -13,19 +13,14 @@ flowchart LR
   subgraph Project["外圈 Project：決定下一個做什麼"]
     direction LR
     A1["Analyze"] --> A2["Architect"] --> A3["Plan"]
-    subgraph Feature["內圈 Feature：每個 Feature 一圈"]
-      direction LR
-      F1["Define"] --> F2["Deliver"] --> F3{"Accept"}
-      F3 -->|退回| F2
-    end
-    A3 -->|選下一個 Feature| F1
-    F3 -->|Retro & Replan| A3
+    A3 -->|選下一個 Feature| F((("Feature ↻<br/>每個 Feature 一圈")))
+    F -->|Retro & Replan| A3
   end
   style Project fill:#eff6ff,stroke:#2563eb,color:#172554
-  style Feature fill:#fff7ed,stroke:#c2410c,color:#431407
+  style F fill:#fff7ed,stroke:#c2410c,color:#431407
 ```
 
-外圈 Project 決定下一個做什麼：**Analyze**（為什麼做、做到哪算完成）→ **Architect**（高層設計）→ **Plan**（Roadmap），每次選一個 Feature 進入內圈。內圈 Feature 把它做到驗收：**Define**（寫清楚 spec）→ **Deliver**（設計、實作、審查）→ **Accept**（人工驗收，退回就回 Deliver 修正）。接受後，完成的需求成為系統現況，**Retro & Replan** 把經驗帶回外圈調整 Roadmap。Agent 做大部分工作，人在關鍵點確認。
+外圈 Project 決定下一個做什麼：**Analyze**（為什麼做、做到哪算完成）→ **Architect**（高層設計）→ **Plan**（Roadmap），每次選一個 Feature。每個 Feature 走自己的一圈，直到人工驗收通過，這一圈在下方「內圈」放大。接受後，**Retro & Replan** 把經驗帶回 Plan，再選下一個。Agent 做大部分工作，人在關鍵點確認。
 
 ## 誰做什麼
 
@@ -178,7 +173,7 @@ flowchart LR
 
 ## 內圈：一個 Feature
 
-小圈的三格放大後：**Define** 是 B1–B3，**Deliver** 是 B4–B6，**Accept** 是 B7–B8。
+上圖的 Feature 圈放大後分三段：**Define**（B1–B3，把要做什麼寫清楚）→ **Deliver**（B4–B6，設計、實作、審查）→ **Accept**（B7–B8，驗收與歸檔）。
 
 ```mermaid
 flowchart LR
