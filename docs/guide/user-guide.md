@@ -447,20 +447,32 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
 
 **目的**：決定怎麼做、拆成哪些 task。
 
+先把 Feature 垂直切成 tasks，再替每個 task 選一種計畫：
+
+| | 預設 | 加一層程式碼計畫 |
+| --- | --- | --- |
+| 什麼時候用 | 一般 task | Engineer 指定，例如 legacy 上 PBI 大小的 task |
+| 計畫寫到哪 | `tasks.md`：要證明什麼（測試、Red 應失敗的斷言），不寫程式碼 | 另外用 Superpowers `writing-plans` 寫 `task-plans/<task>.md`，寫到程式碼 |
+| 怎麼做 | Implementer 用 TDD，自己決定實作 | Implementer 照程式碼計畫用 TDD |
+| 之後 | 逐 task 審查、`to-pr`，兩種相同 | 同左 |
+
+**legacy 先補特性測試**：要改的 legacy 路徑沒有測試保護時，不論哪種計畫，第一個 task 都是補特性測試（characterization test）：實際執行程式，把現有行為記錄成測試，之後改錯才抓得到。這類 task 的 Implementer 用強模型（D72，見參考手冊的[模型怎麼選](reference.md#模型怎麼選)）。
+
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
 | 1 | Engineer | 開始寫設計與計畫 | skill [spec-to-plan](../../skills/spec-to-plan/SKILL.md)：開一個 Agent session，貼上：`/spec-to-plan 準備〈Feature〉的設計與計畫：讀交接包，寫 design.md 與 tasks.md，交另一個模型審到 clean，停在確認開工。` | — |
 | 2 | Agent | 寫詳細設計 | • skill [spec-to-plan](../../skills/spec-to-plan/SKILL.md)<br>• 指令 `openspec instructions design --change <id>` | design |
-| 3 | Agent | • 垂直切 tasks：每個 task 走完一條完整路徑、能單獨驗證、一個 session 做得完<br>• 先做讓後面好做的整理；需要共用的測試骨架時，排成第一個 task<br>• 每個 task 寫明依賴哪些 task、從它們拿到的介面與不變式<br>• 每個 task 列出要寫的測試，寫明 Red 應該失敗在哪個斷言<br>• 每個 task 標出 Implementer 與 Reviewer 的 effort<br>• 寫每條 AC 的驗法<br>• 交另一個模型審計畫到 clean | • 指令 `openspec instructions tasks --change <id>`<br>• 切法參考 skill [to-tickets](../../skills/third-party/mattpocock/engineering/to-tickets/SKILL.md)（Matt Pocock）的垂直切片規則，不放實作碼 | • tasks<br>• AC 驗法：寫在 validation 文件或 tasks 的明確段落 |
+| 3 | Agent | • 垂直切 tasks：每個 task 走完一條完整路徑、能單獨驗證、一個 session 做得完<br>• 先做讓後面好做的整理；需要共用的測試骨架時，排成第一個 task；legacy 路徑沒有測試保護時，第一個 task 補特性測試<br>• 每個 task 選計畫：預設，或 Engineer 指定的加一層程式碼計畫<br>• 每個 task 寫明依賴哪些 task、從它們拿到的介面與不變式<br>• 每個 task 列出要寫的測試，寫明 Red 應該失敗在哪個斷言<br>• 每個 task 標出 Implementer 與 Reviewer 的 effort<br>• 寫每條 AC 的驗法<br>• 交另一個模型審計畫到 clean | • 指令 `openspec instructions tasks --change <id>`<br>• 切法參考 skill [to-tickets](../../skills/third-party/mattpocock/engineering/to-tickets/SKILL.md)（Matt Pocock）的垂直切片規則，不放實作碼 | • tasks<br>• AC 驗法：寫在 validation 文件或 tasks 的明確段落 |
 | 4 | 交接時指定的人 | ◆確認開工（兼任時連 spec 一起確認） | skill [spec-to-plan](../../skills/spec-to-plan/SKILL.md) 停在這裡，記成 ticket 留言 | 開工確認紀錄 |
 
 **每一步怎麼做、怎樣算完成**
 
 1. **開始寫設計與計畫**
-   - 怎麼做：在 feature 的 worktree 貼上 prompt，把〈Feature〉換成 change 的 id。接下來依[內圈的四個指令](#內圈一個-feature)往下跑；誰可以代為啟動，見參考手冊的[控制方向與自主程度](reference.md#控制方向與自主程度)。
+   - 怎麼做：在 feature 的 worktree 貼上 prompt，把〈Feature〉換成 change 的 id。要替某個 task 加一層程式碼計畫時，在 prompt 後面加一句「〈task〉加一層程式碼計畫」；也可以等 Agent 切好 tasks 後再指定。接下來依[內圈的四個指令](#內圈一個-feature)往下跑；誰可以代為啟動，見參考手冊的[控制方向與自主程度](reference.md#控制方向與自主程度)。
    - 完成：
      - [ ] Agent 回報已載入 spec-to-plan skill
      - [ ] Agent 讀完交接包，沒有要退回的問題；研究報告已 commit
+     - [ ] 改到 legacy 時，研究報告寫明要改的路徑有沒有測試保護
 2. **寫詳細設計**
    - 怎麼做：在 A2 定的邊界內，決定模組、介面與資料流。
    - 完成：
@@ -481,6 +493,8 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
      - [ ] 每個 task 都能單獨驗證，沒有只做一層的 task
      - [ ] 每個 task 列出要寫的測試，每個測試寫明斷言、Red 應失敗的位置、Green 預期與指令
      - [ ] 共用的測試骨架排在第一個 task；不需要時寫明理由
+     - [ ] 要改的 legacy 路徑沒有測試保護時，第一個 task 是補特性測試
+     - [ ] 每個 task 標明用哪種計畫；加一層程式碼計畫的，`task-plans/<task>.md` 已寫好並一起審過
      - [ ] 每條 AC 都有驗法
      - [ ] 每個 task 標出模式、Implementer 的模型，以及 Implementer 與 Reviewer 的 effort（預設強模型；見參考手冊的[模型怎麼選](reference.md#模型怎麼選)）
      - [ ] scope、必要環境、風險與執行限制都寫明

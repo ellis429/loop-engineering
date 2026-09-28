@@ -18,7 +18,7 @@ Read repository instructions (AGENTS.md, CLAUDE.md, `openspec/config.yaml`) firs
 
 ## 1. Research the code
 
-Use `research-codebase` on the flows this feature touches: entry points, existing fixtures and test helpers, test seams, and the files each change will own. Save the report on the branch and commit it.
+Use `research-codebase` on the flows this feature touches: entry points, existing fixtures and test helpers, test seams, and the files each change will own. On legacy code, also which of the paths it changes have no tests protecting them: they get characterization tests first (D72). Save the report on the branch and commit it.
 
 ## 2. Write design.md
 
