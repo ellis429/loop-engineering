@@ -94,13 +94,13 @@ Agent 把確認後的骨架寫成這個 Feature 的 proposal 與 spec（需求�
 
 中途離開不影響進度，答案都已寫進文件。下次說「接續〈project／feature〉的 SA」，Agent 會先讀文件，已確認的不重問。
 
-## 專案基準要回答什麼
+## 外圈產出哪些文件
 
 用於 A1–A3。
 
 以未來的 `cross-node-file-transfer` 演練為例：
 
-> 請用 project-lead skill 準備 cross-node-file-transfer。先核對可沿用的 gigaxfer 需求、領域、設計與 roadmap，保留來源版本；把 `docs/spec.md` 依能力拆成需求輸入（不放進 `openspec/specs/`），先給我拆法對照表。只釐清差異與阻擋問題，最後交出專案基準、milestones 與第一個 feature 的建議。
+> 請用 project-lead skill 準備 cross-node-file-transfer。先核對可沿用的 gigaxfer 需求、領域、設計與 roadmap，保留來源版本；把 `docs/spec.md` 依能力拆成需求輸入（不放進 `openspec/specs/`），先給我拆法對照表。只釐清差異與阻擋問題，最後交出 project intent、高層設計、roadmap 與第一個 feature 的建議。
 
 ```mermaid
 flowchart TD
@@ -110,7 +110,7 @@ flowchart TD
     C{"Project Lead<br/>需求足以進入 Design？"}:::gate
     D["Project Lead Agent<br/>高層設計與技術取捨"]:::agent
     M["Project Lead Agent<br/>roadmap、milestones、features"]:::agent
-    F{"Project Lead<br/>確認專案基準與第一個 feature"}:::gate
+    F{"Project Lead<br/>確認高層設計、roadmap<br/>與第一個 feature"}:::gate
     A -->|目標與來源| R
     R -->|研究報告：事實、推論、未知| S
     S -->|每輪 1–3 題| A
@@ -118,7 +118,7 @@ flowchart TD
     C -->|仍有阻擋| S
     C -->|確認| D
     D -->|元件責任與限制| M
-    M -->|baseline 與 roadmap 草案| F
+    M -->|roadmap 草案| F
     F -->|需要調整| M
     classDef human fill:#e9ebef,stroke:#7a8399,color:#2d3142
     classDef agent fill:#ffffff,stroke:#2d3142,color:#2d3142
@@ -127,7 +127,7 @@ flowchart TD
 
 Research 記錄「目前如何運作」，研究報告不是已批准的 spec。Spec 說「要達成什麼」，design 說「如何達成」。
 
-專案基準（project baseline）要能回答以下問題：
+外圈結束時，下面每個問題都要有文件可查；之後每個 Feature 引用這些文件的版本：
 
 | 內容 | 位置 |
 | --- | --- |
@@ -142,7 +142,7 @@ Research 記錄「目前如何運作」，研究報告不是已批准的 spec。
 
 交接時保存採用的路徑與版本。已確認的需求可以沿用；新 example 的程式必須留下自己的驗證證據。需要先建立專案骨架（測試、CI、工程規則，常稱 Sprint 0 或 bootstrap）時，把它當作第一個 feature，和其他 feature 一樣用 ticket 編號。
 
-完成這個階段，代表已有足以展開近期工作的基準與 roadmap，不要求提前寫完所有未來 features 的 spec。
+完成這個階段，代表已有足以展開近期工作的 project intent、高層設計與 roadmap，不要求提前寫完所有未來 features 的 spec。
 
 ## Roadmap 要切多細
 
@@ -327,7 +327,7 @@ Project 層是人和 Agent 一來一回的對話，不需要派工或 gates；Fe
 
 ### 把 Feature 交出去
 
-> 請用 project-lead skill 準備〈feature〉：補足 spec、AC、必要高層設計與依賴，引用專案基準的實際版本。交接給〈Engineer〉，列出已確認事項與阻擋問題。
+> 請用 project-lead skill 準備〈feature〉：補足 spec、AC、必要高層設計與依賴，引用 project intent、高層設計與 roadmap 的版本。交接給〈Engineer〉，列出已確認事項與阻擋問題。
 
 ```mermaid
 flowchart TD
@@ -516,7 +516,7 @@ feature loop 回來的結果只有兩種：
 3. **交付第一個產品 Feature（B1–B6）**：Project Lead 準備 spec 與交接包，Engineer 帶 Implementer 完成 PR；另一個 session 的 Reviewer 審查。
 4. **驗證修正循環**：有真實 blocking finding 時，留下 finding → fix → re-review 的歷程。review 沒找到問題就如實記錄，不製造缺陷湊演示。
 5. **驗收與收尾（B7–B8）**：人驗收後，Project Lead 整理 Retro 候選、提出下一個 Feature；確認 merge 後再把 spec 併入現況。
-6. **接續下一個 Feature**：核對依賴、人工接受、merge 與基準；保存各 Feature 的 branch／worktree、文件與交付證據。
+6. **接續下一個 Feature**：核對依賴、人工接受、merge，以及下一個 Feature 引用的文件版本；保存各 Feature 的 branch／worktree、文件與交付證據。
 7. **展示 Milestone（C）**：執行跨 Feature 的整合情境。真正的 stacked PR 展示，要等 stacked PR 的規則決定、能力驗證之後再加入。
 
 Demo 結束時，觀眾應能沿一條路徑找到：「目標 → Milestone → Feature／AC → design／tasks → worktree／PR → TDD／review／CI → 人的決策 → 併入現況的 spec」。

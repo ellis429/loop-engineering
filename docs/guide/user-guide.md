@@ -29,7 +29,7 @@ Agent 做大部分工作；人只在六個確認點做決定，Agent 不做確�
 | 確認點 | 確認什麼 | 誰確認 | 在哪一步 |
 | --- | --- | --- | --- |
 | ① | 方向清楚，可以進入設計 | Project Lead | [A1](#a1-analyzeproject-sa) |
-| ② | 專案基準與 roadmap | Project Lead | [A3](#a3-roadmap排-milestone-與-feature) |
+| ② | 高層設計與 roadmap | Project Lead | [A3](#a3-roadmap排-milestone-與-feature) |
 | ③ | 下一個做哪個 Feature | Project Lead | [B1](#b1-open開-feature) |
 | ④ | 這個 Feature 的 spec 清楚 | Project Lead | [B2](#b2-specifyfeature-sa) |
 | ⑤ | 設計與計畫可以開工 | 被授權的人，通常是 Engineer | [B4](#b4-design設計與計畫engineer) |
@@ -99,7 +99,7 @@ flowchart LR
   A1["A1 Analyze<br/>Project SA"] -->|project intent| G1(["① 可進入設計<br/>Project Lead"])
   G1 --> A2["A2 Architect<br/>高層設計"]
   A2 -->|設計文件、ADR| A3["A3 Roadmap<br/>Milestone 與 Feature"]
-  A3 -->|roadmap| G2(["② 專案基準與 roadmap<br/>Project Lead"])
+  A3 -->|roadmap| G2(["② 高層設計與 roadmap<br/>Project Lead"])
   G2 --> G3(["③ 下一個 Feature<br/>Project Lead"])
   G3 --> IN[["內圈：Define → Deliver → Accept"]]
   IN -->|Retro & Replan| A3
@@ -154,7 +154,7 @@ flowchart LR
 | 1 | Agent | 提出 Milestone：成果與完成條件 | skill [project-lead](../../skills/project-lead/SKILL.md) | roadmap（[範例](https://github.com/yschiang/cross-node-root/blob/main/docs/roadmap.md)） |
 | 2 | Agent | 切法有依據時，把當前 Milestone 切成 Feature；沒有依據先只列交付能力 | skill [project-lead](../../skills/project-lead/SKILL.md) | roadmap 的 Feature 表 |
 | 3 | 你 | 排順序、決定範圍，標出接下來要做的 1–2 個 | — | 決策紀錄 |
-| 4 | 你 | 確認專案基準與 roadmap ◆② | — | 決策紀錄 |
+| 4 | 你 | 確認高層設計與 roadmap ◆② | — | 決策紀錄 |
 
 **完成的樣子**
 
@@ -215,7 +215,7 @@ Project Lead 同時擔任 Engineer 時，④ 併入 ⑤：spec、設計、計畫
 
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
-| 1 | Agent | 讀需求輸入與專案基準，研究現況 | skill [research-codebase](../../skills/research-codebase/SKILL.md) | — |
+| 1 | Agent | 讀需求輸入、project intent、高層設計與 roadmap，研究現況 | skill [research-codebase](../../skills/research-codebase/SKILL.md) | — |
 | 2 | Agent ⇄ 你 | 從目標往下問：流程 → 規則 → 例外 → 驗收，每輪 1–3 題 | skill [project-lead](../../skills/project-lead/SKILL.md) | — |
 | 3 | Agent | 寫 proposal 與 spec，檢查格式；需要新的設計邊界時寫進設計文件或 ADR | skill [project-lead](../../skills/project-lead/SKILL.md)；指令 `openspec validate`（[說明](https://github.com/Fission-AI/OpenSpec/blob/main/docs/cli.md)） | proposal（[範例](https://github.com/yschiang/cross-node-root/blob/main/openspec/changes/project-skeleton/proposal.md)）、spec（[範例](https://github.com/yschiang/cross-node-root/blob/main/openspec/changes/project-skeleton/specs/engineering-baseline/spec.md)） |
 | 4 | 你 | 看一頁摘要，確認 spec 清楚 ◆④。你同時是 Engineer 時，改到 B4 一起確認 | — | proposal 裡的確認紀錄 |
@@ -226,7 +226,7 @@ Project Lead 同時擔任 Engineer 時，④ 併入 ⑤：spec、設計、計畫
 - [ ] 沒有會改變範圍、行為或驗收的待決
 - [ ] `openspec validate` 通過
 
-> 請用 project-lead skill 準備〈Feature〉：補足 spec、AC、必要高層設計與依賴，引用專案基準的實際版本。
+> 請用 project-lead skill 準備〈Feature〉：補足 spec、AC、必要高層設計與依賴，引用 project intent、高層設計與 roadmap 的版本。
 
 一頁摘要長這樣：
 
@@ -272,7 +272,7 @@ Project Lead 同時擔任 Engineer 時，④ 併入 ⑤：spec、設計、計畫
 - [ ] 每條 AC 都有驗法
 - [ ] 你確認了 ◆⑤
 
-> 請用 orchestrate 承接〈Feature〉。先由 Implementer 讀取它引用的專案基準、spec／AC 與高層設計，提出 detailed design、可執行 tasks 及 AC 驗證方式，交我確認後開工。保留 worktree 與證據；終點是 PR Pass，等待人驗收。
+> 請用 orchestrate 承接〈Feature〉。先由 Implementer 讀取它引用的 project intent、roadmap、spec／AC 與高層設計，提出 detailed design、可執行 tasks 及 AC 驗證方式，交我確認後開工。保留 worktree 與證據；終點是 PR Pass，等待人驗收。
 
 ### B5 Build：實作（Engineer）
 
