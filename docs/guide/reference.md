@@ -448,6 +448,52 @@ Task 是 PR 內的工作單位，一個 session 做得完，不開 ticket。一�
 
 計畫不放實作碼，但每個 task 要列出要寫的測試，寫明 **Red 應該失敗在哪個斷言**；好幾個 task 共用的 fixture、setup、指令入口或 stub，排成第一個 task 先做。只寫範圍、介面和驗證命令的精簡計畫，會讓 Implementer 自己決定測試怎麼寫：薄 controller 第一片的 8 個 task，第一次 review 全部要求修改，其中 6 個被指出 Red 停在共用 setup、缺的指令或回傳 `not_implemented` 的 stub，根本沒走到要測的行為。那樣的 Red 證明不了測試在檢查行為，只能靠之後的 review 抓，換來多輪返工。
 
+### 模型怎麼選
+
+預設兩段都用強模型，plan 寫到設計層，給人審；便宜模型只用在兩種情況：五個前提都成立的 task，以及有測試保護的機械性工作（D72）。
+
+「強 planner＋便宜 coder」的前提是：難在想清楚，寫出來只是翻譯。它靠五個前提：
+
+| 前提 | 不成立會怎樣 |
+| --- | --- |
+| 想比寫難 | 邊寫才發現問題，coder 得自己判斷，便宜模型容易做錯 |
+| 任務切得開 | 改一處牽動多處，coder 看不到全貌 |
+| 有自動檢查（測試、編譯器、linter） | 錯了沒人發現，省下的錢之後要還 |
+| 寫的量遠大於想的量 | 任務很小時，分兩個模型反而麻煩 |
+| 常見寫法 | 冷門技術或自家規則，便宜模型只能猜 |
+
+所以每個 task 在 `tasks.md` 標一種模式，◆確認開工時人可以調整：
+
+| 情況 | Plan 寫到哪 | Implementer |
+| --- | --- | --- |
+| 預設 | 設計層、介面與不變式、要證明的測試 | 強模型 |
+| 五個前提都成立 | 再加改動點：哪個檔、哪個函式、簽名、特殊狀況、要跑的測試；不寫逐行實作 | 可以用便宜模型 |
+| legacy，或領域規則藏在程式碼裡（例如 SECS/GEM、CORBA、VB） | 設計層；強模型先實際讀 code | 強模型；要改的地方沒有測試保護時，第一個 task 先補特性測試（實際執行程式記下現有行為，不靠推測） |
+| 有測試保護的機械性工作（改名、補樣板、分批遷移） | 不需要 | 便宜模型單做 |
+
+Reviewer 不論哪種模式都用強模型，而且和 Implementer 是不同的模型，最好是另一家的（D52）。
+
+Engineer 也可以替某個 task 多要一層程式碼層級的計畫，例如 legacy 上 PBI 大小的 task：`spec-to-plan` 用 Superpowers `writing-plans` 寫進 change 的 `task-plans/<task>.md`，沒有測試保護時從特性測試開始；`tasks.md` 仍是唯一的權威，計畫審查一併審它。差別只在多這一層規劃，切法、逐 task 審查與 `to-pr` 都不變。在 legacy 上，省錢的關鍵不是換便宜的 coder，而是先補測試：測試補起來之後，才有越來越多工作可以安全地交給便宜模型。
+
+A/B/C 重跑的 C 組（Superpowers 原版：Opus 寫到接近逐行的計畫、Sonnet 實作）是第一個資料點：T2.2 一次通過收件，獨立審查仍找到 2 個 major，Claude 部分約 19.6 美元。這是新 code，只有一題，還不足以改動預設。
+
+### 為什麼計畫不寫程式碼
+
+`tasks.md` 的測試清單就是給 Implementer 的詳細計畫：它寫死要證明什麼（從入口看得到的行為與斷言），怎麼寫程式留給 Implementer（D68、D71）。
+
+- **Matt Pocock 的做法也是這樣**：`to-tickets` 切好之後，由 `/implement` 驅動 `/tdd`，一次做一個 red-green 循環，中間沒有程式碼層級的計畫。他的 `tdd` 還明確反對先把測試全部寫好，理由是：這樣測的是想像出來的行為，而且還沒理解實作，就先把測試的結構定死了。所以計畫只列行為與斷言，不寫測試碼；Implementer 一次寫一個，可以調整組織方式，不改驗證的行為。
+- **Superpowers 原版會把程式碼寫進計畫**，由 planner 寫。A/B/C 重跑時，C 組照原版寫的 T2.2 計畫有 2184 行、約 70 段程式碼，比這個 task 的程式加測試還長。這樣做有兩個代價：
+  - Implementer 多半照抄，Red 很容易只是「函式不存在」這種假 Red；
+  - planner 的錯誤會直接傳到程式碼裡。
+
+取捨：不事先寫程式碼，Implementer 就要自己判斷實作方式，品質靠三道把關撐住，少一道就不可靠：
+
+1. `tasks.md` 的測試寫得夠精確；
+2. 收件時嚴格檢查每個 Red 是不是打到要測的斷言；
+3. 另一家模型做 per-task review。
+
+B 組重跑 T2.2 時，第 2 道放寬了：18 個 Red 有 14 個停在指令分派，要靠第 3 道的 review 才抓到，多了一輪修正。
+
 ### 計畫要讓 AC 真正能驗證
 
 每個 AC 都要有「怎麼驗、在哪裡驗、何謂通過、證據放哪」。以下只是寫法示例，並非已核准的 cross-node 功能需求：
@@ -543,7 +589,7 @@ Demo 結束時，觀眾應能沿一條路徑找到：「目標 → Milestone →
 | --- | --- | --- |
 | A4 Specify | `proposal.md`、`specs/<能力>/spec.md` | feature-to-spec：由上往下問（Matt Pocock 的 grilling） |
 | B1 Design | `design.md` | 在 A2 的邊界內決定；方案要比較時，借 Superpowers brainstorming 的做法 |
-| B1 Plan | `tasks.md` | Superpowers writing-plans 的寫法：每個 task 列測試與預期的 Red，不放實作碼（D68） |
+| B1 Plan | `tasks.md` | 切法照 Matt Pocock `to-tickets` 的垂直切片（D71）；每個 task 列測試與預期的 Red，不放實作碼（D68） |
 | B2 Build | 程式與測試；勾 `tasks.md` | Superpowers test-driven-development；要分派多個 Agent 時用 subagent-driven-development |
 | B3 Verify | PR、ticket 留言 | 另一個模型的獨立 Reviewer |
 | A5 Retro | `openspec archive` → `openspec/specs/` | OpenSpec |
@@ -591,6 +637,8 @@ loop-engineering 自己開發 controller 時，預設 Opus 5.5 實作、GPT 審�
 | 準備 Feature 的 skill 獨立成 feature-to-spec | D66 |
 | 內圈的三個 skill 與依複雜度決定 effort | D69 |
 | 修正額度：三輪與到限後的追加 | D13、D70 |
+| Feature 怎麼切成 tasks | D71、D68 |
+| 模型與 plan 細度 | D72、D69 |
 | 每個 Feature 一條 feature branch；薄 ticket 的格式 | D67 |
 | 計畫列出測試與預期的 Red；共用測試骨架先做；Superpowers 的方法寫進 OpenSpec 的檔案 | D68 |
 | 有依賴的 Feature 等上游接受並 merge | D27 |
