@@ -521,35 +521,19 @@ feature loop 回來的結果只有兩種：
 
 Demo 結束時，觀眾應能沿一條路徑找到：「目標 → Milestone → Feature／AC → design／tasks → worktree／PR → TDD／review／CI → 人的決策 → 併入現況的 spec」。
 
-## 分層：人、Agent 與工具
-
-```text
-人          Lead、工程師、驗收人                       做決定：方向、順序、spec、開工、驗收
- │ 用自然語言交代、確認
-ADE         Herdr、OpenCode、Claude Code（Orca 選配）   開 session 與 worktree，讓多個 Agent 並排工作
- │
-Skills      project-lead、orchestrate、research-codebase、TDD、OpenSpec   告訴 Agent 照什麼方法做
- │
-Agents      Project Lead Agent ⇄ Implementer ⇄ Reviewer（不同模型）      做實際的分析、實作與審查
- │
-紀錄與核對  共用的狀態：人和 Agent 靠它交接，不靠聊天
-            ├ 核對：controller 檢查版本、證據與三個 gates（第一片實作中）
-            └ 保存：Git branch／worktree、OpenSpec 檔案、GitHub Issue／PR／CI
-```
-
-**Workflow** 是 Project、Feature 兩層的步驟與規則，貫穿所有層；**Harness** 是讓這些規則真的被執行的 ADE、skills 和 controller。
-
 ## 會用哪些 skills 與工具
 
-| 用途 | 目前方向與界線 |
+在 loop-engineering 執行 `./setup.sh`，就會把下表的 skills 裝到 `~/.claude/skills`、`~/.agents/skills`、`~/.codex/skills`，並檢查 OpenSpec CLI 的版本。外部 skills 的來源與版本見 [SOURCES.md](../../skills/third-party/SOURCES.md)。這些 skills 在哪一層，見使用指南的[人、Agent 與工具的分層](user-guide.md#人agent-與工具的分層)。
+
+| 用途 | 用什麼 |
 | --- | --- |
-| Project 層與 Feature 準備 | [project-lead](../../skills/project-lead/SKILL.md) skill（草稿） |
-| Codebase 研究 | [research-codebase](../../skills/research-codebase/SKILL.md)，改寫自 HumanLayer 的 research_codebase；記錄現況，不批准需求或決定設計 |
-| SA、領域語言與 grill | Matt 的 grill-with-docs、grilling、domain-modeling，由 project-lead 按需叫用 |
-| 規格 | OpenSpec；Writing Plans 與 tasks 的接合仍在驗證 |
-| 單一 Feature 的 loop | `orchestrate` skill 呼叫薄 controller，第一片實作中 |
-| TDD | Superpowers TDD；每個行為 task 保存可追溯證據 |
-| 審查與修正 | 獨立 Reviewer，依 spec 與工程規則審查；Implementer 修正 |
+| Project 層與 Feature 準備 | skill [project-lead](../../skills/project-lead/SKILL.md)（草稿） |
+| 研究現況 | skill [research-codebase](../../skills/research-codebase/SKILL.md)，改寫自 HumanLayer；只記錄現況，不批准需求或決定設計 |
+| SA 問答、領域語言 | skill [grill-with-docs](../../skills/third-party/mattpocock/engineering/grill-with-docs/SKILL.md)、[grilling](../../skills/third-party/mattpocock/productivity/grilling/SKILL.md)、[domain-modeling](../../skills/third-party/mattpocock/engineering/domain-modeling/SKILL.md)（Matt Pocock），由 project-lead 按需叫用 |
+| 規格 | OpenSpec CLI 1.13.1（[指令說明](https://github.com/Fission-AI/OpenSpec/blob/main/docs/cli.md)）；它的 skills 由 `openspec init` 產生 |
+| 單一 Feature 的 loop | skill orchestrate 呼叫薄 controller，第一片實作中 |
+| TDD | skill [test-driven-development](../../skills/third-party/superpowers/test-driven-development/SKILL.md)（Superpowers）；每個行為 task 保存可追溯證據 |
+| 審查與修正 | 獨立 Reviewer（另一個模型、新 session），依 spec 與工程規則審查；Implementer 修正 |
 | Example 執行環境 | Herdr 管 sessions 與工作區；本機 OpenAI 經 OpenCode，Claude 直接用 Claude Code；Orca 是選配入口 |
 | 程式與協作紀錄 | Git branches／worktrees、GitHub issues／PRs／CI，以及可讀的執行結果與狀態 |
 
