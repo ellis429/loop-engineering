@@ -1,6 +1,6 @@
 ---
 name: feature-to-spec
-description: Use when a feature chosen on the roadmap needs its OpenSpec change, spec and ticket before engineering starts, or when the spec of an existing feature must change, whether still in preparation, blocked on scope inside the feature loop, or sent back because the requirement changed. Used by the Project Lead or the Engineer. Not for project-level planning or close-out (project-lead), and not for design, tasks, implementation or review (orchestrate).
+description: Use when a feature chosen on the roadmap needs its OpenSpec change, spec and ticket before engineering starts, or when the spec of an existing feature must change, whether still in preparation, blocked on scope inside the feature loop, or sent back because the requirement changed. Used by the Project Lead or the Engineer. Not for project-level planning or close-out (project-lead), and not for design and plan (spec-to-plan), implementation (plan-to-code) or pull requests and gates (to-pr).
 ---
 
 # Feature to spec
@@ -45,7 +45,7 @@ Ask the human to authorise pushing the branch and writing the ticket; without it
 - #<n> <feature name>：<what releases it>；<owner>   （none: 無）
 ```
 
-Scope, non-goals and acceptance text stay in the change. Records (handoff, start approval, acceptance) are ticket comments (D60). States and who sets them: 準備中 and 就緒 (you); 開發中 after the start approval and 待驗收 after PR Pass (orchestrate, or the coordinator until it exists); 已接受, 開發中 after a rejection, and 已完成 (project-lead, which writes those records); `Blocked：<reason>` by whoever hits it. Whoever sets a state also updates 下一步.
+Scope, non-goals and acceptance text stay in the change. Records (handoff, start approval, acceptance) are ticket comments (D60). States and who sets them: 準備中 and 就緒 (you); 開發中 after the start approval (`spec-to-plan`) and 待驗收 after PR Pass (`to-pr`); 已接受, 開發中 after a rejection, and 已完成 (project-lead, which writes those records); `Blocked：<reason>` by whoever hits it. Whoever sets a state also updates 下一步.
 
 Done when the branch is pushed, the change folder is on it, and the ticket links to it with state `準備中`.
 
@@ -78,12 +78,10 @@ Show the one-page summary. The Project Lead confirms; record it in a short secti
 3. Post the package as one ticket comment (D60). In the ticket body: link that comment on the 交接包 line; fill the spec confirmation line; list each acceptance ID under 驗收 as an unchecked checkbox followed by its scenario title copied from the spec (if a title drops a condition that changes the verdict, fix the title in the spec); set the state to `就緒（可設計）` and 下一步 to the Engineer checking the package.
 4. The Engineer checks the package and either starts or returns specific questions; answer them by going back to step 3 or 4.
 
-Then one of:
+The feature loop continues on the same branch and worktree (design, tasks, code in the root; a branch of the same name in each affected service repo) with three skills in order, each ending at a stop: `spec-to-plan` (design and plan, stops at the start-of-work approval), `plan-to-code` (tasks with per-task review), `to-pr` (pull requests, whole-change review and CI, stops at 待驗收). The root PR is this branch; the ticket's Spec line then links it. Then one of:
 
-The Implementer continues on the same branch and worktree (design, tasks, code in the root; a branch of the same name in each affected service repo). The root PR at B3 is this branch; the ticket's Spec line then links the PR.
-
-- **Manual:** the Engineer starts `orchestrate` with the package.
-- **Authorised:** only when the human explicitly authorised you for a named scope and the spec confirmation exists (or is folded), start `orchestrate` yourself. The loop stops at the design-and-plan approval, which only the named human gives.
+- **Manual:** the Engineer starts `spec-to-plan` in the feature's worktree, and each next skill after the previous one stops.
+- **Authorised:** only when the human explicitly authorised you for a named scope and the spec confirmation exists (or is folded), start `spec-to-plan` yourself. It stops at the start-of-work approval, which only the named human gives.
 
 A feature that depends on another may be prepared now; its implementation starts only after the upstream is accepted and merged (D27).
 
@@ -94,7 +92,7 @@ Use this when the change already exists: a requirement changed while the feature
 1. Work in the feature's existing branch and worktree; update the default-branch base only if the Project Lead asks. Never open a second change or ticket.
 2. Update the proposal and the spec delta (the `openspec-update-change` skill keeps them coherent when it is installed; leave `design.md` and `tasks.md` to the Implementer), run `openspec validate <id>`, commit, and name what changed.
 3. The Project Lead confirms the new spec (or record the fold note); record the confirmed commit in `proposal.md`, then commit and push so the branch holds it.
-4. Post a new handoff comment that lists what changed, names the pushed commit, and supersedes the earlier one; relink it from the ticket. Rebuild the ticket's 驗收 list from the new spec: add new IDs, remove deleted ones, update renamed titles, and untick every ID whose scenario changed.
+4. Post a new handoff comment that carries the complete package of step 2 of the handoff at the new versions, lists what changed, names the pushed commit, and supersedes the earlier one; relink it from the ticket. Rebuild the ticket's 驗收 list from the new spec: add new IDs, remove deleted ones, update renamed titles, and untick every ID whose scenario changed.
 5. A changed spec voids the start-of-work approval for the design and tasks it affects: set the state to `就緒（可設計）` and 下一步 to the Engineer, who revises the plan and gets a new start approval (D11).
 
 ## Boundaries

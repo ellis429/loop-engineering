@@ -1,13 +1,13 @@
 ---
 name: project-lead
-description: Use when starting or importing a Loop Engineering project, when its roadmap must be planned, re-cut or re-confirmed, when new evidence breaks an accepted requirement, or when a feature was accepted and needs close-out. Not for preparing a single feature's spec (feature-to-spec), and not for design, implementation, review or gates (orchestrate).
+description: Use when starting or importing a Loop Engineering project, when its roadmap must be planned, re-cut or re-confirmed, when new evidence breaks an accepted requirement, when a feature's PR Pass needs the acceptor's decision recorded, or when a feature was accepted and needs close-out. Not for preparing a single feature's spec (feature-to-spec), and not for design and plan (spec-to-plan), implementation (plan-to-code) or pull requests and gates (to-pr).
 ---
 
 # Project Lead
 
 Work with the human to decide what gets built and in what order. This is conversational work: the human decides, you research, ask, write, and propose. You do not dispatch implementers or reviewers, run gates, merge, or approve anything on the human's behalf.
 
-Control flows one way. You plan the roadmap and choose features with the human; `feature-to-spec` turns each chosen feature into a spec and a handoff package; the feature loop (`orchestrate`) returns a PR Pass package or a Blocked reason. Requirement or scope problems found inside a feature come back to the human and to you.
+Control flows one way. You plan the roadmap and choose features with the human; `feature-to-spec` turns each chosen feature into a spec and a handoff package; the feature loop (`spec-to-plan`, `plan-to-code`, `to-pr`) returns a PR Pass package or a Blocked reason. Requirement or scope problems found inside a feature come back to the human and to you.
 
 Write artifacts in the language the repository requires. Read repository instructions (AGENTS.md, CLAUDE.md, `openspec/config.yaml`) first; they override this skill.
 
@@ -17,6 +17,7 @@ Write artifacts in the language the repository requires. Read repository instruc
 | --- | --- | --- |
 | Project | New project, or importing an existing one | Direction, high-level design and roadmap each confirmed by the human, and the next features chosen (D63) |
 | Re-analysis | New evidence breaks an accepted requirement | Updated requirement input or roadmap and a recorded human decision; a feature whose spec must change goes to `feature-to-spec` |
+| Acceptance | `to-pr` set 待驗收 and posted the PR Pass package | The acceptor's decision recorded: accepted goes on to Close-out, rejected goes back to the feature loop |
 | Close-out | A feature was accepted by a human | Archive, Retro candidates, updated roadmap |
 
 A chosen feature is prepared with `feature-to-spec`, not here.
@@ -64,12 +65,12 @@ The roadmap is a living document with two levels: a milestone is a group of feat
 
 ## 6. Close out after acceptance
 
-When the feature loop returns, check that the result carries the run id and matches the change and versions in the handoff package:
+When the feature loop returns (`to-pr` sets 待驗收 and posts the PR Pass package, or a skill sets Blocked), check that the result carries the run id (or who ran it by hand) and matches the change and versions in the handoff package:
 
 - **PR Pass:** route the package to the human for acceptance. PR Pass is not acceptance, and acceptance is not merge.
 - **Blocked on requirements or scope:** analyse the impact with the human and record the decision; the spec change itself goes through `feature-to-spec`.
 
-Record the human's acceptance or rejection as one ticket comment: who, when, their words, the version, and the reason when rejected (D60). On acceptance, check in the ticket body only the acceptance IDs the acceptor confirmed, link the record from the 驗收 section, and set the state to `已接受`. On rejection you write the record, so you also set the state back to `開發中` with the reason in 下一步; when the requirement itself changed, send the human to `feature-to-spec` to revise the feature (D67). Every tracker write needs authorisation; without it, hand the text to the human to post.
+Record the human's acceptance or rejection as one ticket comment: who, when, their words, the version, and the reason when rejected (D60). On acceptance, check in the ticket body only the acceptance IDs the acceptor confirmed, link the record from the 驗收 section, and set the state to `已接受`. On rejection the record also names the version judged (each pull request's head) and each acceptance ID that failed with its defect; you write it, so you also mark the PR Pass comment superseded. A rejection because existing acceptance IDs fail shares the feature's correction limit: count the dispatched batches on the ticket against three plus any rounds the human's recorded decisions added (D70), not only what the PR Pass package says; while rounds are left, set the state back to `開發中` and 下一步 to `plan-to-code`, which fixes the defects, each with a Red, as the next round before `to-pr` runs the gates again; when none is left, set `Blocked：correction limit` and 下一步 to the human who decides. A rejection because the requirement changed uses no round: set the state to `準備中` and 下一步 to the Project Lead revising the spec with `feature-to-spec`. A fix beyond the approved plan goes to `spec-to-plan`; when the requirement itself changed, send the human to `feature-to-spec` to revise the feature (D67). Every tracker write needs authorisation; without it, hand the text to the human to post.
 
 After the human accepted the feature:
 

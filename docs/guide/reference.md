@@ -327,11 +327,11 @@ feature loop 無法安全繼續時，改交 **Blocked**：run ID、問題、已�
 
 ### 控制方向與自主程度
 
-Project 層是人和 Agent 一來一回的對話，不需要派工或 gates；Feature 層有多個 Agent 並行，需要 controller 核對證據。所以分成三個 skill，控制只往下走：project-lead 排 roadmap、選 Feature；feature-to-spec 把選中的 Feature 寫成 spec，交接包交給 orchestrate；orchestrate 從不回頭呼叫它們。同一套 skill 有兩種自主程度：
+Project 層是人和 Agent 一來一回的對話，不需要派工或 gates；Feature 層有多個 Agent 並行，需要 controller 核對證據。所以控制只往下走：project-lead 排 roadmap、選 Feature；feature-to-spec 把選中的 Feature 寫成 spec，交接包交給內圈；內圈依序是 spec-to-plan、plan-to-code、to-pr，從不回頭呼叫前面的 skill。orchestrate 可用後把內圈三個 skill 串起來。同一套 skill 有兩種自主程度：
 
 | 模式 | 誰啟動每個 Feature | 適合 |
 | --- | --- | --- |
-| 手動 | 人拿 Project Lead Agent 準備好的交接包，自己啟動 orchestrate | 第一版、個人使用 |
+| 手動 | 人拿交接包，在 feature 的 worktree 依序啟動 spec-to-plan、plan-to-code、to-pr，每個停下後再啟動下一個 | 第一版、個人使用 |
 | 授權 | Project Lead Agent 在 Project Lead 核准的範圍內啟動；各 Feature 的 SA 確認須先完成，或註明併入開工確認。loop 產出 design＋plan 後停下，等人確認開工，Project Lead Agent 不能代批 | goal 模式、多 Feature 的 demo |
 
 
@@ -369,7 +369,7 @@ flowchart TD
 
 ### 跨人、跨 session 要交什麼
 
-換人或重開 session 時，交文件位置與適用版本，再讀保存的結果。聊天可補背景，但不承擔唯一的進度與需求記憶。Implementer 與 Reviewer 不直接互傳結果，都經由保存的檔案與 orchestrate 交接；先保存結果，再發布或通知，通知只是喚醒接收者。各角色之間的交接內容見[交接契約](../workflow/contracts.md#角色交接摘要)。
+換人或重開 session 時，交文件位置與適用版本，再讀保存的結果。聊天可補背景，但不承擔唯一的進度與需求記憶。Implementer 與 Reviewer 不直接互傳結果，都經由保存的檔案交接：局部結果由 plan-to-code 保存，gates 由 to-pr 執行（orchestrate 可用後由它串接）；先保存結果，再發布或通知，通知只是喚醒接收者。各角色之間的交接內容見[交接契約](../workflow/contracts.md#角色交接摘要)。
 
 ## 做出來：Engineer 的細節
 
@@ -420,7 +420,7 @@ flowchart TD
     P["各 PR 目前的 head<br/>Implementer push"]:::agent
     R["Reviewer Agent<br/>G2：獨立 session，不改 branch"]:::agent
     T["CI<br/>G3：必要 checks"]:::agent
-    J{"Orchestrate＋controller<br/>同一組版本結果收齊，三 gates 通過？"}:::mech
+    J{"to-pr<br/>同一組版本結果收齊，三 gates 通過？"}:::mech
     X["Implementer Agent<br/>修正批次，重過 G1"]:::agent
     O["PR Pass<br/>交人驗收，不是 merge"]:::gate
     B["Blocked<br/>保存原因，交人裁決"]:::human
@@ -477,7 +477,7 @@ G1 先於送審；G2 與 G3 彼此獨立，可以並行。Red 通常來自較早
 
 > 請推進〈Feature〉，以已確認的 design／plan 為準。可依計畫實作、更新 PR、執行獨立 review／CI 及修正循環。直到目前版本的三 gates 通過，整理驗收包後停下。保留 worktree，不自動 merge、close issue 或 deploy。需求／AC 或設計需改變時回來裁決；最多三輪修正、四小時主動執行時間。
 
-Orchestrate 按授權工作，controller 核對狀態與證據。每個基礎設施操作最多額外重試兩次，和三輪程式修正分開計算；未知的執行結果先保存並停止，不反覆重派。
+to-pr 按授權工作，核對每個 gate 的證據都對應目前版本；orchestrate 與 controller 可用後，改由它們串接與核對。每個基礎設施操作最多額外重試兩次，和三輪程式修正分開計算；未知的執行結果先保存並停止，不反覆重派。
 
 查進度時，你應看得到：目前 feature／PR 與版本、哪個角色正在工作、各 gate 的證據或缺口、下一步，以及是否有需要人的問題。
 
@@ -564,7 +564,7 @@ Demo 結束時，觀眾應能沿一條路徑找到：「目標 → Milestone →
 | 看懂大的 codebase | skill graphify（[Graphify-Labs/graphify](https://github.com/Graphify-Labs/graphify)，Apache-2.0）：把程式與文件建成知識圖，產出在 `graphify-out/`。不在 `setup.sh` 裡，另外安裝：`uv tool install graphifyy==0.9.71`，再執行 `graphify install`（Codex 加 `--platform codex`）；安裝程式若建立了 `~/.claude/CLAUDE.md`，看過內容再決定要不要留 |
 | SA 問答、領域語言 | skill [grilling](../../skills/third-party/mattpocock/productivity/grilling/SKILL.md)、[domain-modeling](../../skills/third-party/mattpocock/engineering/domain-modeling/SKILL.md)（Matt Pocock），由 project-lead 按需叫用；[grill-with-docs](../../skills/third-party/mattpocock/engineering/grill-with-docs/SKILL.md) 只能由人輸入 `/grill-with-docs` 啟動 |
 | 規格 | OpenSpec CLI 1.13.1（[指令說明](https://github.com/Fission-AI/OpenSpec/blob/main/docs/cli.md)）；它的 skills 由 `openspec init` 產生 |
-| 單一 Feature 的內圈 | skill [spec-to-plan](../../skills/spec-to-plan/SKILL.md)（B1）、skill [plan-to-code](../../skills/plan-to-code/SKILL.md)（B2）、skill [to-pr](../../skills/to-pr/SKILL.md)（B3），每個停在一個人工停點（D69）；之後由 skill orchestrate 串起來並呼叫薄 controller，第一片實作中 |
+| 單一 Feature 的內圈 | skill [spec-to-plan](../../skills/spec-to-plan/SKILL.md)（B1）、skill [plan-to-code](../../skills/plan-to-code/SKILL.md)（B2）、skill [to-pr](../../skills/to-pr/SKILL.md)（B3）：B1 停在 ◆確認開工，B2 做完直接接 B3，B3 停在 PR Pass 等 ◆驗收（D69）；之後由 skill orchestrate 串起來並呼叫薄 controller，第一片實作中 |
 | TDD | skill [test-driven-development](../../skills/third-party/superpowers/test-driven-development/SKILL.md)（Superpowers）；每個行為 task 保存可追溯證據 |
 | 審查與修正 | 獨立 Reviewer（另一個模型、新 session），依 spec 與工程規則審查；Implementer 修正 |
 | Example 執行環境 | Herdr 管 sessions 與工作區；本機 OpenAI 經 OpenCode，Claude 直接用 Claude Code；Orca 是選配入口 |
@@ -590,6 +590,7 @@ loop-engineering 自己開發 controller 時，預設 Opus 5.5 實作、GPT 審�
 | Feature spec 屬於外圈；內圈是 Implement → Validate | D64 |
 | 準備 Feature 的 skill 獨立成 feature-to-spec | D66 |
 | 內圈的三個 skill 與依複雜度決定 effort | D69 |
+| 修正額度：三輪與到限後的追加 | D13、D70 |
 | 每個 Feature 一條 feature branch；薄 ticket 的格式 | D67 |
 | 計畫列出測試與預期的 Red；共用測試骨架先做；Superpowers 的方法寫進 OpenSpec 的檔案 | D68 |
 | 有依賴的 Feature 等上游接受並 merge | D27 |

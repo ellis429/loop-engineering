@@ -432,6 +432,17 @@ flowchart LR
 
 Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工：spec、設計、計畫一起確認一次。不同人擔任時分開，Project Lead 先確認 spec，Engineer 才開始設計。
 
+內圈在 feature 的 worktree 依序跑四個指令。人要決定的只有兩處：spec-to-plan 停下時的 ◆確認開工，和 to-pr 停下後的 ◆驗收；plan-to-code 做完直接接 to-pr。
+
+| 順序 | 指令 | 停在哪 | ticket 狀態 |
+| --- | --- | --- | --- |
+| 1 | `/spec-to-plan` | ◆確認開工 | 就緒（可設計）→ 開發中 |
+| 2 | `/plan-to-code` | 每個 task 都審過、沒有未解的 blocking，接著直接跑 to-pr | 開發中 |
+| 3 | `/to-pr` | PR Pass，等 ◆驗收 | 開發中 → 待驗收 |
+| 4 | `/project-lead` | 記下驗收結果 | 待驗收 → 已接受，或退回開發中 |
+
+中途卡住的 skill 會把狀態標成 Blocked，寫明原因與下一步找誰。
+
 ### B1 Design：寫實作 plan
 
 **目的**：決定怎麼做、拆成哪些 task。
@@ -446,7 +457,7 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
 **每一步怎麼做、怎樣算完成**
 
 1. **開始寫設計與計畫**
-   - 怎麼做：在 feature 的 worktree 貼上 prompt，把〈Feature〉換成 change 的 id。內圈三個 skill 依序是 `spec-to-plan`、`plan-to-code`、`to-pr`，各停在一個人工停點；之後由 orchestrate 串起來（見參考手冊的[控制方向與自主程度](reference.md#控制方向與自主程度)）。
+   - 怎麼做：在 feature 的 worktree 貼上 prompt，把〈Feature〉換成 change 的 id。接下來依[內圈的四個指令](#內圈一個-feature)往下跑；誰可以代為啟動，見參考手冊的[控制方向與自主程度](reference.md#控制方向與自主程度)。
    - 完成：
      - [ ] Agent 回報已載入 spec-to-plan skill
      - [ ] Agent 讀完交接包，沒有要退回的問題；研究報告已 commit
@@ -517,7 +528,7 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
 | 1 | Agent | G1：在全新 clone、要送出的版本跑完整測試，通過才送審 | • skill [to-pr](../../skills/to-pr/SKILL.md)：`/to-pr 送出〈Feature〉`<br>• skill [verification-before-completion](../../skills/third-party/superpowers/verification-before-completion/SKILL.md)（Superpowers） | 測試結果 |
 | 2 | Implementer | 每個受影響的 repo 開一個 PR，連到同一張 ticket；root 的 PR 就是 `feature/<id>` | GitHub | PR |
 | 3 | Reviewer＋CI | • G2：Reviewer 審整組 PR<br>• G3：CI 跑必要 checks | • 獨立 Reviewer<br>• GitHub Actions | review 與 CI 結果 |
-| 3 | Implementer | 修正，最多 3 輪，超過就標 Blocked 交給人；每次 push 都重新評估 | skill [plan-to-code](../../skills/plan-to-code/SKILL.md) 做修正，skill [to-pr](../../skills/to-pr/SKILL.md) 重跑 gates | 新的 commits |
+| 3 | Implementer | 修正，最多 3 輪，超過就標 Blocked 交給人，人可以追加輪數（D70）；每次 push 都重新評估 | skill [plan-to-code](../../skills/plan-to-code/SKILL.md) 做修正，skill [to-pr](../../skills/to-pr/SKILL.md) 重跑 gates | 新的 commits |
 | 4 | Agent | 三個 gates 都在目前版本通過後，整理驗收包 | • skill [to-pr](../../skills/to-pr/SKILL.md)：欄位列在 skill 裡<br>• 核對每個 gate 的證據都對應目前版本<br>• controller 可用後由它核對 | PR Pass 驗收包（ticket 留言） |
 
 **每一步怎麼做、怎樣算完成**
@@ -549,7 +560,8 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
      - [ ] 每條 AC 都有結果與證據
      - [ ] 每個受影響 repo 的 PR、base／head commit、CI 與 review 連結
      - [ ] 風險與已知限制
-     - [ ] run ID
+     - [ ] run ID，或手動執行的人
+     - [ ] 已用的修正輪數
      - [ ] 驗收包貼成 ticket 留言，本文「驗收」連到這則留言，狀態「待驗收」
 
 **細節**：參考手冊的[做出來：Engineer 的細節](reference.md#做出來engineer-的細節)：gates 的證據與 review-fix loop。
@@ -561,7 +573,7 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
 | 1 | 驗收人 | 看驗收包和 demo，逐條對照 AC | — | — |
-| 2 | 驗收人 | ◆驗收：<br>• AC 沒達成：退回修正<br>• 需求要改：回 A4 | — | 接受或退回紀錄（ticket 留言） |
+| 2 | 驗收人 | ◆驗收：<br>• AC 沒達成：退回修正<br>• 需求要改：回 A4 | skill [project-lead](../../skills/project-lead/SKILL.md)：開一個 Agent session，貼上：`/project-lead 記錄〈Feature〉的驗收：〈驗收人〉〈接受／退回〉，原話〈…〉。` | 接受或退回紀錄（ticket 留言） |
 | 3 | 人 | merge：<br>• 接受、而且版本仍適用時才 merge<br>• 多個 PR 照依賴順序，提供方先<br>• 每個 PR 單獨 merge 都要安全（向後相容） | GitHub | merge |
 
 **每一步怎麼做、怎樣算完成**
@@ -575,7 +587,9 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
    - 完成：
      - [ ] 接受或退回記成 ticket 留言：誰、何時、原話、版本
      - [ ] 接受：ticket 只勾驗收人確認過的 AC，狀態「已接受」
-     - [ ] 退回附理由，ticket 狀態回到「開發中」
+     - [ ] 退回寫明判定的版本與沒過的 AC，舊的 PR Pass 作廢
+     - [ ] 既有 AC 沒過：修正和 B3 共用修正額度（三輪，人可以追加）；還有額度就回到「開發中」，修正後重跑 to-pr，用完就轉 Blocked
+     - [ ] 需求要改：回 A4，不算修正輪數，ticket 狀態改回「準備中」
 3. **merge**
    - 怎麼做：多個 PR 照依賴順序，提供方先；每個 PR merge 前確認它單獨 merge 也安全（向後相容）。
    - 完成：

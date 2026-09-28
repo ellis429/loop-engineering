@@ -37,18 +37,19 @@ Both verdicts must be for the recorded version set. They go stale when a head ch
 
 ## 4. Fix loop, at most three rounds
 
-Collect every G2 blocking finding and G3 code failure of one version set into one batch. `plan-to-code` fixes the batch, each fix with a Red tied to its finding; push; record the new version set; run G1, G2 (resume the same reviewer session) and G3 again. A round is one batch.
+Collect every G2 blocking finding and G3 code failure of one version set into one batch. `plan-to-code` fixes the batch, each fix with a Red tied to its finding; push; record the new version set; run G1, G2 (resume the same reviewer session) and G3 again. A round is one batch, which `plan-to-code` records on the ticket with a batch ID and counts once it is dispatched (G1 failures in step 1 included); the fix batch for an acceptor's rejection of existing acceptance IDs counts the same way. The limit is three rounds plus any rounds the human's recorded decisions added.
 
-- **Beyond the plan:** a fix that needs a new task, paths no task owns, or a change to what a task promises (behaviour, acceptance mapping, design, or rewriting or dropping a planned test) goes back to `spec-to-plan`: amend the plan, get a clean plan review and a start approval for the change, then `plan-to-code`. A regression test for a finding inside the approved scope is part of the fix, not a plan change.
-- **Infrastructure failures** (runner lost, network, quota) are not code rounds: retry each at most twice, recorded separately; an unknown outcome is saved and stops the loop.
-- **Disputed finding:** send the rebuttal and its evidence to the independent reviewer once; only a blocking finding still disputed after that goes to the human.
-- **Limit:** after three rounds without passing, stop: set the ticket to `Blocked：<reason>`, set 下一步 to the human who decides, post what was tried with evidence, and hand over.
+- **Beyond the plan:** a fix that needs a new task, paths no task owns, or a change to what a task promises (behaviour, acceptance mapping, design, or rewriting or dropping a planned test) goes back to `spec-to-plan`: post a ticket comment that the start approval no longer covers the plan (name the finding) and set 下一步 to the Engineer revising it; amend the plan, get a clean plan review and a new start approval, then `plan-to-code`. A regression test for a finding inside the approved scope is part of the fix, not a plan change.
+- **Infrastructure failures** (runner lost, network, quota) are not code rounds: retry each at most twice, recorded separately; an unknown outcome or retries used up is saved and handed back as Blocked (`Blocked：infrastructure`), as in the last item.
+- **Disputed finding:** send the rebuttal and its evidence to the independent reviewer once; a blocking finding still disputed after that goes to the human as Blocked (`Blocked：disputed finding`), as in the last item.
+- **Limit:** when the limit is used without passing, stop: set the ticket to `Blocked：correction limit`. Every Blocked hand-back here sets 下一步 to the human who decides, posts one Blocked comment: the run id (or who ran it by hand), the change id and the commits it applies to, the problem, what was tried with its evidence, the options, and who decides, and hands over.
 
 ## 5. PR Pass package
 
 When G1, G2 and G3 pass for the current version set, post one ticket comment, the PR Pass package, with:
 
 - who posted it and when, and the run id, or "run by hand by <person>" before the controller exists;
+- correction rounds used so far, and the limit, from the batch comments on the ticket;
 - change id and the spec commit it implements;
 - for each affected repo: the pull request, its base and head commit, CI run and review links;
 - each acceptance ID with its result and the evidence, all for the current heads;

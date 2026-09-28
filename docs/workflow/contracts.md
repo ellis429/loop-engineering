@@ -74,7 +74,7 @@ Validation 最小對照為 AC ID → 驗證方法／步驟 → 必要環境 → 
 | Orchestrate → 執行角色 | Run／task／attempt、角色、worktree／branch、允許範圍、文件版本、base／head、驗收與結果位置 |
 | Implementer → Reviewer | Spec／design、完整 PR 與 review base／head、實作證據及尚未覆核 findings |
 | Reviewer → 修正循環 | 穩定 finding ID、問題與依據、blocking 與否、預期行為、適用版本；後續修正及覆核證據 |
-| Feature loop → 人／Project Lead | PR Pass 驗收包或 Blocked 原因、AC 結果與限制；每個受影響 repo 的 PR、base／head commit、CI 與 review 連結（D61）；worktree、run ID |
+| Feature loop → 人／Project Lead | PR Pass 驗收包或 Blocked 原因、AC 結果與限制；每個受影響 repo 的 PR、base／head commit、CI 與 review 連結（D61）；worktree、run ID（手動階段寫執行的人）、已用的修正輪數 |
 
 ### 手動階段的紀錄位置（D60）
 
@@ -82,9 +82,9 @@ Validation 最小對照為 AC ID → 驗證方法／步驟 → 必要環境 → 
 | --- | --- | --- |
 | SA 確認 | Project：project-lead；Feature：feature-to-spec（D66） | Feature：proposal 的確認段；Project：決策紀錄 |
 | 交接包 | feature-to-spec（D66） | ticket 留言；ticket 本文的「交接包」連到它 |
-| 開工確認 | orchestrate（可用前由協調的人照同樣格式寫） | ticket 留言 |
-| 局部 review 結果 | orchestrate | ticket 留言，每個 task 一則 |
-| PR Pass 驗收包 | orchestrate | ticket 留言，連到 PR |
+| 開工確認 | spec-to-plan（D69） | ticket 留言 |
+| 局部 review 結果 | plan-to-code（D69） | ticket 留言，每個 task 一則 |
+| PR Pass 驗收包 | to-pr（D69） | ticket 留言，連到 PR |
 | 接受或退回 | project-lead | ticket 留言 |
 | Retro 候選 | project-lead | ticket 留言 |
 
@@ -166,9 +166,9 @@ Final Pass 前重新讀 head/base 與適用 artifacts。觀察不一致時放棄
 
 依 D25，`disputed` 反證由 controller 送獨立 Reviewer 覆核一次；沿用 finding ID、原 correction batch 與版本，持久化 counter-evidence result ID、覆核 assignment/result IDs 和已使用次數。重啟、重複結果、換 session 或新措辭不得重置同一爭議的次數。未改 code 時針對同一版本覆核；有新 head 時先取得適用 G1，再與必要的最新版本 review 合併。這次釐清不另開 batch、不增加 correction round；基礎設施失敗仍按 D13 的操作重試上限處理。Reviewer 接受反證時附依據更新 finding；仍有 blocking 爭議則 Blocked 交人，不自動進行第二次。範圍／規格／AC 或設計變更直接沿 D11 回人，不以一次覆核取代人工決策。
 
-人工驗收退回既有 AC 缺陷時沿用同一 run 與三輪上限；以被退回的交付版本為基準，不要求此前已 accepted。Controller 保存 `source=human_acceptance`、回饋 actor/來源/時間、版本與可重現差異；若是既有 finding 就沿用 ID，否則配置一次新的 stable ID，重複回饋以來源 identity 去重。退回使當前 Pass 失效，對受影響 gate 記錄原因並重評；先核對剩餘 correction 預算，再組 batch 派修，到限轉 Blocked。解除阻擋仍遵守 D09。
+人工驗收退回既有 AC 缺陷時沿用同一 run 與三輪上限（到限後人可追加，D70）；以被退回的交付版本為基準，不要求此前已 accepted。Controller 保存 `source=human_acceptance`、回饋 actor/來源/時間、版本與可重現差異；若是既有 finding 就沿用 ID，否則配置一次新的 stable ID，重複回饋以來源 identity 去重。退回使當前 Pass 失效，對受影響 gate 記錄原因並重評；先核對剩餘 correction 預算，再組 batch 派修，到限轉 Blocked。解除阻擋仍遵守 D09。
 
-已確認最多三輪 correction；同一 finding 重複出現或修正明顯擴大 scope 時先提出原因與裁決需求，不能無限重抽 reviewer。Infra 操作各最多兩次額外重試；診斷出是程式或測試錯誤就回 correction 流程。
+已確認最多三輪 correction，到限轉 Blocked，人可在 ticket 記錄追加（D70）；同一 finding 重複出現或修正明顯擴大 scope 時先提出原因與裁決需求，不能無限重抽 reviewer。Infra 操作各最多兩次額外重試；診斷出是程式或測試錯誤就回 correction 流程。
 
 依 D24，Reviewer 結果先保存，再由 publication adapter 將完整 review 發到 PR；原 issue 發可採取行動的摘要與 PR review 連結。每份紀錄帶 run/review/result ID、head/base/spec 版本與 finding IDs，可對回原文。GitHub 上使用 comment 或 review 不影響獨立性的定義，也不以帳號是否可按 approve 作 clean 證據。
 
@@ -192,7 +192,7 @@ Runtime preflight 核對安裝版本、工具權限、正確 repo/workspace/bran
 
 ## Skills 交接契約
 
-依 D55（修訂 D17），Project 層與 Retro 由 `project-lead` skill 承擔，feature 準備依 D66 由 `feature-to-spec` 承擔，單一 feature 的交付由 `orchestrate` skill 承擔；每個角色只需一個入口。控制方向往下：project-lead 選 feature，feature-to-spec 交出交接包，orchestrate 不回頭呼叫它們，也不另起競爭的外層 loop。
+依 D55（修訂 D17），Project 層與 Retro 由 `project-lead` skill 承擔，feature 準備依 D66 由 `feature-to-spec` 承擔，單一 feature 的交付依 D69 由 `spec-to-plan`、`plan-to-code`、`to-pr` 依序承擔，`orchestrate` 可用後把三者串起來；每一步只需一個入口。控制方向往下：project-lead 選 feature，feature-to-spec 交出交接包，內圈 skills 不回頭呼叫它們，也不另起競爭的外層 loop。
 
 | 分支 | Trigger / input | 方法與工具範圍 | 輸出／完成／Blocked |
 | --- | --- | --- | --- |
