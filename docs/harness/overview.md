@@ -48,7 +48,7 @@ flowchart TD
     HA -->|原 AC 未達成；核對剩餘預算| FIX
 ```
 
-圖只展開主路徑。SA 的確認與 D11 開工確認分開；已有適用成果與確認可沿用，不重做完整 grill。人工驗收的新需求／規格錯誤回 Project Lead 與使用者裁決，原 AC 缺陷才回同一 run 修正；到限仍為 Blocked。相依 feature 目前仍沿 D27；D42 的 stacked PR 目標需待 Q-STACK 確認及版本失效規則修訂後才啟用。Phase 0 的程式變更走相同 feature 流程，不繞 gates。
+圖只展開主路徑。SA 的確認與 D11 開工確認分開（同一人兼任時依 D59 合併）；已有適用成果與確認可沿用，不重做完整 grill。人工驗收的新需求／規格錯誤回 Project Lead 與使用者裁決，原 AC 缺陷才回同一 run 修正；到限仍為 Blocked。相依 feature 目前仍沿 D27；D42 的 stacked PR 目標需待 Q-STACK 確認及版本失效規則修訂後才啟用。Phase 0 的程式變更走相同 feature 流程，不繞 gates。
 
 Review clean 表示未解 blocking finding 為零；CI 綠燈或 agent done 均不能替代三 gates。所有 Pass 與接受帶版本，新 head／base／規格變更會觸發適用性重評；歷史 Red 可早於最終 SHA，但最終 Green／回歸適用整合 head。流程沒有自動 merge、關票、release 或 deploy。
 
@@ -58,7 +58,7 @@ OpenCode 是預設 agent runtime，可依角色選用 OpenAI／Claude models。C
 
 | 層次 | 責任／預設 | 選配與查核邊界 |
 | --- | --- | --- |
-| 使用入口 | OpenCode 中的角色 session＋orchestrate skill，或直接 controller CLI | 有 Orca 時可加上 console／session 整合；ChatGPT 等 UI 只在具備已驗證交接能力時接入，不推定存在派工 API |
+| 使用入口 | OpenCode 中的角色 session＋project-lead 或 orchestrate skill（D55），或直接 controller CLI | 有 Orca 時可加上 console／session 整合；ChatGPT 等 UI 只在具備已驗證交接能力時接入，不推定存在派工 API |
 | Controller | 狀態／交接／版本驗證、gates、findings、budget、允許動作；單次 CLI 呼叫 | 核心依賴抽象 adapter，不讀 Orca 專有 IDs 作必填條件，也不直接用模型回答取代 gate 計算 |
 | Agent runtime | OpenCode adapter 建立、查詢與恢復獨立 sessions，讀取原生 messages／結果 | Orca 派工、Codex CLI、Claude Code 為可選 adapter；未選用的接入缺失或斷線不阻斷 OpenCode 路徑 |
 | Provider／model | 每個角色有明確 provider、requested model、實際 model 證據 | 選 Claude model 不要求 Claude Code；選 OpenAI model 不要求 Codex CLI。精確模型與帳戶能力另查，不默默 fallback |
@@ -90,7 +90,7 @@ OpenCode 的 skills 與 session 接入研究見 [runtime 查核](../research/202
 | --- | --- | --- |
 | Mission／intent | 為誰解決什麼問題、目標、範圍與業務成功條件 | Project Lead＋使用者；選 feature 與 Replanning 使用 |
 | CONTEXT／domain | 標準用語、概念區別及領域邊界 | Project Lead；所有角色在相關領域工作前引用 |
-| Project spec | 跨 feature 的行為規則、責任與不變條件 | Project Lead；feature spec、design、review 共同引用 |
+| Project spec | 系統目前已實作並被接受的行為，包含已成立的共用限制；只由 archive 寫入（D58） | archive 寫入；feature spec、design、review 共同引用 |
 | Architecture／tech | 元件責任、主要資料流、技術選擇與設計限制 | Project Lead；Implementer 與 Reviewer 引用 |
 | Roadmap／milestones | 成果節點、完成條件、feature 切分與依賴順序 | Project Lead＋使用者；依 D55 由 project-lead 提出下一步、使用者選定 |
 | 工程／驗證基準 | 適用工程規則、setup／build／test 與必要 CI | 引用 repo 規範、scripts／CI，避免維護重複副本 |
@@ -160,4 +160,4 @@ Skills 管工作方法；工具執行讀寫與查詢；controller 核對版本�
 - 1.4.209 的舊 probes 保留其歷史結論；新版本仍需重驗 repo placement、worker 生命周期、Reviewer 隔離、crash／reconcile 與 GitHub 發布。Help 或 model catalog 可用不等於 V4／E2E 通過。
 - 預設 runtime 依 D38 為 OpenCode。D40 舊 design／tasks／validation 曾核准並實作；D41／D42 與 Herdr 新方向仍需 [AC／findings 對照](scope-reconciliation.md)、新版 design／plan、獨立 review 及適用的 D11 確認。不同 runtime／profile 的實證不能互相替代。
 
-工作順序維持 D33：先在 orca-delivery 測通這套 harness，再用 cross-node-file-transfer 匯入既有基準、從初始化驗完整交付。既有 gigaxfer／P03 PR 保留暫緩。
+工作順序依 D56 調整 D33：cross-node-file-transfer 的 Project 層現在開始、匯入既有基準；第一個真正的 feature 等 orchestrate 可用後，從 feature loop 驗完整交付。既有 gigaxfer／P03 PR 保留暫緩。

@@ -5,17 +5,21 @@ context: |
   All artifacts must be written in Traditional Chinese.
   Keep OpenSpec structural headings and SHALL/MUST keywords in English.
 
-# Per-artifact rules (D54)
+# Per-artifact rules (D54, D57-D59)
 rules:
   proposal:
     - "Written by the Project Lead. Besides Why, What Changes, Capabilities and Impact, include a 「不做」 list (non-goals) and a 「待決與依賴」 section (open questions, dependencies, whether each blocks Design, owner)."
-    - "Record the human's 「可進入 Design」 confirmation in a short section: who, when, their words, and the confirmed version."
+    - "Record the human's 「可進入 Design」 confirmation in a short section: who, when, their words, and the confirmed version. When one person holds both the Lead and Feature Builder roles, write instead that the confirmation is folded into the design-and-plan approval (D59)."
   specs:
     - "One capability is a set of behaviours that change together, not a component, page, or feature. Cross-feature constraints form their own capability."
     - "Requirement IDs use one prefix per capability (for example ING-01); each Scenario is an acceptance condition with its own ID (for example AC-I01). IDs are never reused and do not change on archive."
     - "Give each requirement its main scenario and the exception scenarios that matter: missing data, duplicates, timeouts, partial failure."
+    - "openspec/specs/ holds only implemented and accepted behaviour and is written only by archive (D58). Check the requirement input for cross-feature constraints that touch this change's behaviour; bring in any not yet in openspec/specs/ with ADDED, and extend existing ones with MODIFIED."
   design:
     - "Owned by the Implementer. Non-goals and open requirement questions stay in proposal.md; only record design goals and design questions here."
+    - "Each affected repo gets one reviewable PR (D61). If a part can be accepted on its own, or a repo's PR is too large to review, propose splitting it into another feature with its own change (D57)."
+  tasks:
+    - "Owned by the Implementer. In a multi-repo product, each task names the repo it changes (D61). Each task fits one session and needs no ticket. Commit per task (one or a few commits, each green). After each task an independent reviewer (different model, new session) reviews its commits; this does not replace G2 (D57)."
 
 # Add custom rules for specific artifacts.
 # Example:

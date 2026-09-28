@@ -9,7 +9,7 @@
 | 層級 | 輸入 | 分析深度與下一步 |
 | --- | --- | --- |
 | Project | 初始問題／希望改善的結果、已知限制、repo 與既有需求／設計 | 形成專案目標、責任邊界、核心情境與共用需求；足以進入 high-level design，再安排 roadmap／milestones 與 feature 候選，不預先細化所有 features |
-| Feature | 選定的 feature、所屬 milestone、適用 project baseline、既有設計限制與依賴 | 聚焦本次可獨立驗收切片，形成行為、重要例外及 AC；必要高層設計由 Project Lead 補足，再交 Implementer 做 detailed design／plan |
+| Feature | 選定的 feature、所屬 milestone、適用 project baseline、既有設計限制與依賴 | 聚焦本次 feature（每個受影響的 repo 一個審得動的 PR），形成行為、重要例外及 AC；必要高層設計由 Project Lead 補足，再交 Implementer 做 detailed design／plan |
 
 SA 是分析活動，Spec 是分析成果；不要求各自建立一份重複文件。Roadmap 是專案交付路徑，milestone 是其中可驗證的成果節點，feature 是達成果所需的可交付能力。順序為足夠的 project SA → high-level design → roadmap／milestones → 選定 feature 的聚焦 SA／spec；相關活動可依新證據迭代，不把未完成的全部 feature specs 當成排 roadmap 的前置條件。
 
@@ -41,6 +41,8 @@ SA 是分析活動，Spec 是分析成果；不要求各自建立一份重複文
 
 ### 3. 漸進 grill，持續保存共識
 
+- **先搭骨架**：骨架就是第 5 步的七項，依問題描述與研究先寫成草稿，每一格標明「假設」。由上往下的順序是問題與目標 → 範圍與非範圍 → 角色與端到端情境 → 行為與業務規則 → 例外與必要限制 → 驗收條件；假設、依賴與待決隨時記錄。Project 層在第 3–6 項只寫到跨 feature 的深度：從情境拆出能力、關鍵規則、共用限制、milestone 的驗收方向；Feature 層寫到本 feature 的角色與主流程、規則、例外與 AC。已確認的需求（例如現成需求文件裡已確認的部分）直接填入並沿用，只核對適用性、追問差異。
+- **由上往下問**：上一層確認後才問下一層；每個問題都要對回骨架裡的某一格，不問骨架以外的零散細節。
 - 能從 codebase／文件查證的事項自行查；需要業務判斷與取捨才問使用者。
 - 按影響與依賴排序，先目標、scope、系統責任、核心情境及影響驗收的問題，再問其依賴細節。
 - 每輪問 1–3 個相關問題，說明現在需要決定的原因、選項、主要影響與建議，等回答後再展開依賴該決策的下一輪。
@@ -78,10 +80,11 @@ CONTEXT.md 只保存可跨需求沿用的領域語言；本次需求、研究證
 | --- | --- | --- | --- |
 | Why | 問題與目標 | project intent／mission | change 的 `proposal.md` `## Why` |
 | Scope | 範圍與非範圍 | project intent／mission | `proposal.md` `## What Changes` 加「不做」 |
-| Requirements | 角色與情境、行為與規則、例外與限制、驗收條件 | `openspec/specs/<能力>/spec.md` | change 的 `specs/<能力>/spec.md` delta |
+| Requirements | 角色與情境、行為與規則、例外與限制、驗收條件 | 不寫成 spec：需求原文留在需求輸入並記錄來源版本；共用限制在 project intent 列出並指向輸入 | change 的 `specs/<能力>/spec.md` delta |
 | Open items | 假設、依賴與待決 | 決策紀錄／project intent | `proposal.md` 的待決與依賴 |
 
-- **能力的切法**：一個能力是一組會一起改變的行為，不是元件、頁面或 feature。一個 feature 可改多個能力；跨 feature 的共用限制自成一個能力。既有專案先沿用現有章節切法，只拆開明顯混雜的部分，並保存「原章節 → 能力」對照與來源版本。
+- **能力的切法**：一個能力是一組會一起改變的行為，不是元件、頁面或 feature。一個 feature 可改多個能力；跨 feature 的共用限制自成一個能力。既有專案先沿用現有章節切法，只拆開明顯混雜的部分。匯入上游需求時，拆分結果是需求輸入，保存「原章節 → 能力」對照與來源版本，不放進 `openspec/specs/`。
+- **`openspec/specs/` 只放現況**：只由 archive 寫入，新專案開始時為空（D58）。共用限制由第一個讓它成立的 feature 以 ADDED 帶入，之後以 MODIFIED 擴充；每次 Feature SA 都檢查輸入裡有沒有和這次行為相關的共用限制。
 - **ID**：需求 ID 每個能力一個前綴，Scenario 是帶 ID 的 AC；用過不重用，archive 後不變。
 - **非範圍與待決歸 Project Lead**：寫在 proposal，不放 Implementer 負責的 `design.md`。
 - **格式檢查**：以 `openspec validate` 檢查；內容是否正確由人與 Reviewer 判斷。
@@ -114,7 +117,7 @@ Project Lead 在以下條件成立後，提出「SA 可進入 Design」的判斷
 
 確認紀錄寫明誰、何時、原話與確認的版本：feature 記在 proposal 的簡短區段，project 記在決策紀錄。
 
-不必決定全部實作細節，也不以七章填滿作為完成證明。保存判斷與使用者對適用版本的確認；這是需求階段交接，不能取代 D11 的 feature design＋plan 一次開工確認，不增加逐文件／逐 task 簽核。已有適用的 SA 成果及確認時沿用；新證據改變其核心需求才重新釐清。
+不必決定全部實作細節，也不以七章填滿作為完成證明。保存判斷與使用者對適用版本的確認；這是需求階段交接，不能取代 D11 的 feature design＋plan 一次開工確認，不增加逐文件／逐 task 簽核。Lead 與 Feature Builder 由同一人擔任時，feature 的 SA 確認併入開工確認：spec、design、plan 一起看一次（D59）；交接包註明這一點。已有適用的 SA 成果及確認時沿用；新證據改變其核心需求才重新釐清。
 
 交接摘要至少包含：
 
@@ -129,32 +132,22 @@ Project SA 交 Project Lead 進行 high-level design 與 roadmap；Feature SA �
 
 ## Roadmap 怎麼規劃
 
-Roadmap 是持續演化的文件：milestone 是可展示的成果節點，feature 是達成它的交付能力，切片是一個可獨立驗收、對應一個 PR 的交付單位。業界做法與出處見 [Roadmap 規劃參考](../references/roadmap-planning.md)。
+Roadmap 是持續演化的文件，只有兩層：milestone 是可展示的成果節點；feature 是能單獨驗收的交付單位，每個受影響的 repo 一個審得動的 PR（D57、D61）。Task 寫在 feature 的 `tasks.md`，不上 roadmap。業界做法與出處見 [Roadmap 規劃參考](../references/roadmap-planning.md)。
 
-「切細」有三個層次，成本差很多，只有第一層可以提早做：
+寫到多細，成本差很多：
 
-| 層次 | 內容 | 何時做 |
+| 內容 | 包含 | 何時寫 |
 | --- | --- | --- |
-| Roadmap 切片 | 名稱、一句範圍、依賴 | 當前 milestone 有依據時可以整個切完；沒有依據時先停在 feature |
-| Feature spec | Proposal、spec delta、帶 ID 的 AC | 只做接下來 1–2 片 |
+| Milestone | 成果、完成條件、主要交付能力 | 專案開始時 |
+| Roadmap 上的 feature | 名稱、一句範圍、依賴、對應需求輸入的哪幾條 | 當前 milestone 有依據時可以整個列出；沒有依據時先只寫 milestone 的交付能力 |
+| Feature spec | Proposal、spec delta、帶 ID 的 AC | 排進近期、開 change 時 |
 | 詳細設計與 plan | Design、tasks | 開工前，由 Implementer 做 |
 
-- **狀態**：每個切片標「近期」或「暫定」。近期是接下來要寫 spec 的 1–2 片；暫定只有名稱、範圍和依賴，不寫 spec。暫定升為近期，就開始該片的 SA；SA 確認並備妥交接包，才算可以交給 feature loop。
-- **切多細的依據**：切法有依據（例如既有實作、穩定的設計），而且需要全貌來規劃平行、依賴或 demo 時，當前 milestone 可以整個切到切片層。內容要看前面的結果才知道、設計還不確定，或牽涉未決政策時，保持在 feature 層。後面的 milestone 只列 feature。
-- **何時重切**：每個切片驗收後（和 Retro 一起）、寫 spec 時發現切片太大、依賴改變，以及進入新的 milestone。
+- **細節看穩定度，不看遠近**（D58）：穩定的需求可以先在需求輸入裡寫細；spec delta 的細節、design、tasks 依賴程式現況，到要做時才寫，過時的規格會誤導 Agent。
+- **狀態**：每個 feature 標「近期」或「暫定」。近期是接下來要開 change 的 1–2 個；暫定只有名稱、範圍和依賴，之後可能再拆或合併。暫定升為近期就開 change 做 SA；change 寫好且 `openspec validate` 通過為就緒，不同人擔任時另需 SA 確認。
+- **切多細的依據**：切法有依據（例如既有實作、穩定的設計），而且需要全貌來規劃平行、依賴或 demo 時，當前 milestone 的 feature 可以整個列出。內容要看前面的結果才知道、設計還不確定，或牽涉未決政策時，先只寫 milestone 的交付能力。
+- **何時重切**：每個 feature 驗收後（和 Retro 一起）、寫 spec 或 design 時發現某部分能單獨驗收，或某個 repo 的 PR 大到審不動（拆成多個 feature）、依賴改變，以及進入新的 milestone。
 - **紀錄**：小調整靠 git 歷史；改變範圍、順序或 milestone 的調整，記進決策紀錄並經使用者確認。
-
-## 文件與決策分工
-
-| 內容 | 權威位置 |
-| --- | --- |
-| 跨需求的共同用語 | CONTEXT.md／適用領域 context |
-| 現況、程式依據、差異與查證限制 | Research 文件 |
-| 本次需求、已確認業務規則、AC 與待決事項 | Spec 的實際 binding |
-| 後續技術設計及重要取捨 | Design；需要持久取捨理由時才 ADR |
-| 交付路徑、milestone 成果與 feature 順序 | Roadmap 的實際 binding |
-
-需求決定直接更新 Spec，不為每個回答建立 ADR。既有 ADR 是研究依據；若需重評，先保存原因與影響，交 Design 處理。優先更新既有文件，不強制改名或平行保存同義版本。
 
 ## 工具接合
 

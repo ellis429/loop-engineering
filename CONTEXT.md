@@ -20,11 +20,11 @@ _Avoid_: Engineer 1
 _Avoid_: Engineer 2
 
 **Lead**:
-帶專案的人：給目標與限制、回答需求問題，確認可進入 Design、專案基準與 roadmap，選 feature 並驗收結果。與 Project Lead Agent 協作，決策權在人。
+帶專案的人：給目標與限制、回答需求問題，確認可進入 Design、專案基準與 roadmap，選 feature 並驗收結果。與 Project Lead Agent 協作，決策權在人。這是角色，不是職位，常由同一人兼任 Feature Builder（D59）。
 _Avoid_: 用 Lead 簡稱 Project Lead Agent
 
 **Feature Builder**:
-承接 feature 交接包的人：帶 Implementer Agent 完成詳細設計與 plan，完成或轉交開工確認，並把 feature 推進到 PR Pass。中文常稱工程師。
+承接 feature 交接包的人：帶 Implementer Agent 完成詳細設計與 plan，完成或轉交開工確認，並把 feature 推進到 PR Pass。中文常稱工程師。這是角色，不是職位，可與 Lead 由同一人擔任。
 _Avoid_: Implementer（指人時）
 
 **Orchestrate**:
@@ -32,7 +32,7 @@ _Avoid_: Implementer（指人時）
 _Avoid_: 與 ADE 層的多 agent 溝通機制（例如 Herdr、Orca）混稱 Orchestrator
 
 **交接包**:
-Project Lead 交給 feature loop 的最小輸入：change ID 與檔案版本、SA 確認、專案基準引用、依賴與 base branch、未決問題與決策者、開工與驗收的決策者。不含開工確認；design＋plan 在 feature loop 中產出後才由人確認。
+Project Lead 交給 feature loop 的最小輸入：change ID 與檔案版本、SA 確認（同一人兼任時註明併入開工確認）、專案基準引用、依賴與 base branch、未決問題與決策者、開工與驗收的決策者。不含開工確認；design＋plan 在 feature loop 中產出後才由人確認。
 
 **Model**:
 Agent 執行推理所使用的模型；與負責工具、session 及執行生命週期的 runtime 分開。
@@ -46,8 +46,13 @@ Agent 執行推理所使用的模型；與負責工具、session 及執行生命
 **SA（系統分析）**:
 在 project 或 feature 範圍內，以研究與互動釐清問題、責任、情境、業務規則、限制及驗收的活動；其需求成果保存為 Spec，不另代表一份固定檔案。
 
+**需求輸入**:
+人或上游提供、尚未承諾要做的需求材料，例如對話、上游 spec 或外部需求。SA 記錄來源版本，feature SA 從中挑出本次要做的需求寫進 change（D58）。
+_Avoid_: 把輸入稱為 spec
+
 **Project spec**:
-整體目標、共用契約、系統限制與跨功能保證的權威需求集合。
+系統目前已實作並被接受的行為，位於 `openspec/specs/`，只由 feature 驗收並 merge 後的 archive 寫入；新專案開始時為空。尚未實作的需求在需求輸入或 change 裡（D58）。
+_Avoid_: 把目標需求或上游 spec 放進 project spec
 
 **Feature spec**:
 經 feature 研究與系統分析形成、引用 project baseline 的需求集合，定義單次交付的目的、可觀察行為、範圍、驗收條件、依賴與必要限制。依 D54 位於 OpenSpec change 的 proposal 與 spec delta；ticket 只保存摘要與引用，並連結適用的高層設計。
@@ -65,11 +70,11 @@ Feature 的主要元件責任、對外契約、跨系統資料流與重要技術
 在 feature spec 與高層設計邊界內，決定模組介面、資料結構、失敗恢復與測試策略的設計，作為拆 implementation tasks 的依據。
 
 **Feature ticket**:
-追蹤一個可獨立驗收功能切片的 issue，只保存摘要並引用其 feature spec（依 D54 位於 OpenSpec change）。
+追蹤一個 feature（一個 change，每個受影響的 repo 一個 PR）的 issue：只寫目標、milestone、change 連結與驗收 ID、Blocked by 與狀態，不重寫需求（D57）。不改需求的小工作不開 change，ticket 本身就是規格。
 _Avoid_: Task ticket（用於指稱 feature 時）
 
 **Implementation task**:
-Feature plan 中具有穩定 ID、scope、依賴、AC 對應與驗證條件的派工單位，由 Implementer 校準並維護最終計畫；Project Lead 也可提供初步拆分。多個 tasks 可共同交付一個 feature PR。
+Feature plan 中具有穩定 ID、scope、依賴、AC 對應與驗證條件的派工單位，一個 session 做得完，不開 ticket（D57）；由 Implementer 校準並維護最終計畫；Project Lead 也可提供初步拆分。多個 tasks 可共同交付一個 feature PR。
 
 **Delivery run**:
 針對一個已選定 feature ticket，從規劃、實作到 PR Pass 或需要人工裁決的持續交付紀錄。

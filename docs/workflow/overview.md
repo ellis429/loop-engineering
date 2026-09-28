@@ -1,6 +1,6 @@
 # Orchestrate：整體 Workflow Design v1
 
-> 要了解自己如何帶專案、承接 feature 或設定交付 goal，先讀 [Loop Engineering Workflow 使用者指南](user-guide.md)。本文保留供設計與維護者查閱的流程細節。
+> 要了解自己如何帶專案、承接 feature 或設定交付 goal，先讀 [使用指南](user-guide.md)。本文保留供設計與維護者查閱的流程細節。
 
 > **2026-09-27 範圍更新（D41／D42）**：已確認改為 orchestrate 呼叫薄 controller，完整成品包含多人 Project／Feature 流程及 cross-node-file-transfer 多 feature 示範。見 [Project intent](../project-intent.md)。本文涉及 controller 自動派工、全面恢復及平台責任的舊設計待逐項對照，不能直接據此續派；三 gates、證據／版本及 finding 覆核仍保留。
 
@@ -8,39 +8,39 @@
 
 日期：2026-09-26；2026-09-27 更新 D32／D34 的分析／設計分工、D31 選型狀態、D37 選配部署及建置／後續試用順序。狀態：供使用者 review 的整合設計，尚非已安裝 skill、controller 或批准開工的 implementation plan。
 
-本文是最新整體設計入口。[decisions.md](../decisions.md) 記錄已確認政策；[先前討論草案](history/orchestrate-workflow-draft.md) 保留來源比較與推導；執行契約見 [workflow-contracts.md](contracts.md)。建議與未決事項不因寫入本文就成為已核准政策。現行順序依 D33：先在 orca-delivery 測通 workflow、orchestrate 與預設工具組合，再啟動 cross-node-file-transfer。P03 Retro 仍等使用者開始，既有 PR 接入保留暫緩。
+本文是最新整體設計入口。[decisions.md](../decisions.md) 記錄已確認政策；[先前討論草案](history/orchestrate-workflow-draft.md) 保留來源比較與推導；執行契約見 [workflow-contracts.md](contracts.md)。建議與未決事項不因寫入本文就成為已核准政策。現行順序依 D56（調整 D33）：cross-node-file-transfer 的 Project 層現在開始，第一個真正的 feature 等 orchestrate 可用後走 feature loop。P03 Retro 仍等使用者開始，既有 PR 接入保留暫緩。
 
 部署依 D37／D38：預設 OpenCode 執行 agents，依角色選用 OpenAI／Claude models；Orca、Codex／ChatGPT 相關入口及 Claude Code 為選配。Controller 核心依賴共用 adapter 契約，不要求這些選配程式、帳戶或服務存在。入口、runtime、model 分開；詳見 [OpenCode 預設接法](../harness/overview.md#11-opencode-預設接法與選配入口d37d38)。既有 Orca probes 是該接法的歷史證據，不是通用前置；精確 reviewer model 與各 adapter 能力仍須查核。
 
-## 1. 一個入口、兩個層級
+## 1. 兩個 skill、兩個層級
 
-使用者透過 `orchestrate` 與目前角色協作。這是 skill 的擬議使用語意，不是已存在的 CLI：
+依 D55，Project 層與 Retro 用 `project-lead` skill，單一 feature 的 loop 用 `orchestrate` skill。以下是擬議的使用語意，不是已存在的 CLI：
 
-| 意圖 | 載入哪段流程 | 第一個可驗證結果 |
+| 意圖 | 用哪個 skill、哪段流程 | 第一個可驗證結果 |
 | --- | --- | --- |
-| 建立／接手 project | Project intake，判斷 greenfield / brownfield | Repo、project artifacts、已決定與待決事項的入口 |
-| 準備下一個 feature | Project Lead 讀 roadmap／baseline，做聚焦 research、SA／grill 與必要高層設計 | 可交付 slice 的 spec / high-level design / ticket |
-| 開始指定 feature | Feature start | 適用 baseline、需求、design / plan 及 AC 驗法 |
-| 接入既有 feature / PR | Adopt | 唯讀查核與證據缺口；確認原 owner 交接後才派工 |
-| 查進度／恢復 | Status / resume | 真實 head、workers、gates、待發文與下一個允許 action |
-| 處理 Blocked | Decision | 對指定版本、問題與理由的人工裁決 |
-| 對指定 feature 做 Retro | Retro | 有證據的改善候選；未涵蓋階段明列 |
+| 建立／接手 project | `project-lead`：Project intake，判斷 greenfield / brownfield | Repo、project artifacts、已決定與待決事項的入口 |
+| 準備下一個 feature | `project-lead`：讀 roadmap／baseline，做聚焦 research、SA／grill 與必要高層設計 | 可交付 feature 的 spec / high-level design / ticket |
+| 開始指定 feature | `orchestrate`：Feature start | 適用 baseline、需求、design / plan 及 AC 驗法 |
+| 接入既有 feature / PR | `orchestrate`：Adopt | 唯讀查核與證據缺口；確認原 owner 交接後才派工 |
+| 查進度／恢復 | `orchestrate`：Status / resume；專案層進度由 `project-lead` 回報 | 真實 head、workers、gates、待發文與下一個允許 action |
+| 處理 Blocked | 人裁決；需求或 scope 問題回 `project-lead` | 對指定版本、問題與理由的人工裁決 |
+| 對指定 feature 做 Retro | `project-lead`：Retro（D55 修訂 D28） | 有證據的改善候選；未涵蓋階段明列 |
 
-Project loop 管理方向與交付順序；feature loop 完成單一 PR。每個 feature 同時只有一個 controller 擁有派工權。Skills 提供方法，agents 提出語意判斷，controller 執行版本、狀態、gate 與限制規則。
+Project loop 管理方向與交付順序；feature loop 完成一個 feature 的 PR（多 repo 時每個受影響的 repo 一個，D61）。每個 feature 同時只有一個 controller 擁有派工權。Skills 提供方法，agents 提出語意判斷，controller 執行版本、狀態、gate 與限制規則。
 
 | 層級 | 主要協作者 | 管理範圍 | 與另一層的交接 |
 | --- | --- | --- | --- |
 | **Project Loop** | 使用者 + Project Lead Agent | Research、SA、domain、high-level design、共用基準、roadmap／milestones、features 拆分與準備、人工驗收、Retro / Replanning | 交出 feature spec / AC、high-level design 與 ticket；接回 PR Pass package 供驗收 |
 | **Feature Loop** | Project Lead 準備需求；Implementer Agent 交付、Reviewer Agent 審查；使用者確認開工與裁決 | 聚焦的 feature 分析／spec／高層設計交接，接續 detailed design / plan、TDD tasks、整合 PR、review / CI、fix / re-review | 引用 project baseline；通過三 gates 後交回 PR Pass package |
 
-交接順序是 **Project 準備 feature → Feature 交付 PR Pass → Project 人工驗收、Retro 並準備下一個 feature**。Review / fix 留在 Feature Loop；跨 feature 的改善與 Replanning 回到 Project Loop。這是兩個工作層級，共用 `orchestrate` 入口，不為同一 feature 建立兩套派工 loop。
+交接順序是 **Project 準備 feature → Feature 交付 PR Pass → Project 人工驗收、Retro 並準備下一個 feature**。Review / fix 留在 Feature Loop；跨 feature 的改善與 Replanning 回到 Project Loop。這是兩個工作層級：Project 層用 `project-lead` skill，單一 feature 的 loop 用 `orchestrate`（D55），不為同一 feature 建立兩套派工 loop。
 
 
 Feature-level 的 research／SA／高層設計由 Project Lead 負責，節奏由 Project Loop 安排；交付執行由 Implementer 承接。兩層描述工作範圍，不代表每層只能有一種角色，也不新增第三個 loop。
 
 ## 2. 角色與控制權
 
-依 D23（2026-09-27 修訂），Project Lead 負責專案協調，Implementer 負責功能交付；兩者有責任上的上下游，以 feature spec／AC、依賴與交付成果交接。Project／Feature 表示工作範圍，角色的決策權依授權劃分；共同 `orchestrate` 入口不代表相同決策權，runtime 也不綁定固定的 agent 父子關係。使用者可直接與任一角色協作，不要求每項 feature 工作都先經 Project Lead 轉達。
+依 D23（2026-09-27 修訂），Project Lead 負責專案協調，Implementer 負責功能交付；兩者有責任上的上下游，以 feature spec／AC、依賴與交付成果交接。Project／Feature 表示工作範圍，角色的決策權依授權劃分；依 D55，Project 層用 `project-lead` skill、單一 feature 的 loop 用 `orchestrate` skill；用哪個 skill 都不代表相同決策權，runtime 也不綁定固定的 agent 父子關係。使用者可直接與任一角色協作，不要求每項 feature 工作都先經 Project Lead 轉達。
 
 使用者直接交付已確認的 feature 時，Implementer 可進入 design／plan，並在已核准的 scope／design 內作實作決策；遇到跨 feature 影響或超出授權範圍的問題，交 Project Lead 分析並依 D11 回使用者裁決。若使用者明確授權 Project Lead 依 roadmap 推進指定範圍，它便承擔該範圍的優先順序、協調與委派責任；委派意圖交 controller 核對後實際派發。其角色名稱本身不授予 scope 變更、開工批准或最終接受權。
 
@@ -133,7 +133,7 @@ flowchart TD
 | Roadmap／milestones／人 + Project Lead | 需求、設計、風險與依賴 → 成果節點、features 候選與順序 | Roadmap 是路徑，milestone 是成果節點，feature 是可獨立驗收的交付切片；不把 milestone 直接當 task |
 | Project baseline／Project Lead | 上述已決定內容 → 可引用的 mission、domain、project spec、architecture/tech、roadmap | 保存實際來源／版本與未決事項，不新增 Project-ready 簽核儀式 |
 | Phase 0／Implementer | 需要的 foundation → 可重現 setup/build/test/CI | 以一般交付單位採用適用 gates；既有成果驗證後沿用 |
-| Feature preparation／使用者 + Project Lead | 選定 feature、baseline、依賴 → 聚焦 research／SA／domain 釐清／grill、必要 high-level design → feature spec／AC 與 ticket | 規格有行為、scope、限制、非目標與可驗收條件；重要歧義回人，slice 可由單一 PR 交付，太大先拆 |
+| Feature preparation／使用者 + Project Lead | 選定 feature、baseline、依賴 → 聚焦 research／SA／domain 釐清／grill、必要 high-level design → feature spec／AC 與 ticket | 規格有行為、scope、限制、非目標與可驗收條件；重要歧義回人，feature 在每個受影響的 repo 各一個審得動的 PR（D61），太大先拆 |
 | Acceptance／人 + Project Lead | PR Pass package → accepted 或具理由的退回 | 接受對應版本；缺陷／新需求／規格錯誤走第 7 節路徑 |
 | Retro / Replanning／Project Lead | 人工接受觸發自動整理交付證據與改善候選；必要時提出 baseline/roadmap 調整 | 改善有 owner、驗法與適用版本；落地依既有權限，重大取捨交人 |
 | Next feature／使用者 + Project Lead | Accepted 成果、merge 事實、依賴 → 下一個候選 | Project Lead 提出候選、使用者選定；依 D27 等上游人工接受且 merge 才實作；等待時可準備 spec/design，核對實際採用 baseline |
@@ -142,7 +142,7 @@ Research、SA、domain modeling、grill 與 high-level design 可反覆修正，
 
 ### 4.1 Feature 準備與實作交接
 
-Project Lead 寫 spec 前，先讀 project baseline 與相關 codebase，再依 [SA 契約](project-lead-sa.md) 做本 feature 的聚焦分析，交接所屬 milestone、需求／AC IDs、來源版本及待決影響。SA readiness 由使用者確認，與稍後 D11 的 design＋plan 開工確認分開；已有適用成果與確認就沿用。Spec 定義為何做、必須達成的行為、scope／非目標、AC、依賴與必要技術限制；high-level design 記錄主要元件責任、跨系統契約及重要取捨。兩者可迭代形成，已有適用內容就引用，不要求為每個 feature 重做全部 project 研究。
+Project Lead 寫 spec 前，先讀 project baseline 與相關 codebase，再依 [SA 契約](project-lead-sa.md) 做本 feature 的聚焦分析，交接所屬 milestone、需求／AC IDs、來源版本及待決影響。SA readiness 由使用者確認，與稍後 D11 的 design＋plan 開工確認分開（同一人兼任時依 D59 併入開工確認）；已有適用成果與確認就沿用。Spec 定義為何做、必須達成的行為、scope／非目標、AC、依賴與必要技術限制；high-level design 記錄主要元件責任、跨系統契約及重要取捨。兩者可迭代形成，已有適用內容就引用，不要求為每個 feature 重做全部 project 研究。
 
 | 交接內容 | 預設負責人 | 判斷尺度 |
 | --- | --- | --- |
@@ -254,16 +254,16 @@ Controller 建議為本機 Python CLI，YAML 保存設定、JSON 保存狀態、
 | V2 核心規則 | 舊版本、缺證據、未知 check、未解 blocker 不放行；round 與 retry 分開 | 經 TDD 驗證的 gate evaluator／狀態轉移 |
 | V3 持久化與恢復 | Crash、重複結果、遺失通知、未知發文結果不重派／重貼 | 檔案 store、outbox、reconcile 與故障注入證據 |
 | V4 真實 adapters | 正確 workspace / worker 身份、隔離、結構化結果與生命週期；以無 Orca／Codex CLI／Claude Code 的 OpenCode 路徑為基線，選配接入分別驗證 | 各核准部署的 integration 證據；不可將一種接法的成功當作另一種已通過 |
-| V5 Skills／預設工具組合驗證 | Member 經 orchestrate 入口按預設方法前進，新 session 讀交接能接續、不繞 gates 或啟動第二 loop | 固定版本的工具組合、可安裝 skill、操作說明及可追溯交接證據；mock／真實執行分開 |
-| V6 真實完整試用 | 本 repo 測通後，cross-node-file-transfer 從既有基準匯入、初始化到 feature 交付；含 finding → fix → re-review 與最新版本三 gates | 可追溯的 project／feature 歷程及 PR Pass package／Blocked 證據；舊 P03 接入不是預設前置 |
+| V5 Skills／預設工具組合驗證 | Member 經 project-lead 與 orchestrate 按預設方法前進（D55），新 session 讀交接能接續、不繞 gates 或啟動第二 loop | 固定版本的工具組合、可安裝 skill、操作說明及可追溯交接證據；mock／真實執行分開 |
+| V6 真實完整試用 | 依 D56，cross-node-file-transfer 的 Project 層先從既有基準匯入、初始化；orchestrate 可用後完成 feature 交付；含 finding → fix → re-review 與最新版本三 gates | 可追溯的 project／feature 歷程及 PR Pass package／Blocked 證據；舊 P03 接入不是預設前置 |
 
 先完成 V1 的正式 plan 與一次具體開工確認，再執行程式開發。初始手工研究報告並不證明 V4 已過：先前 Codex native completion、reviewer 工具隔離與新 repo workspace discovery 都有未解缺口。實驗開始前重查現況，參見 [integration-gaps.md](../research/2026-09-25/integration-gaps.md)。
 
-### 10.1 先測通 orca-delivery，再啟動新專案（D33）
+### 10.1 新專案的啟動順序（D33，D56 調整）
 
-已確認順序：**本 repo 收斂並測通 workflow／orchestrate／預設工具組合 → cross-node-file-transfer 匯入既有基準 → Phase 0 → 首個 feature 完整交付 → 人工驗收與 Retro**。本輪記錄此方向，尚未初始化新專案；具體開工確認仍對應 D11 的 design／plan 版本。
+D33 原定順序是：本 repo 收斂並測通 workflow／orchestrate／預設工具組合 → cross-node-file-transfer 匯入既有基準 → Phase 0 → 首個 feature 完整交付 → 人工驗收與 Retro。**D56 調整為**：cross-node-file-transfer 的 Project 層（匯入基準、roadmap）現在開始，專案骨架可由人協調並標明「人工協調」；第一個真正的 feature 等 orchestrate 可用後走 feature loop，再人工驗收與 Retro。具體開工確認仍對應 D11 的 design／plan 版本。
 
-目前工作集中在 orca-delivery：收斂 Q-METHOD，固定各角色／階段的預設方法、版本與 artifact 交接；實作 orchestrate 與 controller／adapters，按 V2–V5 保存測試及真實能力證據。Member 應從同一入口知道目前階段、必要輸入、下一步與待決事項，由流程載入適用技能，無須每次自行組合工具。工具版本及使用限制要可核對，不能靠本機剛好裝了某套 skill 才能重現。
+目前工作集中在 orca-delivery：收斂 Q-METHOD，固定各角色／階段的預設方法、版本與 artifact 交接；實作 orchestrate 與 controller／adapters，按 V2–V5 保存測試及真實能力證據。Member 應從 project-lead（Project 層）或 orchestrate（單一 feature）知道目前階段、必要輸入、下一步與待決事項（D55），由流程載入適用技能，無須每次自行組合工具。工具版本及使用限制要可核對，不能靠本機剛好裝了某套 skill 才能重現。
 
 以下是「測通」的設計檢核方向，具體案例與完成條件納入 implementation plan：
 
@@ -284,7 +284,7 @@ Controller／adapters／orchestrate 是本專案的正式交付範圍，不是�
 
 使用者已提出依本 workflow 開發 controller 本身。首次建置由目前協作者交接 spec／AC 與高層設計，指定的 Opus 5.5 Implementer 承接詳細設計／plan，D11 確認後再實作；獨立 Reviewer 與真實 CI 分開留證。依 D39，本次 bootstrap 先協調 Opus 與 GPT／Codex agents，使用已核對的派工通道，OpenCode 登入不是此階段前置。產品依 D38 維持 OpenCode 預設及其他 runtime 選配；不能依賴尚未完成的 controller 自動完成自身 bootstrap。這次設計文件 review 也不是產品 PR 的 G2。Controller 可執行後再分別驗證其核心、恢復、runtime 接入及自動交付流程，清楚標示由人／協作者協調與由 controller 自動執行的區段。
 
-依 D33 及使用者本輪再次確認，先完成並測通本 repo 的 harness／controller 實作，再以新 workflow 從頭啟動 cross-node-file-transfer，作為完整 Project＋Feature 流程的驗證與操作練習。它沿用適用的既有專案基準，仍有自己的 spec／issue／PR 與新證據；不是先拿新專案代替尚未完成的 controller。控制用假 adapter 或有意設置的失敗案例屬測試，不能冒充真實 feature 的獨立 finding → fix → re-review。真實 review 沒有 finding 時如實記未覆蓋該展示條件。
+D33 原定先測通本 repo 的 harness／controller，再啟動 cross-node-file-transfer；D56 調整為 Project 層現在開始、第一個真正的 feature 等 orchestrate 可用。cross-node-file-transfer 作為完整 Project＋Feature 流程的驗證與操作練習。它沿用適用的既有專案基準，仍有自己的 spec／issue／PR 與新證據；不是先拿新專案代替尚未完成的 controller。控制用假 adapter 或有意設置的失敗案例屬測試，不能冒充真實 feature 的獨立 finding → fix → re-review。真實 review 沒有 finding 時如實記未覆蓋該展示條件。
 
 建議在設計 review 結束後準備可讀 handoff，再 compact 或開新 session：交接已確認／待決事項、artifact 位置與版本、review findings／覆核結果、目前狀態、下一步及授權邊界。Compact 不代表開工批准或 gate 通過；新 session 先讀交接及實際文件，不重問已有適用確認的問題。
 
