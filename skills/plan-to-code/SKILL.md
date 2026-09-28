@@ -26,7 +26,7 @@ Read repository instructions first; they override this skill. Commit and test co
 
 Follow `subagent-driven-development` for the rhythm (one fresh Implementer per task, you as coordinator), with these rules:
 
-- Implementer: a fresh session at the task's planned effort. Its prompt holds the task's row and card from `tasks.md`, the relevant `design.md` sections, the acceptance rows, the owned paths, what is out of scope, and the repository's commit rules.
+- Implementer: a fresh session at the task's planned model and effort. Its prompt holds the task's row and card from `tasks.md`, the relevant `design.md` sections, the acceptance rows, the owned paths, what is out of scope, and the repository's commit rules.
 - Method: `test-driven-development`. Write the tests the plan lists, run each, and save the raw Red (command, output, exit code, commit) before implementing, then the Green. A task that only changes documentation or comments has no Red: the plan states the reason, and the reviewer confirms it. Save evidence outside the tracked tree, for example `.delivery/<id>/<task>/attempt-<n>/`.
 - A test that passes on its first run is not a Red: record it, and show it can fail (break the guarded line, see it fail, restore) or ask why the behaviour already exists.
 - Commits: one logical change per commit, each green, in the repository's format; no AI attribution. A task may have several commits. Tick the task's box in `tasks.md` in the task's last commit, not a separate one.

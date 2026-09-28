@@ -39,7 +39,7 @@ Then write each task, with these rules:
 
 - **No implementation code.** How to implement stays with the Implementer.
 - **Shared test harness first.** If tests need shared fixtures, setup helpers, a CLI entry point or parser, or stubs that return plausible values, make that the first task, with its own tests. Every later Red must be able to reach its assertion. The harness task's own tests assert the entry point's contract (arguments passed through, output format), and their Reds fail on those assertions too; a test helper that catches the usage error lets them get there. When no harness is needed, say why in `tasks.md`.
-- **Every task lists:** ID; what it delivers; owned paths per repo, shared files included; blocking edges with the interface taken from each; acceptance IDs covered; commit subject; Implementer and Reviewer effort; and its tests. For each test: name, the observable behaviour asserted, **the assertion its Red must fail on**, the expected Green, and the command. Tests are listed as behaviour at the entry point, not as test code: the Implementer writes them one at a time and may organise them differently, but not change what they assert.
+- **Every task lists:** ID; what it delivers; mode and Implementer model (D72); owned paths per repo, shared files included; blocking edges with the interface taken from each; acceptance IDs covered; commit subject; Implementer and Reviewer effort; and its tests. For each test: name, the observable behaviour asserted, **the assertion its Red must fail on**, the expected Green, and the command. Tests are listed as behaviour at the entry point, not as test code: the Implementer writes them one at a time and may organise them differently, but not change what they assert.
 - **Acceptance verification:** for each acceptance ID, how and where it is verified, what passing means, and where the evidence goes.
 - **Scope, environment, risks and execution limits** are written down.
 
@@ -50,6 +50,17 @@ Effort per task (D69):
 | Docs or configuration only | medium | high |
 | Ordinary behaviour, even when it touches several files | high | high |
 | A mistake could lose or corrupt data, break a concurrency or failure-recovery guarantee, or weaken security; or the task covers six or more acceptance rows | xhigh | xhigh |
+
+Mode per task (D72), written on the task with its effort:
+
+| The task | Plan goes down to | Implementer model |
+| --- | --- | --- |
+| Default | Design, the interfaces with their invariants, and the tests | Strong |
+| All five hold: deciding is harder than writing, the task is separable, tests and checks catch mistakes, much more writing than deciding, common code | Also the change points: files, functions, signatures, edge cases, tests to run; never line-by-line code | May be cheaper |
+| Legacy code, or domain rules hidden in the code | Design; research reads the code first | Strong; without tests over the paths it changes, the first task adds characterization tests (current behaviour recorded by running the code, not inferred) |
+| Mechanical work under tests: rename, boilerplate, migrate batches | Nothing beyond the task line | Cheaper |
+
+The Reviewer is always a strong model from another vendor (D52).
 
 Red flags, each a sign the plan is not ready:
 

@@ -481,7 +481,7 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
      - [ ] 每個 task 列出要寫的測試，每個測試寫明斷言、Red 應失敗的位置、Green 預期與指令
      - [ ] 共用的測試骨架排在第一個 task；不需要時寫明理由
      - [ ] 每條 AC 都有驗法
-     - [ ] 每個 task 標出 Implementer 與 Reviewer 的 effort
+     - [ ] 每個 task 標出模式、Implementer 的模型，以及 Implementer 與 Reviewer 的 effort（預設強模型；見參考手冊的[模型怎麼選](reference.md#模型怎麼選)）
      - [ ] scope、必要環境、風險與執行限制都寫明
      - [ ] 另一個模型審過計畫，結果 clean，紀錄在 change 裡
 4. **◆確認開工**
