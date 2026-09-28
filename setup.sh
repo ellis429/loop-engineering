@@ -113,20 +113,16 @@ install_skills() {
   done
 }
 
-# Fingerprint of a folder: every path with its permission string, symlink target and content.
-# Fails (non-zero) when any entry cannot be read or a name contains a newline, so the caller
-# treats the folder as changed instead of trusting a partial fingerprint.
+# Fingerprint of a folder: every path with its permission string, symlink target and content, as a
+# NUL-separated byte stream so names and targets with newlines are fingerprinted exactly. Non-zero when
+# any entry cannot be read; the caller then discards the output.
 tree_hash() {
-  local nl
-  nl="$(printf '\nx')"; nl="${nl%x}"
   (cd "$1" || exit 1
-   [ -z "$(find . -name "*$nl*" -print)" ] || exit 1
-   find . -print | LC_ALL=C sort | while IFS= read -r p; do
+   find . -print0 | LC_ALL=C sort -z | while IFS= read -r -d '' p; do
      mode="$(ls -ld "$p")" || exit 1
-     mode="${mode%% *}"
-     if [ -L "$p" ]; then target="$(readlink "$p")" || exit 1; printf '%s %s %s\n' "$mode" "$p" "$target"
-     elif [ -d "$p" ]; then printf '%s %s\n' "$mode" "$p"
-     else sum="$(shasum < "$p")" || exit 1; printf '%s %s %s\n' "$mode" "$p" "${sum%% *}"
+     printf '%s\0%s\0' "${mode%% *}" "$p"
+     if [ -L "$p" ]; then readlink "$p" || exit 1; printf '\0'
+     elif [ -f "$p" ]; then shasum < "$p" || exit 1
      fi
    done) | shasum | cut -d' ' -f1
 }
@@ -182,7 +178,7 @@ install_project() {
       if [ -e "$dest/$name" ] && [ "$FORCE" -eq 0 ]; then
         # An unreadable manifest or fingerprint counts as no record: the folder is skipped, never replaced.
         recorded="$(awk -v n="$name" '$1 == n { print $2 }' "$dest/$MANIFEST" 2>/dev/null || true)"
-        current="$(tree_hash "$dest/$name" 2>/dev/null || true)"
+        if ! current="$(tree_hash "$dest/$name" 2>/dev/null)"; then current=""; fi
         if [ -z "$recorded" ] || [ -z "$current" ] || [ "$current" != "$recorded" ]; then
           echo "SKIP     $dest/$name (not an unchanged copy from this script; use --force)"; continue
         fi
@@ -190,6 +186,10 @@ install_project() {
       TARGET="$dest/$name"
       STAGE="$(mktemp -d "$dest/.setup-stage.XXXXXX")"
       cp -R "$src" "$STAGE/$name"
+      # Fingerprint the new copy before the old one is touched.
+      if ! hash="$(tree_hash "$STAGE/$name")"; then
+        echo "cannot fingerprint the new copy of $name; nothing was replaced" >&2; exit 1
+      fi
       if [ -e "$TARGET" ]; then
         BACKUP="$(mktemp -d "$dest/.setup-old.XXXXXX")"
         mv "$TARGET" "$BACKUP/$name"
@@ -198,7 +198,6 @@ install_project() {
         echo "failed to install $TARGET" >&2; exit 1
       fi
       cleanup_project
-      hash="$(tree_hash "$dest/$name")" || { echo "cannot fingerprint $dest/$name" >&2; exit 1; }
       entries="$entries$name $hash
 "
       echo "copied   $dest/$name"
