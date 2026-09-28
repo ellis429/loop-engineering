@@ -30,13 +30,16 @@ Record the version set: every pull request with its base and head commit. Then, 
 - **G2:** a reviewer that is a different model from every implementer of this feature (D52; a new session or another effort of the same model does not count), read-only, in a fresh session, reviews the whole set against the spec, `design.md` and `tasks.md`. Findings carry IDs and are blocking or not.
 - **G3:** the required CI checks at each pull request's head. Pending, cancelled, skipped or unknown is not success.
 
-Both verdicts must be for the recorded version set. They go stale when a head changes, a base moves (the default branch advanced), or the spec or `design.md` they were judged against changes. Stale verdicts are run again. If this happens after PR Pass but before acceptance, set the ticket back to `開發中` with the reason in 下一步, mark the old PR Pass comment superseded, and run steps 1–5 again.
+Both verdicts must be for the recorded version set. They go stale when a head changes, a base moves (the default branch advanced), or the spec or `design.md` they were judged against changes.
+
+- A changed head or base: run the gates again. If this happens after PR Pass but before acceptance, set the ticket back to `開發中` with the reason in 下一步, mark the old PR Pass comment superseded, and run steps 1–5 again.
+- A changed spec or design: stop. The spec change goes through `feature-to-spec` and its confirmation, a design or plan change through `spec-to-plan` and a new start approval; only then are the gates run again.
 
 ## 4. Fix loop, at most three rounds
 
 Collect every G2 blocking finding and G3 code failure of one version set into one batch. `plan-to-code` fixes the batch, each fix with a Red tied to its finding; push; record the new version set; run G1, G2 (resume the same reviewer session) and G3 again. A round is one batch.
 
-- **Beyond the plan:** a fix that needs a new task or paths no task owns goes back to `spec-to-plan`: amend `tasks.md`, get the plan review and a start approval for the change, then `plan-to-code`.
+- **Beyond the plan:** a fix that needs a new task, paths no task owns, or a change to a task's behaviour, tests, acceptance mapping or design goes back to `spec-to-plan`: amend the plan, get a clean plan review and a start approval for the change, then `plan-to-code`.
 - **Infrastructure failures** (runner lost, network, quota) are not code rounds: retry each at most twice, recorded separately; an unknown outcome is saved and stops the loop.
 - **Disputed finding:** send the rebuttal and its evidence to the independent reviewer once; only a blocking finding still disputed after that goes to the human.
 - **Limit:** after three rounds without passing, stop: set the ticket to `Blocked：<reason>`, set 下一步 to the human who decides, post what was tried with evidence, and hand over.

@@ -26,6 +26,7 @@ Follow `subagent-driven-development` for the rhythm (one fresh Implementer per t
 - A test that passes on its first run is not a Red: record it, and show it can fail (break the guarded line, see it fail, restore) or ask why the behaviour already exists.
 - Commits: one logical change per commit, each green, in the repository's format; no AI attribution. A task may have several commits. Tick the task's box in `tasks.md` in the task's last commit, not a separate one.
 - A requirement that looks wrong or missing is not implemented: the Implementer reports it, and you stop that task and send it to the Project Lead (`feature-to-spec` revises the feature).
+- A fix that would change the task's behaviour, tests, acceptance mapping or design beyond the approved plan is not a fix: send it to `spec-to-plan`, even when the paths are the same.
 
 ## 2. Accept the attempt yourself
 
@@ -48,7 +49,7 @@ Sort each finding:
 - **before PR:** fix before `to-pr`.
 - **ticket:** out of this feature's scope; open a ticket with the evidence (authorised) and link it.
 
-A fix is a new attempt with a Red tied to the finding, made as new commits on top: never amend, squash or rebase a commit that was reviewed or accepted, so the reviewed version and its evidence stay reachable. Add each fix's tests to the task's test list in `tasks.md` in the same commit. Then re-review in the same reviewer session; the three-attempt limit counts fixes too. Post the review outcome as one ticket comment per task (D60): reviewer model and effort, when, the reviewed range (base and head commits), each finding with its sorting and resolution, and where the evidence is.
+A fix is a new attempt with a Red tied to the finding, made as new commits on top: never amend, squash or rebase a commit that was reviewed or accepted, so the reviewed version and its evidence stay reachable. Add each fix's tests to the task's test list in `tasks.md` in the same commit. Then re-review in the same reviewer session; the three-attempt limit counts fixes too. Post the review outcome as one ticket comment per task (D60): who posts it, the reviewer model and effort, when, the reviewed range (base and head commits), each finding with its sorting and resolution, and the evidence others can open: the Red and Green lines pasted with their commit, since local evidence paths are not reachable.
 
 ## 4. Stop
 
