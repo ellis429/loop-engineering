@@ -9,28 +9,23 @@
 ## 大圈包小圈
 
 ```mermaid
-flowchart TB
-  subgraph Project["外圈 Project｜逐步完成專案"]
-    P["定方向<br/>Project SA → 高層設計"]
-    R["排 Roadmap<br/>選下一個 Feature"]
-    subgraph Feature["內圈 Feature｜完成這一個功能"]
-      S["寫清楚需求"]
-      B["設計與實作"]
-      V{"人驗收"}
-      C["收尾"]
-      S --> B --> V
-      V -->|退回修正| B
-      V -->|接受| C
+flowchart LR
+  subgraph Project["外圈 Project：決定下一個做什麼"]
+    direction LR
+    A1["Analyze"] --> A2["Architect"] --> A3["Plan"]
+    subgraph Feature["內圈 Feature：每個 Feature 一圈"]
+      direction LR
+      F1["Define"] --> F2["Deliver"] --> F3{"Accept"}
+      F3 -->|退回| F2
     end
-    P --> R
-    R --> S
-    C -->|回顧、調整 Roadmap，再選下一個| R
+    A3 -->|選下一個 Feature| F1
+    F3 -->|Retro & Replan| A3
   end
   style Project fill:#eff6ff,stroke:#2563eb,color:#172554
   style Feature fill:#fff7ed,stroke:#c2410c,color:#431407
 ```
 
-Project 外圈先釐清為什麼做、做到哪裡算完成，再安排 Roadmap，每次選一個 Feature。每個 Feature 都走自己的內圈：釐清需求、設計實作、人工驗收；退回就修正，接受後收尾。完成的需求在合併後成為系統現況，交付經驗帶回外圈，調整後續安排。Agent 負責大部分工作，人負責關鍵確認。
+外圈 Project 決定下一個做什麼：**Analyze**（為什麼做、做到哪算完成）→ **Architect**（高層設計）→ **Plan**（Roadmap），每次選一個 Feature 進入內圈。內圈 Feature 把它做到驗收：**Define**（寫清楚 spec）→ **Deliver**（設計、實作、審查）→ **Accept**（人工驗收，退回就回 Deliver 修正）。接受後，完成的需求成為系統現況，**Retro & Replan** 把經驗帶回外圈調整 Roadmap。Agent 做大部分工作，人在關鍵點確認。
 
 ## 誰做什麼
 
@@ -57,21 +52,23 @@ Project 外圈先釐清為什麼做、做到哪裡算完成，再安排 Roadmap�
 
 ## 外圈：Project
 
+大圈的三格放大後：**Analyze** 是 A1，**Architect** 是 A2，**Plan** 是 A3。
+
 ```mermaid
-flowchart TB
-  A1["A1 Project SA<br/>為什麼做、做到哪算完成"] --> G1(["◆① 可進入設計<br/>Lead"])
-  G1 --> A2["A2 高層設計<br/>用什麼架構與技術"]
-  A2 --> A3["A3 Roadmap<br/>Milestone 與各自的 Feature"]
-  A3 --> G2(["◆② 專案基準與 roadmap<br/>Lead"])
-  G2 --> G3(["◆③ 選下一個 Feature<br/>Lead"])
-  G3 --> IN[["進入內圈：交付這個 Feature"]]
-  IN -->|接受後回顧| A3
+flowchart LR
+  A1["A1 Analyze<br/>Project SA"] --> G1(["① 可進入設計<br/>Lead"])
+  G1 --> A2["A2 Architect<br/>高層設計"]
+  A2 --> A3["A3 Plan<br/>Roadmap"]
+  A3 --> G2(["② 專案基準與 roadmap<br/>Lead"])
+  G2 --> G3(["③ 下一個 Feature<br/>Lead"])
+  G3 --> IN[["內圈：Define → Deliver → Accept"]]
+  IN -->|Retro & Replan| A3
   classDef gate fill:#fdf0ea,stroke:#eb6c36,color:#2d3142
   class G1,G2,G3 gate
   style IN fill:#fff7ed,stroke:#c2410c,color:#431407
 ```
 
-### A1 Project SA
+### A1 Analyze：Project SA
 
 **目的**：確定為什麼做、做到哪裡算成功，作為後面所有取捨的依據。
 
@@ -114,7 +111,7 @@ flowchart TB
 
 骨架怎麼搭、怎麼由上往下問，見參考的[需求是怎麼問出來的](reference.md#需求是怎麼問出來的)。
 
-### A2 高層設計
+### A2 Architect：高層設計
 
 **目的**：定下元件責任、主要資料流與技術選擇，roadmap 才切得出能單獨驗收的 Feature。
 
@@ -144,7 +141,7 @@ flowchart TB
 - [ ] 每個能力都有負責的元件
 - [ ] 技術選擇有依據，重要取捨有 ADR
 
-### A3 Roadmap
+### A3 Plan：Roadmap
 
 **目的**：決定先做什麼，讓每次只交出一個 Feature。
 
@@ -181,25 +178,36 @@ flowchart TB
 
 ## 內圈：一個 Feature
 
+小圈的三格放大後：**Define** 是 B1–B3，**Deliver** 是 B4–B6，**Accept** 是 B7–B8。
+
 ```mermaid
-flowchart TB
-  B1["B1 開 Feature<br/>建立 spec 位置與 ticket"] --> B2["B2 需求與 AC"]
-  B2 --> G4(["◆④ spec 清楚<br/>Lead"])
-  G4 --> B3["B3 交接給工程師"]
-  B3 --> B4["B4 設計與計畫"]
-  B4 --> G5(["◆⑤ 開工<br/>被授權的人"])
-  G5 --> B56["B5–B6 逐 task 實作與審查<br/>→ PR"]
-  B56 --> G6(["◆⑥ 接受或退回<br/>驗收人"])
-  G6 -->|退回修正| B56
+flowchart LR
+  subgraph SDEF["Define"]
+    direction TB
+    B1["B1 Open<br/>開 Feature"] --> B2["B2 Specify<br/>需求與 AC"] --> G4(["④ spec<br/>Lead"]) --> B3["B3 Hand off<br/>交接"]
+  end
+  subgraph SDEL["Deliver"]
+    direction TB
+    B4["B4 Design<br/>設計與計畫"] --> G5(["⑤ 開工<br/>被授權的人"]) --> B5["B5 Build<br/>逐 task 實作"] --> B6["B6 Verify<br/>PR、審查、CI"]
+  end
+  subgraph SACC["Accept"]
+    direction TB
+    G6(["B7 Accept<br/>⑥ 驗收人"]) --> B8["B8 Close<br/>歸檔"]
+  end
+  B3 --> B4
+  B6 --> G6
+  G6 -->|退回修正| B5
   G6 -->|需求要改| B2
-  G6 -->|接受| B8["B8 收尾<br/>回到外圈"]
   classDef gate fill:#fdf0ea,stroke:#eb6c36,color:#2d3142
   class G4,G5,G6 gate
+  style SDEF fill:#fafafa,stroke:#b8bfcc
+  style SDEL fill:#fafafa,stroke:#b8bfcc
+  style SACC fill:#fafafa,stroke:#b8bfcc
 ```
 
 Lead 同時擔任工程師時，④ 併入 ⑤：spec、設計、計畫一起確認一次。不同人擔任時分開，Lead 先確認 spec，工程師才開始設計。
 
-### B1 開 Feature
+### B1 Open：開 Feature
 
 **目的**：讓這個 Feature 有自己的 spec 位置與追蹤入口。
 
@@ -227,7 +235,7 @@ Lead 同時擔任工程師時，④ 併入 ⑤：spec、設計、計畫一起確
 - [ ] `openspec/changes/<id>/` 已建立
 - [ ] ticket 連到 spec，依賴寫清楚
 
-### B2 Feature SA
+### B2 Specify：Feature SA
 
 **目的**：把這個 Feature 做到什麼算完成，寫成可以驗收的 spec。
 
@@ -281,7 +289,7 @@ Lead 同時擔任工程師時，④ 併入 ⑤：spec、設計、計畫一起確
 
 需求從哪來、spec 怎麼寫，見參考的[需求放在哪](reference.md#需求放在哪)與[Spec 怎麼寫](reference.md#spec-怎麼寫放哪)。
 
-### B3 交接
+### B3 Hand off：交接
 
 **目的**：讓工程師不必回頭問，就能開始設計。
 
@@ -313,7 +321,7 @@ Lead 同時擔任工程師時，④ 併入 ⑤：spec、設計、計畫一起確
 
 各欄位的定義見參考的[交接](reference.md#交接)。
 
-### B4 Design＋plan（工程師）
+### B4 Design：設計與計畫（工程師）
 
 **目的**：決定怎麼做、拆成哪些 task。
 
@@ -348,7 +356,7 @@ Lead 同時擔任工程師時，④ 併入 ⑤：spec、設計、計畫一起確
 
 > 請用 orchestrate 承接〈Feature〉。先由 Implementer 讀取它引用的專案基準、spec／AC 與高層設計，提出 detailed design、可執行 tasks 及 AC 驗證方式，交我確認後開工。保留 worktree 與證據；終點是 PR Pass，等待人驗收。
 
-### B5 實作（工程師）
+### B5 Build：實作（工程師）
 
 **目的**：一個 task 一個 task 把行為做出來，每一步都能驗證。
 
@@ -379,7 +387,7 @@ Lead 同時擔任工程師時，④ 併入 ⑤：spec、設計、計畫一起確
 - [ ] 每個行為 task 都有有效的 Red 與 Green；純文件或註解的 task 標 TDD N/A，附理由與檢查，並由獨立 Reviewer 確認
 - [ ] 局部 review 的 blocking 已修好並覆核
 
-### B6 PR（工程師）
+### B6 Verify：PR、審查與 CI（工程師）
 
 **目的**：用獨立審查與 CI 證明整個 Feature 符合 spec。
 
@@ -414,7 +422,7 @@ Lead 同時擔任工程師時，④ 併入 ⑤：spec、設計、計畫一起確
 
 Gates 的證據要求、review-fix loop 與 Blocked，見參考的[做出來：工程師的細節](reference.md#做出來工程師的細節)。
 
-### B7 驗收、merge
+### B7 Accept：驗收與 merge
 
 **目的**：由人判斷結果是不是真的是要的。
 
@@ -443,7 +451,7 @@ Gates 的證據要求、review-fix loop 與 Blocked，見參考的[做出來：�
 - [ ] 每條 AC 都有證據
 - [ ] PR Pass、接受、merge 分開記錄
 
-### B8 收尾
+### B8 Close：歸檔與回顧
 
 **目的**：把做完的需求變成系統現況，並用這次的經驗調整後面的計畫。
 
