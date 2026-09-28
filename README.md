@@ -14,7 +14,7 @@
 ./setup.sh
 ```
 
-把本 repo 用到的 skills（我們自己的 `project-lead`、`feature-to-spec`、`research-codebase`，以及拉進 `skills/third-party/` 的 Matt Pocock 與 Superpowers skills）用 symlink 裝到 `~/.claude/skills`、`~/.agents/skills`、`~/.codex/skills`，並檢查 OpenSpec CLI 的版本。已經存在的資料夾不會被動到；`--force` 會改指向其他地方的 link，`--update` 照 [SOURCES.md](skills/third-party/SOURCES.md) 的 commit 重新拉外部 skills。
+把本 repo 用到的 skills（我們自己的 `project-lead`、`feature-to-spec`、`spec-to-plan`、`plan-to-code`、`to-pr`、`research-codebase`，以及拉進 `skills/third-party/` 的 Matt Pocock 與 Superpowers skills）用 symlink 裝到 `~/.claude/skills`、`~/.agents/skills`、`~/.codex/skills`，並檢查 OpenSpec CLI 的版本。已經存在的資料夾不會被動到；`--force` 會改指向其他地方的 link，`--update` 照 [SOURCES.md](skills/third-party/SOURCES.md) 的 commit 重新拉外部 skills。
 
 產品的 root repo 也可以直接帶著 skills，clone 下來就能用，不必另外安裝：
 
