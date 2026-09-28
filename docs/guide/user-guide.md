@@ -163,7 +163,7 @@ flowchart LR
 
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
-| 1 | Agent | 提出設計：<br>• 有既有設計：沿用，標出要改的地方<br>• 沒有：提出 2–3 個方案與比較 | skill [project-lead](../../skills/project-lead/SKILL.md) | 高層設計（[範例](https://github.com/yschiang/cross-node-root/blob/main/docs/design/README.md)） |
+| 1 | Agent | 提出設計：<br>• 有既有設計：沿用，標出要改的地方<br>• 沒有：提出 2–3 個方案與比較 | skill [project-lead](../../skills/project-lead/SKILL.md) | 高層設計（範例：[system-design.md](https://github.com/yschiang/cross-node-root/blob/main/docs/design/system-design.md)，沿用自 [cross-dc-xfer 的設計](https://github.com/yschiang/cross-dc-xfer/tree/main/docs/design)；[文件清單](https://github.com/yschiang/cross-node-root/blob/main/docs/design/README.md)） |
 | 2 | Project Lead | 在方案之間做選擇 | — | 決策紀錄 |
 | 3 | Agent | 把重要取捨寫成 ADR | skill [project-lead](../../skills/project-lead/SKILL.md) | ADR（[範例](https://github.com/yschiang/cross-node-root/tree/main/docs/adr)） |
 | 4 | Project Lead | 看設計摘要，◆確認設計 | — | 決策紀錄 |
@@ -171,7 +171,7 @@ flowchart LR
 **每一步怎麼做、怎樣算完成**
 
 1. **提出設計**
-   - 怎麼做：比較每個方案的優缺點，並給建議。
+   - 怎麼做：有既有設計時，把它複製進 `docs/design/` 與 `docs/adr/`，記下來源與版本，只標出要改的地方；沒有時，比較每個方案的優缺點並給建議。
    - 完成：`docs/design/` 的高層設計寫齊
      - [ ] 元件與責任：每個能力都對到一個元件
      - [ ] 主要資料流
