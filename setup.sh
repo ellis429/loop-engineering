@@ -7,7 +7,8 @@
 #   ./setup.sh --update   re-fetch skills/third-party at the commits in skills/third-party/SOURCES.md
 #   ./setup.sh --project <repo>
 #                         copy the workflow's skills into <repo>/.claude/skills and <repo>/.agents/skills,
-#                         so sessions started in that repository have them without any install
+#                         so sessions started in that repository have them without any install; also places
+#                         templates/AGENTS.md and CLAUDE.md there when the repository has none
 #
 # Existing real folders are never touched. Superpowers skills are not linked into ~/.claude/skills
 # when the Superpowers Claude Code plugin is enabled, to avoid duplicates.
@@ -239,6 +240,16 @@ install_project() {
       echo "copied   $dest/$name"
     done
   done
+  # Agent instructions: placed only where the repo has none; an existing file (or symlink) is the repo's own.
+  for name in AGENTS.md CLAUDE.md; do
+    if [ -e "$repo/$name" ] || [ -L "$repo/$name" ]; then
+      echo "SKIP     $repo/$name (exists; kept as is)"
+    else
+      cp "$ROOT/templates/$name" "$repo/$name"
+      echo "copied   $repo/$name"
+    fi
+  done
+  [ ! -f "$repo/AGENTS.md" ] || ! grep -q '〈待填' "$repo/AGENTS.md" || echo "NOTE     fill in the 〈待填〉 parts of $repo/AGENTS.md"
 }
 
 while [ $# -gt 0 ]; do
