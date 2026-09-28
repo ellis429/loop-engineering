@@ -77,7 +77,7 @@ Agent 做大部分工作；人在六個 ◆ 確認點做決定：
 每個活動一張卡：一句**目的**，一張表，表下再逐步寫**怎麼做**，**完成**寫成勾選清單。表照做事的順序排：
 
 - **Step**：第幾步。
-- **Who**：誰做：Project Lead、Engineer、驗收人或 Agent；◆ 是要人確認的點，見[誰做什麼](#誰做什麼)。
+- **Who**：誰做：Project Lead、Engineer、驗收人或 Agent。`Project Lead ⇄ Agent` 是兩邊來回做，通常 Agent 提出、人調整；◆ 是要人確認的點，只由人做，見[誰做什麼](#誰做什麼)。
 - **Do**：做什麼。
 - **How**：用什麼。skill 會連到 repo 裡它的 `SKILL.md`；指令連到說明文件。第一次使用前，在 loop-engineering 執行 `./setup.sh` 安裝這些 skills。
 - **Output**：產出什麼。示範專案已經有的，附上範例連結；示範還沒走到的步驟先不放，示範專案推上 GitHub 之前，部分連結會打不開。
@@ -164,14 +164,14 @@ flowchart LR
 
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
-| 1 | Agent | 提出設計：<br>• 有既有設計：沿用，標出要改的地方<br>• 沒有：提出 2–3 個方案與比較 | skill [project-lead](../../skills/project-lead/SKILL.md) | 高層設計：`docs/design/`（[範例資料夾](https://github.com/yschiang/cross-node-root/tree/main/docs/design)），先看：<br>• [網頁版](https://yschiang.github.io/cross-node-root/)<br>• [system-design.md](https://github.com/yschiang/cross-node-root/blob/main/docs/design/system-design.md)<br>• [design-decisions.md](https://github.com/yschiang/cross-node-root/blob/main/docs/design/design-decisions.md) |
+| 1 | Project Lead ⇄ Agent | 提出設計：<br>• 有既有設計：沿用，標出要改的地方<br>• 沒有：提出 2–3 個方案與比較 | skill [project-lead](../../skills/project-lead/SKILL.md) | 高層設計：`docs/design/`（[範例資料夾](https://github.com/yschiang/cross-node-root/tree/main/docs/design)），先看：<br>• [網頁版](https://yschiang.github.io/cross-node-root/)<br>• [system-design.md](https://github.com/yschiang/cross-node-root/blob/main/docs/design/system-design.md)<br>• [design-decisions.md](https://github.com/yschiang/cross-node-root/blob/main/docs/design/design-decisions.md) |
 | 2 | Project Lead ⇄ Agent | 選方案：<br>• Project Lead 在方案之間做選擇<br>• Agent 把選擇與取捨寫成 ADR | skill [project-lead](../../skills/project-lead/SKILL.md) | ADR：`docs/adr/`（[範例](https://github.com/yschiang/cross-node-root/blob/main/docs/adr/0002-target-pull-over-http.md)） |
 | 3 | Project Lead | 看設計摘要，◆確認設計方案 | — | 決策紀錄 |
 
 **每一步怎麼做、怎樣算完成**
 
 1. **提出設計**
-   - 怎麼做：有既有設計時，把它複製進 `docs/design/` 與 `docs/adr/`，記下來源與版本，只標出要改的地方；沒有時，比較每個方案的優缺點並給建議。
+   - 怎麼做：Agent 提出，Project Lead 補充限制與偏好。有既有設計時，把它複製進 `docs/design/` 與 `docs/adr/`，記下來源與版本，只標出要改的地方；沒有時，比較每個方案的優缺點並給建議。
    - 完成：`docs/design/` 的高層設計寫齊
      - [ ] 元件與責任：每個能力寫明由哪些元件負責、邊界在哪
      - [ ] 主要資料流
@@ -202,15 +202,16 @@ flowchart LR
 
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
-| 1 | Agent | 切 Feature：<br>• 一個 use case，或一個共用元件，切成一個 Feature<br>• 切法有依據：把能力清單整批切<br>• 沒有依據：先列交付能力，但至少切出下一個能單獨驗收的 Feature | skill [project-lead](../../skills/project-lead/SKILL.md) | roadmap 的 Feature 表 |
+| 1 | Project Lead ⇄ Agent | 切 Feature：<br>• 一個 use case，或一個共用元件，切成一個 Feature<br>• 切法有依據：把能力清單整批切<br>• 沒有依據：先列交付能力，但至少切出下一個能單獨驗收的 Feature | skill [project-lead](../../skills/project-lead/SKILL.md) | roadmap 的 Feature 表 |
 | 2 | Project Lead ⇄ Agent | 排 Milestone：<br>• 把 Feature 分組，加上目標日期<br>• 時間放不下，回第 1 步拆小或延後 | skill [project-lead](../../skills/project-lead/SKILL.md) | roadmap（[範例](https://github.com/yschiang/cross-node-root/blob/main/docs/roadmap.md)） |
-| 3 | Project Lead | 排順序、決定範圍，標出接下來要做的 1–2 個 | — | 決策紀錄 |
+| 3 | Project Lead ⇄ Agent | 排順序、決定範圍，標出接下來要做的 1–2 個 | — | 決策紀錄 |
 | 4 | Project Lead | ◆確認 roadmap：<br>• 選定下一個 Feature<br>• 指定誰做 Feature spec、誰是 Engineer | — | 決策紀錄 |
 
 **每一步怎麼做、怎樣算完成**
 
 1. **切 Feature**
    - 怎麼做：
+     - Agent 提出切法，Project Lead 調整
      - 從能力清單與情境找出自成一體的 use case，每個切成一個 Feature
      - 多個 use case 都要用到的元件，切成自己的 Feature，排在用到它的 Feature 前面
      - 切法有依據（已經有實作、設計穩定）就整批切；沒有依據就先列交付能力，但至少切出下一個
@@ -230,7 +231,7 @@ flowchart LR
      - [ ] 完成條件
      - [ ] 包含哪些 Feature
 3. **排順序**
-   - 怎麼做：看依賴與風險排順序。
+   - 怎麼做：Agent 依依賴與風險提出順序，Project Lead 決定範圍與先後。
    - 完成：
      - [ ] 接下來要做的 1–2 個已標出
      - [ ] 順序與範圍的決定記進決策紀錄
