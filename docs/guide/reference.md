@@ -90,7 +90,7 @@ Agent 把確認後的骨架寫成這個 Feature 的 proposal 與 spec（需求�
 2. **每輪問你 1–3 題**：每題附為什麼現在要決定、選項、影響與建議。
 3. **邊問邊寫**：每輪告訴你改了什麼、還剩哪些阻擋。
 4. **提出「可進入 Design」**：附一頁摘要。
-5. **你確認或退回**：確認後才進入高層設計；這不是開工批准。你同時是 Engineer 時，feature 的這一步併入開工確認，spec、design、plan 一起看一次。
+5. **你確認或退回**：Project SA 確認後進入高層設計（A2）；Feature SA 確認後進入交接（B3），由 Engineer 做詳細設計。這不是開工批准。你同時是 Engineer 時，Feature SA 的確認併入開工確認，spec、design、plan 一起看一次。
 
 中途離開不影響進度，答案都已寫進文件。下次說「接續〈project／feature〉的 SA」，Agent 會先讀文件，已確認的不重問。
 
@@ -109,15 +109,18 @@ flowchart TD
     S["Project Lead Agent<br/>SA／domain／grill"]:::agent
     C{"Project Lead<br/>需求足以進入 Design？"}:::gate
     D["Project Lead Agent<br/>高層設計與技術取捨"]:::agent
+    DG{"Project Lead<br/>確認設計"}:::gate
     M["Project Lead Agent<br/>roadmap、milestones、features"]:::agent
-    F{"Project Lead<br/>確認高層設計、roadmap<br/>與第一個 feature"}:::gate
+    F{"Project Lead<br/>確認 roadmap<br/>選第一個 feature"}:::gate
     A -->|目標與來源| R
     R -->|研究報告：事實、推論、未知| S
     S -->|每輪 1–3 題| A
     S -->|摘要與可進入 Design 的理由| C
     C -->|仍有阻擋| S
     C -->|確認| D
-    D -->|元件責任與限制| M
+    D -->|元件責任、技術、ADR| DG
+    DG -->|需要調整| D
+    DG -->|確認| M
     M -->|roadmap 草案| F
     F -->|需要調整| M
     classDef human fill:#e9ebef,stroke:#7a8399,color:#2d3142
@@ -262,14 +265,14 @@ OpenSpec 把 `changes/` 底下每個 Feature 的資料夾叫 change，和上線�
 | 步驟 | 誰 | 產出 | Ticket |
 | --- | --- | --- | --- |
 | 1. 排進 roadmap | Project Lead Agent 提出，Project Lead 確認 | roadmap 上一行 | 通常還沒開；想早點讓人看到可以先開，只寫目標 |
-| 2. 選中 | Project Lead | 建立 Feature 的 spec（`openspec new change <id>`） | 開 ticket，或把已有的 ticket 連上 spec |
+| 2. 選中 | Project Lead 在確認 roadmap 時選；Project Lead Agent 建立 spec | `openspec new change <id>` | 開 ticket，或把已有的 ticket 連上 spec |
 | 3. Feature SA | Project Lead Agent 研究與提問，Project Lead 回答 | `proposal.md`、spec；`openspec validate` 通過 | 同一人兼任：就緒；不同人：待 SA 確認 |
 | 4. SA 確認 | Project Lead | 確認紀錄、交接包 | 就緒 |
 | 5. Design＋plan | Implementer | `design.md`、`tasks.md`、AC 的驗法 | |
-| 6. 開工確認 | Engineer | 確認紀錄 | 開發中 |
+| 6. 開工確認 | 交接時指定的人，通常是 Engineer | 確認紀錄 | 開發中 |
 | 7. 逐 task 實作 | Implementer；Reviewer 做局部 review | 每個 task 一到幾個綠燈 commit | |
 | 8. PR | Implementer、Reviewer、CI | 三個 gates、PR Pass 驗收包 | 連上 PR |
-| 9. 驗收、merge | 人類驗收人 | 接受紀錄；由人 merge | |
+| 9. 驗收、merge | 驗收人（預設 Project Lead） | 接受紀錄；由人 merge | |
 | 10. 收尾 | Project Lead Agent | `openspec archive`；更新 roadmap；Retro 候選 | 由人關閉，或 PR merge 時關閉；Agent 只在獲授權時更新狀態 |
 
 兩個角色由同一人擔任時，第 4 步併入第 6 步：spec、design、plan 一起看一次，確認後開工。不同人擔任時分開，spec 被推翻時 Engineer 不會白做。
@@ -306,7 +309,7 @@ SA 要回答七個問題，它們是檢核表，不是七個章節：問題與�
 
 | 介面 | 方向 | 你要確認什麼 |
 | --- | --- | --- |
-| **交接包** | Project Lead → Engineer（feature loop） | spec 的版本寫明，並附上 SA 確認紀錄；兼任 Engineer 時，改附「併入開工確認」的註記；每個受影響 repo 的起點寫清楚；依賴的上游已接受並 merge；待決事項各有決策者；寫明誰批准開工、誰驗收。它不含開工確認：design＋plan 在 loop 裡產出後才由人確認 |
+| **交接包** | Project Lead → Engineer（feature loop） | spec 的版本寫明，並附上 SA 確認紀錄；兼任 Engineer 時，改附「併入開工確認」的註記；每個受影響 repo 的起點寫清楚；依賴的上游寫明版本與狀態（上游接受並 merge 之前可以設計，不能開始實作）；待決事項各有決策者；寫明誰批准開工、誰驗收。它不含開工確認：design＋plan 在 loop 裡產出後才由人確認 |
 | **PR Pass 驗收包** | feature loop → 驗收人，副本給 Project Lead | 每條 AC 都有結果與證據；證據對應的是目前的版本；風險與已知限制寫明；PR、CI、review 都連得到 |
 
 兩者的完整欄位定義在[交接契約](../workflow/contracts.md#角色交接摘要)，由 Agent 照著組。
@@ -317,12 +320,12 @@ feature loop 無法安全繼續時，改交 **Blocked**：run ID、問題、已�
 
 ### 控制方向與自主程度
 
-Project 層是人和 Agent 一來一回的對話，不需要派工或 gates；Feature 層有多個 Agent 並行，需要 controller 核對證據。所以兩層分成兩個 skill，控制只往下走：Project Lead 把交接包交給 orchestrate，orchestrate 從不呼叫 Project Lead。同一套 skill 有兩種自主程度：
+Project 層是人和 Agent 一來一回的對話，不需要派工或 gates；Feature 層有多個 Agent 並行，需要 controller 核對證據。所以兩層分成兩個 skill，控制只往下走：project-lead 把交接包交給 orchestrate，orchestrate 從不呼叫 project-lead。同一套 skill 有兩種自主程度：
 
 | 模式 | 誰啟動每個 Feature | 適合 |
 | --- | --- | --- |
-| 手動 | 人拿 Project Lead 準備好的交接包，自己啟動 orchestrate | 第一版、個人使用 |
-| 授權 | Project Lead 在人核准的範圍內啟動；各 Feature 的 SA 確認須先完成，或註明併入開工確認。loop 產出 design＋plan 後停下，等人確認開工，Project Lead 不能代批 | goal 模式、多 Feature 的 demo |
+| 手動 | 人拿 Project Lead Agent 準備好的交接包，自己啟動 orchestrate | 第一版、個人使用 |
+| 授權 | Project Lead Agent 在 Project Lead 核准的範圍內啟動；各 Feature 的 SA 確認須先完成，或註明併入開工確認。loop 產出 design＋plan 後停下，等人確認開工，Project Lead Agent 不能代批 | goal 模式、多 Feature 的 demo |
 
 
 ### 把 Feature 交出去
@@ -350,12 +353,12 @@ flowchart TD
     classDef mech fill:#f5f5f5,stroke:#4f5d75,stroke-dasharray:4 3,color:#2d3142
 ```
 
-交接包的內容見上表。Ticket 連到 spec，不重貼內容。Project Lead 可以附 tasks 草案，但最終 plan 由 Implementer 校準。
+交接包的內容見上表。Ticket 連到 spec，不重貼內容。Project Lead Agent 可以附 tasks 草案，但最終 plan 由 Implementer 校準。
 
 **交接完成**是 Engineer 知道要交付什麼、能開始詳細設計；不等於已開工。啟動 feature loop 有兩種方式：
 
 - **手動**：你把交接包交給 Engineer，由他啟動。
-- **授權**：你明確授權 Project Lead 負責某個範圍，且該 feature 的 SA 已確認（或註明併入開工確認），Project Lead 就能自己啟動。loop 產出 design＋plan 後會停下等開工確認，Project Lead 不能代你批准。
+- **授權**：你明確授權 Project Lead Agent 負責某個範圍，且該 feature 的 SA 已確認（或註明併入開工確認），Project Lead Agent 就能自己啟動。loop 產出 design＋plan 後會停下等交接時指定的人確認開工，Project Lead Agent 不能代批。
 
 ### 跨人、跨 session 要交什麼
 
@@ -367,11 +370,11 @@ flowchart TD
 
 ### 你會收到什麼
 
-Project Lead 交給你一個交接包，內容見[交接](#交接)。缺東西或有衝突時，先回報 Project Lead 和 Project Lead，不要自己補需求。
+Project Lead 交給你一個交接包，內容見[交接](#交接)。缺東西或有衝突時，先回報 Project Lead，不要自己補需求。
 
 feature loop 從收到交接包就開始，第一步是 design＋plan，然後停下等開工確認。交接包本身不含開工確認。
 
-你只改這個 Feature 的 `design.md` 與 `tasks.md`，驗法寫進 validation 文件。`proposal.md` 與 `specs/` 屬於 Project Lead；需要改需求或 AC 時回去找 Project Lead 和 Project Lead，不在程式裡繞過。
+你和 Implementer 只改這個 Feature 的 `design.md`、`tasks.md` 與 AC 驗法；驗法寫在 validation 文件，或 `tasks.md` 的明確段落。`proposal.md` 與 `specs/` 屬於 Project Lead；需要改需求或 AC 時回去找 Project Lead，不在程式裡繞過。
 
 ### 完成一個 Feature，包括 PR
 
@@ -384,9 +387,9 @@ flowchart TD
     C{"被授權的人<br/>一次確認 design＋plan"}:::gate
     D["Implementer Agent<br/>依序 TDD，取得 G1"]:::agent
     L["Review-fix loop<br/>見下一張圖"]:::mech
-    H{"人類 Reviewer／驗收人<br/>review PR、驗證 AC 與 demo"}:::gate
+    H{"驗收人（交接時指定，預設 Project Lead）<br/>對照 AC 與 demo"}:::gate
     Z["記錄接受的版本<br/>Project Lead 收尾"]:::human
-    Q["Project Lead 與 Project Lead<br/>需求、爭議、超限或未知"]:::human
+    Q["Project Lead<br/>需求、爭議、超限或未知"]:::human
     A -->|交接包| B
     B -->|design＋plan＋驗法| C
     C -->|需修改| B
@@ -432,7 +435,7 @@ G1 缺原始證據、必要結果無法取得或出現未知執行狀態時，�
 
 你負責確認技術交付安排、查看進度、處理自己有權決定的問題；Agent 負責實際工作。若你被授權批准 design＋plan，由你完成開工確認，否則交指定決策者。正常已授權工作不需要每個 task 都回來簽核。
 
-Task 是 PR 內的工作單位，一個 session 做得完，不開 ticket。一個可獨立驗收的 Feature，在每個受影響的 repo 各對應一個 PR；做 design 時發現某部分能單獨驗收，或某個 repo 的 PR 大到審不動，就提議拆成另一個 Feature，由 Project Lead 與 Project Lead 確認。每個 task 一到幾個綠燈 commit，完成後由獨立 Reviewer 做一次局部 review，最後 G2 再看整個 PR。
+Task 是 PR 內的工作單位，一個 session 做得完，不開 ticket。一個可獨立驗收的 Feature，在每個受影響的 repo 各對應一個 PR；做 design 時發現某部分能單獨驗收，或某個 repo 的 PR 大到審不動，就提議拆成另一個 Feature，由 Project Lead 確認。每個 task 一到幾個綠燈 commit，完成後由獨立 Reviewer 做一次局部 review，最後 G2 再看整個 PR。
 
 ### 計畫要讓 AC 真正能驗證
 
@@ -473,11 +476,11 @@ Orchestrate 按授權工作，controller 核對狀態與證據。每個基礎設
 
 | 結果 | 交給誰 |
 | --- | --- |
-| PR Pass 驗收包（內容見[交接](#交接)） | 人類驗收人，副本給 Project Lead |
-| Blocked：需求或 scope | Project Lead 與 Project Lead |
+| PR Pass 驗收包（內容見[交接](#交接)） | 驗收人，副本給 Project Lead |
+| Blocked：需求或 scope | Project Lead |
 | Blocked：環境、權限、爭議或到限 | 有權裁決的人 |
 
-驗收後的 Retro 與下一個 feature，以及 merge 後的 archive，都由 Project Lead 處理。依賴與 stacked PR 的規則見[交接](#交接)。
+驗收後的 Retro 與下一個 feature，以及 merge 後的 archive，都由 Project Lead 和 Project Lead Agent 處理。依賴與 stacked PR 的規則見[交接](#交接)。
 
 ## 驗收之後：收尾
 
@@ -485,13 +488,13 @@ Orchestrate 按授權工作，controller 核對狀態與證據。每個基礎設
 
 feature loop 回來的結果只有兩種：
 
-- **PR Pass 驗收包**：交給你或指定的驗收人，內容見[交接](#交接)。
-- **Blocked**：如果原因是需求或 scope，你和 Project Lead 分析影響、更新 spec 並記錄決策，再把新版本交回去。
+- **PR Pass 驗收包**：交給驗收人（預設是你）；內容見[交接](#交接)。
+- **Blocked**：如果原因是需求或 scope，你和 Project Lead Agent 分析影響、更新 spec 並記錄決策，再把新版本交回去。
 
-你接受之後，Project Lead 會：
+你接受之後，Project Lead Agent 會：
 
 1. **整理 Retro 候選**：只挑 1–3 個有證據的改善，寫明來源、原因、改善、owner 與驗法。沒有證據就不寫。
-2. **提出下一個 feature**：更新 roadmap、檢查依賴，讓你選。
+2. **提出下一個 feature**：更新 roadmap、檢查依賴，讓你在確認 roadmap 時選。
 
 確認 PR 已 merge 之後，再：
 
@@ -505,17 +508,17 @@ feature loop 回來的結果只有兩種：
 
 ## 查進度
 
-你問進度時，Project Lead 應列出 roadmap 上每個 feature 的狀態：準備中、SA 已確認、feature loop 進行中（附 run ID）、PR Pass、已接受、已 merge 並 archive，或 Blocked 與原因。狀態來自文件、ticket、PR 與 controller 的唯讀狀態，不靠對話記憶。這個專案進度視圖的自動化列在 S2。
+你問進度時，Project Lead Agent 應列出 roadmap 上每個 feature 的狀態：準備中、SA 已確認、feature loop 進行中（附 run ID）、PR Pass、已接受、已 merge 並 archive，或 Blocked 與原因。狀態來自文件、ticket、PR 與 controller 的唯讀狀態，不靠對話記憶。這個專案進度視圖的自動化列在 S2。
 
 ## 演練路線：用 cross-node-file-transfer 跟走一遍
 
 這是後續演練路線，Feature 名稱與切法以示範專案確認的 roadmap 為準，本指南不另立產品 spec。示範專案分成 root repo `cross-node-root`（規劃、spec、ticket）與程式 repo `cross-node-file-transfer`（由 `repos.yaml` 拉進 `repos/`）。
 
-1. **定方向、排順序（A1–A3）**：Project Lead 把 gigaxfer 的 `docs/spec.md` 依能力拆開，當作需求輸入並記錄來源版本，不放進 `openspec/specs/`；再整理 domain、設計、共用限制與 roadmap。人確認拆法與適用性。
+1. **定方向、排順序（A1–A3）**：Project Lead Agent 把 gigaxfer 的 `docs/spec.md` 依能力拆開，當作需求輸入並記錄來源版本，不放進 `openspec/specs/`；再整理 domain、設計、共用限制與 roadmap。Project Lead 確認拆法與適用性。
 2. **專案骨架（第一個 Feature）**：repo 骨架、CI 與工程規則。它沒有產品行為，但「乾淨 clone 能建置測試、PR 有必要 checks」可以單獨驗收，寫成工程能力（例如 `engineering-baseline`）的 spec，常稱 Sprint 0 或 bootstrap。在 orchestrate 可用前可以手動協調，歷程標明「人工協調」，再由人驗收。
-3. **交付第一個產品 Feature（B1–B6）**：Project Lead 準備 spec 與交接包，Engineer 帶 Implementer 完成 PR；另一個 session 的 Reviewer 審查。
+3. **交付第一個產品 Feature（B1–B6）**：Project Lead Agent 準備 spec 與交接包，Project Lead 確認，Engineer 帶 Implementer 完成 PR；另一個 session 的 Reviewer 審查。
 4. **驗證修正循環**：有真實 blocking finding 時，留下 finding → fix → re-review 的歷程。review 沒找到問題就如實記錄，不製造缺陷湊演示。
-5. **驗收與收尾（B7–B8）**：人驗收後，Project Lead 整理 Retro 候選、提出下一個 Feature；確認 merge 後再把 spec 併入現況。
+5. **驗收與收尾（B7–B8）**：驗收人接受後，Project Lead Agent 整理 Retro 候選、提出下一個 Feature；確認 merge 後再把 spec 併入現況。
 6. **接續下一個 Feature**：核對依賴、人工接受、merge，以及下一個 Feature 引用的文件版本；保存各 Feature 的 branch／worktree、文件與交付證據。
 7. **展示 Milestone（C）**：執行跨 Feature 的整合情境。真正的 stacked PR 展示，要等 stacked PR 的規則決定、能力驗證之後再加入。
 
@@ -552,6 +555,7 @@ loop-engineering 自己開發 controller 時，預設 Opus 5.5 實作、GPT 審�
 | 手動階段的交付紀錄放 ticket 留言 | D60 |
 | 多 repo 的 root 結構與跨 repo 的 Feature | D61 |
 | 驗收人預設是誰 | D62 |
+| 外圈三步各有一次確認；在確認 roadmap 時選下一個 Feature | D63 |
 | 有依賴的 Feature 等上游接受並 merge | D27 |
 | 示範專案的 Project 層先行 | D56 |
 | 薄 controller 第一片的核准 | D53 |

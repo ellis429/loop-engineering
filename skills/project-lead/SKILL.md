@@ -15,7 +15,7 @@ Write artifacts in the language the repository requires. Read repository instruc
 
 | Mode | Trigger | Ends with |
 | --- | --- | --- |
-| Project | New project, or importing an existing one | Project baseline and roadmap confirmed by the human |
+| Project | New project, or importing an existing one | Direction, high-level design and roadmap each confirmed by the human, and the next feature chosen (D63) |
 | Feature | A feature is chosen from the roadmap; open its change first (`openspec new change <id>`) | Handoff package for one OpenSpec change |
 | Re-analysis | New evidence breaks an accepted requirement | Updated spec and a recorded human decision |
 | Close-out | A feature was accepted by a human | Archive, Retro candidates, next-feature proposal |
@@ -98,11 +98,11 @@ Open: Q1 capacity limit (blocks Design, needs your decision)
 Versions: <commit or file hashes>
 ```
 
-Record the confirmation with who, when, their words, and the version confirmed (feature: a short section in `proposal.md`; project: the decisions log). This confirmation is not the start-of-work approval for design and plan; that comes later from the Implementer's plan. When one person holds both the Lead and the Feature Builder roles, fold the feature's confirmation into that approval: they review spec, design and plan once. Say so in the handoff package.
+Record the confirmation with who, when, their words, and the version confirmed (feature: a short section in `proposal.md`; project: the decisions log). This confirmation is not the start-of-work approval for design and plan; that comes later from the Implementer's plan. When one person holds both the Project Lead and Engineer roles, fold the feature's confirmation into that approval: they review spec, design and plan once. Say so in the handoff package.
 
 ## 5a. Project level: high-level design and roadmap
 
-Only after the human confirmed "ready for Design" at project level. First produce or reuse the high-level design: component responsibilities, main data flows, external contracts, technology choices; for an imported project, reference the existing design and ADRs. Record the human's technology choices in the decisions log, and write an ADR for each significant trade-off. Then plan the roadmap, and ask the human to confirm the project baseline and roadmap together; project mode ends there.
+Only after the human confirmed "ready for Design" at project level. First produce or reuse the high-level design: component responsibilities, main data flows, external contracts, technology choices; for an imported project, reference the existing design and ADRs. Record the human's technology choices in the decisions log, and write an ADR for each significant trade-off. Show a design summary and ask the human to confirm the design; record it in the decisions log. Then plan the roadmap and ask the human to confirm it and choose the next feature; record both in the decisions log. Project mode ends there (D63).
 
 
 The roadmap is a living document with two levels: milestones are demonstrable outcomes; a feature is one independently acceptable delivery: one change, and one reviewable PR per affected repo (D61). Tasks live in the feature's `tasks.md`, not on the roadmap. Detail costs differ a lot:
@@ -150,7 +150,7 @@ Record the human's acceptance or rejection as one ticket comment: who, when, the
 After the human accepted the feature:
 
 1. Write 1-3 Retro candidates only where evidence supports them: source, cause (fact or hypothesis), improvement, owner, how to verify. No evidence, no item. Candidates are proposals; applying them follows normal authority. Post them as one ticket comment when authorised, or hand the text to the human (D60).
-2. Revisit the roadmap per step 5a (re-cut, promote the next feature to near-term) and check dependencies; propose the next feature for the human to choose.
+2. Revisit the roadmap per step 5a (re-cut, promote the next feature to near-term) and check dependencies; propose the next feature; the human chooses it when confirming the updated roadmap (D63).
 
 After every PR of the feature, in every affected repo, is verified merged on the hosting service in dependency order:
 
