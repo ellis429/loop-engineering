@@ -333,6 +333,7 @@ flowchart LR
      - [ ] 「驗收」列出每個 AC ID，名稱照抄 spec 的 Scenario 標題（未勾選）；標題漏了會改變判定的條件，就改 spec 的標題
      - [ ] 狀態「就緒（可設計）」，下一步是 Engineer 核對交接包
      - [ ] Engineer 在 ticket 回覆可以開始，或列出具體問題退回
+     - [ ] Agent 最後在對話裡給一份摘要：change id、branch 與 worktree、推上去的 commit 與 proposal／spec 連結、ticket 連結與狀態、交接包留言連結、AC ID、spec 確認、開工確認人與驗收人、待決事項，以及 Engineer 下一步要貼的 `/spec-to-plan` prompt
 
 ticket 長這樣（交接完成時）：
 
