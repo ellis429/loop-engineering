@@ -26,18 +26,18 @@ flowchart LR
 
 | 誰 | 做什麼 | 確認哪幾個 |
 | --- | --- | --- |
-| Lead | 給目標與限制、回答問題、選下一個 Feature | ①②③④ |
-| 工程師 | 安排技術交付、審設計與計畫 | ⑤（被授權時） |
+| Project Lead | 給目標與限制、回答問題、選下一個 Feature | ①②③④ |
+| Engineer | 安排技術交付、審設計與計畫 | ⑤（被授權時） |
 | 驗收人 | 看每條 AC 的證據與 demo | ⑥ |
 | Agent：Project Lead Agent、Implementer、Reviewer | 研究、寫文件、實作、審查；不做確認 | — |
 
-- **角色是工作，不是職位**：同一人兼任 Lead 與工程師是常態，這時 ④ 併入 ⑤。每個 Feature 開始時，寫明誰確認開工、誰驗收。
-- **Lead 和 Project Lead Agent 不同**：Lead 做決定，Agent 做分析與建議。驗收人也不是審查程式的 Reviewer Agent。
+- **角色是工作，不是職位**：同一人兼任 Project Lead 與 Engineer 是常態，這時 ④ 併入 ⑤。每個 Feature 開始時，寫明誰確認開工、誰驗收。
+- **Project Lead 和 Project Lead Agent 不同**：Project Lead 做決定，Agent 做分析與建議。驗收人也不是審查程式的 Reviewer Agent。
 
 ## 人、Agent 與工具的分層
 
 ```text
-人          Project Lead 或 Feature Builder             做決定：方向、順序、spec、開工、驗收
+人          Project Lead 或 Engineer             做決定：方向、順序、spec、開工、驗收
  │ 用自然語言交代、確認
 ADE         Herdr、OpenCode、Claude Code（Orca 選配）   開 session 與 worktree，讓多個 Agent 並排工作
  │
@@ -57,12 +57,12 @@ Agents      Project Lead Agent ⇄ Implementer ⇄ Reviewer（不同模型）   
 每個活動一張卡：一句**目的**，一張表，再加**完成的樣子**。表照做事的順序排：
 
 - **Step**：第幾步。
-- **Who**：誰做。「你」是 Lead；◆ 是要你確認的點。
+- **Who**：誰做。「你」是 Project Lead；◆ 是要你確認的點。
 - **Do**：做什麼。
 - **How**：用什麼。skill 會連到 repo 裡它的 `SKILL.md`；指令連到說明文件。第一次使用前，在 loop-engineering 執行 `./setup.sh` 安裝這些 skills。
 - **Output**：產出什麼。示範專案已經有的，附上範例連結；示範還沒走到的步驟先不放，示範專案推上 GitHub 之前，部分連結會打不開。
 
-Agent 寫 ticket 或 PR 留言之前，會先問你，或照你事先給的授權。controller 可用之前，交付紀錄都放在 ticket 留言。標「工程師」的卡，只帶專案的人可以跳過。
+Agent 寫 ticket 或 PR 留言之前，會先問你，或照你事先給的授權。controller 可用之前，交付紀錄都放在 ticket 留言。標「Engineer」的卡，只帶專案的人可以跳過。
 
 ## 外圈：Project
 
@@ -70,11 +70,11 @@ Agent 寫 ticket 或 PR 留言之前，會先問你，或照你事先給的授�
 
 ```mermaid
 flowchart LR
-  A1["A1 Analyze<br/>Project SA"] -->|project intent| G1(["① 可進入設計<br/>Lead"])
+  A1["A1 Analyze<br/>Project SA"] -->|project intent| G1(["① 可進入設計<br/>Project Lead"])
   G1 --> A2["A2 Architect<br/>高層設計"]
   A2 -->|設計文件、ADR| A3["A3 Roadmap<br/>Milestone 與 Feature"]
-  A3 -->|roadmap| G2(["② 專案基準與 roadmap<br/>Lead"])
-  G2 --> G3(["③ 下一個 Feature<br/>Lead"])
+  A3 -->|roadmap| G2(["② 專案基準與 roadmap<br/>Project Lead"])
+  G2 --> G3(["③ 下一個 Feature<br/>Project Lead"])
   G3 --> IN[["內圈：Define → Deliver → Accept"]]
   IN -->|Retro & Replan| A3
   classDef gate fill:#fdf0ea,stroke:#eb6c36,color:#2d3142
@@ -146,7 +146,7 @@ Feature 怎麼切、切多細，見參考的[工作層級](reference.md#工作�
 flowchart LR
   subgraph SDEF["Define"]
     direction TB
-    B1["B1 Open<br/>開 Feature"] --> B2["B2 Specify<br/>需求與 AC"] -->|spec| G4(["④ spec<br/>Lead"]) --> B3["B3 Hand off<br/>交接"]
+    B1["B1 Open<br/>開 Feature"] --> B2["B2 Specify<br/>需求與 AC"] -->|spec| G4(["④ spec<br/>Project Lead"]) --> B3["B3 Hand off<br/>交接"]
   end
   subgraph SDEL["Deliver"]
     direction TB
@@ -167,7 +167,7 @@ flowchart LR
   style SACC fill:#fafafa,stroke:#b8bfcc
 ```
 
-Lead 同時擔任工程師時，④ 併入 ⑤：spec、設計、計畫一起確認一次。不同人擔任時分開，Lead 先確認 spec，工程師才開始設計。
+Project Lead 同時擔任 Engineer 時，④ 併入 ⑤：spec、設計、計畫一起確認一次。不同人擔任時分開，Project Lead 先確認 spec，Engineer 才開始設計。
 
 ### B1 Open：開 Feature
 
@@ -175,7 +175,7 @@ Lead 同時擔任工程師時，④ 併入 ⑤：spec、設計、計畫一起確
 
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
-| 1 | 你 | 選這個 Feature ◆③，指定工程師 | — | — |
+| 1 | 你 | 選這個 Feature ◆③，指定 Engineer | — | — |
 | 2 | Agent | 建立 spec 的位置 | 指令 `openspec new change <id>`（[說明](https://github.com/Fission-AI/OpenSpec/blob/main/docs/cli.md)） | Feature 資料夾（[範例](https://github.com/yschiang/cross-node-root/tree/main/openspec/changes/project-skeleton)） |
 | 3 | Agent | 開 ticket，或連上既有的 ticket | skill [project-lead](../../skills/project-lead/SKILL.md) | ticket（[範例](https://github.com/yschiang/cross-node-root/issues/1)） |
 
@@ -192,7 +192,7 @@ Lead 同時擔任工程師時，④ 併入 ⑤：spec、設計、計畫一起確
 | 1 | Agent | 讀需求輸入與專案基準，研究現況 | skill [research-codebase](../../skills/research-codebase/SKILL.md) | — |
 | 2 | Agent ⇄ 你 | 從目標往下問：流程 → 規則 → 例外 → 驗收，每輪 1–3 題 | skill [project-lead](../../skills/project-lead/SKILL.md) | — |
 | 3 | Agent | 寫 proposal 與 spec，檢查格式；需要新的設計邊界時寫進設計文件或 ADR | skill [project-lead](../../skills/project-lead/SKILL.md)；指令 `openspec validate`（[說明](https://github.com/Fission-AI/OpenSpec/blob/main/docs/cli.md)） | proposal（[範例](https://github.com/yschiang/cross-node-root/blob/main/openspec/changes/project-skeleton/proposal.md)）、spec（[範例](https://github.com/yschiang/cross-node-root/blob/main/openspec/changes/project-skeleton/specs/engineering-baseline/spec.md)） |
-| 4 | 你 | 看一頁摘要，確認 spec 清楚 ◆④。你同時是工程師時，改到 B4 一起確認 | — | proposal 裡的確認紀錄 |
+| 4 | 你 | 看一頁摘要，確認 spec 清楚 ◆④。你同時是 Engineer 時，改到 B4 一起確認 | — | proposal 裡的確認紀錄 |
 
 **完成的樣子**
 
@@ -215,28 +215,28 @@ Lead 同時擔任工程師時，④ 併入 ⑤：spec、設計、計畫一起確
 
 ### B3 Hand off：交接
 
-**目的**：讓工程師不必回頭問，就能開始設計。
+**目的**：讓 Engineer 不必回頭問，就能開始設計。
 
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
 | 1 | 你 | 指定誰批准開工、誰驗收 | — | — |
 | 2 | Agent | 組交接包，貼成 ticket 留言 | skill [project-lead](../../skills/project-lead/SKILL.md) | 交接包 |
 | 3 | Agent | ticket 補上驗收 ID，標為就緒 | skill [project-lead](../../skills/project-lead/SKILL.md) | ticket 狀態 |
-| 4 | 工程師 | 核對交接包：能開始就開始，不行就退回具體問題 | — | — |
+| 4 | Engineer | 核對交接包：能開始就開始，不行就退回具體問題 | — | — |
 
 **完成的樣子**
 
-- [ ] 工程師已核對，能開始設計
+- [ ] Engineer 已核對，能開始設計
 
 交接包要確認什麼，見參考的[交接](reference.md#交接)。
 
-### B4 Design：設計與計畫（工程師）
+### B4 Design：設計與計畫（Engineer）
 
 **目的**：決定怎麼做、拆成哪些 task。
 
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
-| 1 | 工程師 | 啟動這個 Feature 的 loop | skill orchestrate（實作中，可用前由人協調） | — |
+| 1 | Engineer | 啟動這個 Feature 的 loop | skill orchestrate（實作中，可用前由人協調） | — |
 | 2 | Implementer | 寫詳細設計 | OpenSpec | design |
 | 3 | Implementer | 拆 tasks，每個 task 一個 session 做得完；寫每條 AC 的驗法 | OpenSpec | tasks、AC 驗法 |
 | 4 | 被授權的人 | 確認開工 ◆⑤（兼任時連 spec 一起確認） | skill orchestrate（實作中，可用前由人協調），記成 ticket 留言 | 開工確認紀錄 |
@@ -248,7 +248,7 @@ Lead 同時擔任工程師時，④ 併入 ⑤：spec、設計、計畫一起確
 
 > 請用 orchestrate 承接〈Feature〉。先由 Implementer 讀取它引用的專案基準、spec／AC 與高層設計，提出 detailed design、可執行 tasks 及 AC 驗證方式，交我確認後開工。保留 worktree 與證據；終點是 PR Pass，等待人驗收。
 
-### B5 Build：實作（工程師）
+### B5 Build：實作（Engineer）
 
 **目的**：一個 task 一個 task 把行為做出來，每一步都能驗證。
 
@@ -263,7 +263,7 @@ Lead 同時擔任工程師時，④ 併入 ⑤：spec、設計、計畫一起確
 - [ ] 每個行為 task 都有 Red 與 Green；純文件的 task 要有理由，並由 Reviewer 確認
 - [ ] 局部 review 的 blocking 都修好了
 
-### B6 Verify：PR、審查與 CI（工程師）
+### B6 Verify：PR、審查與 CI（Engineer）
 
 **目的**：用獨立審查和 CI 證明整個 Feature 符合 spec。
 
@@ -280,7 +280,7 @@ Lead 同時擔任工程師時，④ 併入 ⑤：spec、設計、計畫一起確
 - [ ] 三個 gates 都在目前版本通過
 - [ ] 驗收包齊全
 
-Gates 的證據要求與 review-fix loop，見參考的[做出來：工程師的細節](reference.md#做出來工程師的細節)。
+Gates 的證據要求與 review-fix loop，見參考的[做出來：Engineer 的細節](reference.md#做出來 Engineer 的細節)。
 
 ### B7 Accept：驗收與 merge
 

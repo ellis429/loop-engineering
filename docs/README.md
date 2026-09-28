@@ -6,7 +6,7 @@
 
 | 你是 | 去哪 |
 | --- | --- |
-| 使用這套流程的人：Lead、工程師、驗收人 | [`guide/`](guide/README.md)：使用手冊 |
+| 使用這套流程的人：Project Lead、Engineer、驗收人 | [`guide/`](guide/README.md)：使用手冊 |
 | 修改或實作這套流程的人 | [`decisions.md`](decisions.md)、[`workflow/`](workflow/overview.md)、[`harness/`](harness/overview.md)：規則與設計理由（手冊和它們有出入時，以它們為準） |
 | Agent | [`../skills/`](../skills/)、[`../openspec/config.yaml`](../openspec/config.yaml) |
 | 想追來源與過程的人 | `references/`、`research/`、`reviews/`、`handoffs/` |

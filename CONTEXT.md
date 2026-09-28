@@ -19,13 +19,13 @@ _Avoid_: Engineer 1
 依適用規格與工程規範審查整合變更並覆核 findings 的獨立 agent 角色；不直接修改被審查分支。Project Lead 的協調授權或 runtime 的父子關係不取代其獨立判斷。
 _Avoid_: Engineer 2
 
-**Lead**:
-帶專案的人：給目標與限制、回答需求問題，確認可進入 Design、專案基準與 roadmap，選 feature 並驗收結果。與 Project Lead Agent 協作，決策權在人。這是角色，不是職位，常由同一人兼任 Feature Builder（D59）。
-_Avoid_: 用 Lead 簡稱 Project Lead Agent
+**Project Lead**:
+帶專案的人：給目標與限制、回答需求問題，確認可進入 Design、專案基準與 roadmap，選 feature 並驗收結果。與 Project Lead Agent 協作，決策權在人。這是角色，不是職位，常由同一人兼任 Engineer（D59）。舊稱 Lead。
+_Avoid_: 用 Project Lead 指 Project Lead Agent；只寫 Lead
 
-**Feature Builder**:
-承接 feature 交接包的人：帶 Implementer Agent 完成詳細設計與 plan，完成或轉交開工確認，並把 feature 推進到 PR Pass。中文常稱工程師。這是角色，不是職位，可與 Lead 由同一人擔任。
-_Avoid_: Implementer（指人時）
+**Engineer**:
+承接 feature 交接包的人：帶 Implementer Agent 完成詳細設計與 plan，完成或轉交開工確認，並把 feature 推進到 PR Pass。這是角色，不是職位，可與 Project Lead 由同一人擔任。舊稱 Feature Builder、工程師。
+_Avoid_: Implementer（指人時）；用 Engineer 指任何 agent
 
 **Orchestrate**:
 把一個 feature 從交接包跑到 PR Pass 或 Blocked 的 skill；由人或獲授權的 Project Lead 呼叫，使用 controller 核對狀態與 gates，不呼叫 Project Lead。
