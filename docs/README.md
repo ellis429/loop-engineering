@@ -2,16 +2,14 @@
 
 **要用這套流程帶專案或做 feature，先讀 [使用指南](guide/user-guide.md)。** 它先用分層圖與流程大地圖說明整體，再照流程逐一說明每個活動的目的、分工、產出與完成條件；細節查 [參考](guide/reference.md)。附 cross-node-file-transfer 演練路線；完整自動 loop 尚未完成，stacked 政策仍待確認。
 
-## 文件分類
+## 你要讀哪裡
 
-| 類別 | 讀者 | 回答的問題 | 位置 |
-| --- | --- | --- | --- |
-| 使用手冊 | 要使用這套流程的人：Lead、工程師、驗收人 | 我要做什麼、怎麼做、做到什麼算完成 | [`guide/`](guide/README.md) |
-| 內部設計與規則 | 要修改或實作這套流程的人：維護者、controller 的 Implementer 與 Reviewer | 為什麼這樣設計、規則的精確定義、邊界情況、取捨 | [`decisions.md`](decisions.md)、[`workflow/`](workflow/overview.md)、[`harness/`](harness/overview.md)、[`project-intent.md`](project-intent.md) |
-| 給 Agent 的指令 | Agent | 照什麼步驟做，內容要可執行、無歧義 | [`../skills/`](../skills/)、[`../openspec/config.yaml`](../openspec/config.yaml) |
-| 背景與紀錄 | 想追來源與過程的人 | 參考了什麼、查過什麼、審過什麼、交接到哪 | `references/`、`research/`、`reviews/`、`handoffs/`、`validation/` |
-
-手冊說明規則，但不產生規則；手冊和設計文件有出入時，以設計文件與決策為準。內部設計分兩組：**Workflow 說明人與 agents 怎麼合作，Harness 說明用什麼執行環境與控制機制把流程跑起來。** 專案目標及決策留在本目錄根層。
+| 你是 | 去哪 |
+| --- | --- |
+| 使用這套流程的人：Lead、工程師、驗收人 | [`guide/`](guide/README.md)：使用手冊 |
+| 修改或實作這套流程的人 | [`decisions.md`](decisions.md)、[`workflow/`](workflow/overview.md)、[`harness/`](harness/overview.md)：規則與設計理由（手冊和它們有出入時，以它們為準） |
+| Agent | [`../skills/`](../skills/)、[`../openspec/config.yaml`](../openspec/config.yaml) |
+| 想追來源與過程的人 | `references/`、`research/`、`reviews/`、`handoffs/` |
 
 這是本 repo 的文件安排，不強制下游專案搬動 OpenSpec 或其他 skills 的原生 artifacts。
 
