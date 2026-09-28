@@ -25,21 +25,25 @@ Ask the human to authorise pushing the branch and writing the ticket; without it
 
 ```markdown
 **Milestone：** <milestone>　**狀態：** 準備中
+**下一步：** <who> <does what>
 
 ## 目標
 <one or two lines: after this, who can do what>
 
 ## Spec
-[`openspec/changes/<id>/`](<link to the folder on branch feature/<id>>)（branch `feature/<id>`）：範圍、不做、需求與驗收都以這裡為準。開 PR 後改連 PR。
+- [change](<folder openspec/changes/<id>/ on branch feature/<id>; the root PR once it exists>)：範圍、不做、需求與驗收都以這裡為準
+- 交接包：（交接時補上留言連結）
+- spec 確認：（交接時補上：已確認 <commit>，或併入開工確認）
 
 ## 驗收
-（◆確認 spec 後補上）
+勾選＝驗收人已確認這一條；證據看驗收包與驗收紀錄的留言。
+（交接時列出 AC）
 
 ## Blocked by
-- #<n> <feature name>   （none: 無）
+- #<n> <feature name>：<what releases it>；<owner>   （none: 無）
 ```
 
-Scope, non-goals and acceptance text stay in the change. Records (handoff, start approval, acceptance) are ticket comments (D60).
+Scope, non-goals and acceptance text stay in the change. Records (handoff, start approval, acceptance) are ticket comments (D60). States and who sets them: 準備中 and 就緒 (you); 開發中 after the start approval and 待驗收 after PR Pass (orchestrate, or the coordinator until it exists); 已接受 and 已完成 (project-lead); `Blocked：<reason>` by whoever hits it. Whoever sets a state also updates 下一步.
 
 Done when the branch is pushed, the change folder is on it, and the ticket links to it with state `準備中`.
 
@@ -69,7 +73,7 @@ Show the one-page summary. The Project Lead confirms; record it in a short secti
 
 1. Ask the Project Lead who approves the start of work (usually the Engineer) and who accepts the result: the Project Lead unless the requirement came from someone else, who then accepts (D62).
 2. Assemble the handoff package: change id and file versions; the spec confirmation or the fold note; versions of the project intent, high-level design and roadmap it relies on; spec, acceptance IDs and design boundaries; for each affected repo its base branch, commit, and the PR to be opened (D61); dependencies with their version and state; open items with decision maker and next owner; the start approver and the acceptor.
-3. Post the package as one ticket comment (D60). In the ticket body, list each acceptance ID with a one-line name under 驗收 as a checkbox, and set the state to `就緒`.
+3. Post the package as one ticket comment (D60). In the ticket body: link that comment on the 交接包 line; fill the spec confirmation line; list each acceptance ID under 驗收 as an unchecked checkbox followed by its scenario title copied from the spec (if a title drops a condition that changes the verdict, fix the title in the spec); set the state to `就緒（可設計）` and 下一步 to the Engineer checking the package.
 4. The Engineer checks the package and either starts or returns specific questions; answer them by going back to step 3 or 4.
 
 Then one of:

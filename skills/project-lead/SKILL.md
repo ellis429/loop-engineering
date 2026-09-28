@@ -69,7 +69,7 @@ When the feature loop returns, check that the result carries the run id and matc
 - **PR Pass:** route the package to the human for acceptance. PR Pass is not acceptance, and acceptance is not merge.
 - **Blocked on requirements or scope:** analyse the impact with the human and record the decision; the spec change itself goes through `feature-to-spec`.
 
-Record the human's acceptance or rejection as one ticket comment: who, when, their words, the version, and the reason when rejected (D60). Every tracker write needs authorisation; without it, hand the comment text to the human to post.
+Record the human's acceptance or rejection as one ticket comment: who, when, their words, the version, and the reason when rejected (D60). On acceptance, check in the ticket body only the acceptance IDs the acceptor confirmed, link the record from the 驗收 section, and set the state to `已接受`; on rejection, set it back to `開發中` with the reason in 下一步 (D67). Every tracker write needs authorisation; without it, hand the text to the human to post.
 
 After the human accepted the feature:
 
@@ -78,7 +78,7 @@ After the human accepted the feature:
 
 After every PR of the feature, in every affected repo, is verified merged on the hosting service in dependency order:
 
-3. Archive the change in the root repo (`openspec-archive-change` or `openspec archive`) so the delta merges into `openspec/specs/`. Stop and report if the sync does not match.
+3. Archive the change in the root repo (`openspec-archive-change` or `openspec archive`) so the delta merges into `openspec/specs/`. Stop and report if the sync does not match. In the ticket, add a link to the archived change at that commit and set the state to `已完成`; closing the ticket is the human's call.
 
 ## 7. Report status
 

@@ -80,15 +80,15 @@ Validation 最小對照為 AC ID → 驗證方法／步驟 → 必要環境 → 
 
 | 紀錄 | 產生的 skill | 位置 |
 | --- | --- | --- |
-| SA 確認 | project-lead | Feature：proposal 的確認段；Project：決策紀錄 |
-| 交接包 | project-lead | ticket 留言 |
+| SA 確認 | Project：project-lead；Feature：feature-to-spec（D66） | Feature：proposal 的確認段；Project：決策紀錄 |
+| 交接包 | feature-to-spec（D66） | ticket 留言；ticket 本文的「交接包」連到它 |
 | 開工確認 | orchestrate（可用前由協調的人照同樣格式寫） | ticket 留言 |
 | 局部 review 結果 | orchestrate | ticket 留言，每個 task 一則 |
 | PR Pass 驗收包 | orchestrate | ticket 留言，連到 PR |
 | 接受或退回 | project-lead | ticket 留言 |
 | Retro 候選 | project-lead | ticket 留言 |
 
-每則留言寫明誰、何時、原話或結果、適用版本與連結。寫到 GitHub 需要授權；controller 可用後是否改由它保存另議。薄 controller 第一片已把開工決定與接受紀錄定在 `$LOOPCTL_HOME/features/<id>/feature.json`，PR Pass 驗收包由它產生（[D45-04 design](../design-candidate/d45-04/design.md)）；用它時以狀態檔為準，ticket 留言是摘要。
+每則留言寫明誰、何時、原話或結果、適用版本與連結。ticket 本文的狀態、下一步與驗收勾選，由寫對應紀錄的 skill 一併更新（D67）。寫到 GitHub 需要授權；controller 可用後是否改由它保存另議。薄 controller 第一片已把開工決定與接受紀錄定在 `$LOOPCTL_HOME/features/<id>/feature.json`，PR Pass 驗收包由它產生（[D45-04 design](../design-candidate/d45-04/design.md)）；用它時以狀態檔為準，ticket 留言是摘要。
 
 ### 共用入口與版本交接
 

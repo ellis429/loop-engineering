@@ -272,17 +272,17 @@ OpenSpec 把 `changes/` 底下每個 Feature 的資料夾叫 change，和上線�
 | 步驟 | 誰 | 產出 | Ticket |
 | --- | --- | --- | --- |
 | 1. 排進 roadmap | Project Lead Agent 提出，Project Lead 確認 | roadmap 上一行 | 通常還沒開；想早點讓人看到可以先開，只寫目標 |
-| 2. 選中 | Project Lead 在確認 roadmap 時選；Project Lead Agent 建立 spec | `openspec new change <id>` | 開 ticket，或把已有的 ticket 連上 spec |
-| 3. Feature SA | Project Lead Agent 研究與提問，Project Lead 或 Engineer 回答 | `proposal.md`、spec；`openspec validate <id>` 通過 | 同一人兼任：就緒；不同人：待 SA 確認 |
-| 4. SA 確認 | Project Lead | 確認紀錄、交接包 | 就緒 |
+| 2. 選中 | Project Lead 在確認 roadmap 時選；Project Lead Agent 開 branch 與 change | `feature/<id>`、`openspec new change <id>` | 開 ticket，或把已有的 ticket 改成薄格式：準備中 |
+| 3. Feature SA | Project Lead Agent 研究與提問，Project Lead 或 Engineer 回答 | `proposal.md`、spec；`openspec validate <id>` 通過 | 準備中 |
+| 4. SA 確認、交接 | Project Lead | 確認紀錄、交接包 | 就緒（可設計）；列出 AC |
 | 5. Design＋plan | Implementer | `design.md`、`tasks.md`、AC 的驗法 | |
 | 6. 開工確認 | 交接時指定的人，通常是 Engineer | 確認紀錄 | 開發中 |
 | 7. 逐 task 實作 | Implementer；Reviewer 做局部 review | 每個 task 一到幾個綠燈 commit | |
-| 8. PR | Implementer、Reviewer、CI | 三個 gates、PR Pass 驗收包 | 連上 PR |
-| 9. 驗收、merge | 驗收人（預設 Project Lead） | 接受紀錄；由人 merge | |
-| 10. 收尾 | Project Lead Agent | `openspec archive`；更新 roadmap；Retro 候選 | 由人關閉，或 PR merge 時關閉；Agent 只在獲授權時更新狀態 |
+| 8. PR | Implementer、Reviewer、CI | 三個 gates、PR Pass 驗收包 | 待驗收；Spec 改連 root PR |
+| 9. 驗收、merge | 驗收人（預設 Project Lead） | 接受紀錄；由人 merge | 已接受；勾選確認過的 AC |
+| 10. 收尾 | Project Lead Agent | `openspec archive`；更新 roadmap；Retro 候選 | 已完成；補封存連結；由人關閉。Agent 寫 ticket 都要授權 |
 
-兩個角色由同一人擔任時，第 4 步併入第 6 步：spec、design、plan 一起看一次，確認後開工。不同人擔任時分開，spec 被推翻時 Engineer 不會白做。
+兩個角色由同一人擔任時，只有第 4 步的 spec 確認延到第 6 步，和 design、plan 一起看一次，確認後開工；交接、列出 AC、標「就緒」仍在第 4 步完成。不同人擔任時分開，spec 被推翻時 Engineer 不會白做。
 
 ## Spec 怎麼寫、放哪
 

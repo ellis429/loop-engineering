@@ -260,7 +260,7 @@ flowchart LR
 - **誰做**：Project Lead 或 Engineer 帶著 Agent 做；中小型 Feature 常由 Engineer 自己寫。用的 skill 是 `feature-to-spec`（不是 Matt Pocock 的 `/to-spec`）。
 - **誰確認**：◆確認 spec 仍由 Project Lead 做；兩個角色是同一人時，併入 B1 的 ◆確認開工。
 - **branch**：每個 Feature 在 root 開一條 `feature/<id>` 與自己的 worktree，spec 從第 1 步就寫在這條 branch 上；之後的 design、tasks、程式也在同一條，B3 開 PR，merge 後才進 main。
-- **ticket**：薄的追蹤票，第 1 步就開。只放 Milestone、狀態、目標、Spec 連結、驗收 ID、Blocked by；範圍、不做與 AC 條文只在 spec。交接、開工、驗收紀錄都用留言貼在同一張 ticket。
+- **ticket**：薄的追蹤票，第 1 步就開。只放 Milestone、狀態、下一步、目標、Spec 連結、驗收 ID、Blocked by；範圍、不做與 AC 條文只在 spec。交接、開工、驗收紀錄都用留言貼在同一張 ticket。狀態依序是準備中 → 就緒（可設計）→ 開發中 → 待驗收 → 已接受 → 已完成，卡住時標 Blocked 並寫原因；每一步寫紀錄的人順手更新狀態和「下一步」。
 
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
@@ -328,26 +328,32 @@ flowchart LR
        - [ ] 依賴：上游的版本與狀態
        - [ ] 待決、決策者與下一位 owner
        - [ ] 開工確認人與驗收人
-     - [ ] ticket 的「驗收」列出每個 AC ID 和一句名稱（勾選框），狀態「就緒」
+     - [ ] ticket 本文連到交接包留言，寫明 spec 確認（已確認的 commit，或併入開工確認）
+     - [ ] 「驗收」列出每個 AC ID，名稱照抄 spec 的 Scenario 標題（未勾選）；標題漏了會改變判定的條件，就改 spec 的標題
+     - [ ] 狀態「就緒（可設計）」，下一步是 Engineer 核對交接包
      - [ ] Engineer 在 ticket 回覆可以開始，或列出具體問題退回
 
-ticket 長這樣（◆確認 spec 之後、交接完成時）：
+ticket 長這樣（交接完成時）：
 
 ```markdown
-**Milestone：** M1 跨 Node 檔案讀取　**狀態：** 就緒
+**Milestone：** M1 跨 Node 檔案讀取　**狀態：** 就緒（可設計）
+**下一步：** Engineer 核對交接包
 
 ## 目標
 App 寫完檔案後，能拿到明確的發布結果：只有內容已發布才回成功。
 
 ## Spec
-[`openspec/changes/finalize-protocol/`](…)（branch `feature/finalize-protocol`）：範圍、不做、需求與驗收都以這裡為準。開 PR 後改連 PR。
+- [change](…)：範圍、不做、需求與驗收都以這裡為準（branch `feature/finalize-protocol`，開 PR 後改連 PR）
+- 交接包：[留言](…)
+- spec 確認：已確認 `a1b2c3d`
 
 ## 驗收
-- [ ] AC-F01 宣告成功才回 SUCCESS
+勾選＝驗收人已確認這一條；證據看驗收包與驗收紀錄的留言。
+- [ ] AC-F01 內容已發布才回 SUCCESS
 - [ ] AC-F02 同內容重試不重複發布
 
 ## Blocked by
-- #1 專案骨架
+- #1 專案骨架：接受並 merge 後解除；Project Lead
 ```
 
 一頁摘要長這樣：
@@ -390,6 +396,7 @@ App 寫完檔案後，能拿到明確的發布結果：只有內容已發布才�
    - 完成：
      - [ ] `openspec/specs/` 和已 merge 的實作一致
      - [ ] Feature 資料夾移進封存
+     - [ ] ticket 補上封存位置的固定 commit 連結，狀態「已完成」；關票由人決定
 
 有依賴的 Feature 要等上游接受並 merge 後才開始實作。
 
@@ -461,6 +468,7 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
    - 怎麼做：看 design、tasks、驗法、scope、環境、風險與執行限制；兼任時連 spec 一起看。
    - 完成：
      - [ ] ticket 留言記下誰、何時、原話和確認的版本
+     - [ ] ticket 狀態「開發中」
 
 **細節**：參考手冊的[做出來：Engineer 的細節](reference.md#做出來engineer-的細節)。
 
@@ -535,7 +543,7 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
      - [ ] 每個受影響 repo 的 PR、base／head commit、CI 與 review 連結
      - [ ] 風險與已知限制
      - [ ] run ID
-     - [ ] 驗收包貼成 ticket 留言
+     - [ ] 驗收包貼成 ticket 留言，本文「驗收」連到這則留言，狀態「待驗收」
 
 **細節**：參考手冊的[做出來：Engineer 的細節](reference.md#做出來engineer-的細節)：gates 的證據與 review-fix loop。
 
@@ -559,7 +567,8 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
    - 怎麼做：AC 沒達成就退回 B2 修正；需求要改就回 A4 更新 spec。
    - 完成：
      - [ ] 接受或退回記成 ticket 留言：誰、何時、原話、版本
-     - [ ] 退回附理由
+     - [ ] 接受：ticket 只勾驗收人確認過的 AC，狀態「已接受」
+     - [ ] 退回附理由，ticket 狀態回到「開發中」
 3. **merge**
    - 怎麼做：多個 PR 照依賴順序，提供方先；每個 PR merge 前確認它單獨 merge 也安全（向後相容）。
    - 完成：
