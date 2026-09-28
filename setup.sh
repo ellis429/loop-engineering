@@ -134,6 +134,7 @@ tree_hash() {
 STAGE=""
 BACKUP=""
 TARGET=""
+MANIFEST_TMP=""
 cleanup_project() {
   if [ -n "$BACKUP" ] && [ -e "$BACKUP/${TARGET##*/}" ] && [ ! -e "$TARGET" ]; then
     if ! mv "$BACKUP/${TARGET##*/}" "$TARGET"; then
@@ -143,14 +144,30 @@ cleanup_project() {
   fi
   [ -z "$STAGE" ] || rm -rf "$STAGE"
   [ -z "$BACKUP" ] || rm -rf "$BACKUP"
-  STAGE=""; BACKUP=""; TARGET=""
+  [ -z "$MANIFEST_TMP" ] || rm -f "$MANIFEST_TMP"
+  STAGE=""; BACKUP=""; TARGET=""; MANIFEST_TMP=""
+}
+
+# Rewrites the manifest of install_project's $dest atomically: the records read at the start of the run
+# ($old) for folders not named in $2, then the lines in $1.
+write_manifest() {
+  MANIFEST_TMP="$(mktemp "$dest/.setup-manifest.XXXXXX")"
+  { echo "# Written by loop-engineering setup.sh --project, last copy from commit $commit. Each line: a skill it copied and the fingerprints accepted as that copy (two only while it is being swapped). Edit skills in loop-engineering, then re-run."
+    printf '%s\n' "$old" | awk -v c="$2" '!/^#/ && NF >= 2 && index(c, " " $1 " ") == 0'
+    printf '%s' "$1"; } > "$MANIFEST_TMP"
+  mv -f "$MANIFEST_TMP" "$dest/$MANIFEST"
+  MANIFEST_TMP=""
 }
 
 # Copies each skill folder into the product repo. A folder is replaced only when the manifest this
 # script wrote lists it with the same fingerprint, so a folder someone else put there or changed
 # since is left alone unless --force. The old folder is moved aside and restored if the swap fails.
+# The manifest keeps the record of every folder not replaced in this run, so a skipped folder is
+# still known as this script's copy, changed since, on the next run. While a folder is swapped its
+# record accepts the new fingerprint and, when the replaced folder was this script's unchanged copy,
+# that copy's fingerprint, so a run that stops at any point leaves each folder matching its record.
 install_project() {
-  local repo dest name src commit recorded current entries rel manifest_tmp hash
+  local repo dest name src commit recorded current entries rel hash copied old h prev
   repo="$(cd "$PROJECT" 2>/dev/null && git rev-parse --show-toplevel 2>/dev/null)" \
     || { echo "not a git repository: $PROJECT" >&2; exit 2; }
   repo="$(cd "$repo" && pwd -P)"
@@ -170,18 +187,31 @@ install_project() {
       echo "refusing to write $dest: $MANIFEST is not a regular file" >&2; exit 1
     fi
     mkdir -p "$dest"
-    entries=""
+    # Read once. A manifest that cannot be read stops the run before anything is written here, because
+    # rewriting it would drop the records of the folders this run skips.
+    old=""
+    if [ -e "$dest/$MANIFEST" ]; then
+      old="$(cat "$dest/$MANIFEST")" || { echo "refusing to write $dest: cannot read $MANIFEST" >&2; exit 1; }
+    fi
+    entries=""; copied=" "
     for name in "${PROJECT_SKILLS[@]}"; do
       src="$(find "$ROOT/skills" -type f -name SKILL.md -path "*/$name/SKILL.md" -exec dirname {} \; | head -1)"
       [ -n "$src" ] || { echo "missing skill in this repository: $name" >&2; exit 1; }
       if [ -L "$dest/$name" ]; then
         echo "SKIP     $dest/$name (a symlink; remove it to install a copy)"; continue
       fi
-      if [ -e "$dest/$name" ] && [ "$FORCE" -eq 0 ]; then
-        # An unreadable manifest or fingerprint counts as no record: the folder is skipped, never replaced.
-        recorded="$(awk -v n="$name" '$1 == n { print $2 }' "$dest/$MANIFEST" 2>/dev/null || true)"
-        if ! current="$(tree_hash "$dest/$name" 2>/dev/null)"; then current=""; fi
-        if [ -z "$recorded" ] || [ -z "$current" ] || [ "$current" != "$recorded" ]; then
+      recorded=""
+      for h in $(printf '%s\n' "$old" | awk -v n="$name" '!/^#/ && $1 == n { for (i = 2; i <= NF; i++) print $i }'); do
+        recorded="$recorded $h"
+      done
+      # prev: the folder's fingerprint when it is a copy this script made, kept on record during the swap.
+      prev=""
+      if [ -e "$dest/$name" ]; then
+        # An unreadable fingerprint counts as no record: the folder is skipped, never replaced.
+        if current="$(tree_hash "$dest/$name" 2>/dev/null)"; then
+          case "$recorded " in *" $current "*) prev=" $current" ;; esac
+        fi
+        if [ -z "$prev" ] && [ "$FORCE" -eq 0 ]; then
           echo "SKIP     $dest/$name (not an unchanged copy from this script; use --force)"; continue
         fi
       fi
@@ -192,6 +222,8 @@ install_project() {
       if ! hash="$(tree_hash "$STAGE/$name")"; then
         echo "cannot fingerprint the new copy of $name; nothing was replaced" >&2; exit 1
       fi
+      write_manifest "$entries$name $hash$prev
+" "$copied$name "
       if [ -e "$TARGET" ]; then
         BACKUP="$(mktemp -d "$dest/.setup-old.XXXXXX")"
         mv "$TARGET" "$BACKUP/$name"
@@ -202,12 +234,10 @@ install_project() {
       cleanup_project
       entries="$entries$name $hash
 "
+      copied="$copied$name "
+      write_manifest "$entries" "$copied"
       echo "copied   $dest/$name"
     done
-    manifest_tmp="$(mktemp "$dest/.setup-manifest.XXXXXX")"
-    { echo "# Copied by loop-engineering setup.sh --project from commit $commit. Edit in loop-engineering, then re-run."
-      printf '%s' "$entries"; } > "$manifest_tmp"
-    mv -f "$manifest_tmp" "$dest/$MANIFEST"
   done
 }
 
