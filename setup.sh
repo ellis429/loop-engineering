@@ -136,6 +136,7 @@ STAGE=""
 BACKUP=""
 TARGET=""
 MANIFEST_TMP=""
+TEMPLATE_TMP=""
 cleanup_project() {
   if [ -n "$BACKUP" ] && [ -e "$BACKUP/${TARGET##*/}" ] && [ ! -e "$TARGET" ]; then
     if ! mv "$BACKUP/${TARGET##*/}" "$TARGET"; then
@@ -146,6 +147,7 @@ cleanup_project() {
   [ -z "$STAGE" ] || rm -rf "$STAGE"
   [ -z "$BACKUP" ] || rm -rf "$BACKUP"
   [ -z "$MANIFEST_TMP" ] || rm -f "$MANIFEST_TMP"
+  [ -z "$TEMPLATE_TMP" ] || rm -f "$TEMPLATE_TMP"
   STAGE=""; BACKUP=""; TARGET=""; MANIFEST_TMP=""
 }
 
@@ -241,13 +243,16 @@ install_project() {
     done
   done
   # Agent instructions: placed only where the repo has none; an existing file (or symlink) is the repo's own.
+  # The complete copy is hard-linked into place, which fails rather than replace or follow any existing name.
   for name in AGENTS.md CLAUDE.md; do
-    if [ -e "$repo/$name" ] || [ -L "$repo/$name" ]; then
-      echo "SKIP     $repo/$name (exists; kept as is)"
-    else
-      cp "$ROOT/templates/$name" "$repo/$name"
+    TEMPLATE_TMP="$(mktemp "$repo/.setup-template.XXXXXX")"
+    cp "$ROOT/templates/$name" "$TEMPLATE_TMP"
+    if ln "$TEMPLATE_TMP" "$repo/$name" 2>/dev/null; then
       echo "copied   $repo/$name"
+    else
+      echo "SKIP     $repo/$name (exists; kept as is)"
     fi
+    rm -f "$TEMPLATE_TMP"; TEMPLATE_TMP=""
   done
   [ ! -f "$repo/AGENTS.md" ] || ! grep -q '〈待填' "$repo/AGENTS.md" || echo "NOTE     fill in the 〈待填〉 parts of $repo/AGENTS.md"
 }

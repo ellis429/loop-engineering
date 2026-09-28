@@ -21,10 +21,10 @@
 ### 2. 不在程式裡留「以後再改」
 
 - 不寫 `TODO`、`FIXME`、`HACK`、`XXX`，也不寫「暫時」「先這樣」「之後再補」「真的遇到再改」這類承諾式註解。
-- 要嘛現在就做對；要嘛確定超出本票範圍，那就：
-  - 開 issue 追蹤；
-  - 寫進該 Feature 的 OpenSpec change（`tasks.md` 的範圍、風險或未涵蓋段）；
-  - 若偏離設計，寫進決策紀錄。
+- 要嘛現在就做對；要嘛確定超出本票範圍，那就依事項交給對應的流程：
+  - 範圍外的問題：開 issue 追蹤，連回原本的 ticket；
+  - 需求或範圍要改：交給人決定，由 `feature-to-spec` 修改 spec；
+  - 偏離設計：寫進決策紀錄。
 - 程式註解只寫「為什麼現在這樣是對的」：不變式、前提、設計依據。不寫「目前不夠好、將來要改」。
 
 ### 3. 修根因，不修症狀
@@ -115,14 +115,14 @@ Refs: #<ticket>
 ### 範例
 
 ```
-fix(store): keep handle poisoned after any discard delete failure
+fix(parser): reject a header line without a colon
 
-Why: Only one exception type poisoned the handle; any other exception
-from the delete skipped the transition, leaving a reusable handle that
-could publish untrusted bytes.
+Why: The parser split each header line on its first colon and read a
+line without one as an empty header, so a malformed request passed
+validation.
 
-Behavior: After a failed delete, discard() leaves the handle poisoned
-regardless of the exception type.
+Behavior: A header line without a colon is rejected with a clear
+error, and valid headers parse as before.
 
-Refs: #4
+Refs: #<ticket>
 ```
