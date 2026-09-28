@@ -19,6 +19,21 @@ _Avoid_: Engineer 1
 依適用規格與工程規範審查整合變更並覆核 findings 的獨立 agent 角色；不直接修改被審查分支。Project Lead 的協調授權或 runtime 的父子關係不取代其獨立判斷。
 _Avoid_: Engineer 2
 
+**Lead**:
+帶專案的人：給目標與限制、回答需求問題，確認可進入 Design、專案基準與 roadmap，選 feature 並驗收結果。與 Project Lead Agent 協作，決策權在人。
+_Avoid_: 用 Lead 簡稱 Project Lead Agent
+
+**Feature Builder**:
+承接 feature 交接包的人：帶 Implementer Agent 完成詳細設計與 plan，完成或轉交開工確認，並把 feature 推進到 PR Pass。中文常稱工程師。
+_Avoid_: Implementer（指人時）
+
+**Orchestrate**:
+把一個 feature 從交接包跑到 PR Pass 或 Blocked 的 skill；由人或獲授權的 Project Lead 呼叫，使用 controller 核對狀態與 gates，不呼叫 Project Lead。
+_Avoid_: 與 ADE 層的多 agent 溝通機制（例如 Herdr、Orca）混稱 Orchestrator
+
+**交接包**:
+Project Lead 交給 feature loop 的最小輸入：change ID 與檔案版本、SA 確認、專案基準引用、依賴與 base branch、未決問題與決策者、開工與驗收的決策者。不含開工確認；design＋plan 在 feature loop 中產出後才由人確認。
+
 **Model**:
 Agent 執行推理所使用的模型；與負責工具、session 及執行生命週期的 runtime 分開。
 
@@ -35,7 +50,7 @@ Agent 執行推理所使用的模型；與負責工具、session 及執行生命
 整體目標、共用契約、系統限制與跨功能保證的權威需求集合。
 
 **Feature spec**:
-經 feature 研究與系統分析形成、引用 project baseline 的需求集合，定義單次交付的目的、可觀察行為、範圍、驗收條件、依賴與必要限制。可位於 feature ticket 內文或引用文件，並連結適用的高層設計。
+經 feature 研究與系統分析形成、引用 project baseline 的需求集合，定義單次交付的目的、可觀察行為、範圍、驗收條件、依賴與必要限制。依 D54 位於 OpenSpec change 的 proposal 與 spec delta；ticket 只保存摘要與引用，並連結適用的高層設計。
 
 **Roadmap**:
 專案的交付路徑，描述 milestones 的成果、優先順序與依賴，並逐步拆成可交付的 features。
@@ -50,7 +65,7 @@ Feature 的主要元件責任、對外契約、跨系統資料流與重要技術
 在 feature spec 與高層設計邊界內，決定模組介面、資料結構、失敗恢復與測試策略的設計，作為拆 implementation tasks 的依據。
 
 **Feature ticket**:
-追蹤一個可獨立驗收功能切片的 issue，包含或引用其 feature spec。
+追蹤一個可獨立驗收功能切片的 issue，只保存摘要並引用其 feature spec（依 D54 位於 OpenSpec change）。
 _Avoid_: Task ticket（用於指稱 feature 時）
 
 **Implementation task**:

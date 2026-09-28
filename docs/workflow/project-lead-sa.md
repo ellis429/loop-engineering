@@ -1,10 +1,10 @@
 # Project Lead：Research 與 SA 階段契約
 
-日期：2026-09-27。來源：使用者提供的 Project Lead prompt，以及要求納入 workflow 的「更新？」。D34 確認本階段方法與交接；Q-METHOD 的工具組合仍待比較與試用。本文是 [workflow-design.md](overview.md) 的階段 reference，尚非已安裝 skill，也不是已批准的產品 implementation plan。
+日期：2026-09-27。來源：使用者提供的 Project Lead prompt，以及要求納入 workflow 的「更新？」。D34 確認本階段方法與交接；Q-METHOD 的工具組合仍待比較與試用。本文是 [workflow-design.md](overview.md) 的階段 reference，也是 [project-lead skill](../../skills/project-lead/SKILL.md) 要遵守的契約（D55）；skill 是執行程序，規則以本文與決策紀錄為準。它不是已批准的產品 implementation plan。
 
 ## 何時使用與工作邊界
 
-Orchestrate 在準備 project 需求、準備選定 feature，或因新證據需要重新分析需求時，讓 Project Lead 載入本契約。先辨識本次層級、初始意圖與上游依據：
+準備 project 需求、準備選定 feature，或因新證據需要重新分析需求時，使用者以 project-lead skill 進入本階段（D55）；orchestrate 只跑單一 feature loop，不呼叫 Project Lead。先辨識本次層級、初始意圖與上游依據：
 
 | 層級 | 輸入 | 分析深度與下一步 |
 | --- | --- | --- |
@@ -30,6 +30,8 @@ SA 是分析活動，Spec 是分析成果；不要求各自建立一份重複文
 完成條件：本次意圖、分析層級與可用來源可辨識；阻擋性缺口已明列。
 
 ### 2. 先研究，再依決策需要深入
+
+使用者於 2026-09-28 指定 codebase 研究採 [HumanLayer 衍生的 research-codebase skill](../../skills/research-codebase/SKILL.md)；[來源版本與適配](../../skills/research-codebase/references/source.md) 隨 skill 保存。它先記錄現況、程式依據與限制，研究結果再供本階段的 SA／domain／grill 使用；不由研究工具直接決定未來需求或批准 Spec。本機已安裝 skill，不代表 orchestrate 接合或 example 演練已通過。
 
 追查與目標相關的流程及上下游，不要求全 repo 盤點。關注角色／觸發、主要與例外流程、模組與系統責任、外部依賴、核心資料／狀態／介面／資料來源、業務規則／權限／限制，以及相關測試、既有能力與缺口。
 
@@ -70,6 +72,20 @@ CONTEXT.md 只保存可跨需求沿用的領域語言；本次需求、研究證
 | 驗收條件 | 在哪些前提、操作／事件下，得到何種可觀察結果；涵蓋主流程與重要例外，可對回需求。分開記功能符合要求與業務改善達成 |
 | 假設、依賴與待決事項 | 已確認與未確認內容、依賴系統／角色、影響、是否阻擋 Design，以及預定解決階段 |
 
+七項放進四個位置（D54，採 OpenSpec）：
+
+| 位置 | 七項中的哪幾項 | Project 層 | Feature 層 |
+| --- | --- | --- | --- |
+| Why | 問題與目標 | project intent／mission | change 的 `proposal.md` `## Why` |
+| Scope | 範圍與非範圍 | project intent／mission | `proposal.md` `## What Changes` 加「不做」 |
+| Requirements | 角色與情境、行為與規則、例外與限制、驗收條件 | `openspec/specs/<能力>/spec.md` | change 的 `specs/<能力>/spec.md` delta |
+| Open items | 假設、依賴與待決 | 決策紀錄／project intent | `proposal.md` 的待決與依賴 |
+
+- **能力的切法**：一個能力是一組會一起改變的行為，不是元件、頁面或 feature。一個 feature 可改多個能力；跨 feature 的共用限制自成一個能力。既有專案先沿用現有章節切法，只拆開明顯混雜的部分，並保存「原章節 → 能力」對照與來源版本。
+- **ID**：需求 ID 每個能力一個前綴，Scenario 是帶 ID 的 AC；用過不重用，archive 後不變。
+- **非範圍與待決歸 Project Lead**：寫在 proposal，不放 Implementer 負責的 `design.md`。
+- **格式檢查**：以 `openspec validate` 檢查；內容是否正確由人與 Reviewer 判斷。
+
 Project SA 以共用契約與近期成果為尺度，不強制產出所有未來 features 的詳細 AC；Feature SA 對本次關鍵需求提供穩定需求／AC ID、可觀察通過條件與對應關係。沿 D19，design／plan 再補具體驗法、環境、任務與證據位置，執行後才填實證；SA 文件完成不代表驗證已通過。
 
 內容深度依本次需求調整；不為填滿章節新增功能。必要技術限制可引用適用設計／ADR；未決方案留到 Design 分析，不由規格整理工具補定。
@@ -85,6 +101,19 @@ Project Lead 在以下條件成立後，提出「SA 可進入 Design」的判斷
 5. 沒有會改變核心 scope、行為或驗收的阻擋性未決事項。
 6. 可延後問題已列明影響、後續處理階段與承接者。
 
+確認時，Project Lead 給使用者一頁照意思排列的摘要，每項附位置連結與版本；使用者讀摘要，不必逐一打開檔案：
+
+```text
+目標：……                          → proposal.md#why
+不做：……                          → proposal.md
+規則：ING-01 ……、ING-02 ……        → specs/<能力>/spec.md
+例外：AC-I03 ……、AC-I04 ……
+待決：Q1 ……（阻擋 Design，等你決定）
+版本：<commit 或檔案 hash>
+```
+
+確認紀錄寫明誰、何時、原話與確認的版本：feature 記在 proposal 的簡短區段，project 記在決策紀錄。
+
 不必決定全部實作細節，也不以七章填滿作為完成證明。保存判斷與使用者對適用版本的確認；這是需求階段交接，不能取代 D11 的 feature design＋plan 一次開工確認，不增加逐文件／逐 task 簽核。已有適用的 SA 成果及確認時沿用；新證據改變其核心需求才重新釐清。
 
 交接摘要至少包含：
@@ -98,6 +127,23 @@ Project SA 交 Project Lead 進行 high-level design 與 roadmap；Feature SA �
 
 若有阻擋，回報原因、證據、受影響工作、需人的具體決定或最小恢復條件及可繼續的部分；未讀到來源或查證失敗時列限制，不宣告完成。機器欄位與儲存方式仍由 [workflow-contracts.md](contracts.md) 的實作設計決定。
 
+## Roadmap 怎麼規劃
+
+Roadmap 是持續演化的文件：milestone 是可展示的成果節點，feature 是達成它的交付能力，切片是一個可獨立驗收、對應一個 PR 的交付單位。業界做法與出處見 [Roadmap 規劃參考](../references/roadmap-planning.md)。
+
+「切細」有三個層次，成本差很多，只有第一層可以提早做：
+
+| 層次 | 內容 | 何時做 |
+| --- | --- | --- |
+| Roadmap 切片 | 名稱、一句範圍、依賴 | 當前 milestone 有依據時可以整個切完；沒有依據時先停在 feature |
+| Feature spec | Proposal、spec delta、帶 ID 的 AC | 只做接下來 1–2 片 |
+| 詳細設計與 plan | Design、tasks | 開工前，由 Implementer 做 |
+
+- **狀態**：每個切片標「近期」或「暫定」。近期是接下來要寫 spec 的 1–2 片；暫定只有名稱、範圍和依賴，不寫 spec。暫定升為近期，就開始該片的 SA；SA 確認並備妥交接包，才算可以交給 feature loop。
+- **切多細的依據**：切法有依據（例如既有實作、穩定的設計），而且需要全貌來規劃平行、依賴或 demo 時，當前 milestone 可以整個切到切片層。內容要看前面的結果才知道、設計還不確定，或牽涉未決政策時，保持在 feature 層。後面的 milestone 只列 feature。
+- **何時重切**：每個切片驗收後（和 Retro 一起）、寫 spec 時發現切片太大、依賴改變，以及進入新的 milestone。
+- **紀錄**：小調整靠 git 歷史；改變範圍、順序或 milestone 的調整，記進決策紀錄並經使用者確認。
+
 ## 文件與決策分工
 
 | 內容 | 權威位置 |
@@ -110,14 +156,14 @@ Project SA 交 Project Lead 進行 high-level design 與 roadmap；Feature SA �
 
 需求決定直接更新 Spec，不為每個回答建立 ADR。既有 ADR 是研究依據；若需重評，先保存原因與影響，交 Design 處理。優先更新既有文件，不強制改名或平行保存同義版本。
 
-## 工具接合：目前建議，尚未固定
+## 工具接合
 
-此階段契約定義內容與互動；工具提供方法與 artifact 格式，不替代人的需求決策。Q-METHOD 目前優先試驗：
+依 D55，本階段由 [project-lead skill](../../skills/project-lead/SKILL.md) 執行，它按需叫用以下工具；工具提供方法與格式，不替代人的需求決策：
 
-- Project 文件保留原生結構；research／grill／domain skills 按實際可用版本支援分析。
-- Feature 由 Project Lead 在同一 OpenSpec change 準備 proposal／specs，七項內容依語意分配；高層設計引用既有來源或置於適用 design。Implementer 接續 detailed design 與 tasks，不複製一份 spec／plan。
-- 為維持角色交接，採用能分步產出並交接的入口；不能因工具能一次產出全部 artifacts，就讓 Project Lead 越過 Implementer 的詳細設計責任或把 artifacts 存在當成確認。
-- Matt to-spec 保留為整理方法的比較候選，不是預設必經步驟。若選用，仍遵守本契約七項內容、不提前補定技術方案，並明示處理其 user-only 呼叫、測試介面確認及 tracker 發布契約；不靜默假稱原生支援另一種輸出。
-- Writing Plans 與 OpenSpec tasks 的接合仍待試驗；D26 的 Superpowers TDD 選擇與三 gates 不因此重開。
+- **研究**：[research-codebase](../../skills/research-codebase/SKILL.md)，使用者於 2026-09-28 指定。
+- **grill 與領域語言**：Matt 的 grill-with-docs、grilling、domain-modeling，按實際可用版本使用。
+- **Spec**：依 D54 採 OpenSpec。Project Lead 寫 proposal 與 spec delta；Implementer 在同一個 change 接續 detailed design 與 tasks，不複製一份 spec 或 plan。不能因工具能一次產出全部 artifacts，就越過 Implementer 的詳細設計責任，或把 artifacts 存在當成確認。
+- **收尾**：人工接受並 merge 後以 OpenSpec archive 把 delta 併回 `openspec/specs/`；Retro 候選由 project-lead 整理（D55 修訂 D28）。
+- Matt to-spec 保留為比較候選，不是預設步驟。Writing Plans 與 OpenSpec tasks 的接合仍屬 Q-METHOD；D26 的 Superpowers TDD 與三 gates 不因此重開。
 
-以上是工具分工的試驗提案，不表示已完成整合或已關閉 Q-METHOD。
+project-lead skill 目前是草稿，尚未實際演練。

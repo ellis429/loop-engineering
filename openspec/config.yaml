@@ -5,7 +5,18 @@ context: |
   All artifacts must be written in Traditional Chinese.
   Keep OpenSpec structural headings and SHALL/MUST keywords in English.
 
-# Per-artifact rules (optional)
+# Per-artifact rules (D54)
+rules:
+  proposal:
+    - "Written by the Project Lead. Besides Why, What Changes, Capabilities and Impact, include a 「不做」 list (non-goals) and a 「待決與依賴」 section (open questions, dependencies, whether each blocks Design, owner)."
+    - "Record the human's 「可進入 Design」 confirmation in a short section: who, when, their words, and the confirmed version."
+  specs:
+    - "One capability is a set of behaviours that change together, not a component, page, or feature. Cross-feature constraints form their own capability."
+    - "Requirement IDs use one prefix per capability (for example ING-01); each Scenario is an acceptance condition with its own ID (for example AC-I01). IDs are never reused and do not change on archive."
+    - "Give each requirement its main scenario and the exception scenarios that matter: missing data, duplicates, timeouts, partial failure."
+  design:
+    - "Owned by the Implementer. Non-goals and open requirement questions stay in proposal.md; only record design goals and design questions here."
+
 # Add custom rules for specific artifacts.
 # Example:
 #   rules:

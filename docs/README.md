@@ -1,27 +1,27 @@
 # 文件導覽
 
-**要用這套流程帶專案或做 feature，先讀 [Loop Engineering Workflow 使用者指南](workflow/user-guide.md)。** 它按角色與三個 use cases 說明操作和產出，附 cross-node-file-transfer 演練路線；不必先讀 controller 設計。完整自動 loop 尚未完成，指南有標明可用程度。
+**要用這套流程帶專案或做 feature，先讀 [使用指南總覽](workflow/user-guide.md)。** 它用一張泳道全貌圖與角色對照表區分人的責任與 Agent 工作，再依角色分兩份：帶專案讀 [Project Lead 指南](workflow/user-guide-project-lead.md)，接 feature 讀 [Feature Builder 指南](workflow/user-guide-feature-builder.md)。附 cross-node-file-transfer 演練路線；完整自動 loop 尚未完成，stacked 政策仍待確認。
 
 主要文件分成兩組：**Workflow 說明人與 agents 怎麼合作，Harness 說明用什麼執行環境與控制機制把流程跑起來。** 專案目標及決策留在本目錄根層，不另建立 product／project 分類。
 
 這是本 repo 的文件安排，不強制下游專案搬動 OpenSpec 或其他 skills 的原生 artifacts。
 
-> **目前進度（2026-09-28）**：[候選 D45-04 revision-14](../../loop-engineering-thin/docs/design-candidate/d45-04/README.md)已修正原 Opus review 的 16 項及覆核新增的 2 項，獨立 Astra xhigh 覆核為 `clean`，見[修正與覆核紀錄](reviews/2026-09-28-opus-review-d45-04-resolution.md)。此結論只涵蓋本批文件修正；D11 未確認、產品未實作，88 AC 仍 planned、17 舊 S1 findings 仍 open。原 [88 AC 審核](reviews/2026-09-27-ac-audit/README.md)與 [Opus 初審](reviews/2026-09-28-opus-review-d45-04.md)保留歷史；接續以 [handoff](handoffs/2026-09-27-controller-design.md) 最新段為準。
+> **目前進度（2026-09-28）**：[D45-04 revision-17](design-candidate/d45-04/README.md) 的 design＋plan 已由 [D53](decisions.md) 完成 D11 開工確認，文件經 PR #3 合進 main，薄 controller 第一片正在 `delivery/thin-controller` 分支依 tasks 實作，完成狀態以該分支的驗證紀錄為準。D54 定下 spec 的位置與回流（OpenSpec），D55 把 Project 層交給 `project-lead` skill、orchestrate 只跑單一 feature loop；第一片不受影響。D56 讓 cross-node-file-transfer 的 Project 層先開始。[88 AC 審核](reviews/2026-09-27-ac-audit/README.md)、[Opus 初審](reviews/2026-09-28-opus-review-d45-04.md)與[修正紀錄](reviews/2026-09-28-opus-review-d45-04-resolution.md)保留歷史；接續以 [handoff](handoffs/2026-09-27-controller-design.md) 最新段為準。
 
 ## 先讀哪份
 
-使用者入口是上面的 [Workflow 指南](workflow/user-guide.md)。以下供需要了解規則、維護設計或接續實作的人閱讀：
+使用者入口是上面的 [使用指南](workflow/user-guide.md)。以下供需要了解規則、維護設計或接續實作的人閱讀：
 
 1. 了解目標：[Project intent](project-intent.md)、[已確認／待決事項](decisions.md)、[領域詞彙](../CONTEXT.md)。
 2. 了解方法：[Workflow](workflow/overview.md)、[交接契約](workflow/contracts.md)；準備需求時讀 [Project Lead SA](workflow/project-lead-sa.md)。
 3. 討論工具整合：[Herdr 設計](harness/herdr-integration.md)，包含四層概念圖、元件資料流與開工前缺項。它仍是提案；[範圍收斂對照](harness/scope-reconciliation.md) 逐項整理 88 個 AC 與 17 個未解 findings，作為正式修訂的輸入。
-4. 接續實作前核對：[正式 OpenSpec change](../openspec/changes/implement-delivery-loop/proposal.md)、[checkpoint](handoffs/2026-09-27-controller-design.md) 及 [AC 對照](validation/implement-delivery-loop.md)。舊 design／tasks 仍在 scope revision pending。
+4. 接續實作前核對：[正式 OpenSpec change](../openspec/changes/implement-delivery-loop/proposal.md)、[checkpoint](handoffs/2026-09-27-controller-design.md) 及 [AC 對照](validation/implement-delivery-loop.md)。design／tasks 已指向 D53 採用的 revision-17，D40 內容留在 Git 歷史。
 
 ## 主要文件與狀態
 
 | 位置 | 責任與目前狀態 |
 | --- | --- |
-| [workflow/user-guide.md](workflow/user-guide.md) | 給使用者的角色、Project／Feature／goal 操作情境、交接與 example 演練；清楚區分預期流程與已完成能力 |
+| [workflow/user-guide.md](workflow/user-guide.md) | 使用指南總覽：角色、控制方向、兩層介面、文件位置與 example 演練；角色操作見 [Project Lead](workflow/user-guide-project-lead.md) 與 [Feature Builder](workflow/user-guide-feature-builder.md) 兩份，圖見 [圖解頁](workflow/user-guide-visual.html) |
 | [project-intent.md](project-intent.md) | 本專案目標、需求基線、D41／D42 成品與責任邊界 |
 | [decisions.md](decisions.md) | 已確認決策及未決項目，保留原決策 ID 與沿革 |
 | [workflow/overview.md](workflow/overview.md) | Project／Feature 流程、角色、人工介入、Retro；舊平台責任仍依 D41／D42 待對照 |
@@ -45,7 +45,10 @@ docs/
 ├── decisions.md                    # 已確認與待決事項
 ├── workflow/                       # Project／Feature 方法與交接契約
 │   ├── overview.md
-│   ├── user-guide.md                # 使用者首先閱讀
+│   ├── user-guide.md                # 使用者首先閱讀：總覽
+│   ├── user-guide-project-lead.md   # 帶專案的 Lead
+│   ├── user-guide-feature-builder.md # 接 feature 的 Feature Builder
+│   ├── user-guide-visual.html       # 指南圖解；SVG 由此匯出
 │   ├── contracts.md
 │   ├── project-lead-sa.md
 │   └── history/                    # 早期流程草案及推導
@@ -70,8 +73,9 @@ Repo 根目錄的責任維持：
 | --- | --- |
 | [CONTEXT.md](../CONTEXT.md) | 共用領域語言，保留 domain-modeling 慣例 |
 | [openspec/](../openspec/) | 原生 proposal／specs／design／tasks |
+| [skills/](../skills/) | 本專案的 skills：`project-lead`（D55，草稿）、`research-codebase` |
 | [.agents/skills/](../.agents/skills/)、[.claude/](../.claude/) | 原生 agent skills／commands |
-| [src/delivery/](../src/delivery/)、[tests/](../tests/) | 既有 controller 與測試，沒有因文件分組而移除或宣稱已替換 |
+| `src/delivery/`、`tests/` | 舊 S1 controller 與測試，在未合併的 [PR #2](https://github.com/yschiang/loop-engineering/pull/2) 分支，不在 main；薄 controller 第一片在 `delivery/thin-controller` 分支實作中 |
 | `.delivery/`、`.worktrees/` | 本機執行狀態與工作區，已 gitignore；可分享的證據另外保存 |
 
 本輪不新增空的 mission／tech／roadmap 文件。Project 產出物的語意與要求見 [產出物契約](workflow/contracts.md#project-與-feature-產出物)，需要獨立維護時再沿責任拆檔。
@@ -86,7 +90,7 @@ Repo 根目錄的責任維持：
 | 初始環境查核 | [Research](research/2026-09-25/research.md) · [Orca 能力](research/2026-09-25/orca-capabilities.md) · [Runtime probe](research/2026-09-25/runtime-probe.md) · [整合限制](research/2026-09-25/integration-gaps.md) |
 | 早期交接與 controller 設計推導 | [Feature handoff](research/2026-09-25/feature-handoff-contract.md) · [Loop 藍圖](harness/history/loop-engineering.md) · [檔案狀態](harness/history/file-state.md) |
 | 早期流程草案與 Retro 提案 | [Orchestrate 草案](workflow/history/orchestrate-workflow-draft.md) · [輕量流程取捨](research/2026-09-26/workflow-gap-review.md) |
-| 外部方法來源 | [SDD](references/spec-driven-development-workflow.md) · [PR Bottleneck](references/fixing-the-pr-bottleneck.md) · [雙層 Retro](references/dual-loop-retro.md) |
+| 外部方法來源 | [SDD](references/spec-driven-development-workflow.md) · [PR Bottleneck](references/fixing-the-pr-bottleneck.md) · [雙層 Retro](references/dual-loop-retro.md) · [Roadmap 規劃](references/roadmap-planning.md) |
 | Spec 寫作對照 | [OpenSpec／Matt 實驗](experiments/spec-authoring-comparison/2026-09-26/README.md)；候選稿不是另一份現行規格 |
 | 暫緩的既有 PR 接入 | [gigaxfer pre-PR 實驗](experiments/pr-gating.md) |
 | 舊 controller 設計及 bootstrap | [設計 review](reviews/2026-09-27-design-review.md) · [詳細設計 review](reviews/2026-09-27-controller-detailed-design.md) · [Bootstrap](research/2026-09-27/controller-bootstrap.md) |

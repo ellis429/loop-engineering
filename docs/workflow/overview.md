@@ -4,6 +4,8 @@
 
 > **2026-09-27 範圍更新（D41／D42）**：已確認改為 orchestrate 呼叫薄 controller，完整成品包含多人 Project／Feature 流程及 cross-node-file-transfer 多 feature 示範。見 [Project intent](../project-intent.md)。本文涉及 controller 自動派工、全面恢復及平台責任的舊設計待逐項對照，不能直接據此續派；三 gates、證據／版本及 finding 覆核仍保留。
 
+> **2026-09-28 更新（D54／D55）**：Spec 位置與回流採 OpenSpec（D54）。本文 §1 的「單一 orchestrate 入口分兩層」已由 D55 修訂：Project 層、feature 準備與 Retro 由 project-lead skill 承擔，orchestrate 只跑單一 feature loop，控制方向由 Project Lead 往下。使用者操作見 [使用指南](user-guide.md)，交接見 [契約](contracts.md#角色交接摘要)。
+
 日期：2026-09-26；2026-09-27 更新 D32／D34 的分析／設計分工、D31 選型狀態、D37 選配部署及建置／後續試用順序。狀態：供使用者 review 的整合設計，尚非已安裝 skill、controller 或批准開工的 implementation plan。
 
 本文是最新整體設計入口。[decisions.md](../decisions.md) 記錄已確認政策；[先前討論草案](history/orchestrate-workflow-draft.md) 保留來源比較與推導；執行契約見 [workflow-contracts.md](contracts.md)。建議與未決事項不因寫入本文就成為已核准政策。現行順序依 D33：先在 orca-delivery 測通 workflow、orchestrate 與預設工具組合，再啟動 cross-node-file-transfer。P03 Retro 仍等使用者開始，既有 PR 接入保留暫緩。
@@ -157,7 +159,7 @@ Mission、tech、roadmap、CONTEXT 與 spec 是文件角色，不是強制每個
 
 ### 4.2 Project baseline 與 Feature 產出物
 
-共用的 [產出物契約](contracts.md#project-與-feature-產出物) 定義 mission、domain、project spec、architecture／tech、roadmap、工程驗證及研究決策的責任與讀取時機。Project orchestrate 和每個 feature 都引用實際版本；保留 Matt 原生 CONTEXT.md 作共同領域詞彙入口，不強制另建 domain-model.md。
+共用的 [產出物契約](contracts.md#project-與-feature-產出物) 定義 mission、domain、project spec、architecture／tech、roadmap、工程驗證及研究決策的責任與讀取時機。project-lead（D55）和每個 feature 都引用實際版本；保留 Matt 原生 CONTEXT.md 作共同領域詞彙入口，不強制另建 domain-model.md。
 
 Feature 的 requirements、plan、validation 分別對應 spec／AC、implementation plan／tasks、AC 驗證對照與實際 evidence；另外保留 design。語意已涵蓋，具體 layout 與工具接合仍是提案，現有 OpenSpec change 的 design／tasks／validation 尚待補齊。
 
@@ -214,7 +216,7 @@ Implementer 與 Reviewer 不直接傳訊或互相呼叫；Orca／runtime 的交�
 
 ## 8. Retro 接回下一個 feature
 
-依 D28，節奏為「開發中保存線索 → 人工驗收後自動整理 Retro 改善候選 → 有跨 feature 影響才 Replanning」。Orchestrate 明示整合回顧方法，不隱式呼叫 Matt user-only 原版 skill。第一輪挑 1–3 個有依據的改善，記錄來源、原因（事實或假設）、改善、承接者、驗法與落地版本；下一個相關 feature 再看重犯與誤報。
+依 D28，節奏為「開發中保存線索 → 人工驗收後自動整理 Retro 改善候選 → 有跨 feature 影響才 Replanning」。依 D55 由 project-lead skill 明示整合回顧方法（原為 orchestrate），不隱式呼叫 Matt user-only 原版 skill。第一輪挑 1–3 個有依據的改善，記錄來源、原因（事實或假設）、改善、承接者、驗法與落地版本；下一個相關 feature 再看重犯與誤報。
 
 修復當前必要缺陷留在原 fix loop；可獨立的規範／工具改善作 follow-up。修改已核准 spec/AC、架構、gate policy 或工具權限沿 D11 回人。沒有改善不造待辦或 no-change 簽核。完成快照與 findings 保存後，再按需要換 fresh session；context reset 本身不是交接。
 
@@ -240,7 +242,7 @@ D31 的 authoring／planning 組合已重新開放評估，Q-METHOD 尚待收斂
 
 Writing Plans 的儲存路徑可以依使用者偏好調整，但原生任務格式與 execution handoff 仍需明示適配。若採 OpenSpec tasks 為唯一計畫來源，需保留其追蹤格式並補足交接細節；不能聲稱只改檔名就完成整合，也不另維護一份可獨立漂移的 plan。技能候選不因此取得派工權；既有單一 controller 與 G2 獨立性要求維持。
 
-依 D17 使用單一 `orchestrate` 入口；建議以 router 按意圖載入 project / feature / adopt-resume / retro references；共用 gate、assignment/result 與 owner 契約。Skill 程序與輸出範圍見 [契約文件](contracts.md#skills-交接契約)。自動呼叫限制不靠 wrapper 名稱繞過；保留原方法或明示整合調整。
+原依 D17 使用單一 `orchestrate` 入口並按意圖載入 project / feature / adopt-resume / retro references；D55 已修訂為兩個 skill：project 與 retro 由 `project-lead` 承擔，`orchestrate` 只載入 feature 與 adopt-resume；共用 gate、assignment/result 與 owner 契約。Skill 程序與輸出範圍見 [契約文件](contracts.md#skills-交接契約)。自動呼叫限制不靠 wrapper 名稱繞過；保留原方法或明示整合調整。
 
 Controller 建議為本機 Python CLI，YAML 保存設定、JSON 保存狀態、JSONL 保存事件；運作原子性見 [file-state.md](../harness/history/file-state.md)。OpenCode 為預設 runtime adapter；Orca／Codex／Claude Code 為選配接入，GitHub／git／CI 各有窄 adapter，核心規則可用 fake adapters 測。所選 profile 才載入其依賴及 preflight；未選用的接入失敗不阻斷 controller 的核心或 OpenCode 路徑。實際語言與執行命令將在 implementation plan 固定，目前沒有可直接啟動的產品指令。
 

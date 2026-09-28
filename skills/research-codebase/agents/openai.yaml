@@ -1,0 +1,4 @@
+interface:
+  display_name: "Research Codebase"
+  short_description: "Trace existing code into an evidence-backed report"
+  default_prompt: "Use $research-codebase to explain the relevant existing code paths and save a source-backed research report before we discuss requirements."
