@@ -8,6 +8,14 @@
 
 目前優先事項（D56 調整 D33）：**cross-node-file-transfer 的 Project 層現在開始，第一個真正的 feature 等 orchestrate 可用後走 feature loop**。新專案沿用既有需求／設計／roadmap 基準，核對來源並映射文件結構，省去重做完整 grill；從初始化開始留下新的交付證據。目的讓 member 沿同一入口與預設方法工作，不必各自挑 skills。詳見 [測通與新專案順序](docs/workflow/overview.md#101-新專案的啟動順序d33d56-調整)。
 
+## 安裝
+
+```bash
+./setup.sh
+```
+
+把本 repo 用到的 skills（我們自己的 `project-lead`、`research-codebase`，以及拉進 `skills/third-party/` 的 Matt Pocock 與 Superpowers skills）用 symlink 裝到 `~/.claude/skills`、`~/.agents/skills`、`~/.codex/skills`，並檢查 OpenSpec CLI 的版本。已經存在的資料夾不會被動到；`--force` 會改指向其他地方的 link，`--update` 照 [SOURCES.md](skills/third-party/SOURCES.md) 的 commit 重新拉外部 skills。
+
 ## 文件
 
 **第一次使用，先讀 [使用指南](docs/guide/user-guide.md)**：先看一張「大圈包小圈」的圖（外圈 Project、內圈 Feature），再照兩個圈逐一看每個活動的目的、分工、產出與完成條件；細節查 [參考](docs/guide/reference.md)。完整自動 loop 尚未完成，stacked PR 仍是待定政策下的目標流程。
