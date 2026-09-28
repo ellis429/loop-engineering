@@ -113,33 +113,54 @@ install_skills() {
   done
 }
 
-# Copies each skill folder into the product repo. A folder that exists but is not listed in the
-# manifest this script wrote was put there by someone else and is left alone unless --force.
+# Hash of a folder's file names and contents; identifies a copy this script made.
+tree_hash() {
+  (cd "$1" && find . -type f -print | LC_ALL=C sort | while IFS= read -r f; do printf '%s\n' "$f"; shasum < "$f"; done) | shasum | cut -d' ' -f1
+}
+
+# Copies each skill folder into the product repo. A folder is replaced only when the manifest this
+# script wrote lists it with the same content hash, so a folder someone else put there or changed
+# since is left alone unless --force. Each copy is staged first and swapped in by rename.
 install_project() {
-  local repo dest name src commit copied
+  local repo dest name src commit recorded entries rel stage
   repo="$(cd "$PROJECT" 2>/dev/null && git rev-parse --show-toplevel 2>/dev/null)" \
     || { echo "not a git repository: $PROJECT" >&2; exit 2; }
+  repo="$(cd "$repo" && pwd -P)"
   commit="$(git -C "$ROOT" rev-parse --short HEAD)"
   if [ -n "$(git -C "$ROOT" status --porcelain -- skills)" ]; then
     commit="$commit+uncommitted"; echo "WARN     skills/ has uncommitted changes; recorded as $commit"
   fi
-  for dest in "$repo/.claude/skills" "$repo/.agents/skills"; do
+  for rel in .claude/skills .agents/skills; do
+    dest="$repo/$rel"
+    # Nothing is created or deleted through a symlink: checked before mkdir, so no folder appears outside.
+    if [ -L "$repo/${rel%%/*}" ] || [ -L "$dest" ]; then
+      echo "refusing to write $dest: part of the path is a symlink" >&2; exit 1
+    fi
     mkdir -p "$dest"
-    copied=()
+    entries=""
     for name in "${PROJECT_SKILLS[@]}"; do
       src="$(find "$ROOT/skills" -type f -name SKILL.md -path "*/$name/SKILL.md" -exec dirname {} \; | head -1)"
       [ -n "$src" ] || { echo "missing skill in this repository: $name" >&2; exit 1; }
-      if [ -e "$dest/$name" ] && ! grep -qx "$name" "$dest/$MANIFEST" 2>/dev/null && [ "$FORCE" -eq 0 ]; then
-        echo "SKIP     $dest/$name (not installed by this script; use --force)"; continue
+      if [ -L "$dest/$name" ]; then
+        echo "SKIP     $dest/$name (a symlink; remove it to install a copy)"; continue
       fi
+      if [ -e "$dest/$name" ] && [ "$FORCE" -eq 0 ]; then
+        recorded="$(awk -v n="$name" '$1 == n { print $2 }' "$dest/$MANIFEST" 2>/dev/null)"
+        if [ -z "$recorded" ] || [ "$(tree_hash "$dest/$name")" != "$recorded" ]; then
+          echo "SKIP     $dest/$name (not an unchanged copy from this script; use --force)"; continue
+        fi
+      fi
+      stage="$dest/.$name.setup-new"
+      rm -rf "$stage"
+      cp -R "$src" "$stage"
       rm -rf "${dest:?}/$name"
-      cp -R "$src" "$dest/$name"
-      copied+=("$name")
+      mv "$stage" "$dest/$name"
+      entries="$entries$name $(tree_hash "$dest/$name")
+"
       echo "copied   $dest/$name"
     done
-    # Only folders this script copied are listed, so a skipped folder stays protected next time.
     { echo "# Copied by loop-engineering setup.sh --project from commit $commit. Edit in loop-engineering, then re-run."
-      [ ${#copied[@]} -eq 0 ] || printf '%s\n' "${copied[@]}"; } > "$dest/$MANIFEST"
+      printf '%s' "$entries"; } > "$dest/$MANIFEST"
   done
 }
 
@@ -147,7 +168,7 @@ while [ $# -gt 0 ]; do
   case "$1" in
     --force) FORCE=1 ;;
     --update) update_third_party; exit 0 ;;
-    --project) [ $# -ge 2 ] || { echo "--project needs a repository path" >&2; exit 2; }; PROJECT="$2"; shift ;;
+    --project) [ $# -ge 2 ] && [ -n "$2" ] || { echo "--project needs a repository path" >&2; exit 2; }; PROJECT="$2"; shift ;;
     *) echo "unknown option: $1" >&2; exit 2 ;;
   esac
   shift
