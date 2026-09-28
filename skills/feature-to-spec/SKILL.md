@@ -97,7 +97,7 @@ End by showing the human one short summary, in the chat, of what now exists:
 - the spec confirmation: the confirmed commit, or the fold note;
 - the start approver and the acceptor;
 - open items and dependencies, each with who decides;
-- the next prompt the Engineer pastes in the feature's worktree, ready to copy: `/spec-to-plan 準備〈change id〉的設計與計畫：讀交接包，寫 design.md 與 tasks.md，交另一個模型審到 clean，停在確認開工。`
+- the next step: after a manual hand-off, the prompt the Engineer pastes in the feature's worktree, ready to copy: `/spec-to-plan 準備〈change id〉的設計與計畫：讀交接包，寫 design.md 與 tasks.md，交另一個模型審到 clean，停在確認開工。`; when you started `spec-to-plan` yourself (authorised), where it stands and where it will stop instead.
 
 Anything the summary cannot show (not pushed, no ticket, no confirmation yet) is said plainly, with what is missing.
 
