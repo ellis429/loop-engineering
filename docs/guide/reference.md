@@ -535,6 +535,23 @@ feature loop 回來的結果只有兩種：
 
 Demo 結束時，觀眾應能沿一條路徑找到：「目標 → Milestone → Feature／AC → design／tasks → worktree／PR → TDD／review／CI → 人的決策 → 併入現況的 spec」。
 
+## OpenSpec 和 Superpowers 怎麼分工
+
+用於 A4、B1–B3、A5。**OpenSpec 管文件：放哪、長什麼樣、什麼時候變成現況；Superpowers 管做事的紀律。** 每種文件只有 OpenSpec 那一份，Superpowers 只借它的做法。
+
+| 步驟 | 文件（OpenSpec） | 怎麼寫、怎麼做 |
+| --- | --- | --- |
+| A4 Specify | `proposal.md`、`specs/<能力>/spec.md` | feature-to-spec：由上往下問（Matt Pocock 的 grilling） |
+| B1 Design | `design.md` | 在 A2 的邊界內決定；方案要比較時，借 Superpowers brainstorming 的做法 |
+| B1 Plan | `tasks.md` | Superpowers writing-plans 的寫法：每個 task 列測試與預期的 Red，不放實作碼（D68） |
+| B2 Build | 程式與測試；勾 `tasks.md` | Superpowers test-driven-development；要分派多個 Agent 時用 subagent-driven-development |
+| B3 Verify | PR、ticket 留言 | 另一個模型的獨立 Reviewer |
+| A5 Retro | `openspec archive` → `openspec/specs/` | OpenSpec |
+
+- **OpenSpec 的好處**：需求只有一份、每條有 ID；`openspec validate` 檢查格式；進行中的在 `changes/`，archive 後才進 `specs/`，Agent 不會把還沒做的當成已經有。
+- **Superpowers 的好處**：計畫拆多細、測試先寫、Red 一定先紅這些紀律；OpenSpec 只給格式，不管這些。
+- **不要讓 Superpowers 另寫一份**：brainstorming 預設寫 `docs/superpowers/specs/…`、writing-plans 預設寫 `docs/superpowers/plans/…`。照預設走，同一個 Feature 會有兩份 spec 或兩份計畫，遲早對不上。用它們時要求內容寫進上表的 OpenSpec 檔案。
+
 ## 會用哪些 skills 與工具
 
 在 loop-engineering 執行 `./setup.sh`，就會把下表的 skills 裝到 `~/.claude/skills`、`~/.agents/skills`、`~/.codex/skills`，並檢查 OpenSpec CLI 的版本。外部 skills 的來源與版本見 [SOURCES.md](../../skills/third-party/SOURCES.md)。這些 skills 在哪一層，見使用指南的[人、Agent 與工具的分層](user-guide.md#人agent-與工具的分層)。
@@ -573,7 +590,7 @@ loop-engineering 自己開發 controller 時，預設 Opus 5.5 實作、GPT 審�
 | Feature spec 屬於外圈；內圈是 Implement → Validate | D64 |
 | 準備 Feature 的 skill 獨立成 feature-to-spec | D66 |
 | 每個 Feature 一條 feature branch；薄 ticket 的格式 | D67 |
-| 計畫列出測試與預期的 Red；共用測試骨架先做 | D68 |
+| 計畫列出測試與預期的 Red；共用測試骨架先做；Superpowers 的方法寫進 OpenSpec 的檔案 | D68 |
 | 有依賴的 Feature 等上游接受並 merge | D27 |
 | 示範專案的 Project 層先行 | D56 |
 | 薄 controller 第一片的核准 | D53 |

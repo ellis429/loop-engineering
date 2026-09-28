@@ -70,7 +70,7 @@ Agent 做大部分工作；人在六個 ◆ 確認點做決定：
 └──────────────────────────────────────────┘
 ```
 
-**Workflow** 是 Project、Feature 兩層的步驟與規則，貫穿所有層；**Harnessing** 是套在 Agent 身上的做法：skills、模型選擇、TDD、spec-driven，讓 Agent 照規則做。
+**Workflow** 是 Project、Feature 兩層的步驟與規則，貫穿所有層；**Harnessing** 是套在 Agent 身上的做法：skills、模型選擇、TDD、spec-driven，讓 Agent 照規則做。其中 OpenSpec 管文件放哪、長什麼樣，Superpowers 管做事的紀律，每種文件只有 OpenSpec 那一份，見參考手冊的 [OpenSpec 和 Superpowers 怎麼分工](reference.md#openspec-和-superpowers-怎麼分工)。
 
 ## 活動卡怎麼讀
 
