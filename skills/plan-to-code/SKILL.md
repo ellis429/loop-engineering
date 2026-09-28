@@ -11,7 +11,7 @@ Read repository instructions first; they override this skill. Commit and test co
 
 ## 0. Check the entry
 
-- The start-of-work approval is recorded (ticket comment with the plan's commit) and the ticket state is `開發中`. It must be the latest approval: no later comment supersedes it, and `tasks.md` differs from the approved commit only in ticked boxes and regression tests added for findings. Without it, stop.
+- The start-of-work approval is recorded (ticket comment with the plan's commit) and the ticket state is `開發中`. It must be the latest approval: no later comment supersedes it, `design.md` is unchanged since the approved commit, and `tasks.md` differs from it only in ticked boxes and regression tests added for findings. Without it, stop.
 - Fixes sent back by `to-pr` (G2 findings, G3 failures) or by an acceptor's rejection (defects against acceptance IDs) are fixes to the task that owns the affected paths, handled as in step 3.
 - Every upstream feature this one depends on is accepted and merged, at the version the handoff package names (D27); otherwise stop, because only preparation may run ahead of it.
 - If the approval depends on a spec change (a decision that alters a requirement or scenario), that change is already committed through `feature-to-spec`; otherwise stop and send it there. Do not implement against a spec that says something else.

@@ -561,6 +561,7 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
      - [ ] 每個受影響 repo 的 PR、base／head commit、CI 與 review 連結
      - [ ] 風險與已知限制
      - [ ] run ID，或手動執行的人
+     - [ ] 已用的修正輪數
      - [ ] 驗收包貼成 ticket 留言，本文「驗收」連到這則留言，狀態「待驗收」
 
 **細節**：參考手冊的[做出來：Engineer 的細節](reference.md#做出來engineer-的細節)：gates 的證據與 review-fix loop。
@@ -586,7 +587,7 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
    - 完成：
      - [ ] 接受或退回記成 ticket 留言：誰、何時、原話、版本
      - [ ] 接受：ticket 只勾驗收人確認過的 AC，狀態「已接受」
-     - [ ] 退回寫明判定的版本與沒過的 AC，舊的 PR Pass 作廢，ticket 狀態回到「開發中」，下一步是修正後重跑 to-pr
+     - [ ] 退回寫明判定的版本與沒過的 AC，舊的 PR Pass 作廢；退回算一輪修正，還有額度就回到「開發中」、修正後重跑 to-pr，三輪用完就轉 Blocked
 3. **merge**
    - 怎麼做：多個 PR 照依賴順序，提供方先；每個 PR merge 前確認它單獨 merge 也安全（向後相容）。
    - 完成：

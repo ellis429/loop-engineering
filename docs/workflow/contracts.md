@@ -74,7 +74,7 @@ Validation 最小對照為 AC ID → 驗證方法／步驟 → 必要環境 → 
 | Orchestrate → 執行角色 | Run／task／attempt、角色、worktree／branch、允許範圍、文件版本、base／head、驗收與結果位置 |
 | Implementer → Reviewer | Spec／design、完整 PR 與 review base／head、實作證據及尚未覆核 findings |
 | Reviewer → 修正循環 | 穩定 finding ID、問題與依據、blocking 與否、預期行為、適用版本；後續修正及覆核證據 |
-| Feature loop → 人／Project Lead | PR Pass 驗收包或 Blocked 原因、AC 結果與限制；每個受影響 repo 的 PR、base／head commit、CI 與 review 連結（D61）；worktree、run ID |
+| Feature loop → 人／Project Lead | PR Pass 驗收包或 Blocked 原因、AC 結果與限制；每個受影響 repo 的 PR、base／head commit、CI 與 review 連結（D61）；worktree、run ID（手動階段寫執行的人）、已用的修正輪數 |
 
 ### 手動階段的紀錄位置（D60）
 
