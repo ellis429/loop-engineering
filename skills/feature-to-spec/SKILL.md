@@ -1,6 +1,6 @@
 ---
 name: feature-to-spec
-description: Use when a feature chosen on the roadmap needs its OpenSpec change, spec and ticket before engineering starts, or when the spec of a feature still in preparation must change. Used by the Project Lead or the Engineer. Not for project-level planning or close-out (project-lead), and not for design, tasks, implementation or review (orchestrate).
+description: Use when a feature chosen on the roadmap needs its OpenSpec change, spec and ticket before engineering starts, or when the spec of an existing feature must change, whether still in preparation, blocked on scope inside the feature loop, or sent back because the requirement changed. Used by the Project Lead or the Engineer. Not for project-level planning or close-out (project-lead), and not for design, tasks, implementation or review (orchestrate).
 ---
 
 # Feature to spec
@@ -12,16 +12,18 @@ Read repository instructions (AGENTS.md, CLAUDE.md, `openspec/config.yaml`) firs
 ## 0. Check the entry
 
 - Multi-repo product: work from the root repo and run its sync command first (D61).
-- Small work does not open a change: a fix that restores behaviour the spec already states, a dependency update, or missing tests. Write a self-contained ticket (goal, acceptance criteria, narrow scope) and stop. A bug the spec never covered is a feature.
+- Small work does not open a change: a fix that restores behaviour the spec already states, a dependency update, or missing tests. Write a self-contained ticket (goal, acceptance criteria, narrow scope) in the root repo's tracker and stop. A bug the spec never covered is a feature.
 - The feature must be on the roadmap and chosen when the Project Lead confirmed it (D63). If not, stop and send the human to `project-lead`.
+- If the feature's branch, change and ticket already exist, do not open new ones: follow **Revise an existing feature** below.
 
 ## 1. Open the branch, the change and the ticket
 
 Ask the human to authorise pushing the branch and writing the ticket; without it, hand the commands and text to the human.
 
-- Pick a short English change id (`finalize-protocol`). In the root repo, create branch `feature/<id>` from the default branch in its own worktree (`git worktree add ../<root>-<id> -b feature/<id>`); every later step works there (D67). First use in the repository: `openspec init --tools claude,codex` on the default branch.
+- First use in the repository: on an up-to-date default branch, run `openspec init --tools claude,codex`, then commit and push it before any feature branch exists.
+- Pick a short English change id (`finalize-protocol`). In the root repo, `git fetch origin`, then create the branch and its worktree from the remote default branch: `git worktree add ../<root>-<id> -b feature/<id> origin/<default-branch>`. Record that base commit; every later step works in this worktree (D67).
 - `openspec new change <id>`, commit, and push the branch.
-- Create the ticket, or bring an existing one to this shape. Title: the feature name, no prefix. Body, nothing else (D54, D67):
+- Create the ticket in the root repo's tracker (service repos only get PRs), or bring an existing one to this shape. Title: the feature name, no prefix. Body, nothing else (D54, D67):
 
 ```markdown
 **Milestone：** <milestone>　**狀態：** 準備中
@@ -43,13 +45,13 @@ Ask the human to authorise pushing the branch and writing the ticket; without it
 - #<n> <feature name>：<what releases it>；<owner>   （none: 無）
 ```
 
-Scope, non-goals and acceptance text stay in the change. Records (handoff, start approval, acceptance) are ticket comments (D60). States and who sets them: 準備中 and 就緒 (you); 開發中 after the start approval and 待驗收 after PR Pass (orchestrate, or the coordinator until it exists); 已接受 and 已完成 (project-lead); `Blocked：<reason>` by whoever hits it. Whoever sets a state also updates 下一步.
+Scope, non-goals and acceptance text stay in the change. Records (handoff, start approval, acceptance) are ticket comments (D60). States and who sets them: 準備中 and 就緒 (you); 開發中 after the start approval and 待驗收 after PR Pass (orchestrate, or the coordinator until it exists); 已接受, 開發中 after a rejection, and 已完成 (project-lead, which writes those records); `Blocked：<reason>` by whoever hits it. Whoever sets a state also updates 下一步.
 
 Done when the branch is pushed, the change folder is on it, and the ticket links to it with state `準備中`.
 
 ## 2. Research
 
-Read the feature's roadmap row, the requirement input it points to, the cross-feature constraints in the project intent, `openspec/specs/`, design documents and ADRs, and related tickets; record each source's path and version. Then research the code this feature touches with `research-codebase` (query `graphify-out/` first when it exists). Save the report under the repository's research location on the feature branch; separate facts, assumptions, and unknowns.
+Read the feature's roadmap row, the requirement input it points to, the cross-feature constraints in the project intent, `openspec/specs/`, design documents and ADRs, and related tickets; record each source's path and version. Then research the code this feature touches with `research-codebase` (query `graphify-out/` first when it exists). Save the report under the repository's research location on the feature branch, separating facts, assumptions, and unknowns; commit it and note the commit.
 
 Done when the next questions have evidence behind them.
 
@@ -84,6 +86,16 @@ The Implementer continues on the same branch and worktree (design, tasks, code i
 - **Authorised:** only when the human explicitly authorised you for a named scope and the spec confirmation exists (or is folded), start `orchestrate` yourself. The loop stops at the design-and-plan approval, which only the named human gives.
 
 A feature that depends on another may be prepared now; its implementation starts only after the upstream is accepted and merged (D27).
+
+## Revise an existing feature
+
+Use this when the change already exists: a requirement changed while the feature was in the loop, the loop returned Blocked on scope, or the acceptor sent it back because the requirement changed.
+
+1. Work in the feature's existing branch and worktree; update the default-branch base only if the Project Lead asks. Never open a second change or ticket.
+2. Update the proposal and the spec delta, run `openspec validate <id>`, commit, and name what changed.
+3. The Project Lead confirms the new spec (or record the fold note); record the new commit in `proposal.md`.
+4. Post a new handoff comment that lists what changed and supersedes the earlier one; relink it from the ticket; untick every acceptance ID whose scenario changed.
+5. A changed spec voids the start-of-work approval for the design and tasks it affects: set the state to `就緒（可設計）` and 下一步 to the Engineer, who revises the plan and gets a new start approval (D11).
 
 ## Boundaries
 

@@ -113,7 +113,7 @@ flowchart TD
     D["Project Lead Agent<br/>高層設計與技術取捨"]:::agent
     DG{"Project Lead<br/>確認設計方案"}:::gate
     M["Project Lead Agent<br/>roadmap、milestones、features"]:::agent
-    F{"Project Lead<br/>確認 roadmap<br/>選第一個 feature"}:::gate
+    F{"Project Lead<br/>確認 roadmap<br/>選接下來的 feature"}:::gate
     A -->|目標與來源| R
     R -->|研究報告：Facts、Assumptions、Unknown| S
     S -->|每輪 1–3 題| A
@@ -165,7 +165,7 @@ Roadmap 會一直改，所以問題不是「切得越細越好」，而是哪些
 
 每個 feature 標「近期」或「暫定」，讓人分得出哪些已經要做。每個 feature 驗收後回頭看一次 roadmap；改範圍或順序時記進決策紀錄。
 
-以 cross-node-file-transfer 為例：M1 的 feature 來自參考資料裡已經實作過的計畫，所以可以整個列出，只有專案骨架和第一個 feature 標近期；M2 要不要做等 M1 完成再決定，所以先只寫交付能力。需求放在哪、怎麼流動，見[需求放在哪](#需求放在哪)；業界做法與出處見 [Roadmap 規劃參考](../references/roadmap-planning.md)。
+以 cross-node-file-transfer 為例：M1 的 feature 來自參考資料裡已經實作過的計畫，所以可以整個列出，只有專案骨架和第一個 feature 標近期；M2 要不要做等 M1 完成再決定，所以先列交付能力，排進近期前再切出 Feature。需求放在哪、怎麼流動，見[需求放在哪](#需求放在哪)；業界做法與出處見 [Roadmap 規劃參考](../references/roadmap-planning.md)。
 
 ## 工作層級：Milestone、Feature、Task
 
@@ -274,7 +274,7 @@ OpenSpec 把 `changes/` 底下每個 Feature 的資料夾叫 change，和上線�
 | 1. 排進 roadmap | Project Lead Agent 提出，Project Lead 確認 | roadmap 上一行 | 通常還沒開；想早點讓人看到可以先開，只寫目標 |
 | 2. 選中 | Project Lead 在確認 roadmap 時選；Project Lead Agent 開 branch 與 change | `feature/<id>`、`openspec new change <id>` | 開 ticket，或把已有的 ticket 改成薄格式：準備中 |
 | 3. Feature SA | Project Lead Agent 研究與提問，Project Lead 或 Engineer 回答 | `proposal.md`、spec；`openspec validate <id>` 通過 | 準備中 |
-| 4. SA 確認、交接 | Project Lead | 確認紀錄、交接包 | 就緒（可設計）；列出 AC |
+| 4. SA 確認、交接 | Project Lead 確認；Project Lead Agent 用 feature-to-spec 組交接包 | 確認紀錄、交接包 | 就緒（可設計）；列出 AC |
 | 5. Design＋plan | Implementer | `design.md`、`tasks.md`、AC 的驗法 | |
 | 6. 開工確認 | 交接時指定的人，通常是 Engineer | 確認紀錄 | 開發中 |
 | 7. 逐 task 實作 | Implementer；Reviewer 做局部 review | 每個 task 一到幾個綠燈 commit | |
@@ -381,7 +381,7 @@ Project Lead 交給你一個交接包，內容見[交接](#交接)。缺東西�
 
 feature loop 從收到交接包就開始，第一步是 design＋plan，然後停下等開工確認。交接包本身不含開工確認。
 
-你和 Implementer 只改這個 Feature 的 `design.md`、`tasks.md` 與 AC 驗法；驗法寫在 validation 文件，或 `tasks.md` 的明確段落。`proposal.md` 與 `specs/` 屬於 Project Lead；需要改需求或 AC 時回去找 Project Lead，不在程式裡繞過。
+你和 Implementer 只改這個 Feature 的 `design.md`、`tasks.md` 與 AC 驗法；驗法寫在 validation 文件，或 `tasks.md` 的明確段落。`proposal.md` 與 `specs/` 屬於 A4，由 Project Lead 確認；需要改需求或 AC 時回到 A4，用 `feature-to-spec` 修改這個既有的 Feature，不在程式裡繞過。
 
 ### 完成一個 Feature，包括 PR
 
@@ -496,7 +496,7 @@ Orchestrate 按授權工作，controller 核對狀態與證據。每個基礎設
 feature loop 回來的結果只有兩種：
 
 - **PR Pass 驗收包**：交給驗收人（預設是 Project Lead）；內容見[交接](#交接)。
-- **Blocked**：如果原因是需求或 scope，Project Lead 和 Project Lead Agent 分析影響、更新 spec 並記錄決策，再把新版本交回去。
+- **Blocked**：如果原因是需求或 scope，Project Lead 和 Project Lead Agent 分析影響並記錄決策，再用 `feature-to-spec` 修改 spec、交出新的交接包。
 
 驗收人接受之後，Project Lead Agent 會：
 

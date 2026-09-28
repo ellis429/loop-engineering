@@ -25,14 +25,14 @@ The seven questions are a checklist, not seven sections: 1 problem and goal; 2 s
 | --- | --- | --- | --- |
 | Why | 1 | Project intent / mission | `proposal.md` `## Why` |
 | Scope | 2 | Project intent / mission | `proposal.md` `## What Changes` plus a `不做` (non-goals) list |
-| Requirements | 3-6 | Requirement input with its source version; cross-feature constraints listed in the project intent, pointing to the input | `changes/<id>/specs/<capability>/spec.md` delta |
+| Requirements | 3-6 | Project intent keeps a summary: main scenarios, the capability list, key rules, shared constraints and the milestone acceptance direction, each pointing to the requirement input, which keeps the requirement text with its source version | `changes/<id>/specs/<capability>/spec.md` delta |
 | Open items | 7 | Decisions log / project intent | `proposal.md` section for open items and dependencies |
 
 Only shared domain definitions go into `CONTEXT.md`.
 
 ## Spec rules
 
-- One capability is a set of behaviours that change together (for example ingest, sync obligation, recovery), not a component, page, or feature. A feature may touch several capabilities. Cross-feature constraints (capacity, security, audit) form their own capability.
+- One capability is a set of behaviours that change together (for example ingest, sync obligation, recovery), not a component, page, or feature. A feature may touch several capabilities. Cross-feature constraints (capacity, security, audit) form their own capability. In an existing project, keep the current capability boundaries unless they clearly mix concerns.
 - `openspec/specs/` holds only implemented and accepted behaviour; only archive writes it (D58). A feature brings the requirements it delivers from the input into its change: ADDED when `openspec/specs/` does not have them yet, MODIFIED (full new text) when it does. A cross-feature constraint enters with the first feature that makes it hold; in every feature SA, check the input for constraints that touch this feature.
 - Requirement IDs use one prefix per capability (`ING-01`). IDs are never reused and do not change on archive. Each `Scenario` is an acceptance condition with its own ID (`AC-I01`).
 - Give each requirement its main scenario and the exception scenarios that matter (missing data, duplicates, timeouts, partial failure).

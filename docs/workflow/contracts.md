@@ -56,7 +56,7 @@ Domain model 是對領域的理解，可涉及概念、關係、規則與邊界�
 
 | SDD 產出物 | 本流程對應 | 最小內容與負責人 | 檔名／狀態 |
 | --- | --- | --- | --- |
-| requirements | Feature spec／AC | Project Lead 定義行為、scope、依賴、重要例外、限制及可驗收結果；引用 project baseline | 依 D54 以 change 的 specs delta 承載行為與 AC，ticket 只保存摘要與引用；proposal 承載動機、範圍、「不做」與待決；非範圍與待決由 Project Lead 寫，不放 design。不再複製 requirements.md |
+| requirements | Feature spec／AC | A4 由 Project Lead 或 Engineer 帶 `feature-to-spec` 定義行為、scope、依賴、重要例外、限制及可驗收結果，Project Lead 確認（D64、D66）；引用 project intent、高層設計與 roadmap 的版本 | 依 D54 以 change 的 specs delta 承載行為與 AC，ticket 只保存摘要與引用；proposal 承載動機、範圍、「不做」與待決；非範圍與待決由 Project Lead 寫，不放 design。不再複製 requirements.md |
 | 原三檔未獨立列出 | Design | Project Lead 提供必要高層邊界，Implementer 完成 detailed design／介面／失敗恢復／測試策略 | 可共用一份 design 或引用既有適用設計，標明責任與版本 |
 | plan | Implementation plan／tasks | Implementer 校準 task groups、順序／依賴、scope、AC 對應、具體步驟與完成驗法；Project Lead 可提草案 | 保留 OpenSpec tasks 或選定方法的原生路徑，唯一可派工計畫；草案與 checkbox 不代表開工批准。依 D57，每個 task 一個 session 做得完、不開 ticket；commit 以 task 為單位且各自綠燈；每個 task 完成後由獨立 Reviewer 做局部 review，不取代 G2 |
 | validation | AC 驗證對照＋實際 evidence references | SA 定義可觀察通過條件；Implementer 在 design／plan 階段補方法、環境、通過標準、證據位置，執行後填結果；Reviewer 核查有效性 | 可用既有 validation 文件或 plan 中明確區段；不宣稱它是 OpenSpec 原生必有 artifact。實際 gate 結論由 controller state 保存 |
@@ -192,12 +192,12 @@ Runtime preflight 核對安裝版本、工具權限、正確 repo/workspace/bran
 
 ## Skills 交接契約
 
-依 D55（修訂 D17），Project 層與 feature 準備、Retro 由 `project-lead` skill 承擔，單一 feature 的交付由 `orchestrate` skill 承擔；每個角色只需一個入口。控制方向由 project-lead 往下，orchestrate 不呼叫 project-lead，兩者都不另起競爭的外層 loop。
+依 D55（修訂 D17），Project 層與 Retro 由 `project-lead` skill 承擔，feature 準備依 D66 由 `feature-to-spec` 承擔，單一 feature 的交付由 `orchestrate` skill 承擔；每個角色只需一個入口。控制方向往下：project-lead 選 feature，feature-to-spec 交出交接包，orchestrate 不回頭呼叫它們，也不另起競爭的外層 loop。
 
 | 分支 | Trigger / input | 方法與工具範圍 | 輸出／完成／Blocked |
 | --- | --- | --- | --- |
 | Project／`project-lead` | Start project；mission、repo、既有成果 | Research → SA／domain／grill／high-level design 可迭代；research-codebase、grill-with-docs、grilling、domain-modeling 按實際可用版本使用 | 有來源的分析、baseline、roadmap／milestones 與 feature 候選；重要歧義明列，不擅自選 scope |
-| Feature preparation／`project-lead` | 選定 feature；baseline、roadmap、相關 code/docs/issues | 聚焦 research／SA／grill 與必要高層設計，依 D54 寫 OpenSpec proposal 與 spec delta，`openspec validate` 檢查格式；依授權更新 ticket | 唯一 spec／AC、設計邊界、依賴、研究來源及決策；交接包；重要未知不得藏入假設 |
+| Feature preparation／`feature-to-spec`（D66） | 選定 feature；project intent、高層設計、roadmap、相關 code/docs/issues | 在 root 的 `feature/<id>` branch（D67）聚焦 research／SA／grill 與必要高層設計，依 D54 寫 OpenSpec proposal 與 spec delta，`openspec validate` 檢查格式；依授權開 root repo 的 ticket 並維持薄格式 | 唯一 spec／AC、設計邊界、依賴、研究來源及決策；交接包；重要未知不得藏入假設 |
 | Design / plan／Implementer | Feature spec／AC、高層設計、baseline、repo、deps、可選 tasks 草案 | 研究實作與測試接縫，完成 detailed design；Writing Plans／OpenSpec tasks 的整合為 Q-METHOD 候選 | 校準後唯一 plan、task IDs／DAG、scope、task→AC、介面、Red/Green 步驟、驗法與文件更新；交一次 design+plan 確認 |
 | Implement / fix | 已授權 assignment；task或finding batch | Superpowers TDD、review-response / debugging；只寫指定隔離 scope | Code/commit、實際 evidence、結構化 result、逐 finding 的 fix_submitted／disputed 回應；缺依賴或 scope 不符回 Blocked |
 | N/A eligibility | G1 前的純文件／註解 N/A 申請；理由、diff、適用檢查 | Controller 派獨立 Reviewer 核對實際行為影響；唯讀審查與隔離驗證 | 版本化接受／拒絕與證據；資訊不足回 Blocked，不產生 G2 clean |

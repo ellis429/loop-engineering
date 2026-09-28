@@ -145,16 +145,16 @@ flowchart LR
      - 從目標問起，上一層確認了才問下一層
      - 每題附選項、影響與建議；答案當場寫進文件
    - 完成：下面都寫好，沒有一項還標「假設」
-     - [ ] `docs/project-intent.md` 寫齊骨架七項：
+     - [ ] `docs/project-intent.md` 寫齊骨架七項，其中 3–6 項寫摘要、連到需求輸入：
        - [ ] 問題與目標
        - [ ] 範圍與不做
-       - [ ] 角色與情境
-       - [ ] 行為與規則，也就是能力清單
-       - [ ] 例外與限制，也就是每個 Feature 都要守的共用限制
+       - [ ] 角色與主要情境
+       - [ ] 能力清單與主要規則
+       - [ ] 共用限制：每個 Feature 都要守的
        - [ ] 驗收方向
        - [ ] 待決：每條寫明影響與誰決定，沒有一條擋住設計
      - [ ] `CONTEXT.md` 收錄用到的領域詞彙，每個一句定義
-     - [ ] 有參考資料時，需求輸入的每一段都對到一個能力
+     - [ ] 需求原文在需求輸入，記下來源版本；有參考資料時，每一段都對到一個能力
 5. **◆確認目的與需求**
    - 怎麼做：看一頁摘要（目標、不做、能力、限制、待決、版本），不必讀檔案；有疑問就回到第 4 步。
    - 完成：
@@ -213,7 +213,7 @@ flowchart LR
 | 2 | Agent | 把 Feature 分組成 Milestone，提出目標日期 | skill [project-lead](../../skills/project-lead/SKILL.md) | roadmap（[範例](https://github.com/yschiang/cross-node-root/blob/main/docs/roadmap.md)） |
 | 2 | Project Lead | 定日期；放不下就回第 1 步拆小或延後 | — | — |
 | 3 | Agent | 依依賴與風險提出順序 | skill [project-lead](../../skills/project-lead/SKILL.md) | — |
-| 3 | Project Lead | 決定範圍與先後，標出接下來要做的 1–2 個 | — | 決策紀錄 |
+| 3 | Project Lead | 決定範圍與先後，標出接下來要做的 Feature | — | 決策紀錄 |
 | 4 | Project Lead | ◆確認 roadmap：<br>• 選定接下來要做的 Feature；沒有依賴的可以同時選幾個<br>• 指定誰做 Feature spec、誰是 Engineer | — | 決策紀錄 |
 
 **每一步怎麼做、怎樣算完成**
@@ -238,11 +238,11 @@ flowchart LR
      - [ ] 目標日期
      - [ ] 可以展示的成果
      - [ ] 完成條件
-     - [ ] 包含哪些 Feature
+     - [ ] 已切出的 Feature；還沒切的部分列交付能力
 3. **排順序**
    - 怎麼做：Agent 依依賴與風險提出順序，Project Lead 決定範圍與先後。
    - 完成：
-     - [ ] 接下來要做的 1–2 個已標出
+     - [ ] 接下來要做的 Feature 已標出
      - [ ] 順序與範圍的決定記進決策紀錄
 4. **◆確認 roadmap、選接下來的 Feature**
    - 怎麼做：從「近期」選；彼此沒有依賴的可以同時選幾個，各走自己的內圈、各開自己的 worktree。每個選中的 Feature，決定 spec 由 Project Lead 或 Engineer 做。
@@ -260,12 +260,12 @@ flowchart LR
 - **誰做**：Project Lead 或 Engineer 帶著 Agent 做；中小型 Feature 常由 Engineer 自己寫。用的 skill 是 `feature-to-spec`（不是 Matt Pocock 的 `/to-spec`）。
 - **誰確認**：◆確認 spec 仍由 Project Lead 做；兩個角色是同一人時，併入 B1 的 ◆確認開工。
 - **branch**：每個 Feature 在 root 開一條 `feature/<id>` 與自己的 worktree，spec 從第 1 步就寫在這條 branch 上；之後的 design、tasks、程式也在同一條，B3 開 PR，merge 後才進 main。
-- **ticket**：薄的追蹤票，第 1 步就開。只放 Milestone、狀態、下一步、目標、Spec 連結、驗收 ID、Blocked by；範圍、不做與 AC 條文只在 spec。交接、開工、驗收紀錄都用留言貼在同一張 ticket。狀態依序是準備中 → 就緒（可設計）→ 開發中 → 待驗收 → 已接受 → 已完成，卡住時標 Blocked 並寫原因；每一步寫紀錄的人順手更新狀態和「下一步」。
+- **ticket**：開在 root repo 的 Issues（服務 repo 只開 PR），是薄的追蹤票，第 1 步就開。只放 Milestone、狀態、下一步、目標、Spec 連結、驗收 ID、Blocked by；範圍、不做與 AC 條文只在 spec。交接、開工、驗收紀錄都用留言貼在同一張 ticket。狀態依序是準備中 → 就緒（可設計）→ 開發中 → 待驗收 → 已接受 → 已完成，卡住時標 Blocked 並寫原因；每一步寫紀錄的人順手更新狀態和「下一步」。
 
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
 | 1 | Project Lead 或 Engineer | 交代要準備的 Feature；授權 Agent push branch、開 ticket | 開一個 Agent session，貼上：`/feature-to-spec 準備〈Feature〉：補足 spec、AC、必要高層設計與依賴，引用 project intent、高層設計與 roadmap 的版本。` | — |
-| 1 | Agent | 開 Feature：<br>• 在 root 開 branch `feature/<id>` 與 worktree<br>• 在上面建立 change，commit、push<br>• 開 ticket，或把既有的 ticket 改成下方的格式<br>• 專案第一次用時，先在 main 執行 `openspec init --tools claude,codex` | • 指令 `git worktree add ../<root>-<id> -b feature/<id>`<br>• 指令 `openspec new change <id>`（[說明](https://github.com/Fission-AI/OpenSpec/blob/main/docs/cli.md)）<br>• skill [feature-to-spec](../../skills/feature-to-spec/SKILL.md) | • Feature 資料夾（[範例](https://github.com/yschiang/cross-node-root/tree/main/openspec/changes/project-skeleton)）<br>• ticket，狀態「準備中」（[範例](https://github.com/yschiang/cross-node-root/issues/1)） |
+| 1 | Agent | 開 Feature：<br>• 專案第一次用時，先在更新過的 main 執行 `openspec init --tools claude,codex`，commit、push<br>• 在 root 從 `origin/main` 開 branch `feature/<id>` 與 worktree<br>• 在上面建立 change，commit、push<br>• 在 root repo 開 ticket，或把既有的 ticket 改成下方的格式 | • 指令 `git fetch origin`、`git worktree add ../<root>-<id> -b feature/<id> origin/main`<br>• 指令 `openspec new change <id>`（[說明](https://github.com/Fission-AI/OpenSpec/blob/main/docs/cli.md)）<br>• skill [feature-to-spec](../../skills/feature-to-spec/SKILL.md) | • Feature 資料夾（[範例](https://github.com/yschiang/cross-node-root/tree/main/openspec/changes/project-skeleton)）<br>• ticket，狀態「準備中」（[範例](https://github.com/yschiang/cross-node-root/issues/1)） |
 | 2 | Agent | Research：讀<br>• roadmap 上這個 Feature 那一列<br>• 需求輸入與共用限制<br>• 現況 spec、設計與 ADR<br>• 這次會碰到的程式 | • skill [research-codebase](../../skills/research-codebase/SKILL.md)<br>• 有 `graphify-out/` 時，先用 `/graphify query` 查 | 研究報告：`docs/research/<日期>-<主題>.md`（[範例](../research/2026-09-25/integration-gaps.md)） |
 | 2 | Project Lead 或 Engineer | 讀報告，有疑問就追問 | — | — |
 | 3 | Agent | 寫 proposal：<br>• 為什麼做<br>• 做什麼、不做什麼<br>• 待決與依賴 | skill [feature-to-spec](../../skills/feature-to-spec/SKILL.md) | proposal（[範例](https://github.com/yschiang/cross-node-root/blob/main/openspec/changes/project-skeleton/proposal.md)） |
@@ -286,12 +286,12 @@ flowchart LR
      - ticket 照下方的格式：標題就是 Feature 名稱，不加前綴
    - 完成：
      - [ ] Agent 回報已載入 feature-to-spec skill
-     - [ ] branch `feature/<id>` 已 push，上面有 `openspec/changes/<id>/`
+     - [ ] branch `feature/<id>` 從最新的 `origin/main` 開出、已 push，上面有 `openspec/changes/<id>/`；記下起點 commit
      - [ ] ticket 的 Spec 連到這條 branch 上的 change，寫明 Blocked by，狀態「準備中」
 2. **Research**
    - 怎麼做：只查這個 Feature 會碰到的流程。
    - 完成：
-     - [ ] 報告存進 `docs/research/`
+     - [ ] 報告存進 feature branch 的 `docs/research/`，已 commit
      - [ ] Facts、Assumptions、Unknown 分開列
 3. **寫 proposal、確認範圍**
    - 怎麼做：先談目標與範圍，範圍談定才寫需求；新的高層邊界寫進設計文件或 ADR，由 proposal 引用。
@@ -377,7 +377,7 @@ App 寫完檔案後，能拿到明確的發布結果：只有內容已發布才�
 | --- | --- | --- | --- | --- |
 | 1 | Agent | 接受後，整理 1–3 個有證據的改善建議 | skill [project-lead](../../skills/project-lead/SKILL.md) | Retro 候選（ticket 留言） |
 | 2 | Agent | 更新 roadmap，提出接下來的 Feature 候選 | skill [project-lead](../../skills/project-lead/SKILL.md) | roadmap |
-| 3 | Agent | 所有 PR 都 merge 後，把 spec 併入現況 | 指令 `openspec archive <id> --yes`（[說明](https://github.com/Fission-AI/OpenSpec/blob/main/docs/cli.md)） | • 現況 spec<br>• 封存的 Feature 資料夾 |
+| 3 | Agent | 所有 PR 都 merge 後，在 root 更新過的 main 上把 spec 併入現況，commit、push，再移除 feature worktree | 指令 `openspec archive <id> --yes`（[說明](https://github.com/Fission-AI/OpenSpec/blob/main/docs/cli.md)） | • 現況 spec<br>• 封存的 Feature 資料夾 |
 
 **每一步怎麼做、怎樣算完成**
 
@@ -392,7 +392,7 @@ App 寫完檔案後，能拿到明確的發布結果：只有內容已發布才�
      - [ ] roadmap 草稿已更新，下一個候選標為「近期」
      - [ ] A5 做完後回到 A3 ◆確認 roadmap
 3. **併入現況**
-   - 怎麼做：先確認每個受影響 repo 的 PR 都已 merge，再在 root repo 執行。
+   - 怎麼做：先確認每個受影響 repo 的 PR 都已 merge；在 root 的主要 checkout（不是 feature worktree）切到 main 並 pull，確認 merge 已在上面，再執行。
    - 完成：
      - [ ] `openspec/specs/` 和已 merge 的實作一致
      - [ ] Feature 資料夾移進封存
@@ -564,7 +564,7 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
    - 完成：
      - [ ] 每條 AC 都看過證據
 2. **◆驗收**
-   - 怎麼做：AC 沒達成就退回 B2 修正；需求要改就回 A4 更新 spec。
+   - 怎麼做：AC 沒達成就退回 B2 修正；需求要改就回 A4，用 `feature-to-spec` 修改這個既有的 Feature（沿用原本的 branch 與 ticket）。
    - 完成：
      - [ ] 接受或退回記成 ticket 留言：誰、何時、原話、版本
      - [ ] 接受：ticket 只勾驗收人確認過的 AC，狀態「已接受」
