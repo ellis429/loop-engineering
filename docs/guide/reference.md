@@ -1,4 +1,4 @@
-# Loop Engineering 使用指南：參考
+# Loop Engineering 參考手冊：每一步的細節
 
 [使用指南](user-guide.md)照流程講每個活動；這裡放要查才看的細節，順序跟流程相同。以下各圖使用同一套顏色：
 
@@ -16,7 +16,7 @@ flowchart LR
 
 ## 需求是怎麼問出來的
 
-用於 A1 Project SA 與 B2 Feature SA。
+用於 A1 Project SA 與 A4 Feature SA。
 
 Agent 不是想到什麼問什麼。它**先搭骨架，再由上往下問**：
 
@@ -86,11 +86,11 @@ Agent 把確認後的骨架寫成這個 Feature 的 proposal 與 spec（需求�
 
 進去之後：
 
-1. **Agent 先研究，不先問問題**：用 research-codebase 查現況，交一份摘要，分清事實、推論和未知。
+1. **Agent 先研究，不先問問題**：用 research-codebase 查現況，交一份摘要，分清現況的 Facts、Assumptions 與 Unknown。
 2. **每輪問你 1–3 題**：每題附為什麼現在要決定、選項、影響與建議。
 3. **邊問邊寫**：每輪告訴你改了什麼、還剩哪些阻擋。
 4. **提出「可進入 Design」**：附一頁摘要。
-5. **你確認或退回**：Project SA 確認後進入高層設計（A2）；Feature SA 確認後進入交接（B3），由 Engineer 做詳細設計。這不是開工批准。你同時是 Engineer 時，Feature SA 的確認併入開工確認，spec、design、plan 一起看一次。
+5. **你確認或退回**：Project SA 確認後進入高層設計（A2）；Feature SA 確認後交接（A4），由 Engineer 做詳細設計（B1）。這不是開工批准。你同時是 Engineer 時，Feature SA 的確認併入開工確認，spec、design、plan 一起看一次。
 
 中途離開不影響進度，答案都已寫進文件。下次說「接續〈project／feature〉的 SA」，Agent 會先讀文件，已確認的不重問。
 
@@ -113,7 +113,7 @@ flowchart TD
     M["Project Lead Agent<br/>roadmap、milestones、features"]:::agent
     F{"Project Lead<br/>確認 roadmap<br/>選第一個 feature"}:::gate
     A -->|目標與來源| R
-    R -->|研究報告：事實、推論、未知| S
+    R -->|研究報告：Facts、Assumptions、Unknown| S
     S -->|每輪 1–3 題| A
     S -->|摘要與可進入 Design 的理由| C
     C -->|仍有阻擋| S
@@ -216,7 +216,7 @@ repos:
 
 ## 需求放在哪
 
-用於 B1–B8。**需求放在哪，看它做到哪了。**
+用於 A4、B1–B4、A5。**需求放在哪，看它做到哪了。**
 
 ```text
 還沒開始做            決定做、正在做               做完了
@@ -266,7 +266,7 @@ OpenSpec 把 `changes/` 底下每個 Feature 的資料夾叫 change，和上線�
 | --- | --- | --- | --- |
 | 1. 排進 roadmap | Project Lead Agent 提出，Project Lead 確認 | roadmap 上一行 | 通常還沒開；想早點讓人看到可以先開，只寫目標 |
 | 2. 選中 | Project Lead 在確認 roadmap 時選；Project Lead Agent 建立 spec | `openspec new change <id>` | 開 ticket，或把已有的 ticket 連上 spec |
-| 3. Feature SA | Project Lead Agent 研究與提問，Project Lead 回答 | `proposal.md`、spec；`openspec validate` 通過 | 同一人兼任：就緒；不同人：待 SA 確認 |
+| 3. Feature SA | Project Lead Agent 研究與提問，Project Lead 或 Engineer 回答 | `proposal.md`、spec；`openspec validate <id>` 通過 | 同一人兼任：就緒；不同人：待 SA 確認 |
 | 4. SA 確認 | Project Lead | 確認紀錄、交接包 | 就緒 |
 | 5. Design＋plan | Implementer | `design.md`、`tasks.md`、AC 的驗法 | |
 | 6. 開工確認 | 交接時指定的人，通常是 Engineer | 確認紀錄 | 開發中 |
@@ -279,7 +279,7 @@ OpenSpec 把 `changes/` 底下每個 Feature 的資料夾叫 change，和上線�
 
 ## Spec 怎麼寫、放哪
 
-用於 B2。
+用於 A4。
 
 SA 要回答七個問題，它們是檢核表，不是七個章節：問題與目標、範圍與非範圍、角色與端到端情境、行為與業務規則、例外與必要限制、驗收條件、假設依賴與待決。Agent 把它們放進四個位置：
 
@@ -305,7 +305,7 @@ SA 要回答七個問題，它們是檢核表，不是七個章節：問題與�
 
 ## 交接
 
-用於 B3、B6、B7。兩層之間只交兩樣東西，Agent 依規則組好，你讀的是它們的重點：
+用於 A4、B3、B4。兩層之間只交兩樣東西，Agent 依規則組好，你讀的是它們的重點：
 
 | 介面 | 方向 | 你要確認什麼 |
 | --- | --- | --- |
@@ -366,7 +366,7 @@ flowchart TD
 
 ## 做出來：Engineer 的細節
 
-用於 B4–B6。
+用於 B1–B3。
 
 ### 你會收到什麼
 
@@ -484,7 +484,7 @@ Orchestrate 按授權工作，controller 核對狀態與證據。每個基礎設
 
 ## 驗收之後：收尾
 
-用於 B7、B8。
+用於 B4、A5。
 
 feature loop 回來的結果只有兩種：
 
@@ -516,9 +516,9 @@ feature loop 回來的結果只有兩種：
 
 1. **定方向、排順序（A1–A3）**：Project Lead Agent 把 gigaxfer 的 `docs/spec.md` 依能力拆開，當作需求輸入並記錄來源版本，不放進 `openspec/specs/`；再整理 domain、設計、共用限制與 roadmap。Project Lead 確認拆法與適用性。
 2. **專案骨架（第一個 Feature）**：repo 骨架、CI 與工程規則。它沒有產品行為，但「乾淨 clone 能建置測試、PR 有必要 checks」可以單獨驗收，寫成工程能力（例如 `engineering-baseline`）的 spec，常稱 Sprint 0 或 bootstrap。在 orchestrate 可用前可以手動協調，歷程標明「人工協調」，再由人驗收。
-3. **交付第一個產品 Feature（B1–B6）**：Project Lead Agent 準備 spec 與交接包，Project Lead 確認，Engineer 帶 Implementer 完成 PR；另一個 session 的 Reviewer 審查。
+3. **交付第一個產品 Feature（A4、B1–B3）**：Project Lead Agent 準備 spec 與交接包，Project Lead 確認，Engineer 帶 Implementer 完成 PR；另一個 session 的 Reviewer 審查。
 4. **驗證修正循環**：有真實 blocking finding 時，留下 finding → fix → re-review 的歷程。review 沒找到問題就如實記錄，不製造缺陷湊演示。
-5. **驗收與收尾（B7–B8）**：驗收人接受後，Project Lead Agent 整理 Retro 候選、提出下一個 Feature；確認 merge 後再把 spec 併入現況。
+5. **驗收與收尾（B4、A5）**：驗收人接受後，Project Lead Agent 整理 Retro 候選、提出下一個 Feature；確認 merge 後再把 spec 併入現況。
 6. **接續下一個 Feature**：核對依賴、人工接受、merge，以及下一個 Feature 引用的文件版本；保存各 Feature 的 branch／worktree、文件與交付證據。
 7. **展示 Milestone（C）**：執行跨 Feature 的整合情境。真正的 stacked PR 展示，要等 stacked PR 的規則決定、能力驗證之後再加入。
 
@@ -532,6 +532,7 @@ Demo 結束時，觀眾應能沿一條路徑找到：「目標 → Milestone →
 | --- | --- |
 | Project 層與 Feature 準備 | skill [project-lead](../../skills/project-lead/SKILL.md)（草稿） |
 | 研究現況 | skill [research-codebase](../../skills/research-codebase/SKILL.md)，改寫自 HumanLayer；只記錄現況，不批准需求或決定設計 |
+| 看懂大的 codebase | skill graphify（[Graphify-Labs/graphify](https://github.com/Graphify-Labs/graphify)，Apache-2.0）：把程式與文件建成知識圖，產出在 `graphify-out/`。不在 `setup.sh` 裡，另外安裝：`uv tool install graphifyy==0.9.71`，再執行 `graphify install`（Codex 加 `--platform codex`）；安裝程式若建立了 `~/.claude/CLAUDE.md`，看過內容再決定要不要留 |
 | SA 問答、領域語言 | skill [grill-with-docs](../../skills/third-party/mattpocock/engineering/grill-with-docs/SKILL.md)、[grilling](../../skills/third-party/mattpocock/productivity/grilling/SKILL.md)、[domain-modeling](../../skills/third-party/mattpocock/engineering/domain-modeling/SKILL.md)（Matt Pocock），由 project-lead 按需叫用 |
 | 規格 | OpenSpec CLI 1.13.1（[指令說明](https://github.com/Fission-AI/OpenSpec/blob/main/docs/cli.md)）；它的 skills 由 `openspec init` 產生 |
 | 單一 Feature 的 loop | skill orchestrate 呼叫薄 controller，第一片實作中 |
@@ -556,6 +557,7 @@ loop-engineering 自己開發 controller 時，預設 Opus 5.5 實作、GPT 審�
 | 多 repo 的 root 結構與跨 repo 的 Feature | D61 |
 | 驗收人預設是誰 | D62 |
 | 外圈三步各有一次確認；在確認 roadmap 時選下一個 Feature | D63 |
+| Feature spec 屬於外圈；內圈是 Implement → Validate | D64 |
 | 有依賴的 Feature 等上游接受並 merge | D27 |
 | 示範專案的 Project 層先行 | D56 |
 | 薄 controller 第一片的核准 | D53 |

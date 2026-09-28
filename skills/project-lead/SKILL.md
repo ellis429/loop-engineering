@@ -16,7 +16,7 @@ Write artifacts in the language the repository requires. Read repository instruc
 | Mode | Trigger | Ends with |
 | --- | --- | --- |
 | Project | New project, or importing an existing one | Direction, high-level design and roadmap each confirmed by the human, and the next feature chosen (D63) |
-| Feature | A feature is chosen from the roadmap; open its change first (`openspec new change <id>`) | Handoff package for one OpenSpec change |
+| Feature | A feature is chosen from the roadmap; open its change first (`openspec new change <id>`). The human answering may be the Project Lead or the Engineer (D64); the spec confirmation still comes from the Project Lead, folded into the plan approval when one person holds both roles | Handoff package for one OpenSpec change |
 | Re-analysis | New evidence breaks an accepted requirement | Updated spec and a recorded human decision |
 | Close-out | A feature was accepted by a human | Archive, Retro candidates, next-feature proposal |
 
