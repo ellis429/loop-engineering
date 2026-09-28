@@ -79,7 +79,7 @@ Agent 做大部分工作；人在六個 ◆ 確認點做決定：
 - **Step**：第幾步。
 - **Who**：誰做：Project Lead、Engineer、驗收人或 Agent。`Project Lead ⇄ Agent` 是兩邊來回做，通常 Agent 提出、人調整；◆ 是要人確認的點，只由人做，見[誰做什麼](#誰做什麼)。
 - **Do**：做什麼。
-- **How**：用什麼。skill 會連到 repo 裡它的 `SKILL.md`；指令連到說明文件。第一次使用前，在 loop-engineering 執行 `./setup.sh` 安裝這些 skills。
+- **How**：用什麼。skill 會連到 repo 裡它的 `SKILL.md`；指令連到說明文件。prompt 開頭的 `/skill 名稱` 會直接叫用那個 skill，只寫「請用某某 skill」不保證會叫用：Claude Code 照寫 `/project-lead`；Codex 改成 `$project-lead`；OpenCode 沒有直接叫用的寫法，改成「請用 project-lead skill」，再看 Agent 有沒有說已載入。第一次使用前，在 loop-engineering 執行 `./setup.sh` 安裝這些 skills。
 - **Output**：產出什麼。示範專案已經有的，附上範例連結；示範還沒走到的步驟先不放，示範專案推上 GitHub 之前，部分連結會打不開。
 
 Agent 寫 ticket 或 PR 留言之前，會先問人，或照人事先給的授權。controller 可用之前，交付紀錄都放在 ticket 留言；只有確認目的與需求、設計方案、roadmap 記在決策紀錄，確認 spec 記在 proposal。
@@ -105,7 +105,7 @@ flowchart LR
 
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
-| 1 | Project Lead | 說明要解決的問題和限制 | 開一個 Agent session，貼上：「請用 project-lead skill 做 project 的 SA。Repo 在〈路徑〉，既有資料在〈位置〉。我想解決的問題是〈一兩句〉。」 | — |
+| 1 | Project Lead | 說明要解決的問題和限制 | 開一個 Agent session，貼上：`/project-lead 做 project 的 SA。Repo 在〈路徑〉，既有資料在〈位置〉。我想解決的問題是〈一兩句〉。` | — |
 | 2 | Project Lead ⇄ Agent | Research：分清現況的<br>• Facts<br>• Assumptions<br>• Unknown | • skill [research-codebase](../../skills/research-codebase/SKILL.md)<br>• codebase 大或第一次接手：先用 skill graphify（[說明](https://github.com/Graphify-Labs/graphify)） 建知識圖，`/graphify <路徑>` | • 研究報告：`docs/research/<日期>-<主題>.md`（[範例](../research/2026-09-25/integration-gaps.md)）<br>• 用了 graphify：`graphify-out/GRAPH_REPORT.md` |
 | 3 | Project Lead ⇄ Agent | （選用）解析參考資料：<br>• Project Lead 把客戶規格、上游 spec、會議紀錄放進資料夾<br>• Agent 依能力分組、註明來源版本 | skill [project-lead](../../skills/project-lead/SKILL.md) | 需求輸入：`docs/research/<日期>-import/`（[範例](https://github.com/yschiang/cross-node-root/blob/main/docs/research/2026-09-28-import/README.md)） |
 | 4 | Project Lead ⇄ Agent | 由上往下問，每輪 1–3 題：<br>• 目標<br>• 範圍<br>• 情境<br>• 規則<br>• 例外<br>• 驗收 | • skill [project-lead](../../skills/project-lead/SKILL.md)<br>• 想被追問得更深：Project Lead 自己輸入 `/grill-with-docs`（[說明](../../skills/third-party/mattpocock/engineering/grill-with-docs/SKILL.md)；Agent 不會自動叫它） | • project intent（[範例](https://github.com/yschiang/cross-node-root/blob/main/docs/project-intent.md)）<br>• 共同詞彙 `CONTEXT.md`（[範例](https://github.com/yschiang/cross-node-root/blob/main/CONTEXT.md)） |
@@ -116,6 +116,7 @@ flowchart LR
 1. **說明問題和限制**
    - 怎麼做：填上 repo、既有資料的位置，用一兩句說要解決的問題；講不清楚也可以，Agent 會問。
    - 完成：
+     - [ ] Agent 回報已載入 project-lead skill
      - [ ] Agent 用自己的話複述了問題、範圍與已知限制，Project Lead 認可
 2. **Research**
    - 怎麼做：
@@ -253,7 +254,7 @@ flowchart LR
 
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
-| 1 | Project Lead 或 Engineer | 交代要準備的 Feature | 開一個 Agent session，貼上：「請用 project-lead skill 準備〈Feature〉：補足 spec、AC、必要高層設計與依賴，引用 project intent、高層設計與 roadmap 的版本。」 | — |
+| 1 | Project Lead 或 Engineer | 交代要準備的 Feature | 開一個 Agent session，貼上：`/project-lead 準備〈Feature〉：補足 spec、AC、必要高層設計與依賴，引用 project intent、高層設計與 roadmap 的版本。` | — |
 | 2 | Agent | 開 Feature：<br>• 在 root repo 建立 spec 的位置<br>• 開 ticket，或連上既有的<br>• 專案第一次用時，先執行 `openspec init --tools claude,codex` | • 指令 `openspec new change <id>`（[說明](https://github.com/Fission-AI/OpenSpec/blob/main/docs/cli.md)）<br>• skill [project-lead](../../skills/project-lead/SKILL.md) | • Feature 資料夾（[範例](https://github.com/yschiang/cross-node-root/tree/main/openspec/changes/project-skeleton)）<br>• ticket（[範例](https://github.com/yschiang/cross-node-root/issues/1)） |
 | 3 | Project Lead 或 Engineer ⇄ Agent | Research：讀<br>• 需求輸入<br>• project intent<br>• 高層設計與 roadmap<br>• 這次會碰到的程式 | • skill [research-codebase](../../skills/research-codebase/SKILL.md)<br>• 有 `graphify-out/` 時，先用 `/graphify query` 查 | 研究報告：`docs/research/<日期>-<主題>.md`（[範例](../research/2026-09-25/integration-gaps.md)） |
 | 4 | Project Lead 或 Engineer ⇄ Agent | 由上往下問，每輪 1–3 題：<br>• 流程<br>• 規則<br>• 例外<br>• 驗收 | skill [project-lead](../../skills/project-lead/SKILL.md) | — |
@@ -268,6 +269,7 @@ flowchart LR
 1. **交代 Feature**
    - 怎麼做：填上 Feature 名稱；已知的限制或疑慮一起講。
    - 完成：
+     - [ ] Agent 回報已載入 project-lead skill
      - [ ] Agent 複述了這個 Feature 的範圍，和它在 roadmap 上的依賴
 2. **開 Feature**
    - 怎麼做：id 用簡短的英文，例如 `finalize-protocol`；ticket 只寫摘要，連到 spec。
@@ -402,7 +404,7 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
 
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
-| 1 | Engineer，或獲授權的 Project Lead Agent | 啟動這個 Feature 的 loop | skill orchestrate（實作中，可用前由人協調）：開一個 Agent session，貼上：「請用 orchestrate 承接〈Feature〉。先由 Implementer 讀取它引用的 project intent、roadmap、spec／AC 與高層設計，提出 detailed design、可執行 tasks 及 AC 驗證方式，交我確認後開工。保留 worktree 與證據；終點是 PR Pass，等待人驗收。」 | — |
+| 1 | Engineer，或獲授權的 Project Lead Agent | 啟動這個 Feature 的 loop | skill orchestrate（實作中，可用前由人協調）：開一個 Agent session，貼上：`/orchestrate 承接〈Feature〉。先由 Implementer 讀取它引用的 project intent、roadmap、spec／AC 與高層設計，提出 detailed design、可執行 tasks 及 AC 驗證方式，交我確認後開工。保留 worktree 與證據；終點是 PR Pass，等待人驗收。` | — |
 | 2 | Implementer | 寫詳細設計 | 指令 `openspec instructions design --change <id>` | design |
 | 3 | Implementer | • 拆 tasks，每個 task 一個 session 做得完<br>• 寫每條 AC 的驗法 | 指令 `openspec instructions tasks --change <id>` | • tasks<br>• AC 驗法：寫在 validation 文件或 tasks 的明確段落 |
 | 4 | 交接時指定的人 | ◆確認開工（兼任時連 spec 一起確認） | skill orchestrate（實作中，可用前由人協調），記成 ticket 留言 | 開工確認紀錄 |
@@ -414,6 +416,7 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
      - 手動：Engineer 貼上 prompt，把〈Feature〉換成 change 的 id
      - 授權：Project Lead Agent 在 Project Lead 核准的範圍內啟動，見參考手冊的[控制方向與自主程度](reference.md#控制方向與自主程度)
    - 完成：
+     - [ ] Agent 回報已載入 orchestrate skill
      - [ ] Implementer 讀完交接包，沒有要退回的問題
 2. **寫詳細設計**
    - 怎麼做：在 A2 定的邊界內，決定模組、介面與資料流。

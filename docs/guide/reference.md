@@ -80,7 +80,7 @@ Agent 把確認後的骨架寫成這個 Feature 的 proposal 與 spec（需求�
 
 有三個時機會進入 SA：開新專案或匯入既有專案、選定要做的 feature、新證據推翻原本的需求。開一個 agent session，這樣說：
 
-> 請用 project-lead skill，做〈project／某個 feature〉的 SA。Repo 在〈路徑〉，既有資料在〈位置〉。我想解決的問題是〈一兩句〉。
+> /project-lead 做〈project／某個 feature〉的 SA。Repo 在〈路徑〉，既有資料在〈位置〉。我想解決的問題是〈一兩句〉。
 
 只要給四樣：哪一層、repo 在哪、既有資料、想解決什麼。第四樣講不清楚也沒關係，Agent 會先問。
 
@@ -100,7 +100,7 @@ Agent 把確認後的骨架寫成這個 Feature 的 proposal 與 spec（需求�
 
 以未來的 `cross-node-file-transfer` 演練為例：
 
-> 請用 project-lead skill 準備 cross-node-file-transfer。先核對參考資料裡可沿用的需求、領域、設計與 roadmap，保留來源版本；把參考規格依能力拆成需求輸入（不放進 `openspec/specs/`），先給我拆法對照表。只釐清差異與阻擋問題，最後交出 project intent、高層設計、roadmap 與第一個 feature 的建議。
+> /project-lead 準備 cross-node-file-transfer。先核對參考資料裡可沿用的需求、領域、設計與 roadmap，保留來源版本；把參考規格依能力拆成需求輸入（不放進 `openspec/specs/`），先給我拆法對照表。只釐清差異與阻擋問題，最後交出 project intent、高層設計、roadmap 與第一個 feature 的建議。
 
 ```mermaid
 flowchart TD
@@ -334,7 +334,7 @@ Project 層是人和 Agent 一來一回的對話，不需要派工或 gates；Fe
 
 ### 把 Feature 交出去
 
-> 請用 project-lead skill 準備〈feature〉：補足 spec、AC、必要高層設計與依賴，引用 project intent、高層設計與 roadmap 的版本。交接給〈Engineer〉，列出已確認事項與阻擋問題。
+> /project-lead 準備〈feature〉：補足 spec、AC、必要高層設計與依賴，引用 project intent、高層設計與 roadmap 的版本。交接給〈Engineer〉，列出已確認事項與阻擋問題。
 
 ```mermaid
 flowchart TD
