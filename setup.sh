@@ -113,20 +113,33 @@ install_skills() {
   done
 }
 
-# Fingerprint of a folder: every path with its type, symlink target, executable bit and content.
+# Fingerprint of a folder: every path with its permission string, symlink target and content.
 tree_hash() {
   (cd "$1" && find . -print | LC_ALL=C sort | while IFS= read -r p; do
-    if [ -L "$p" ]; then printf 'l %s %s\n' "$p" "$(readlink "$p")"
-    elif [ -d "$p" ]; then printf 'd %s\n' "$p"
-    else printf 'f %s %s %s\n' "$p" "$([ -x "$p" ] && echo x || echo -)" "$(shasum < "$p" | cut -d' ' -f1)"
+    mode="$(ls -ld "$p" | cut -d' ' -f1)"
+    if [ -L "$p" ]; then printf '%s %s %s\n' "$mode" "$p" "$(readlink "$p")"
+    elif [ -d "$p" ]; then printf '%s %s\n' "$mode" "$p"
+    else printf '%s %s %s\n' "$mode" "$p" "$(shasum < "$p" | cut -d' ' -f1)"
     fi
   done) | shasum | cut -d' ' -f1
 }
 
-# Unique scratch folders of the current skill; removed on any exit so no half-made copy is left.
+# Unique scratch folders of the skill being swapped. On any exit, including an interrupt, the old copy is
+# put back if the new one is not in place; if that fails, the backup is kept and its path reported.
 STAGE=""
 BACKUP=""
-cleanup_project() { [ -z "$STAGE" ] || rm -rf "$STAGE"; [ -z "$BACKUP" ] || rm -rf "$BACKUP"; }
+TARGET=""
+cleanup_project() {
+  if [ -n "$BACKUP" ] && [ -e "$BACKUP/${TARGET##*/}" ] && [ ! -e "$TARGET" ]; then
+    if ! mv "$BACKUP/${TARGET##*/}" "$TARGET"; then
+      echo "could not restore $TARGET; the previous copy is kept at $BACKUP/${TARGET##*/}" >&2
+      BACKUP=""
+    fi
+  fi
+  [ -z "$STAGE" ] || rm -rf "$STAGE"
+  [ -z "$BACKUP" ] || rm -rf "$BACKUP"
+  STAGE=""; BACKUP=""; TARGET=""
+}
 
 # Copies each skill folder into the product repo. A folder is replaced only when the manifest this
 # script wrote lists it with the same fingerprint, so a folder someone else put there or changed
@@ -141,6 +154,7 @@ install_project() {
     commit="$commit+uncommitted"; echo "WARN     skills/ has uncommitted changes; recorded as $commit"
   fi
   trap cleanup_project EXIT
+  trap 'exit 129' HUP; trap 'exit 130' INT; trap 'exit 143' TERM
   for rel in .claude/skills .agents/skills; do
     dest="$repo/$rel"
     # Nothing is created, written or deleted through a symlink: checked before mkdir.
@@ -156,22 +170,23 @@ install_project() {
         echo "SKIP     $dest/$name (a symlink; remove it to install a copy)"; continue
       fi
       if [ -e "$dest/$name" ] && [ "$FORCE" -eq 0 ]; then
-        recorded="$(awk -v n="$name" '$1 == n { print $2 }' "$dest/$MANIFEST" 2>/dev/null)"
+        recorded=""
+        [ ! -f "$dest/$MANIFEST" ] || recorded="$(awk -v n="$name" '$1 == n { print $2 }' "$dest/$MANIFEST")"
         if [ -z "$recorded" ] || [ "$(tree_hash "$dest/$name")" != "$recorded" ]; then
           echo "SKIP     $dest/$name (not an unchanged copy from this script; use --force)"; continue
         fi
       fi
+      TARGET="$dest/$name"
       STAGE="$(mktemp -d "$dest/.setup-stage.XXXXXX")"
       cp -R "$src" "$STAGE/$name"
-      if [ -e "$dest/$name" ]; then
+      if [ -e "$TARGET" ]; then
         BACKUP="$(mktemp -d "$dest/.setup-old.XXXXXX")"
-        mv "$dest/$name" "$BACKUP/$name"
+        mv "$TARGET" "$BACKUP/$name"
       fi
-      if ! mv "$STAGE/$name" "$dest/$name"; then
-        [ -z "$BACKUP" ] || mv "$BACKUP/$name" "$dest/$name"
-        echo "failed to install $dest/$name; the previous copy is kept" >&2; exit 1
+      if ! mv "$STAGE/$name" "$TARGET"; then
+        echo "failed to install $TARGET" >&2; exit 1
       fi
-      cleanup_project; STAGE=""; BACKUP=""
+      cleanup_project
       entries="$entries$name $(tree_hash "$dest/$name")
 "
       echo "copied   $dest/$name"
