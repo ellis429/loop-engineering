@@ -109,7 +109,7 @@ flowchart TD
     S["Project Lead Agent<br/>SA／domain／grill"]:::agent
     C{"Project Lead<br/>需求足以進入 Design？"}:::gate
     D["Project Lead Agent<br/>高層設計與技術取捨"]:::agent
-    DG{"Project Lead<br/>確認設計"}:::gate
+    DG{"Project Lead<br/>確認設計方案"}:::gate
     M["Project Lead Agent<br/>roadmap、milestones、features"]:::agent
     F{"Project Lead<br/>確認 roadmap<br/>選第一個 feature"}:::gate
     A -->|目標與來源| R

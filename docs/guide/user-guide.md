@@ -14,7 +14,7 @@
 flowchart LR
   subgraph Project["外圈 Project：決定要做什麼"]
     direction LR
-    A1["Analyze"] --> A2["Architect"] --> A3["Roadmap"] --> A4["Specify"]
+    A1["Analyze<br/>釐清目的與需求"] --> A2["Architect<br/>設計方案"] --> A3["Roadmap<br/>安排交付"] --> A4["Specify<br/>開 Feature"]
     A4 -->|交接| F((("Feature ↻<br/>Implement → Validate")))
     F -->|Retro & Replan| A3
   end
@@ -22,7 +22,7 @@ flowchart LR
   style F fill:#fff7ed,stroke:#c2410c,color:#431407
 ```
 
-外圈 Project 決定要做什麼：**Analyze**（為什麼做、做到哪算完成）→ **Architect**（高層設計）→ **Roadmap**（排 Milestone 與 Feature，選下一個）→ **Specify**（把這個 Feature 寫成可驗收的 spec，交接出去）。內圈 Feature 把它做出來並證明是對的：**Implement**（設計、實作）→ **Validate**（審查、CI、人工驗收）。接受後，**Retro & Replan** 把經驗帶回 Roadmap，再選下一個。Agent 做大部分工作，人在關鍵點確認。
+外圈 Project 決定要做什麼：**Analyze**（釐清目的與需求）→ **Architect**（設計方案）→ **Roadmap**（安排交付，選下一個 Feature）→ **Specify**（開 Feature：寫成可驗收的 spec，交接出去）。內圈 Feature 把它做出來並證明是對的：**Implement**（寫實作 plan、交給 agent 執行）→ **Validate**（Review 與 CI、驗收）。接受後，**Retro & Replan** 把經驗帶回 Roadmap，再選下一個。Agent 做大部分工作，人在關鍵點確認。
 
 ## 誰做什麼
 
@@ -30,9 +30,9 @@ Agent 做大部分工作；人在六個 ◆ 確認點做決定：
 
 | 誰 | 做什麼（◆ 是他要確認的點） |
 | --- | --- |
-| Project Lead | • [分析需求](#a1-analyzeproject-sa)（先研究 codebase）◆確認方向<br>• [切模組與邊界](#a2-architect高層設計) ◆確認設計<br>• [排 roadmap、選下一個 Feature](#a3-roadmap排-milestone-與-feature) ◆確認 roadmap<br>• [訂 Feature spec、交接](#a4-specifyfeature-spec-與交接) ◆確認 spec<br>• [驗收後收尾與回顧](#a5-retro歸檔與回顧) |
-| Engineer | • [設計與計畫](#b1-design設計與計畫) ◆確認開工<br>• [實作](#b2-build實作)<br>• [PR、審查、CI](#b3-verifypr審查與-ci)<br>• 中小型 Feature 也常自己[訂 Feature spec](#a4-specifyfeature-spec-與交接) |
-| 驗收人：預設是 Project Lead；需求由別人提出時，是提出的人 | • [看每條 AC 的證據與 demo](#b4-accept驗收與-merge) ◆驗收：接受或退回 |
+| Project Lead | • [釐清目的與需求](#a1-analyze釐清目的與需求)（先研究 codebase）◆確認目的與需求<br>• [設計方案](#a2-architect設計方案) ◆確認設計方案<br>• [安排交付](#a3-roadmap安排交付)：排 roadmap、選下一個 Feature ◆確認 roadmap<br>• [開 Feature](#a4-specify開-feature)：寫 Feature spec、交接 ◆確認 spec<br>• [歸檔與回顧](#a5-retro歸檔與回顧) |
+| Engineer | • [寫實作 plan](#b1-design寫實作-plan) ◆確認開工<br>• [交給 agent 執行](#b2-build交給-agent-執行)<br>• [Review 與 CI](#b3-verifyreview-與-ci)<br>• 中小型 Feature 也常自己[開 Feature](#a4-specify開-feature) |
+| 驗收人：預設是 Project Lead；需求由別人提出時，是提出的人 | • [驗收](#b4-accept驗收)：看每條 AC 的證據與 demo ◆驗收：接受或退回 |
 | Agent：Project Lead Agent、Implementer、Reviewer | • 研究、寫文件、實作、審查<br>• 不做確認 |
 
 - **角色是工作，不是職位**：中小型 Feature 的外圈很薄，同一人兼任 Project Lead 與 Engineer 是常態，這時 ◆確認 spec 併入 ◆確認開工。交接時寫明誰確認開工、誰驗收；確認開工的人通常是 Engineer。
@@ -42,7 +42,7 @@ Agent 做大部分工作；人在六個 ◆ 確認點做決定：
 
 ```text
 ┌─ Human ──────────────────────────────────┐
-│ Project Lead / Engineer                  │  做決定：方向、設計、roadmap、spec、開工、驗收
+│ Project Lead / Engineer                  │  做決定：目的與需求、設計方案、roadmap、spec、開工、驗收
 └────────────────────┬─────────────────────┘
                      │ 用自然語言交代、確認
 ┌─ ADE ──────────────▼─────────────────────┐
@@ -81,7 +81,7 @@ Agent 做大部分工作；人在六個 ◆ 確認點做決定：
 - **How**：用什麼。skill 會連到 repo 裡它的 `SKILL.md`；指令連到說明文件。第一次使用前，在 loop-engineering 執行 `./setup.sh` 安裝這些 skills。
 - **Output**：產出什麼。示範專案已經有的，附上範例連結；示範還沒走到的步驟先不放，示範專案推上 GitHub 之前，部分連結會打不開。
 
-Agent 寫 ticket 或 PR 留言之前，會先問人，或照人事先給的授權。controller 可用之前，交付紀錄都放在 ticket 留言；只有確認方向、設計、roadmap 記在決策紀錄，確認 spec 記在 proposal。
+Agent 寫 ticket 或 PR 留言之前，會先問人，或照人事先給的授權。controller 可用之前，交付紀錄都放在 ticket 留言；只有確認目的與需求、設計方案、roadmap 記在決策紀錄，確認 spec 記在 proposal。
 
 ## 外圈：Project
 
@@ -89,16 +89,16 @@ Agent 寫 ticket 或 PR 留言之前，會先問人，或照人事先給的授�
 
 ```mermaid
 flowchart LR
-  A1["A1 Analyze<br/>Project SA"] -->|◆確認方向| A2["A2 Architect<br/>高層設計"]
-  A2 -->|◆確認設計| A3["A3 Roadmap<br/>Milestone 與 Feature"]
-  A3 -->|◆確認 roadmap<br/>選下一個 Feature| A4["A4 Specify<br/>Feature spec 與交接"]
+  A1["A1 Analyze<br/>釐清目的與需求"] -->|◆確認目的與需求| A2["A2 Architect<br/>設計方案"]
+  A2 -->|◆確認設計方案| A3["A3 Roadmap<br/>安排交付"]
+  A3 -->|◆確認 roadmap<br/>選下一個 Feature| A4["A4 Specify<br/>開 Feature"]
   A4 -->|◆確認 spec<br/>交接包| IN[["內圈：Implement → Validate"]]
   IN -->|◆驗收：接受| A5["A5 Retro<br/>歸檔與回顧"]
   A5 -->|Replan| A3
   style IN fill:#fff7ed,stroke:#c2410c,color:#431407
 ```
 
-### A1 Analyze：Project SA
+### A1 Analyze：釐清目的與需求
 
 **目的**：確定為什麼做、做到哪裡算完成。
 
@@ -108,7 +108,7 @@ flowchart LR
 | 2 | Project Lead ⇄ Agent | Research：分清現況的<br>• Facts<br>• Assumptions<br>• Unknown | • skill [research-codebase](../../skills/research-codebase/SKILL.md)<br>• codebase 大或第一次接手：先用 skill graphify（[說明](https://github.com/Graphify-Labs/graphify)） 建知識圖，`/graphify <路徑>` | • 研究報告：`docs/research/<日期>-<主題>.md`（[範例](../research/2026-09-25/integration-gaps.md)）<br>• 用了 graphify：`graphify-out/GRAPH_REPORT.md` |
 | 3 | Project Lead ⇄ Agent | （選用）解析參考資料：<br>• Project Lead 把客戶規格、上游 spec、會議紀錄放進資料夾<br>• Agent 依能力分組、註明來源版本 | skill [project-lead](../../skills/project-lead/SKILL.md) | 需求輸入：`docs/research/<日期>-import/`（[範例](https://github.com/yschiang/cross-node-root/blob/main/docs/research/2026-09-28-import/README.md)） |
 | 4 | Project Lead ⇄ Agent | 由上往下問，每輪 1–3 題：<br>• 目標<br>• 範圍<br>• 情境<br>• 規則<br>• 例外<br>• 驗收 | • skill [project-lead](../../skills/project-lead/SKILL.md)<br>• 想被追問得更深：Project Lead 自己輸入 `/grill-with-docs`（[說明](../../skills/third-party/mattpocock/engineering/grill-with-docs/SKILL.md)；Agent 不會自動叫它） | • project intent（[範例](https://github.com/yschiang/cross-node-root/blob/main/docs/project-intent.md)）<br>• 共同詞彙 `CONTEXT.md`（[範例](https://github.com/yschiang/cross-node-root/blob/main/CONTEXT.md)） |
-| 5 | Project Lead | 看一頁摘要，◆確認方向：可以進入設計 | — | 決策紀錄（[範例](https://github.com/yschiang/cross-node-root/blob/main/docs/decisions.md)） |
+| 5 | Project Lead | 看一頁摘要，◆確認目的與需求：可以進入設計方案 | — | 決策紀錄（[範例](https://github.com/yschiang/cross-node-root/blob/main/docs/decisions.md)） |
 
 **每一步怎麼做、怎樣算完成**
 
@@ -150,22 +150,22 @@ flowchart LR
        - [ ] 待決：每條寫明影響與誰決定，沒有一條擋住設計
      - [ ] `CONTEXT.md` 收錄用到的領域詞彙，每個一句定義
      - [ ] 有參考資料時，需求輸入的每一段都對到一個能力
-5. **◆確認方向**
+5. **◆確認目的與需求**
    - 怎麼做：看一頁摘要（目標、不做、能力、限制、待決、版本），不必讀檔案；有疑問就回到第 4 步。
    - 完成：
      - [ ] 決策紀錄寫下誰、何時、原話和確認的版本
 
 **細節**：參考手冊的[需求是怎麼問出來的](reference.md#需求是怎麼問出來的)、[外圈產出哪些文件](reference.md#外圈產出哪些文件)。
 
-### A2 Architect：高層設計
+### A2 Architect：設計方案
 
 **目的**：定下元件責任與技術，roadmap 才切得出能單獨驗收的 Feature。
 
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
-| 1 | Agent | 提出設計：<br>• 有既有設計：沿用，標出要改的地方<br>• 沒有：提出 2–3 個方案與比較 | skill [project-lead](../../skills/project-lead/SKILL.md) | 高層設計：`docs/design/`（[範例](https://github.com/yschiang/cross-node-root/blob/main/docs/design/system-design.md)） |
+| 1 | Agent | 提出設計：<br>• 有既有設計：沿用，標出要改的地方<br>• 沒有：提出 2–3 個方案與比較 | skill [project-lead](../../skills/project-lead/SKILL.md) | 高層設計：`docs/design/`（[範例資料夾](https://github.com/yschiang/cross-node-root/tree/main/docs/design)），先看：<br>• [網頁版](https://yschiang.github.io/cross-node-root/)<br>• [system-design.md](https://github.com/yschiang/cross-node-root/blob/main/docs/design/system-design.md)<br>• [design-decisions.md](https://github.com/yschiang/cross-node-root/blob/main/docs/design/design-decisions.md) |
 | 2 | Project Lead ⇄ Agent | 選方案：<br>• Project Lead 在方案之間做選擇<br>• Agent 把選擇與取捨寫成 ADR | skill [project-lead](../../skills/project-lead/SKILL.md) | ADR：`docs/adr/`（[範例](https://github.com/yschiang/cross-node-root/blob/main/docs/adr/0002-target-pull-over-http.md)） |
-| 3 | Project Lead | 看設計摘要，◆確認設計 | — | 決策紀錄 |
+| 3 | Project Lead | 看設計摘要，◆確認設計方案 | — | 決策紀錄 |
 
 **每一步怎麼做、怎樣算完成**
 
@@ -183,14 +183,14 @@ flowchart LR
    - 完成：
      - [ ] 每個選擇都有一份 ADR，寫明誰選的
      - [ ] 高層設計連得到每份 ADR
-3. **◆確認設計**
+3. **◆確認設計方案**
    - 怎麼做：看設計摘要：元件責任、技術、重要取捨。
    - 完成：
      - [ ] 決策紀錄寫下誰、何時、原話和確認的版本
 
 **細節**：參考手冊的[外圈產出哪些文件](reference.md#外圈產出哪些文件)、[多個 repo 的專案](reference.md#多個-repo-的專案)。
 
-### A3 Roadmap：排 Milestone 與 Feature
+### A3 Roadmap：安排交付
 
 **目的**：決定先做什麼，讓每次只交出一個 Feature。
 
@@ -231,7 +231,7 @@ flowchart LR
 
 **細節**：參考手冊的[Roadmap 要切多細](reference.md#roadmap-要切多細)、[工作層級](reference.md#工作層級milestonefeaturetask)。
 
-### A4 Specify：Feature spec 與交接
+### A4 Specify：開 Feature
 
 **目的**：把選中的 Feature 寫成可以驗收的 spec，交給 Engineer 不必回頭問就能開始設計。
 
@@ -360,11 +360,11 @@ flowchart LR
   A4["A4 Specify"] -->|交接包| B1
   subgraph SIMP["Implement"]
     direction TB
-    B1["B1 Design<br/>設計與計畫"] -->|◆確認開工| B2["B2 Build<br/>逐 task 實作"]
+    B1["B1 Design<br/>寫實作 plan"] -->|◆確認開工| B2["B2 Build<br/>交給 agent 執行"]
   end
   subgraph SVAL["Validate"]
     direction TB
-    B3["B3 Verify<br/>PR、審查、CI"] -->|PR Pass 驗收包| B4(["B4 Accept<br/>◆驗收：驗收人"])
+    B3["B3 Verify<br/>Review 與 CI"] -->|PR Pass 驗收包| B4(["B4 Accept<br/>◆驗收：驗收人"])
   end
   B2 --> B3
   B4 -->|退回修正| B2
@@ -380,7 +380,7 @@ flowchart LR
 
 Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工：spec、設計、計畫一起確認一次。不同人擔任時分開，Project Lead 先確認 spec，Engineer 才開始設計。
 
-### B1 Design：設計與計畫
+### B1 Design：寫實作 plan
 
 **目的**：決定怎麼做、拆成哪些 task。
 
@@ -416,7 +416,7 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
 
 **細節**：參考手冊的[做出來：Engineer 的細節](reference.md#做出來engineer-的細節)。
 
-### B2 Build：實作
+### B2 Build：交給 agent 執行
 
 **目的**：一個 task 一個 task 把行為做出來，每一步都能驗證。
 
@@ -444,7 +444,7 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
 
 **細節**：參考手冊的[做出來：Engineer 的細節](reference.md#做出來engineer-的細節)。
 
-### B3 Verify：PR、審查與 CI
+### B3 Verify：Review 與 CI
 
 **目的**：用獨立審查和 CI 證明整個 Feature 符合 spec。
 
@@ -487,7 +487,7 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
 
 **細節**：參考手冊的[做出來：Engineer 的細節](reference.md#做出來engineer-的細節)：gates 的證據與 review-fix loop。
 
-### B4 Accept：驗收與 merge
+### B4 Accept：驗收
 
 **目的**：由人判斷結果是不是真的是要的。
 
