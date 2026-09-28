@@ -42,6 +42,7 @@ flowchart LR
 - **步驟**：誰、做什麼、用什麼。「skill 第 N 步」指 [project-lead skill](../../skills/project-lead/SKILL.md) 的章節。
 - **產出**：每一列一個產出，寫明位置、內容與由哪一步產生。controller 可用前，交付紀錄放在 ticket 留言；薄 controller 第一片已把開工確認與接受紀錄定在它自己的狀態檔，用它時以狀態檔為準，ticket 留言是摘要。
 - **完成條件**：每一條都可以檢查。
+- **看範例**：連到示範專案 cross-node-file-transfer（root repo：`cross-node-root`）的實際檔案。示範還沒走到的步驟先不放；示範專案推上 GitHub 之前，部分連結會打不開。
 
 標「工程師」的卡，只帶專案的人可以跳過。
 
@@ -51,10 +52,10 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-  A1["A1 Analyze<br/>Project SA"] --> G1(["① 可進入設計<br/>Lead"])
+  A1["A1 Analyze<br/>Project SA"] -->|project intent| G1(["① 可進入設計<br/>Lead"])
   G1 --> A2["A2 Architect<br/>高層設計"]
-  A2 --> A3["A3 Plan<br/>Roadmap"]
-  A3 --> G2(["② 專案基準與 roadmap<br/>Lead"])
+  A2 -->|設計文件、ADR| A3["A3 Plan<br/>Roadmap"]
+  A3 -->|roadmap| G2(["② 專案基準與 roadmap<br/>Lead"])
   G2 --> G3(["③ 下一個 Feature<br/>Lead"])
   G3 --> IN[["內圈：Define → Deliver → Accept"]]
   IN -->|Retro & Replan| A3
@@ -66,6 +67,8 @@ flowchart LR
 ### A1 Analyze：Project SA
 
 **目的**：確定為什麼做、做到哪裡算成功，作為後面所有取捨的依據。
+
+**看範例**：[project intent](https://github.com/yschiang/cross-node-root/blob/main/docs/project-intent.md)、[CONTEXT](https://github.com/yschiang/cross-node-root/blob/main/CONTEXT.md)、[需求輸入](https://github.com/yschiang/cross-node-root/blob/main/docs/research/2026-09-28-import/README.md)、[匯入紀錄](https://github.com/yschiang/cross-node-root/blob/main/docs/research/2026-09-28-import-from-gigaxfer.md)、[決策紀錄](https://github.com/yschiang/cross-node-root/blob/main/docs/decisions.md)
 
 **輸入**
 
@@ -110,6 +113,8 @@ flowchart LR
 
 **目的**：定下元件責任、主要資料流與技術選擇，roadmap 才切得出能單獨驗收的 Feature。
 
+**看範例**：[設計文件](https://github.com/yschiang/cross-node-root/blob/main/docs/design/README.md)、[ADR](https://github.com/yschiang/cross-node-root/tree/main/docs/adr)
+
 **輸入**
 
 - A1 的 project intent、能力清單、共用限制
@@ -139,6 +144,8 @@ flowchart LR
 ### A3 Plan：Roadmap
 
 **目的**：決定先做什麼，讓每次只交出一個 Feature。
+
+**看範例**：[roadmap](https://github.com/yschiang/cross-node-root/blob/main/docs/roadmap.md)、[決策紀錄](https://github.com/yschiang/cross-node-root/blob/main/docs/decisions.md)
 
 **輸入**
 
@@ -179,18 +186,18 @@ flowchart LR
 flowchart LR
   subgraph SDEF["Define"]
     direction TB
-    B1["B1 Open<br/>開 Feature"] --> B2["B2 Specify<br/>需求與 AC"] --> G4(["④ spec<br/>Lead"]) --> B3["B3 Hand off<br/>交接"]
+    B1["B1 Open<br/>開 Feature"] --> B2["B2 Specify<br/>需求與 AC"] -->|spec| G4(["④ spec<br/>Lead"]) --> B3["B3 Hand off<br/>交接"]
   end
   subgraph SDEL["Deliver"]
     direction TB
-    B4["B4 Design<br/>設計與計畫"] --> G5(["⑤ 開工<br/>被授權的人"]) --> B5["B5 Build<br/>逐 task 實作"] --> B6["B6 Verify<br/>PR、審查、CI"]
+    B4["B4 Design<br/>設計與計畫"] -->|design、tasks| G5(["⑤ 開工<br/>被授權的人"]) --> B5["B5 Build<br/>逐 task 實作"] --> B6["B6 Verify<br/>PR、審查、CI"]
   end
   subgraph SACC["Accept"]
     direction TB
     G6(["B7 Accept<br/>⑥ 驗收人"]) --> B8["B8 Close<br/>歸檔"]
   end
-  B3 --> B4
-  B6 --> G6
+  B3 -->|交接包| B4
+  B6 -->|PR Pass 驗收包| G6
   G6 -->|退回修正| B5
   G6 -->|需求要改| B2
   classDef gate fill:#fdf0ea,stroke:#eb6c36,color:#2d3142
@@ -205,6 +212,8 @@ Lead 同時擔任工程師時，④ 併入 ⑤：spec、設計、計畫一起確
 ### B1 Open：開 Feature
 
 **目的**：讓這個 Feature 有自己的 spec 位置與追蹤入口。
+
+**看範例**：[專案骨架的 spec 位置](https://github.com/yschiang/cross-node-root/tree/main/openspec/changes/project-skeleton)、[ticket #1](https://github.com/yschiang/cross-node-root/issues/1)
 
 **輸入**
 
@@ -233,6 +242,8 @@ Lead 同時擔任工程師時，④ 併入 ⑤：spec、設計、計畫一起確
 ### B2 Specify：Feature SA
 
 **目的**：把這個 Feature 做到什麼算完成，寫成可以驗收的 spec。
+
+**看範例**：[proposal](https://github.com/yschiang/cross-node-root/blob/main/openspec/changes/project-skeleton/proposal.md)、[spec](https://github.com/yschiang/cross-node-root/blob/main/openspec/changes/project-skeleton/specs/engineering-baseline/spec.md)
 
 **輸入**
 
@@ -288,6 +299,8 @@ Lead 同時擔任工程師時，④ 併入 ⑤：spec、設計、計畫一起確
 
 **目的**：讓工程師不必回頭問，就能開始設計。
 
+**看範例**：示範走到這一步後補上。
+
 **輸入**
 
 - B2 的 spec，以及 SA 確認紀錄或「併入開工確認」的註記
@@ -319,6 +332,8 @@ Lead 同時擔任工程師時，④ 併入 ⑤：spec、設計、計畫一起確
 ### B4 Design：設計與計畫（工程師）
 
 **目的**：決定怎麼做、拆成哪些 task。
+
+**看範例**：示範走到這一步後補上。
 
 **輸入**
 
@@ -355,6 +370,8 @@ Lead 同時擔任工程師時，④ 併入 ⑤：spec、設計、計畫一起確
 
 **目的**：一個 task 一個 task 把行為做出來，每一步都能驗證。
 
+**看範例**：示範走到這一步後補上。
+
 **輸入**
 
 - 確認過的 design 與 tasks
@@ -385,6 +402,8 @@ Lead 同時擔任工程師時，④ 併入 ⑤：spec、設計、計畫一起確
 ### B6 Verify：PR、審查與 CI（工程師）
 
 **目的**：用獨立審查與 CI 證明整個 Feature 符合 spec。
+
+**看範例**：示範走到這一步後補上。
 
 **輸入**
 
@@ -421,6 +440,8 @@ Gates 的證據要求、review-fix loop 與 Blocked，見參考的[做出來：�
 
 **目的**：由人判斷結果是不是真的是要的。
 
+**看範例**：示範走到這一步後補上。
+
 **輸入**
 
 - PR Pass 驗收包
@@ -449,6 +470,8 @@ Gates 的證據要求、review-fix loop 與 Blocked，見參考的[做出來：�
 ### B8 Close：歸檔與回顧
 
 **目的**：把做完的需求變成系統現況，並用這次的經驗調整後面的計畫。
+
+**看範例**：示範走到這一步後補上。
 
 **輸入**
 
