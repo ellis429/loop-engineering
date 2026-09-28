@@ -432,12 +432,12 @@ flowchart LR
 
 Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工：spec、設計、計畫一起確認一次。不同人擔任時分開，Project Lead 先確認 spec，Engineer 才開始設計。
 
-內圈在 feature 的 worktree 依序跑四個指令，每個停下、交給人之後才跑下一個：
+內圈在 feature 的 worktree 依序跑四個指令。人要決定的只有兩處：spec-to-plan 停下時的 ◆確認開工，和 to-pr 停下後的 ◆驗收；plan-to-code 做完直接接 to-pr。
 
 | 順序 | 指令 | 停在哪 | ticket 狀態 |
 | --- | --- | --- | --- |
 | 1 | `/spec-to-plan` | ◆確認開工 | 就緒（可設計）→ 開發中 |
-| 2 | `/plan-to-code` | 每個 task 都審過、沒有未解的 blocking | 開發中 |
+| 2 | `/plan-to-code` | 每個 task 都審過、沒有未解的 blocking，接著直接跑 to-pr | 開發中 |
 | 3 | `/to-pr` | PR Pass，等 ◆驗收 | 開發中 → 待驗收 |
 | 4 | `/project-lead` | 記下驗收結果 | 待驗收 → 已接受，或退回開發中 |
 
@@ -457,7 +457,7 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
 **每一步怎麼做、怎樣算完成**
 
 1. **開始寫設計與計畫**
-   - 怎麼做：在 feature 的 worktree 貼上 prompt，把〈Feature〉換成 change 的 id。內圈三個 skill 依序是 `spec-to-plan`、`plan-to-code`、`to-pr`，各停在一個人工停點；之後由 orchestrate 串起來（見參考手冊的[控制方向與自主程度](reference.md#控制方向與自主程度)）。
+   - 怎麼做：在 feature 的 worktree 貼上 prompt，把〈Feature〉換成 change 的 id。接下來依[內圈的四個指令](#內圈一個-feature)往下跑；誰可以代為啟動，見參考手冊的[控制方向與自主程度](reference.md#控制方向與自主程度)。
    - 完成：
      - [ ] Agent 回報已載入 spec-to-plan skill
      - [ ] Agent 讀完交接包，沒有要退回的問題；研究報告已 commit
@@ -560,7 +560,7 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
      - [ ] 每條 AC 都有結果與證據
      - [ ] 每個受影響 repo 的 PR、base／head commit、CI 與 review 連結
      - [ ] 風險與已知限制
-     - [ ] run ID
+     - [ ] run ID，或手動執行的人
      - [ ] 驗收包貼成 ticket 留言，本文「驗收」連到這則留言，狀態「待驗收」
 
 **細節**：參考手冊的[做出來：Engineer 的細節](reference.md#做出來engineer-的細節)：gates 的證據與 review-fix loop。
@@ -586,7 +586,7 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
    - 完成：
      - [ ] 接受或退回記成 ticket 留言：誰、何時、原話、版本
      - [ ] 接受：ticket 只勾驗收人確認過的 AC，狀態「已接受」
-     - [ ] 退回附理由，ticket 狀態回到「開發中」
+     - [ ] 退回寫明判定的版本與沒過的 AC，舊的 PR Pass 作廢，ticket 狀態回到「開發中」，下一步是修正後重跑 to-pr
 3. **merge**
    - 怎麼做：多個 PR 照依賴順序，提供方先；每個 PR merge 前確認它單獨 merge 也安全（向後相容）。
    - 完成：

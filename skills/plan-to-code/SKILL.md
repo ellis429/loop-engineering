@@ -1,6 +1,6 @@
 ---
 name: plan-to-code
-description: Use when a feature's plan (design.md and tasks.md) has its start-of-work approval and its tasks must be implemented, or when review findings or a failed gate send fixes back to a feature's tasks. Used by the Engineer or the coordinator of the feature loop. Not for writing the plan (spec-to-plan) or opening pull requests (to-pr).
+description: Use when a feature's plan (design.md and tasks.md) has its start-of-work approval and its tasks must be implemented, or when review findings, a failed gate or an acceptor's rejection send fixes back to a feature's tasks. Used by the Engineer or the coordinator of the feature loop. Not for writing the plan (spec-to-plan) or opening pull requests (to-pr).
 ---
 
 # Plan to code
@@ -11,7 +11,8 @@ Read repository instructions first; they override this skill. Commit and test co
 
 ## 0. Check the entry
 
-- The start-of-work approval is recorded (ticket comment with the plan's commit) and the ticket state is `開發中`. Without it, stop.
+- The start-of-work approval is recorded (ticket comment with the plan's commit) and the ticket state is `開發中`. It must be the latest approval: no later comment supersedes it, and `tasks.md` differs from the approved commit only in ticked boxes and regression tests added for findings. Without it, stop.
+- Fixes sent back by `to-pr` (G2 findings, G3 failures) or by an acceptor's rejection (defects against acceptance IDs) are fixes to the task that owns the affected paths, handled as in step 3.
 - Every upstream feature this one depends on is accepted and merged, at the version the handoff package names (D27); otherwise stop, because only preparation may run ahead of it.
 - If the approval depends on a spec change (a decision that alters a requirement or scenario), that change is already committed through `feature-to-spec`; otherwise stop and send it there. Do not implement against a spec that says something else.
 - Work on `feature/<id>` in the feature's worktree, and on the branch of the same name in each affected service repo (D67). Do not commit to the default branch.
@@ -26,7 +27,7 @@ Follow `subagent-driven-development` for the rhythm (one fresh Implementer per t
 - A test that passes on its first run is not a Red: record it, and show it can fail (break the guarded line, see it fail, restore) or ask why the behaviour already exists.
 - Commits: one logical change per commit, each green, in the repository's format; no AI attribution. A task may have several commits. Tick the task's box in `tasks.md` in the task's last commit, not a separate one.
 - A requirement that looks wrong or missing is not implemented: the Implementer reports it, and you stop that task and send it to the Project Lead (`feature-to-spec` revises the feature).
-- A fix that would change what the task promises (its behaviour, acceptance mapping or design, or rewriting or dropping a test the plan lists) is not a fix: send it to `spec-to-plan`, even when the paths are the same. Adding a regression test for a finding inside the approved scope is part of the fix.
+- A fix that would change what the task promises (its behaviour, acceptance mapping or design, or rewriting or dropping a test the plan lists) is not a fix: post a ticket comment that the start approval no longer covers the plan (name the finding), set 下一步 to the Engineer revising the plan, and send it to `spec-to-plan`, even when the paths are the same. Adding a regression test for a finding inside the approved scope is part of the fix.
 
 ## 2. Accept the attempt yourself
 

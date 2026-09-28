@@ -369,7 +369,7 @@ flowchart TD
 
 ### 跨人、跨 session 要交什麼
 
-換人或重開 session 時，交文件位置與適用版本，再讀保存的結果。聊天可補背景，但不承擔唯一的進度與需求記憶。Implementer 與 Reviewer 不直接互傳結果，都經由保存的檔案與 orchestrate 交接；先保存結果，再發布或通知，通知只是喚醒接收者。各角色之間的交接內容見[交接契約](../workflow/contracts.md#角色交接摘要)。
+換人或重開 session 時，交文件位置與適用版本，再讀保存的結果。聊天可補背景，但不承擔唯一的進度與需求記憶。Implementer 與 Reviewer 不直接互傳結果，都經由保存的檔案交接：局部結果由 plan-to-code 保存，gates 由 to-pr 執行（orchestrate 可用後由它串接）；先保存結果，再發布或通知，通知只是喚醒接收者。各角色之間的交接內容見[交接契約](../workflow/contracts.md#角色交接摘要)。
 
 ## 做出來：Engineer 的細節
 
@@ -420,7 +420,7 @@ flowchart TD
     P["各 PR 目前的 head<br/>Implementer push"]:::agent
     R["Reviewer Agent<br/>G2：獨立 session，不改 branch"]:::agent
     T["CI<br/>G3：必要 checks"]:::agent
-    J{"Orchestrate＋controller<br/>同一組版本結果收齊，三 gates 通過？"}:::mech
+    J{"to-pr<br/>同一組版本結果收齊，三 gates 通過？"}:::mech
     X["Implementer Agent<br/>修正批次，重過 G1"]:::agent
     O["PR Pass<br/>交人驗收，不是 merge"]:::gate
     B["Blocked<br/>保存原因，交人裁決"]:::human
@@ -477,7 +477,7 @@ G1 先於送審；G2 與 G3 彼此獨立，可以並行。Red 通常來自較早
 
 > 請推進〈Feature〉，以已確認的 design／plan 為準。可依計畫實作、更新 PR、執行獨立 review／CI 及修正循環。直到目前版本的三 gates 通過，整理驗收包後停下。保留 worktree，不自動 merge、close issue 或 deploy。需求／AC 或設計需改變時回來裁決；最多三輪修正、四小時主動執行時間。
 
-Orchestrate 按授權工作，controller 核對狀態與證據。每個基礎設施操作最多額外重試兩次，和三輪程式修正分開計算；未知的執行結果先保存並停止，不反覆重派。
+to-pr 按授權工作，核對每個 gate 的證據都對應目前版本；orchestrate 與 controller 可用後，改由它們串接與核對。每個基礎設施操作最多額外重試兩次，和三輪程式修正分開計算；未知的執行結果先保存並停止，不反覆重派。
 
 查進度時，你應看得到：目前 feature／PR 與版本、哪個角色正在工作、各 gate 的證據或缺口、下一步，以及是否有需要人的問題。
 

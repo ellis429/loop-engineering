@@ -56,13 +56,13 @@ Run `openspec validate <id>` and commit.
 
 ## 4. Independent plan review
 
-A model different from the plan's author reviews the plan in a fresh session, read-only (D52), for example `codex exec -m gpt-6-sol -s read-only`. Ask it to check: the D68 rules above, every acceptance ID covered, task size, owned paths, effort, risks, and whether each listed Red can actually fail on its assertion. Fix and re-review in the same reviewer session until clean, at most three rounds. The start-of-work approval needs a clean review. Not clean after three rounds: stop and report the open findings to the human, who decides how the plan (or, through `feature-to-spec`, the spec) changes; then review again. Keep the review result on the branch.
+A model different from the plan's author reviews the plan in a fresh session, read-only (D52), for example `codex exec -m gpt-6-sol -s read-only`. Ask it to check: the D68 rules above, every acceptance ID covered, task size, owned paths, effort, risks, and whether each listed Red can actually fail on its assertion. Fix and re-review in the same reviewer session until clean, at most three rounds. The start-of-work approval needs a clean review. Not clean after three rounds: set the ticket to `Blocked：plan review not clean`, set 下一步 to the human who decides, post the open findings with the plan commit as one comment, and stop. The human decides how the plan (or, through `feature-to-spec`, the spec) changes; then review again. Keep the review result on the branch.
 
 ## 5. Stop at the start-of-work approval
 
 Show the start approver a one-page summary: tasks in order with their effort, what each Red proves, risks and limits, the plan review result, and any decision they must make. When the Project Lead is also the Engineer, this approval also covers the spec (D59).
 
-If the approver changes only a task's effort, update `tasks.md` and commit before recording. Any other change (tests, acceptance mapping, owned paths, tasks, design) goes back through step 4 until the review is clean, and the approval is asked again. When approved, record it as one ticket comment: who, when, their words, and the plan's commit (D60); set the ticket state to `開發中` and 下一步 to implementation (D67). Every tracker write needs authorisation. Implementation continues with `plan-to-code`.
+If the approver changes only a task's effort, update `tasks.md` and commit before recording. Any other change (tests, acceptance mapping, owned paths, tasks, design) goes back through step 4 until the review is clean, and the approval is asked again. When approved, record it as one ticket comment: who, when, their words, and the plan's commit, naming any approval it supersedes (D60); set the ticket state to `開發中` and 下一步 to implementation (D67). Every tracker write needs authorisation. Implementation continues with `plan-to-code`.
 
 ## Boundaries
 
