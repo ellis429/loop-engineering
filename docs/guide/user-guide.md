@@ -57,14 +57,16 @@ Agent 做大部分工作；人只在六個確認點做決定，Agent 不做確�
 │ Orca (optional)                          │
 └────────────────────┬─────────────────────┘
                      │
-┌─ Skills ───────────▼─────────────────────┐
-│ project-lead / orchestrate /             │  告訴 Agent 照什麼方法做
-│ research-codebase / TDD / OpenSpec       │
+┌─ Harnessing ───────▼─────────────────────┐
+│ Skills: project-lead / orchestrate /     │  約束 Agent 怎麼做：
+│         research-codebase                │  照哪個方法、用哪個模型、先寫什麼
+│ Model: chosen per role                   │  例如 Reviewer 和 Implementer 用不同模型
+│ TDD, spec-driven (OpenSpec)              │  先寫測試再實作；先寫 spec 再設計
 └────────────────────┬─────────────────────┘
                      │
 ┌─ Agents ───────────▼─────────────────────┐
-│ Project Lead Agent <-> Implementer       │  做實際的分析、實作與審查；
-│ <-> Reviewer                             │  Reviewer 用不同模型
+│ Project Lead Agent <-> Implementer       │  做實際的分析、實作與審查
+│ <-> Reviewer                             │
 └────────────────────┬─────────────────────┘
                      │ 讀寫
 ┌─ Records & checks ─▼─────────────────────┐
@@ -74,7 +76,7 @@ Agent 做大部分工作；人只在六個確認點做決定，Agent 不做確�
 └──────────────────────────────────────────┘
 ```
 
-**Workflow** 是 Project、Feature 兩層的步驟與規則，貫穿所有層；**Harness** 是讓這些規則真的被執行的 ADE、skills 和 controller。
+**Workflow** 是 Project、Feature 兩層的步驟與規則，貫穿所有層；**Harnessing** 是套在 Agent 身上的做法：skills、模型選擇、TDD、spec-driven，讓 Agent 照規則做。
 
 ## 活動卡怎麼讀
 
