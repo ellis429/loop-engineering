@@ -7,21 +7,22 @@ description: Use when a feature's plan (design.md and tasks.md) has its start-of
 
 Implement an approved plan task by task: dispatch an Implementer at the planned effort, check the attempt yourself, have a different model review it, and fix within limits. Stop when every task is accepted and its review is clean (D69).
 
-Read repository instructions first; they override this skill. Commit and test conventions come from them.
+Read repository instructions first; they override this skill. Commit and test conventions come from them. Superpowers skills are named here without a prefix; installed as the Superpowers plugin they appear as `superpowers:<name>`.
 
 ## 0. Check the entry
 
 - The start-of-work approval is recorded (ticket comment with the plan's commit) and the ticket state is `開發中`. Without it, stop.
+- Every upstream feature this one depends on is accepted and merged, at the version the handoff package names (D27); otherwise stop, because only preparation may run ahead of it.
 - If the approval depends on a spec change (a decision that alters a requirement or scenario), that change is already committed through `feature-to-spec`; otherwise stop and send it there. Do not implement against a spec that says something else.
 - Work on `feature/<id>` in the feature's worktree, and on the branch of the same name in each affected service repo (D67). Do not commit to the default branch.
 - `tasks.md` is the only plan. Take each task's owned paths, tests, expected Reds and effort from it; do not re-plan. A plan that cannot be followed goes back to `spec-to-plan`.
 
 ## 1. Dispatch one task
 
-Follow superpowers:subagent-driven-development for the rhythm (one fresh Implementer per task, you as coordinator), with these rules:
+Follow `subagent-driven-development` for the rhythm (one fresh Implementer per task, you as coordinator), with these rules:
 
 - Implementer: a fresh session at the task's planned effort. Its prompt holds the task's row and card from `tasks.md`, the relevant `design.md` sections, the acceptance rows, the owned paths, what is out of scope, and the repository's commit rules.
-- Method: superpowers:test-driven-development. Write the tests the plan lists, run each, and save the raw Red (command, output, exit code, commit) before implementing, then the Green. Save evidence outside the tracked tree, for example `.delivery/<id>/<task>/attempt-<n>/`.
+- Method: `test-driven-development`. Write the tests the plan lists, run each, and save the raw Red (command, output, exit code, commit) before implementing, then the Green. A task that only changes documentation or comments has no Red: the plan states the reason, and the reviewer confirms it. Save evidence outside the tracked tree, for example `.delivery/<id>/<task>/attempt-<n>/`.
 - A test that passes on its first run is not a Red: record it, and show it can fail (break the guarded line, see it fail, restore) or ask why the behaviour already exists.
 - Commits: one logical change per commit, each green, in the repository's format; no AI attribution. A task may have several commits. Tick the task's box in `tasks.md` in the task's last commit, not a separate one.
 - A requirement that looks wrong or missing is not implemented: the Implementer reports it, and you stop that task and send it to the Project Lead (`feature-to-spec` revises the feature).
@@ -32,10 +33,10 @@ Before any review:
 
 - `git diff --name-only <task base>..HEAD` stays inside the task's owned paths.
 - In a fresh clone at the attempt's head: the full test suite and every repository check pass.
-- Every listed test exists, and every Red fails on its planned assertion. A Red that stops in setup, import, a missing command or a stub does not count, except in the harness task (D68).
+- Every listed test exists, and every Red fails on its planned assertion. A Red that stops in setup, import, a missing command or a stub does not count, in the harness task too (D68).
 - Evidence files exist for every Red and Green.
 
-Any miss sends the task to a new attempt with the concrete reasons. At most three attempts per task; then stop and report to the human.
+Any miss sends the task to a new attempt with the concrete reasons. At most three attempts per task. When they are used up, set the ticket to `Blocked：<task and reason>`, set 下一步 to the human who decides, post the attempts and their evidence as one comment, and stop.
 
 ## 3. Per-task review
 
@@ -47,7 +48,7 @@ Sort each finding:
 - **before PR:** fix before `to-pr`.
 - **ticket:** out of this feature's scope; open a ticket with the evidence (authorised) and link it.
 
-A fix is a new attempt with a Red tied to the finding, made as new commits on top: never amend, squash or rebase a commit that was reviewed or accepted, so the reviewed version and its evidence stay reachable. Add each fix's tests to the task's test list in `tasks.md` in the same commit. Then re-review in the same reviewer session; the three-attempt limit counts fixes too. Post the review outcome as one ticket comment per task (D60).
+A fix is a new attempt with a Red tied to the finding, made as new commits on top: never amend, squash or rebase a commit that was reviewed or accepted, so the reviewed version and its evidence stay reachable. Add each fix's tests to the task's test list in `tasks.md` in the same commit. Then re-review in the same reviewer session; the three-attempt limit counts fixes too. Post the review outcome as one ticket comment per task (D60): reviewer model and effort, when, the reviewed range (base and head commits), each finding with its sorting and resolution, and where the evidence is.
 
 ## 4. Stop
 
@@ -57,7 +58,7 @@ When every task is accepted and its review has no open `now` or `before PR` find
 
 | Thought | Reality |
 | --- | --- |
-| "The first failure was `invalid choice`, close enough" | Not a Red, unless this is the harness task |
+| "The first failure was `invalid choice`, close enough" | Not a Red; the test must reach its assertion |
 | "A Sonnet agent reviewed the Opus work" | Allowed only as a different model; prefer another vendor, and never the same model at another effort |
 | "Tests pass in my worktree" | Acceptance runs in a fresh clone |
 | "I'll tick the box in its own commit" | The box goes in the task's last commit |
