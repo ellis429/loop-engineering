@@ -58,9 +58,9 @@ Mode per task (D72), written on the task with its effort:
 | Default | Design, the interfaces with their invariants, and the tests | Strong |
 | All five hold: deciding is harder than writing, the task is separable, tests and checks catch mistakes, much more writing than deciding, common code | Also the change points: files, functions, signatures, edge cases, tests to run; never line-by-line code | May be cheaper |
 | Legacy code, or domain rules hidden in the code | Design; research reads the code first | Strong; without tests over the paths it changes, the first task adds characterization tests (current behaviour recorded by running the code, not inferred) |
-| Mechanical work under tests: rename, boilerplate, migrate batches | Nothing beyond the task line | Cheaper |
+| Mechanical work under tests: rename, boilerplate, migrate batches | The required task fields only, no extra detail | Cheaper |
 
-The Reviewer is always a strong model from another vendor (D52).
+The Reviewer is always a strong model and a different model from the Implementer, preferably from another vendor (D52).
 
 **Code-level plan, on request.** When the Engineer asks for one on a task (typically a PBI-sized task on legacy code), write that task's plan down to code with `writing-plans` into `openspec/changes/<id>/task-plans/<task-id>.md` and link it from the task: its steps, code and commands, starting with characterization tests when the paths have none. `tasks.md` stays the plan of record; the plan review covers the task plan too. Nothing else changes for that task: the cut, its tests and expected Reds, the per-task review, `to-pr`.
 
