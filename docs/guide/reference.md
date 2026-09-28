@@ -533,7 +533,7 @@ Demo 結束時，觀眾應能沿一條路徑找到：「目標 → Milestone →
 
 ## 會用哪些 skills 與工具
 
-在 loop-engineering 執行 `./setup.sh`，就會把下表的 skills 裝到 `~/.claude/skills`、`~/.agents/skills`、`~/.codex/skills`，並檢查 OpenSpec CLI 的版本。外部 skills 的來源與版本見 [SOURCES.md](../../skills/third-party/SOURCES.md)。這些 skills 在哪一層，見使用指南的[人、Agent 與工具的分層](user-guide.md#人agent-與工具的分層)。
+在 loop-engineering 執行 `./setup.sh`，就會把下表的 skills 裝到 `~/.claude/skills`、`~/.agents/skills`、`~/.codex/skills`，並檢查 OpenSpec CLI 的版本。無法這樣安裝時，用 `./setup.sh --project <root repo>` 把它們複製進產品 root repo 的 `.claude/skills/` 與 `.agents/skills/`，由 root repo commit；從 root 開 session 就讀得到，OpenSpec 的 skills 則由 root 的 `openspec init --tools claude,codex` 產生。外部 skills 的來源與版本見 [SOURCES.md](../../skills/third-party/SOURCES.md)。這些 skills 在哪一層，見使用指南的[人、Agent 與工具的分層](user-guide.md#人agent-與工具的分層)。
 
 | 用途 | 用什麼 |
 | --- | --- |

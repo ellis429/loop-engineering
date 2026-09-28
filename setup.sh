@@ -5,6 +5,9 @@
 #                         and ~/.codex/skills; check the OpenSpec CLI
 #   ./setup.sh --force    also re-point links that currently point somewhere else
 #   ./setup.sh --update   re-fetch skills/third-party at the commits in skills/third-party/SOURCES.md
+#   ./setup.sh --project <repo>
+#                         copy the workflow's skills into <repo>/.claude/skills and <repo>/.agents/skills,
+#                         so sessions started in that repository have them without any install
 #
 # Existing real folders are never touched. Superpowers skills are not linked into ~/.claude/skills
 # when the Superpowers Claude Code plugin is enabled, to avoid duplicates.
@@ -14,6 +17,11 @@ ROOT="$(cd "$(dirname "$0")" && pwd)"
 OPENSPEC_VERSION="1.13.1"
 TARGETS=("$HOME/.claude/skills" "$HOME/.agents/skills" "$HOME/.codex/skills")
 FORCE=0
+PROJECT=""
+# Skills a product repository needs to run the workflow; copied, not linked, by --project.
+PROJECT_SKILLS=(project-lead feature-to-spec research-codebase grilling domain-modeling grill-with-docs
+                test-driven-development)
+MANIFEST=".loop-engineering-skills"
 
 # A vendored folder moved aside during --update is put back if the new one did not arrive,
 # whatever interrupted the swap; the staging directory is removed afterwards.
@@ -105,13 +113,116 @@ install_skills() {
   done
 }
 
-for arg in "$@"; do
-  case "$arg" in
+# Fingerprint of a folder: every path with its permission string, symlink target and content, as a
+# NUL-separated byte stream so names and targets with newlines are fingerprinted exactly. Non-zero when
+# any entry cannot be read; the caller then discards the output.
+tree_hash() {
+  (cd "$1" || exit 1
+   find . -print0 | LC_ALL=C sort -z | while IFS= read -r -d '' p; do
+     mode="$(ls -ld "$p")" || exit 1
+     printf '%s\0%s\0' "${mode%% *}" "$p"
+     if [ -L "$p" ]; then readlink "$p" || exit 1; printf '\0'
+     elif [ -f "$p" ]; then shasum < "$p" || exit 1
+     fi
+   done) | shasum | cut -d' ' -f1
+}
+
+# Unique scratch folders of the skill being swapped. On any exit, including an interrupt, the old copy is
+# put back if the new one is not in place; if that fails, the backup is kept and its path reported.
+STAGE=""
+BACKUP=""
+TARGET=""
+cleanup_project() {
+  if [ -n "$BACKUP" ] && [ -e "$BACKUP/${TARGET##*/}" ] && [ ! -e "$TARGET" ]; then
+    if ! mv "$BACKUP/${TARGET##*/}" "$TARGET"; then
+      echo "could not restore $TARGET; the previous copy is kept at $BACKUP/${TARGET##*/}" >&2
+      BACKUP=""
+    fi
+  fi
+  [ -z "$STAGE" ] || rm -rf "$STAGE"
+  [ -z "$BACKUP" ] || rm -rf "$BACKUP"
+  STAGE=""; BACKUP=""; TARGET=""
+}
+
+# Copies each skill folder into the product repo. A folder is replaced only when the manifest this
+# script wrote lists it with the same fingerprint, so a folder someone else put there or changed
+# since is left alone unless --force. The old folder is moved aside and restored if the swap fails.
+install_project() {
+  local repo dest name src commit recorded current entries rel manifest_tmp hash
+  repo="$(cd "$PROJECT" 2>/dev/null && git rev-parse --show-toplevel 2>/dev/null)" \
+    || { echo "not a git repository: $PROJECT" >&2; exit 2; }
+  repo="$(cd "$repo" && pwd -P)"
+  commit="$(git -C "$ROOT" rev-parse --short HEAD)"
+  if [ -n "$(git -C "$ROOT" status --porcelain -- skills)" ]; then
+    commit="$commit+uncommitted"; echo "WARN     skills/ has uncommitted changes; recorded as $commit"
+  fi
+  trap cleanup_project EXIT
+  trap 'exit 129' HUP; trap 'exit 130' INT; trap 'exit 143' TERM
+  for rel in .claude/skills .agents/skills; do
+    dest="$repo/$rel"
+    # Nothing is created, written or deleted through a symlink: checked before mkdir.
+    if [ -L "$repo/${rel%%/*}" ] || [ -L "$dest" ] || [ -L "$dest/$MANIFEST" ]; then
+      echo "refusing to write $dest: part of the path or its manifest is a symlink" >&2; exit 1
+    fi
+    if [ -e "$dest/$MANIFEST" ] && [ ! -f "$dest/$MANIFEST" ]; then
+      echo "refusing to write $dest: $MANIFEST is not a regular file" >&2; exit 1
+    fi
+    mkdir -p "$dest"
+    entries=""
+    for name in "${PROJECT_SKILLS[@]}"; do
+      src="$(find "$ROOT/skills" -type f -name SKILL.md -path "*/$name/SKILL.md" -exec dirname {} \; | head -1)"
+      [ -n "$src" ] || { echo "missing skill in this repository: $name" >&2; exit 1; }
+      if [ -L "$dest/$name" ]; then
+        echo "SKIP     $dest/$name (a symlink; remove it to install a copy)"; continue
+      fi
+      if [ -e "$dest/$name" ] && [ "$FORCE" -eq 0 ]; then
+        # An unreadable manifest or fingerprint counts as no record: the folder is skipped, never replaced.
+        recorded="$(awk -v n="$name" '$1 == n { print $2 }' "$dest/$MANIFEST" 2>/dev/null || true)"
+        if ! current="$(tree_hash "$dest/$name" 2>/dev/null)"; then current=""; fi
+        if [ -z "$recorded" ] || [ -z "$current" ] || [ "$current" != "$recorded" ]; then
+          echo "SKIP     $dest/$name (not an unchanged copy from this script; use --force)"; continue
+        fi
+      fi
+      TARGET="$dest/$name"
+      STAGE="$(mktemp -d "$dest/.setup-stage.XXXXXX")"
+      cp -R "$src" "$STAGE/$name"
+      # Fingerprint the new copy before the old one is touched.
+      if ! hash="$(tree_hash "$STAGE/$name")"; then
+        echo "cannot fingerprint the new copy of $name; nothing was replaced" >&2; exit 1
+      fi
+      if [ -e "$TARGET" ]; then
+        BACKUP="$(mktemp -d "$dest/.setup-old.XXXXXX")"
+        mv "$TARGET" "$BACKUP/$name"
+      fi
+      if ! mv "$STAGE/$name" "$TARGET"; then
+        echo "failed to install $TARGET" >&2; exit 1
+      fi
+      cleanup_project
+      entries="$entries$name $hash
+"
+      echo "copied   $dest/$name"
+    done
+    manifest_tmp="$(mktemp "$dest/.setup-manifest.XXXXXX")"
+    { echo "# Copied by loop-engineering setup.sh --project from commit $commit. Edit in loop-engineering, then re-run."
+      printf '%s' "$entries"; } > "$manifest_tmp"
+    mv -f "$manifest_tmp" "$dest/$MANIFEST"
+  done
+}
+
+while [ $# -gt 0 ]; do
+  case "$1" in
     --force) FORCE=1 ;;
     --update) update_third_party; exit 0 ;;
-    *) echo "unknown option: $arg" >&2; exit 2 ;;
+    --project) [ $# -ge 2 ] && [ -n "$2" ] || { echo "--project needs a repository path" >&2; exit 2; }; PROJECT="$2"; shift ;;
+    *) echo "unknown option: $1" >&2; exit 2 ;;
   esac
+  shift
 done
+
+if [ -n "$PROJECT" ]; then
+  install_project
+  exit 0
+fi
 
 install_skills
 check_openspec
