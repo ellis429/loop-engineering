@@ -1,16 +1,25 @@
 # 文件導覽
 
-**要用這套流程帶專案或做 feature，先讀 [使用指南總覽](workflow/user-guide.md)。** 它用一張泳道全貌圖與角色對照表區分人的責任與 Agent 工作，再依角色分兩份：帶專案讀 [Project Lead 指南](workflow/user-guide-project-lead.md)，接 feature 讀 [Feature Builder 指南](workflow/user-guide-feature-builder.md)。附 cross-node-file-transfer 演練路線；完整自動 loop 尚未完成，stacked 政策仍待確認。
+**要用這套流程帶專案或做 feature，先讀 [使用指南](guide/user-guide.md)。** 它先用分層圖與流程大地圖說明整體，再照流程逐一說明每個活動的目的、分工、產出與完成條件；細節查 [參考](guide/reference.md)。附 cross-node-file-transfer 演練路線；完整自動 loop 尚未完成，stacked 政策仍待確認。
 
-主要文件分成兩組：**Workflow 說明人與 agents 怎麼合作，Harness 說明用什麼執行環境與控制機制把流程跑起來。** 專案目標及決策留在本目錄根層，不另建立 product／project 分類。
+## 文件分類
+
+| 類別 | 讀者 | 回答的問題 | 位置 |
+| --- | --- | --- | --- |
+| 使用手冊 | 要使用這套流程的人：Lead、工程師、驗收人 | 我要做什麼、怎麼做、做到什麼算完成 | [`guide/`](guide/README.md) |
+| 內部設計與規則 | 要修改或實作這套流程的人：維護者、controller 的 Implementer 與 Reviewer | 為什麼這樣設計、規則的精確定義、邊界情況、取捨 | [`decisions.md`](decisions.md)、[`workflow/`](workflow/overview.md)、[`harness/`](harness/overview.md)、[`project-intent.md`](project-intent.md) |
+| 給 Agent 的指令 | Agent | 照什麼步驟做，內容要可執行、無歧義 | [`../skills/`](../skills/)、[`../openspec/config.yaml`](../openspec/config.yaml) |
+| 背景與紀錄 | 想追來源與過程的人 | 參考了什麼、查過什麼、審過什麼、交接到哪 | `references/`、`research/`、`reviews/`、`handoffs/`、`validation/` |
+
+手冊說明規則，但不產生規則；手冊和設計文件有出入時，以設計文件與決策為準。內部設計分兩組：**Workflow 說明人與 agents 怎麼合作，Harness 說明用什麼執行環境與控制機制把流程跑起來。** 專案目標及決策留在本目錄根層。
 
 這是本 repo 的文件安排，不強制下游專案搬動 OpenSpec 或其他 skills 的原生 artifacts。
 
-> **目前進度（2026-09-28）**：[D45-04 revision-17](design-candidate/d45-04/README.md) 的 design＋plan 已由 [D53](decisions.md) 完成 D11 開工確認，文件經 PR #3 合進 main，薄 controller 第一片正在 `delivery/thin-controller` 分支依 tasks 實作，完成狀態以該分支的驗證紀錄為準。D54 定下 spec 的位置與回流（OpenSpec），D55 把 Project 層交給 `project-lead` skill、orchestrate 只跑單一 feature loop；第一片不受影響。D56 讓 cross-node-file-transfer 的 Project 層先開始。[88 AC 審核](reviews/2026-09-27-ac-audit/README.md)、[Opus 初審](reviews/2026-09-28-opus-review-d45-04.md)與[修正紀錄](reviews/2026-09-28-opus-review-d45-04-resolution.md)保留歷史；接續以 [handoff](handoffs/2026-09-27-controller-design.md) 最新段為準。
+> **目前進度（2026-09-28）**：[D45-04 revision-17](design-candidate/d45-04/README.md) 的 design＋plan 已由 [D53](decisions.md) 完成 D11 開工確認，文件經 PR #3 合進 main，薄 controller 第一片正在 `delivery/thin-controller` 分支依 tasks 實作，完成狀態以該分支的驗證紀錄為準。D54 定下 spec 的位置與回流（OpenSpec），D55 把 Project 層交給 `project-lead` skill、orchestrate 只跑單一 feature loop；第一片不受影響。D56 讓 cross-node-file-transfer 的 Project 層先開始。D57–D59 定下工作三層（milestone、feature、task）與每個 task 的局部 review、需求依狀態放置（`openspec/specs/` 只放已實作的行為），角色不等於人，以及手動階段的交付紀錄放在 ticket 留言（D60）；說明見[總覽指南的需求放在哪](guide/reference.md#需求放在哪)。[88 AC 審核](reviews/2026-09-27-ac-audit/README.md)、[Opus 初審](reviews/2026-09-28-opus-review-d45-04.md)與[修正紀錄](reviews/2026-09-28-opus-review-d45-04-resolution.md)保留歷史；接續以 [handoff](handoffs/2026-09-27-controller-design.md) 最新段為準。
 
 ## 先讀哪份
 
-使用者入口是上面的 [使用指南](workflow/user-guide.md)。以下供需要了解規則、維護設計或接續實作的人閱讀：
+使用者入口是上面的 [使用指南](guide/user-guide.md)。以下供需要了解規則、維護設計或接續實作的人閱讀：
 
 1. 了解目標：[Project intent](project-intent.md)、[已確認／待決事項](decisions.md)、[領域詞彙](../CONTEXT.md)。
 2. 了解方法：[Workflow](workflow/overview.md)、[交接契約](workflow/contracts.md)；準備需求時讀 [Project Lead SA](workflow/project-lead-sa.md)。
@@ -21,7 +30,7 @@
 
 | 位置 | 責任與目前狀態 |
 | --- | --- |
-| [workflow/user-guide.md](workflow/user-guide.md) | 使用指南總覽：角色、控制方向、兩層介面、文件位置與 example 演練；角色操作見 [Project Lead](workflow/user-guide-project-lead.md) 與 [Feature Builder](workflow/user-guide-feature-builder.md) 兩份，圖見 [圖解頁](workflow/user-guide-visual.html) |
+| [guide/user-guide.md](guide/user-guide.md) | 使用指南：分層圖、流程大地圖、誰做什麼、活動卡、example 演練與進度；細節見 [參考](guide/reference.md)，圖見 [圖解頁](guide/visual.html) |
 | [project-intent.md](project-intent.md) | 本專案目標、需求基線、D41／D42 成品與責任邊界 |
 | [decisions.md](decisions.md) | 已確認決策及未決項目，保留原決策 ID 與沿革 |
 | [workflow/overview.md](workflow/overview.md) | Project／Feature 流程、角色、人工介入、Retro；舊平台責任仍依 D41／D42 待對照 |
@@ -43,12 +52,9 @@ docs/
 ├── README.md                       # 本導覽
 ├── project-intent.md               # 專案目標、範圍與需求基線
 ├── decisions.md                    # 已確認與待決事項
+├── guide/                          # 使用手冊：使用指南、參考、圖解
 ├── workflow/                       # Project／Feature 方法與交接契約
 │   ├── overview.md
-│   ├── user-guide.md                # 使用者首先閱讀：總覽
-│   ├── user-guide-project-lead.md   # 帶專案的 Lead
-│   ├── user-guide-feature-builder.md # 接 feature 的 Feature Builder
-│   ├── user-guide-visual.html       # 指南圖解；SVG 由此匯出
 │   ├── contracts.md
 │   ├── project-lead-sa.md
 │   └── history/                    # 早期流程草案及推導

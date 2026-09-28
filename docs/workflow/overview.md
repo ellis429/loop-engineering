@@ -1,10 +1,10 @@
 # Orchestrate：整體 Workflow Design v1
 
-> 要了解自己如何帶專案、承接 feature 或設定交付 goal，先讀 [使用指南](user-guide.md)。本文保留供設計與維護者查閱的流程細節。
+> 要了解自己如何帶專案、承接 feature 或設定交付 goal，先讀 [使用指南](../guide/user-guide.md)。本文保留供設計與維護者查閱的流程細節。
 
 > **2026-09-27 範圍更新（D41／D42）**：已確認改為 orchestrate 呼叫薄 controller，完整成品包含多人 Project／Feature 流程及 cross-node-file-transfer 多 feature 示範。見 [Project intent](../project-intent.md)。本文涉及 controller 自動派工、全面恢復及平台責任的舊設計待逐項對照，不能直接據此續派；三 gates、證據／版本及 finding 覆核仍保留。
 
-> **2026-09-28 更新（D54／D55）**：Spec 位置與回流採 OpenSpec（D54）。本文 §1 的「單一 orchestrate 入口分兩層」已由 D55 修訂：Project 層、feature 準備與 Retro 由 project-lead skill 承擔，orchestrate 只跑單一 feature loop，控制方向由 Project Lead 往下。使用者操作見 [使用指南](user-guide.md)，交接見 [契約](contracts.md#角色交接摘要)。
+> **2026-09-28 更新（D54／D55）**：Spec 位置與回流採 OpenSpec（D54）。本文 §1 的「單一 orchestrate 入口分兩層」已由 D55 修訂：Project 層、feature 準備與 Retro 由 project-lead skill 承擔，orchestrate 只跑單一 feature loop，控制方向由 Project Lead 往下。使用者操作見 [使用指南](../guide/user-guide.md)，交接見 [契約](contracts.md#角色交接摘要)。
 
 日期：2026-09-26；2026-09-27 更新 D32／D34 的分析／設計分工、D31 選型狀態、D37 選配部署及建置／後續試用順序。狀態：供使用者 review 的整合設計，尚非已安裝 skill、controller 或批准開工的 implementation plan。
 
