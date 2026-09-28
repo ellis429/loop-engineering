@@ -245,11 +245,17 @@ install_project() {
   # Agent instructions: placed only where the repo has none; an existing file (or symlink) is the repo's own.
   # The complete copy is hard-linked into place, which fails rather than replace or follow any existing name.
   for name in AGENTS.md CLAUDE.md; do
+    if [ -e "$repo/$name" ] || [ -L "$repo/$name" ]; then
+      echo "SKIP     $repo/$name (exists; kept as is)"; continue
+    fi
     TEMPLATE_TMP="$(mktemp "$repo/.setup-template.XXXXXX")"
     cp "$ROOT/templates/$name" "$TEMPLATE_TMP"
-    if ln "$TEMPLATE_TMP" "$repo/$name" 2>/dev/null; then
+    chmod 644 "$TEMPLATE_TMP"
+    # A directory appearing at the name since the check would receive the link inside it: undo that.
+    if ln -n "$TEMPLATE_TMP" "$repo/$name" 2>/dev/null && [ ! -L "$repo/$name" ] && [ "$repo/$name" -ef "$TEMPLATE_TMP" ]; then
       echo "copied   $repo/$name"
     else
+      rm -f "$repo/$name/${TEMPLATE_TMP##*/}"
       echo "SKIP     $repo/$name (exists; kept as is)"
     fi
     rm -f "$TEMPLATE_TMP"; TEMPLATE_TMP=""
