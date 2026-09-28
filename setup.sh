@@ -134,6 +134,7 @@ tree_hash() {
 STAGE=""
 BACKUP=""
 TARGET=""
+MANIFEST_TMP=""
 cleanup_project() {
   if [ -n "$BACKUP" ] && [ -e "$BACKUP/${TARGET##*/}" ] && [ ! -e "$TARGET" ]; then
     if ! mv "$BACKUP/${TARGET##*/}" "$TARGET"; then
@@ -143,16 +144,18 @@ cleanup_project() {
   fi
   [ -z "$STAGE" ] || rm -rf "$STAGE"
   [ -z "$BACKUP" ] || rm -rf "$BACKUP"
-  STAGE=""; BACKUP=""; TARGET=""
+  [ -z "$MANIFEST_TMP" ] || rm -f "$MANIFEST_TMP"
+  STAGE=""; BACKUP=""; TARGET=""; MANIFEST_TMP=""
 }
 
 # Copies each skill folder into the product repo. A folder is replaced only when the manifest this
 # script wrote lists it with the same fingerprint, so a folder someone else put there or changed
 # since is left alone unless --force. The old folder is moved aside and restored if the swap fails.
 # The manifest keeps the record of every folder not replaced in this run, so a skipped folder is
-# still known as this script's copy, changed since, on the next run.
+# still known as this script's copy, changed since, on the next run. It is rewritten after each
+# replacement, so a run that stops part way leaves every finished copy recorded.
 install_project() {
-  local repo dest name src commit recorded current entries rel manifest_tmp hash copied
+  local repo dest name src commit recorded current entries rel hash copied old
   repo="$(cd "$PROJECT" 2>/dev/null && git rev-parse --show-toplevel 2>/dev/null)" \
     || { echo "not a git repository: $PROJECT" >&2; exit 2; }
   repo="$(cd "$repo" && pwd -P)"
@@ -172,6 +175,12 @@ install_project() {
       echo "refusing to write $dest: $MANIFEST is not a regular file" >&2; exit 1
     fi
     mkdir -p "$dest"
+    # Read once. A manifest that cannot be read stops the run before anything is written here, because
+    # rewriting it would drop the records of the folders this run skips.
+    old=""
+    if [ -e "$dest/$MANIFEST" ]; then
+      old="$(cat "$dest/$MANIFEST")" || { echo "refusing to write $dest: cannot read $MANIFEST" >&2; exit 1; }
+    fi
     entries=""; copied=" "
     for name in "${PROJECT_SKILLS[@]}"; do
       src="$(find "$ROOT/skills" -type f -name SKILL.md -path "*/$name/SKILL.md" -exec dirname {} \; | head -1)"
@@ -180,8 +189,8 @@ install_project() {
         echo "SKIP     $dest/$name (a symlink; remove it to install a copy)"; continue
       fi
       if [ -e "$dest/$name" ] && [ "$FORCE" -eq 0 ]; then
-        # An unreadable manifest or fingerprint counts as no record: the folder is skipped, never replaced.
-        recorded="$(awk -v n="$name" '$1 == n { print $2 }' "$dest/$MANIFEST" 2>/dev/null || true)"
+        # An unreadable fingerprint counts as no record: the folder is skipped, never replaced.
+        recorded="$(printf '%s\n' "$old" | awk -v n="$name" '!/^#/ && $1 == n { print $2 }')"
         if ! current="$(tree_hash "$dest/$name" 2>/dev/null)"; then current=""; fi
         if [ -z "$recorded" ] || [ -z "$current" ] || [ "$current" != "$recorded" ]; then
           echo "SKIP     $dest/$name (not an unchanged copy from this script; use --force)"; continue
@@ -205,15 +214,14 @@ install_project() {
       entries="$entries$name $hash
 "
       copied="$copied$name "
+      MANIFEST_TMP="$(mktemp "$dest/.setup-manifest.XXXXXX")"
+      { echo "# Written by loop-engineering setup.sh --project, last copy from commit $commit. Each line: a skill it copied and that copy's fingerprint. Edit skills in loop-engineering, then re-run."
+        printf '%s\n' "$old" | awk -v c="$copied" '!/^#/ && NF == 2 && index(c, " " $1 " ") == 0'
+        printf '%s' "$entries"; } > "$MANIFEST_TMP"
+      mv -f "$MANIFEST_TMP" "$dest/$MANIFEST"
+      MANIFEST_TMP=""
       echo "copied   $dest/$name"
     done
-    manifest_tmp="$(mktemp "$dest/.setup-manifest.XXXXXX")"
-    { echo "# Written by loop-engineering setup.sh --project, last run from commit $commit. Each line: a skill it copied and that copy's fingerprint. Edit skills in loop-engineering, then re-run."
-      if [ -f "$dest/$MANIFEST" ]; then
-        awk -v c="$copied" '!/^#/ && NF == 2 && index(c, " " $1 " ") == 0' "$dest/$MANIFEST" 2>/dev/null || true
-      fi
-      printf '%s' "$entries"; } > "$manifest_tmp"
-    mv -f "$manifest_tmp" "$dest/$MANIFEST"
   done
 }
 
