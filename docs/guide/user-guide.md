@@ -79,7 +79,7 @@ Agent 做大部分工作；人在六個 ◆ 確認點做決定：
 - **Step**：第幾步。
 - **Who**：誰做，每一列一個角色：Project Lead、Engineer、驗收人或 Agent。**同一個 Step 編號出現好幾列，代表同一件事由人和 Agent 來回做**，每列寫各自做的部分和用的東西；◆ 是要人確認的點，只由人做，見[誰做什麼](#誰做什麼)。
 - **Do**：做什麼。
-- **How**：用什麼。skill 會連到 repo 裡它的 `SKILL.md`；指令連到說明文件。prompt 開頭的 `/skill 名稱` 會直接叫用那個 skill，只寫「請用某某 skill」不保證會叫用：Claude Code 照寫 `/project-lead`；Codex 改成 `$project-lead`；OpenCode 沒有直接叫用的寫法，改成「請用 project-lead skill」，再看 Agent 有沒有說已載入。第一次使用前，在 loop-engineering 執行 `./setup.sh` 安裝這些 skills。
+- **How**：用什麼。skill 會連到 repo 裡它的 `SKILL.md`；指令連到說明文件。prompt 開頭的 `/skill 名稱` 會直接叫用那個 skill，只寫「請用某某 skill」不保證會叫用：Claude Code 照寫 `/project-lead`；Codex 改成 `$project-lead`；OpenCode 沒有直接叫用的寫法，改成「請用 project-lead skill」，再看 Agent 有沒有說已載入。第一次使用前，在 loop-engineering 執行 `./setup.sh` 安裝這些 skills；產品的 root repo 若已用 `./setup.sh --project` 帶著 skills，從 root 開 session 就能直接用。
 - **Output**：產出什麼。示範專案已經有的，附上範例連結；示範還沒走到的步驟先不放，示範專案推上 GitHub 之前，部分連結會打不開。
 
 Agent 寫 ticket 或 PR 留言之前，會先問人，或照人事先給的授權。controller 可用之前，交付紀錄都放在 ticket 留言；只有確認目的與需求、設計方案、roadmap 記在決策紀錄，確認 spec 記在 proposal。
