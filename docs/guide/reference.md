@@ -213,7 +213,7 @@ repos:
 
 **一個 Feature 跨 repo 時**
 
-- spec、design、tasks 都在 root 的 `openspec/changes/<id>/`；每個 task 註明改哪個 repo。
+- spec、design、tasks 都在 root 的 `openspec/changes/<id>/`，寫在 root 的 branch `feature/<id>` 上；每個受影響的服務 repo 開同名 branch；每個 task 註明改哪個 repo。
 - 每個受影響的 repo 開一個 PR（root 也算一個），都連到同一張 ticket並互相連結。
 - G1、G3 在各 repo 執行；G2 對照 spec 審整組 PR；人驗收整個 Feature。
 - merge 依依賴順序、提供方先；每個 PR 單獨 merge 都要安全（向後相容）。全部 merge 後才在 root 把 spec 併入現況。
@@ -227,7 +227,8 @@ repos:
 ```text
 還沒開始做            決定做、正在做               做完了
 OpenSpec 之外     →   openspec/changes/<名稱>/  →  openspec/specs/
-（輸入、roadmap）      寫 spec、design、實作        archive 時搬進來
+（輸入、roadmap）      在 feature/<名稱> branch     merge 進 main 後
+                      寫 spec、design、實作        archive 時搬進來
 ```
 
 ### 跟著一條需求走
@@ -567,6 +568,7 @@ loop-engineering 自己開發 controller 時，預設 Opus 5.5 實作、GPT 審�
 | Feature 以 use case 或共用元件為單位；Milestone 加上時間；切法是循環的 | D65 |
 | Feature spec 屬於外圈；內圈是 Implement → Validate | D64 |
 | 準備 Feature 的 skill 獨立成 feature-to-spec | D66 |
+| 每個 Feature 一條 feature branch；薄 ticket 的格式 | D67 |
 | 有依賴的 Feature 等上游接受並 merge | D27 |
 | 示範專案的 Project 層先行 | D56 |
 | 薄 controller 第一片的核准 | D53 |
