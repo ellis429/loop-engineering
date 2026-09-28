@@ -69,7 +69,7 @@ Validation 最小對照為 AC ID → 驗證方法／步驟 → 必要環境 → 
 
 | 交接 | 接收者至少要拿到 |
 | --- | --- |
-| Project Lead → feature loop（交接包） | Change ID 與檔案版本、每個受影響 repo 的 base branch 與 commit，以及預定要開的 PR（D61）、SA 確認（同一人兼任時註明併入開工確認，D59）、project baseline 引用、spec／AC、設計邊界、依賴與 base branch、未決問題與下一位 owner、開工與驗收的決策者 |
+| Project Lead → feature loop（交接包） | Change ID 與檔案版本、每個受影響 repo 的 base branch 與 commit，以及預定要開的 PR（D61）、SA 確認（同一人兼任時註明併入開工確認，D59）、project baseline 引用、spec／AC、設計邊界、依賴與 base branch、未決問題與下一位 owner、開工與驗收的決策者（驗收人預設是 Project Lead，需求由別人提出時是那個人，D62） |
 | Implementer → 開工確認 | Detailed design、最終 tasks、scope、AC 驗法、必要環境、風險與執行限制 |
 | Orchestrate → 執行角色 | Run／task／attempt、角色、worktree／branch、允許範圍、文件版本、base／head、驗收與結果位置 |
 | Implementer → Reviewer | Spec／design、完整 PR 與 review base／head、實作證據及尚未覆核 findings |

@@ -24,23 +24,14 @@ flowchart LR
 
 ## 誰做什麼
 
-Agent 做大部分工作；人只在六個確認點做決定，Agent 不做確認：
+Agent 做大部分工作；人在六個確認點做決定，編號就是流程圖上的 ①–⑥：
 
-| 確認點 | 確認什麼 | 誰確認 | 在哪一步 |
-| --- | --- | --- | --- |
-| ① | 方向清楚，可以進入設計 | Project Lead | [A1](#a1-analyzeproject-sa) |
-| ② | 高層設計與 roadmap | Project Lead | [A3](#a3-roadmap排-milestone-與-feature) |
-| ③ | 下一個做哪個 Feature | Project Lead | [B1](#b1-open開-feature) |
-| ④ | 這個 Feature 的 spec 清楚 | Project Lead | [B2](#b2-specifyfeature-sa) |
-| ⑤ | 設計與計畫可以開工 | 被授權的人，通常是 Engineer | [B4](#b4-design設計與計畫engineer) |
-| ⑥ | 接受或退回交付 | 驗收人 | [B7](#b7-accept驗收與-merge) |
-
-| 誰 | 做什麼 | 確認哪幾個 |
+| 誰 | 做什麼 | 確認什麼（在哪一步） |
 | --- | --- | --- |
-| Project Lead | 給目標與限制、回答問題、選下一個 Feature | ①②③④ |
-| Engineer | 安排技術交付、審設計與計畫 | ⑤（被授權時） |
-| 驗收人 | 看每條 AC 的證據與 demo | ⑥ |
-| Agent：Project Lead Agent、Implementer、Reviewer | 研究、寫文件、實作、審查；不做確認 | — |
+| Project Lead | 給目標與限制、回答問題、選下一個 Feature | ① 方向清楚，可以進入設計（[A1](#a1-analyzeproject-sa)）<br>② 高層設計與 roadmap（[A3](#a3-roadmap排-milestone-與-feature)）<br>③ 下一個做哪個 Feature（[B1](#b1-open開-feature)）<br>④ 這個 Feature 的 spec 清楚（[B2](#b2-specifyfeature-sa)） |
+| Engineer | 安排技術交付、審設計與計畫 | ⑤ 設計與計畫可以開工（[B4](#b4-design設計與計畫engineer)）；交接時被指定才確認 |
+| 驗收人：預設是 Project Lead；需求由別人提出時，是提出的人 | 看每條 AC 的證據與 demo | ⑥ 接受或退回交付（[B7](#b7-accept驗收與-merge)） |
+| Agent：Project Lead Agent、Implementer、Reviewer | 研究、寫文件、實作、審查 | 不做確認 |
 
 - **角色是工作，不是職位**：同一人兼任 Project Lead 與 Engineer 是常態，這時 ④ 併入 ⑤。每個 Feature 開始時，寫明誰確認開工、誰驗收。
 - **Project Lead 和 Project Lead Agent 不同**：Project Lead 做決定，Agent 做分析與建議。驗收人也不是審查程式的 Reviewer Agent。
@@ -245,7 +236,7 @@ Project Lead 同時擔任 Engineer 時，④ 併入 ⑤：spec、設計、計畫
 
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
-| 1 | 你 | 指定誰批准開工、誰驗收 | — | — |
+| 1 | 你 | 指定誰批准開工、誰驗收（驗收人預設是你；需求由別人提出時，指定那個人） | — | — |
 | 2 | Agent | 組交接包，貼成 ticket 留言 | skill [project-lead](../../skills/project-lead/SKILL.md) | 交接包 |
 | 3 | Agent | ticket 補上驗收 ID，標為就緒 | skill [project-lead](../../skills/project-lead/SKILL.md) | ticket 狀態 |
 | 4 | Engineer | 核對交接包：能開始就開始，不行就退回具體問題 | — | — |

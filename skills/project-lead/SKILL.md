@@ -125,7 +125,7 @@ Assemble the handoff package:
 
 - change id and file versions; for each affected repo, its base branch, commit, and the PR to be opened (D61); SA confirmation, or a note that it is folded into the plan approval; project baseline references;
 - dependencies; upstream features that must be accepted and merged first;
-- open items with owner and whether they block; who approves the plan, rules on requirements, and accepts the result.
+- open items with owner and whether they block; who approves the plan, rules on requirements, and accepts the result. The acceptor is the human Project Lead unless the requirement came from someone else, who then accepts (D62).
 
 The package does not contain the start-of-work approval. The feature loop's first step is the Implementer's detailed design and plan; the loop then waits for the named human to approve it.
 

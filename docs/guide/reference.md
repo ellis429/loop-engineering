@@ -551,6 +551,7 @@ loop-engineering 自己開發 controller 時，預設 Opus 5.5 實作、GPT 審�
 | 角色是工作；兼任時 SA 確認併入開工確認 | D59 |
 | 手動階段的交付紀錄放 ticket 留言 | D60 |
 | 多 repo 的 root 結構與跨 repo 的 Feature | D61 |
+| 驗收人預設是誰 | D62 |
 | 有依賴的 Feature 等上游接受並 merge | D27 |
 | 示範專案的 Project 層先行 | D56 |
 | 薄 controller 第一片的核准 | D53 |
