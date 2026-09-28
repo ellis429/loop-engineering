@@ -148,14 +148,26 @@ cleanup_project() {
   STAGE=""; BACKUP=""; TARGET=""; MANIFEST_TMP=""
 }
 
+# Rewrites the manifest of install_project's $dest atomically: the records read at the start of the run
+# ($old) for folders not named in $2, then the lines in $1.
+write_manifest() {
+  MANIFEST_TMP="$(mktemp "$dest/.setup-manifest.XXXXXX")"
+  { echo "# Written by loop-engineering setup.sh --project, last copy from commit $commit. Each line: a skill it copied and the fingerprints accepted as that copy (two only while it is being swapped). Edit skills in loop-engineering, then re-run."
+    printf '%s\n' "$old" | awk -v c="$2" '!/^#/ && NF >= 2 && index(c, " " $1 " ") == 0'
+    printf '%s' "$1"; } > "$MANIFEST_TMP"
+  mv -f "$MANIFEST_TMP" "$dest/$MANIFEST"
+  MANIFEST_TMP=""
+}
+
 # Copies each skill folder into the product repo. A folder is replaced only when the manifest this
 # script wrote lists it with the same fingerprint, so a folder someone else put there or changed
 # since is left alone unless --force. The old folder is moved aside and restored if the swap fails.
 # The manifest keeps the record of every folder not replaced in this run, so a skipped folder is
-# still known as this script's copy, changed since, on the next run. It is rewritten after each
-# replacement, so a run that stops part way leaves every finished copy recorded.
+# still known as this script's copy, changed since, on the next run. While a folder is swapped its
+# record accepts both the old and the new fingerprint, so a run that stops at any point leaves each
+# folder matching its record.
 install_project() {
-  local repo dest name src commit recorded current entries rel hash copied old
+  local repo dest name src commit recorded current entries rel hash copied old h known
   repo="$(cd "$PROJECT" 2>/dev/null && git rev-parse --show-toplevel 2>/dev/null)" \
     || { echo "not a git repository: $PROJECT" >&2; exit 2; }
   repo="$(cd "$repo" && pwd -P)"
@@ -188,11 +200,15 @@ install_project() {
       if [ -L "$dest/$name" ]; then
         echo "SKIP     $dest/$name (a symlink; remove it to install a copy)"; continue
       fi
+      recorded=""
+      for h in $(printf '%s\n' "$old" | awk -v n="$name" '!/^#/ && $1 == n { for (i = 2; i <= NF; i++) print $i }'); do
+        recorded="$recorded $h"
+      done
       if [ -e "$dest/$name" ] && [ "$FORCE" -eq 0 ]; then
         # An unreadable fingerprint counts as no record: the folder is skipped, never replaced.
-        recorded="$(printf '%s\n' "$old" | awk -v n="$name" '!/^#/ && $1 == n { print $2 }')"
         if ! current="$(tree_hash "$dest/$name" 2>/dev/null)"; then current=""; fi
-        if [ -z "$recorded" ] || [ -z "$current" ] || [ "$current" != "$recorded" ]; then
+        case "$recorded " in *" $current "*) known=1 ;; *) known=0 ;; esac
+        if [ -z "$current" ] || [ "$known" -eq 0 ]; then
           echo "SKIP     $dest/$name (not an unchanged copy from this script; use --force)"; continue
         fi
       fi
@@ -203,6 +219,8 @@ install_project() {
       if ! hash="$(tree_hash "$STAGE/$name")"; then
         echo "cannot fingerprint the new copy of $name; nothing was replaced" >&2; exit 1
       fi
+      write_manifest "$entries$name $hash$recorded
+" "$copied$name "
       if [ -e "$TARGET" ]; then
         BACKUP="$(mktemp -d "$dest/.setup-old.XXXXXX")"
         mv "$TARGET" "$BACKUP/$name"
@@ -214,12 +232,7 @@ install_project() {
       entries="$entries$name $hash
 "
       copied="$copied$name "
-      MANIFEST_TMP="$(mktemp "$dest/.setup-manifest.XXXXXX")"
-      { echo "# Written by loop-engineering setup.sh --project, last copy from commit $commit. Each line: a skill it copied and that copy's fingerprint. Edit skills in loop-engineering, then re-run."
-        printf '%s\n' "$old" | awk -v c="$copied" '!/^#/ && NF == 2 && index(c, " " $1 " ") == 0'
-        printf '%s' "$entries"; } > "$MANIFEST_TMP"
-      mv -f "$MANIFEST_TMP" "$dest/$MANIFEST"
-      MANIFEST_TMP=""
+      write_manifest "$entries" "$copied"
       echo "copied   $dest/$name"
     done
   done
