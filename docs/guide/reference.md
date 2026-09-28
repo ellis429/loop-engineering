@@ -100,7 +100,7 @@ Agent 把確認後的骨架寫成這個 Feature 的 proposal 與 spec（需求�
 
 以未來的 `cross-node-file-transfer` 演練為例：
 
-> 請用 project-lead skill 準備 cross-node-file-transfer。先核對可沿用的 gigaxfer 需求、領域、設計與 roadmap，保留來源版本；把 `docs/spec.md` 依能力拆成需求輸入（不放進 `openspec/specs/`），先給我拆法對照表。只釐清差異與阻擋問題，最後交出 project intent、高層設計、roadmap 與第一個 feature 的建議。
+> 請用 project-lead skill 準備 cross-node-file-transfer。先核對參考資料裡可沿用的需求、領域、設計與 roadmap，保留來源版本；把參考規格依能力拆成需求輸入（不放進 `openspec/specs/`），先給我拆法對照表。只釐清差異與阻擋問題，最後交出 project intent、高層設計、roadmap 與第一個 feature 的建議。
 
 ```mermaid
 flowchart TD
@@ -159,7 +159,7 @@ Roadmap 只有兩層：milestone 和 feature。Feature 是能單獨驗收的交�
 
 每個 feature 標「近期」或「暫定」，讓人分得出哪些已經要做。每個 feature 驗收後回頭看一次 roadmap；改範圍或順序時記進決策紀錄。
 
-以 cross-node-file-transfer 為例：M1 的 feature 來自 gigaxfer 已經實作過的計畫，所以可以整個列出，只有專案骨架和第一個 feature 標近期；M2 要不要做等 M1 完成再決定，所以先只寫交付能力。需求放在哪、怎麼流動，見[需求放在哪](#需求放在哪)；業界做法與出處見 [Roadmap 規劃參考](../references/roadmap-planning.md)。
+以 cross-node-file-transfer 為例：M1 的 feature 來自參考資料裡已經實作過的計畫，所以可以整個列出，只有專案骨架和第一個 feature 標近期；M2 要不要做等 M1 完成再決定，所以先只寫交付能力。需求放在哪、怎麼流動，見[需求放在哪](#需求放在哪)；業界做法與出處見 [Roadmap 規劃參考](../references/roadmap-planning.md)。
 
 ## 工作層級：Milestone、Feature、Task
 
@@ -514,7 +514,7 @@ feature loop 回來的結果只有兩種：
 
 這是後續演練路線，Feature 名稱與切法以示範專案確認的 roadmap 為準，本指南不另立產品 spec。示範專案分成 root repo `cross-node-root`（規劃、spec、ticket）與程式 repo `cross-node-file-transfer`（由 `repos.yaml` 拉進 `repos/`）。
 
-1. **定方向、排順序（A1–A3）**：Project Lead Agent 把 gigaxfer 的 `docs/spec.md` 依能力拆開，當作需求輸入並記錄來源版本，不放進 `openspec/specs/`；再整理 domain、設計、共用限制與 roadmap。Project Lead 確認拆法與適用性。
+1. **定方向、排順序（A1–A3）**：Project Lead Agent 把參考規格依能力拆開，當作需求輸入並記錄來源版本，不放進 `openspec/specs/`；再整理 domain、設計、共用限制與 roadmap。Project Lead 確認拆法與適用性。
 2. **專案骨架（第一個 Feature）**：repo 骨架、CI 與工程規則。它沒有產品行為，但「乾淨 clone 能建置測試、PR 有必要 checks」可以單獨驗收，寫成工程能力（例如 `engineering-baseline`）的 spec，常稱 Sprint 0 或 bootstrap。在 orchestrate 可用前可以手動協調，歷程標明「人工協調」，再由人驗收。
 3. **交付第一個產品 Feature（A4、B1–B3）**：Project Lead Agent 準備 spec 與交接包，Project Lead 確認，Engineer 帶 Implementer 完成 PR；另一個 session 的 Reviewer 審查。
 4. **驗證修正循環**：有真實 blocking finding 時，留下 finding → fix → re-review 的歷程。review 沒找到問題就如實記錄，不製造缺陷湊演示。

@@ -163,9 +163,9 @@ flowchart LR
 
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
-| 1 | Agent | 提出設計：<br>• 有既有設計：沿用，標出要改的地方<br>• 沒有：提出 2–3 個方案與比較 | skill [project-lead](../../skills/project-lead/SKILL.md) | 高層設計（範例：[system-design.md](https://github.com/yschiang/cross-node-root/blob/main/docs/design/system-design.md)，沿用自 [cross-dc-xfer 的設計](https://github.com/yschiang/cross-dc-xfer/tree/main/docs/design)；[文件清單](https://github.com/yschiang/cross-node-root/blob/main/docs/design/README.md)） |
+| 1 | Agent | 提出設計：<br>• 有既有設計：沿用，標出要改的地方<br>• 沒有：提出 2–3 個方案與比較 | skill [project-lead](../../skills/project-lead/SKILL.md) | 高層設計：`docs/design/`（[範例](https://github.com/yschiang/cross-node-root/blob/main/docs/design/system-design.md)） |
 | 2 | Project Lead | 在方案之間做選擇 | — | 決策紀錄 |
-| 3 | Agent | 把重要取捨寫成 ADR | skill [project-lead](../../skills/project-lead/SKILL.md) | ADR（[範例](https://github.com/yschiang/cross-node-root/tree/main/docs/adr)） |
+| 3 | Agent | 把重要取捨寫成 ADR | skill [project-lead](../../skills/project-lead/SKILL.md) | ADR：`docs/adr/`（[範例](https://github.com/yschiang/cross-node-root/blob/main/docs/adr/0002-target-pull-over-http.md)） |
 | 4 | Project Lead | 看設計摘要，◆確認設計 | — | 決策紀錄 |
 
 **每一步怎麼做、怎樣算完成**
