@@ -5,7 +5,7 @@ description: Use when a feature's handoff package is ready and its design and im
 
 # Spec to plan
 
-Turn a confirmed spec into `design.md` and `tasks.md` in the feature's OpenSpec change, have a different model review the plan, and stop at the start-of-work approval (◆確認開工). The plan holds no implementation code, but it states every test and where its Red must fail (D68, D69).
+Turn a confirmed spec into `design.md` and `tasks.md` in the feature's OpenSpec change, have a different model review the plan, and stop at the start-of-work approval (◆確認開工). `tasks.md` holds no implementation code, but it states every test and where its Red must fail (D68, D69); only a task plan the Engineer asked for goes down to code (D72).
 
 Read repository instructions (AGENTS.md, CLAUDE.md, `openspec/config.yaml`) first; they override this skill. Superpowers skills are named here without a prefix; installed as the Superpowers plugin they appear as `superpowers:<name>`.
 
@@ -37,7 +37,7 @@ Run `openspec instructions tasks --change <id>`. Cut the work into tasks as vert
 Then write each task, with these rules:
 
 
-- **No implementation code.** How to implement stays with the Implementer.
+- **No implementation code in `tasks.md`.** How to implement stays with the Implementer, unless the Engineer asked for that task's code-level plan (below).
 - **Shared test harness first.** If tests need shared fixtures, setup helpers, a CLI entry point or parser, or stubs that return plausible values, make that the first task, with its own tests. Every later Red must be able to reach its assertion. The harness task's own tests assert the entry point's contract (arguments passed through, output format), and their Reds fail on those assertions too; a test helper that catches the usage error lets them get there. When no harness is needed, say why in `tasks.md`.
 - **Every task lists:** ID; what it delivers; mode and Implementer model (D72); owned paths per repo, shared files included; blocking edges with the interface taken from each; acceptance IDs covered; commit subject; Implementer and Reviewer effort; and its tests. For each test: name, the observable behaviour asserted, **the assertion its Red must fail on**, the expected Green, and the command. Tests are listed as behaviour at the entry point, not as test code: the Implementer writes them one at a time and may organise them differently, but not change what they assert.
 - **Acceptance verification:** for each acceptance ID, how and where it is verified, what passing means, and where the evidence goes.
@@ -87,6 +87,6 @@ If the approver changes only a task's effort, update `tasks.md` and commit befor
 
 ## Boundaries
 
-- No implementation code, no commits outside the design, plan, research and review records.
+- No implementation code outside a requested task plan; no commits outside the design, plan, task plan, research and review records.
 - No approval on the human's behalf; no spec edits.
 - One plan: `tasks.md`. No `docs/superpowers/plans/` file.
