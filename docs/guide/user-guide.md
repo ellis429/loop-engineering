@@ -52,8 +52,8 @@ Agent 做大部分工作；人在六個 ◆ 確認點做決定：
 └────────────────────┬─────────────────────┘
                      │
 ┌─ Harnessing ───────▼─────────────────────┐
-│ Skills: project-lead / orchestrate /     │  約束 Agent 怎麼做：
-│         research-codebase                │  照哪個方法、用哪個模型、先寫什麼
+│ Skills: project-lead / feature-to-spec / │  約束 Agent 怎麼做：
+│         orchestrate / research-codebase  │  照哪個方法、用哪個模型、先寫什麼
 │ Model: chosen per role                   │  例如 Reviewer 和 Implementer 用不同模型
 │ TDD, spec-driven (OpenSpec)              │  先寫測試再實作；先寫 spec 再設計
 └────────────────────┬─────────────────────┘
@@ -257,66 +257,66 @@ flowchart LR
 
 **目的**：把選中的 Feature 寫成可以驗收的 spec，交給 Engineer 不必回頭問就能開始設計。
 
-- **誰做**：Project Lead 或 Engineer 帶著 Agent 做；中小型 Feature 常由 Engineer 自己寫。
+- **誰做**：Project Lead 或 Engineer 帶著 Agent 做；中小型 Feature 常由 Engineer 自己寫。用的 skill 是 `feature-to-spec`（不是 Matt Pocock 的 `/to-spec`）。
 - **誰確認**：◆確認 spec 仍由 Project Lead 做；兩個角色是同一人時，併入 B1 的 ◆確認開工。
+- **ticket**：這一步一開始就開，狀態從「準備中」到交接完成時的「就緒」；之後的交接、開工、驗收紀錄都貼在同一張 ticket。
 
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
-| 1 | Project Lead 或 Engineer | 交代要準備的 Feature | 開一個 Agent session，貼上：`/project-lead 準備〈Feature〉：補足 spec、AC、必要高層設計與依賴，引用 project intent、高層設計與 roadmap 的版本。` | — |
-| 1 | Agent | 開 Feature：<br>• 在 root repo 建立 spec 的位置<br>• 開 ticket，或連上既有的<br>• 專案第一次用時，先執行 `openspec init --tools claude,codex` | • 指令 `openspec new change <id>`（[說明](https://github.com/Fission-AI/OpenSpec/blob/main/docs/cli.md)）<br>• skill [project-lead](../../skills/project-lead/SKILL.md) | • Feature 資料夾（[範例](https://github.com/yschiang/cross-node-root/tree/main/openspec/changes/project-skeleton)）<br>• ticket（[範例](https://github.com/yschiang/cross-node-root/issues/1)） |
-| 2 | Agent | Research：讀<br>• 需求輸入<br>• project intent<br>• 高層設計與 roadmap<br>• 這次會碰到的程式 | • skill [research-codebase](../../skills/research-codebase/SKILL.md)<br>• 有 `graphify-out/` 時，先用 `/graphify query` 查 | 研究報告：`docs/research/<日期>-<主題>.md`（[範例](../research/2026-09-25/integration-gaps.md)） |
+| 1 | Project Lead 或 Engineer | 交代要準備的 Feature；授權 Agent 開 ticket | 開一個 Agent session，貼上：`/feature-to-spec 準備〈Feature〉：補足 spec、AC、必要高層設計與依賴，引用 project intent、高層設計與 roadmap 的版本。` | — |
+| 1 | Agent | 開 Feature：<br>• 在 root repo 建立 change<br>• 開 ticket，或把既有的 ticket 補成同一個格式<br>• 專案第一次用時，先執行 `openspec init --tools claude,codex` | • 指令 `openspec new change <id>`（[說明](https://github.com/Fission-AI/OpenSpec/blob/main/docs/cli.md)）<br>• skill [feature-to-spec](../../skills/feature-to-spec/SKILL.md) | • Feature 資料夾（[範例](https://github.com/yschiang/cross-node-root/tree/main/openspec/changes/project-skeleton)）<br>• ticket，狀態「準備中」（[範例](https://github.com/yschiang/cross-node-root/issues/1)） |
+| 2 | Agent | Research：讀<br>• roadmap 上這個 Feature 那一列<br>• 需求輸入與共用限制<br>• 現況 spec、設計與 ADR<br>• 這次會碰到的程式 | • skill [research-codebase](../../skills/research-codebase/SKILL.md)<br>• 有 `graphify-out/` 時，先用 `/graphify query` 查 | 研究報告：`docs/research/<日期>-<主題>.md`（[範例](../research/2026-09-25/integration-gaps.md)） |
 | 2 | Project Lead 或 Engineer | 讀報告，有疑問就追問 | — | — |
-| 3 | Agent | 由上往下問，每輪 1–3 題：<br>• 流程<br>• 規則<br>• 例外<br>• 驗收 | skill [project-lead](../../skills/project-lead/SKILL.md) | — |
-| 3 | Project Lead 或 Engineer | 回答、修正 | — | — |
-| 3 | Agent | 寫 proposal 與 spec；新的設計邊界寫進設計文件或 ADR | • skill [project-lead](../../skills/project-lead/SKILL.md)<br>• 指令 `openspec validate <id>`（[說明](https://github.com/Fission-AI/OpenSpec/blob/main/docs/cli.md)） | • proposal（[範例](https://github.com/yschiang/cross-node-root/blob/main/openspec/changes/project-skeleton/proposal.md)）<br>• spec（[範例](https://github.com/yschiang/cross-node-root/blob/main/openspec/changes/project-skeleton/specs/engineering-baseline/spec.md)） |
-| 4 | Project Lead | 看一頁摘要，◆確認 spec；同時是 Engineer 時，改到 B1 一起確認 | — | proposal 裡的確認紀錄 |
-| 5 | Project Lead | 指定：<br>• 誰確認開工<br>• 誰驗收 | — | — |
-| 5 | Agent | 交接：<br>• 組交接包，貼成 ticket 留言<br>• ticket 補上驗收 ID，標為就緒 | skill [project-lead](../../skills/project-lead/SKILL.md) | • 交接包<br>• ticket 狀態 |
-| 5 | Engineer | 核對交接包：能開始就開始，不行就退回具體問題 | — | — |
+| 3 | Agent | 寫 proposal：<br>• 為什麼做<br>• 做什麼、不做什麼<br>• 待決與依賴 | skill [feature-to-spec](../../skills/feature-to-spec/SKILL.md) | proposal（[範例](https://github.com/yschiang/cross-node-root/blob/main/openspec/changes/project-skeleton/proposal.md)） |
+| 3 | Project Lead 或 Engineer | 確認範圍：目標、做／不做 | — | — |
+| 4 | Agent | 寫 spec：<br>• 從需求輸入帶入需求（ADDED／MODIFIED）<br>• 由上往下問：流程 → 規則 → 例外 → 驗收，每輪 1–3 題<br>• 每條寫成帶 ID 的 Scenario | • skill [feature-to-spec](../../skills/feature-to-spec/SKILL.md)<br>• 指令 `openspec validate <id>`（[說明](https://github.com/Fission-AI/OpenSpec/blob/main/docs/cli.md)） | spec（[範例](https://github.com/yschiang/cross-node-root/blob/main/openspec/changes/project-skeleton/specs/engineering-baseline/spec.md)） |
+| 4 | Project Lead 或 Engineer | 回答、修正 | — | — |
+| 5 | Project Lead | 看一頁摘要，◆確認 spec；同時是 Engineer 時，改到 B1 一起確認 | — | proposal 裡的確認紀錄 |
+| 6 | Project Lead | 指定：<br>• 誰確認開工<br>• 誰驗收 | — | — |
+| 6 | Agent | 交接：<br>• 組交接包，貼成 ticket 留言<br>• ticket 補上 AC ID，狀態改「就緒」 | skill [feature-to-spec](../../skills/feature-to-spec/SKILL.md) | • 交接包<br>• ticket 狀態「就緒」 |
+| 6 | Engineer | 核對交接包：能開始就開始，不行就退回具體問題 | — | — |
 
 **每一步怎麼做、怎樣算完成**
 
 1. **開 Feature**
    - 怎麼做：
-     - 交代 Feature：填上 Feature 名稱；已知的限制或疑慮一起講。
-     - 開 Feature：id 用簡短的英文，例如 `finalize-protocol`；ticket 只寫摘要，連到 spec。
+     - 填上 Feature 名稱；已知的限制或疑慮一起講
+     - change id 用簡短的英文，例如 `finalize-protocol`
+     - ticket 標題就是 Feature 名稱，不加前綴；內容只寫目標、Milestone、依賴，連到 change
    - 完成：
-     - [ ] Agent 回報已載入 project-lead skill
-     - [ ] Agent 複述了這個 Feature 的範圍，和它在 roadmap 上的依賴
+     - [ ] Agent 回報已載入 feature-to-spec skill
      - [ ] `openspec/changes/<id>/` 已建立
-     - [ ] ticket 連到它，並寫明依賴
+     - [ ] ticket 連到它，寫明依賴，狀態「準備中」
 2. **Research**
    - 怎麼做：只查這個 Feature 會碰到的流程。
    - 完成：
      - [ ] 報告存進 `docs/research/`
      - [ ] Facts、Assumptions、Unknown 分開列
-3. **寫 spec**
-   - 怎麼做：
-     - 由上往下問：
-       - 從 Project 情境裡跟這個 Feature 有關的那一步搭骨架
-       - 上一層確認了才問下一層
-       - 檢查這次碰到哪些共用限制
-     - 寫 proposal 與 spec：新的高層邊界寫進設計文件或 ADR，由 proposal 引用。
+3. **寫 proposal、確認範圍**
+   - 怎麼做：先談目標與範圍，範圍談定才寫需求；新的高層邊界寫進設計文件或 ADR，由 proposal 引用。
    - 完成：
-     - [ ] 主流程、規則、例外都有答案
-     - [ ] 每個例外都有對應的 Scenario
-     - [ ] `openspec/changes/<id>/` 裡都寫好，沒有一項還標「假設」：
-       - [ ] `proposal.md`：為什麼做、改了什麼、不做什麼
-       - [ ] `proposal.md` 的待決與依賴：每條寫明是否擋住設計與 owner；沒有一條會改變範圍、行為或驗收
-       - [ ] `specs/<能力>/spec.md`：每條需求都有 ID，至少一個帶 ID 的 Scenario（也就是 AC）
-       - [ ] Scenario 涵蓋主流程與每個例外
-       - [ ] `openspec validate <id>` 通過
-4. **◆確認 spec**
+     - [ ] `proposal.md` 有為什麼做、改了什麼、不做什麼
+     - [ ] 待決與依賴：每條寫明是否擋住設計與 owner
+     - [ ] Project Lead 或 Engineer 同意了範圍
+4. **寫 spec**
+   - 怎麼做：
+     - 從 Project 情境裡跟這個 Feature 有關的那一步搭骨架，再往下問
+     - 需求從需求輸入帶進來：`openspec/specs/` 還沒有的用 ADDED，已經有的用 MODIFIED
+     - 檢查這次碰到哪些共用限制
+   - 完成：`specs/<能力>/spec.md` 寫好，沒有一項還標「假設」
+     - [ ] 每條需求都有 ID，至少一個帶 ID 的 Scenario（也就是 AC）
+     - [ ] 主流程與每個例外都有 Scenario
+     - [ ] 沒有一條待決會改變範圍、行為或驗收
+     - [ ] `openspec validate <id>` 通過
+5. **◆確認 spec**
    - 怎麼做：看下方的一頁摘要，不必讀檔案。
    - 完成：
      - [ ] proposal 記下誰、何時、原話和確認的版本；兼任時記「併入確認開工」
-5. **交接**
+6. **交接**
    - 怎麼做：
-     - 指定開工確認人與驗收人：
-       - 開工確認人通常是 Engineer
-       - 驗收人預設是 Project Lead；需求由別人提出時，指定那個人
-     - 交接：照參考手冊的[交接](reference.md#交接)清單組。
-     - 核對交接包：對照 spec 與 AC，看能不能開始設計。
+     - Project Lead 指定開工確認人（通常是 Engineer）與驗收人（預設是 Project Lead；需求由別人提出時，指定那個人）
+     - Agent 照參考手冊的[交接](reference.md#交接)清單組交接包
+     - Engineer 對照 spec 與 AC，看能不能開始設計
    - 完成：
      - [ ] 交接包貼成 ticket 留言，內容有：
        - [ ] change ID 與 spec 的檔案版本
@@ -327,7 +327,7 @@ flowchart LR
        - [ ] 依賴：上游的版本與狀態
        - [ ] 待決、決策者與下一位 owner
        - [ ] 開工確認人與驗收人
-     - [ ] ticket 狀態是就緒
+     - [ ] ticket 補上 AC ID，狀態「就緒」
      - [ ] Engineer 在 ticket 回覆可以開始，或列出具體問題退回
 
 一頁摘要長這樣：

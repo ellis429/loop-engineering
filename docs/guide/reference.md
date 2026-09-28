@@ -80,7 +80,9 @@ Agent 把確認後的骨架寫成這個 Feature 的 proposal 與 spec（需求�
 
 有三個時機會進入 SA：開新專案或匯入既有專案、選定要做的 feature、新證據推翻原本的需求。開一個 agent session，這樣說：
 
-> /project-lead 做〈project／某個 feature〉的 SA。Repo 在〈路徑〉，既有資料在〈位置〉。我想解決的問題是〈一兩句〉。
+> /project-lead 做 project 的 SA。Repo 在〈路徑〉，既有資料在〈位置〉。我想解決的問題是〈一兩句〉。
+
+某個 feature 的 SA 則用 `/feature-to-spec 準備〈feature〉`，見使用指南的 A4。
 
 只要給四樣：哪一層、repo 在哪、既有資料、想解決什麼。第四樣講不清楚也沒關係，Agent 會先問。
 
@@ -324,7 +326,7 @@ feature loop 無法安全繼續時，改交 **Blocked**：run ID、問題、已�
 
 ### 控制方向與自主程度
 
-Project 層是人和 Agent 一來一回的對話，不需要派工或 gates；Feature 層有多個 Agent 並行，需要 controller 核對證據。所以兩層分成兩個 skill，控制只往下走：project-lead 把交接包交給 orchestrate，orchestrate 從不呼叫 project-lead。同一套 skill 有兩種自主程度：
+Project 層是人和 Agent 一來一回的對話，不需要派工或 gates；Feature 層有多個 Agent 並行，需要 controller 核對證據。所以分成三個 skill，控制只往下走：project-lead 排 roadmap、選 Feature；feature-to-spec 把選中的 Feature 寫成 spec，交接包交給 orchestrate；orchestrate 從不回頭呼叫它們。同一套 skill 有兩種自主程度：
 
 | 模式 | 誰啟動每個 Feature | 適合 |
 | --- | --- | --- |
@@ -334,7 +336,7 @@ Project 層是人和 Agent 一來一回的對話，不需要派工或 gates；Fe
 
 ### 把 Feature 交出去
 
-> /project-lead 準備〈feature〉：補足 spec、AC、必要高層設計與依賴，引用 project intent、高層設計與 roadmap 的版本。交接給〈Engineer〉，列出已確認事項與阻擋問題。
+> /feature-to-spec 準備〈feature〉：補足 spec、AC、必要高層設計與依賴，引用 project intent、高層設計與 roadmap 的版本。交接給〈Engineer〉，列出已確認事項與阻擋問題。
 
 ```mermaid
 flowchart TD
@@ -534,7 +536,8 @@ Demo 結束時，觀眾應能沿一條路徑找到：「目標 → Milestone →
 
 | 用途 | 用什麼 |
 | --- | --- |
-| Project 層與 Feature 準備 | skill [project-lead](../../skills/project-lead/SKILL.md)（草稿） |
+| Project 層：目的與需求、設計方案、roadmap、收尾 | skill [project-lead](../../skills/project-lead/SKILL.md)（草稿） |
+| 準備一個 Feature：change、spec、ticket、交接包 | skill [feature-to-spec](../../skills/feature-to-spec/SKILL.md)（草稿）；和 project-lead 共用 [SA 問法](../../skills/project-lead/sa-method.md) |
 | 研究現況 | skill [research-codebase](../../skills/research-codebase/SKILL.md)，改寫自 HumanLayer；只記錄現況，不批准需求或決定設計 |
 | 看懂大的 codebase | skill graphify（[Graphify-Labs/graphify](https://github.com/Graphify-Labs/graphify)，Apache-2.0）：把程式與文件建成知識圖，產出在 `graphify-out/`。不在 `setup.sh` 裡，另外安裝：`uv tool install graphifyy==0.9.71`，再執行 `graphify install`（Codex 加 `--platform codex`）；安裝程式若建立了 `~/.claude/CLAUDE.md`，看過內容再決定要不要留 |
 | SA 問答、領域語言 | skill [grilling](../../skills/third-party/mattpocock/productivity/grilling/SKILL.md)、[domain-modeling](../../skills/third-party/mattpocock/engineering/domain-modeling/SKILL.md)（Matt Pocock），由 project-lead 按需叫用；[grill-with-docs](../../skills/third-party/mattpocock/engineering/grill-with-docs/SKILL.md) 只能由人輸入 `/grill-with-docs` 啟動 |
@@ -563,6 +566,7 @@ loop-engineering 自己開發 controller 時，預設 Opus 5.5 實作、GPT 審�
 | 外圈三步各有一次確認；在確認 roadmap 時選接下來的 Feature，沒有依賴的可以並行 | D63、D27 |
 | Feature 以 use case 或共用元件為單位；Milestone 加上時間；切法是循環的 | D65 |
 | Feature spec 屬於外圈；內圈是 Implement → Validate | D64 |
+| 準備 Feature 的 skill 獨立成 feature-to-spec | D66 |
 | 有依賴的 Feature 等上游接受並 merge | D27 |
 | 示範專案的 Project 層先行 | D56 |
 | 薄 controller 第一片的核准 | D53 |
