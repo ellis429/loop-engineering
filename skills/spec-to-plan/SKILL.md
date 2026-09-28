@@ -12,7 +12,7 @@ Read repository instructions (AGENTS.md, CLAUDE.md, `openspec/config.yaml`) firs
 ## 0. Check the entry
 
 - Work in the feature's worktree on `feature/<id>` in the root repo (D67); in a multi-repo product, run the sync command and use a branch of the same name in each affected service repo.
-- The ticket state is `就緒（可設計）`; `開發中` when `plan-to-code`, `to-pr` or a rejection sent a fix beyond the approved plan back here; or `Blocked：…` (an unclean plan review, or a limit reached in `plan-to-code` or `to-pr`) once the human's decision to revise the plan is recorded on the ticket. Otherwise stop and report the state.
+- The ticket state is `就緒（可設計）`; `開發中` when `plan-to-code`, `to-pr` or a rejection sent a fix beyond the approved plan back here; or `Blocked：…` (an unclean plan review, or a limit reached in `plan-to-code` or `to-pr`) once the human's decision to revise the plan is recorded on the ticket; after a correction limit, that decision also states how many more correction rounds are allowed, and `plan-to-code` and `to-pr` count against it. Otherwise stop and report the state.
 - Read the handoff package (ticket comment): spec commit, spec confirmation or fold note, acceptance IDs, affected repos with base commits, start approver, acceptor. Anything missing or contradictory goes back to `feature-to-spec` as specific questions.
 - The spec is fixed here. A requirement that looks wrong is a question for the Project Lead, not an edit.
 
