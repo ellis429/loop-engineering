@@ -106,7 +106,7 @@ flowchart LR
 
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
-| 1 | Project Lead | 說明要解決的問題和限制 | 開一個 Agent session，貼上：`/project-lead 做 project 的 SA。Repo 在〈路徑〉，既有資料在〈位置〉。我想解決的問題是〈一兩句〉。` | — |
+| 1 | Project Lead | 說明要解決的問題和限制 | skill [project-lead](../../skills/project-lead/SKILL.md)：開一個 Agent session，貼上：`/project-lead 做 project 的 SA。Repo 在〈路徑〉，既有資料在〈位置〉。我想解決的問題是〈一兩句〉。` | — |
 | 2 | Project Lead | 給要查的問題；讀報告，有疑問就追問 | — | — |
 | 2 | Agent | Research：分清現況的<br>• Facts<br>• Assumptions<br>• Unknown | • skill [research-codebase](../../skills/research-codebase/SKILL.md)<br>• codebase 大或第一次接手：先用 skill graphify（[說明](https://github.com/Graphify-Labs/graphify)） 建知識圖，`/graphify <路徑>` | • 研究報告：`docs/research/<日期>-<主題>.md`（[範例](../research/2026-09-25/integration-gaps.md)）<br>• 用了 graphify：`graphify-out/GRAPH_REPORT.md` |
 | 3 | Project Lead | （選用）把參考資料（客戶規格、上游 spec、會議紀錄）放進資料夾；確認分組 | — | — |
@@ -265,7 +265,7 @@ flowchart LR
 
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
-| 1 | Project Lead 或 Engineer | 交代要準備的 Feature；授權 Agent push branch、開 ticket | 開一個 Agent session，貼上：`/feature-to-spec 準備〈Feature〉：補足 spec、AC、必要高層設計與依賴，引用 project intent、高層設計與 roadmap 的版本。` | — |
+| 1 | Project Lead 或 Engineer | 交代要準備的 Feature；授權 Agent push branch、開 ticket | skill [feature-to-spec](../../skills/feature-to-spec/SKILL.md)：開一個 Agent session，貼上：`/feature-to-spec 準備〈Feature〉：補足 spec、AC、必要高層設計與依賴，引用 project intent、高層設計與 roadmap 的版本。` | — |
 | 1 | Agent | 開 Feature：<br>• 專案第一次用時，先在更新過的 main 執行 `openspec init --tools claude,codex`，commit、push<br>• 在 root 從 `origin/main` 開 branch `feature/<id>` 與 worktree<br>• 在上面建立 change，commit、push<br>• 在 root repo 開 ticket，或把既有的 ticket 改成下方的格式 | • 指令 `git fetch origin`、`git worktree add ../<root>-<id> -b feature/<id> origin/main`<br>• 指令 `openspec new change <id>`（[說明](https://github.com/Fission-AI/OpenSpec/blob/main/docs/cli.md)） | • Feature 資料夾（[範例](https://github.com/yschiang/cross-node-root/tree/main/openspec/changes/project-skeleton)）<br>• ticket，狀態「準備中」（[範例](https://github.com/yschiang/cross-node-root/issues/1)） |
 | 2 | Agent | Research：讀<br>• roadmap 上這個 Feature 那一列<br>• 需求輸入與共用限制<br>• 現況 spec、設計與 ADR<br>• 這次會碰到的程式 | • skill [research-codebase](../../skills/research-codebase/SKILL.md)<br>• 有 `graphify-out/` 時，先用 `/graphify query` 查 | 研究報告：`docs/research/<日期>-<主題>.md`（[範例](../research/2026-09-25/integration-gaps.md)） |
 | 2 | Project Lead 或 Engineer | 讀報告，有疑問就追問 | — | — |
