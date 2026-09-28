@@ -105,11 +105,11 @@ Record the confirmation with who, when, their words, and the version confirmed (
 Only after the human confirmed "ready for Design" at project level. First produce or reuse the high-level design: component responsibilities, main data flows, external contracts, technology choices; for an imported project, reference the existing design and ADRs. Record each design choice the human makes among options as one ADR (context, options, decision, consequences, who chose); the decisions log does not repeat it. Show a design summary and ask the human to confirm the design; record it in the decisions log. Then plan the roadmap and ask the human to confirm it and choose the next feature; record both in the decisions log. Project mode ends there (D63).
 
 
-The roadmap is a living document with two levels: milestones are demonstrable outcomes; a feature is one independently acceptable delivery: one change, and one reviewable PR per affected repo (D61). Tasks live in the feature's `tasks.md`, not on the roadmap. Detail costs differ a lot:
+The roadmap is a living document with two levels: a milestone is a group of features with a time condition (a target date) that together make a demonstrable outcome; a feature is one independently acceptable delivery built around one self-contained use case or one shared component: one change, and one reviewable PR per affected repo (D61). Cutting is a loop (D65): cut features by use case or shared component, group them into milestones with target dates, and re-cut when the dates do not fit or after each feature is accepted. Tasks live in the feature's `tasks.md`, not on the roadmap. Detail costs differ a lot:
 
 | Content | Holds | When |
 | --- | --- | --- |
-| Milestone | Outcome, completion condition, main capabilities delivered | At project start |
+| Milestone | Target date, demonstrable outcome, completion condition, features included | At project start |
 | Roadmap feature | Name, one-line scope, dependencies, which input requirements it covers | For the current milestone when the cut is grounded (existing implementation, stable design) and the whole picture helps plan parallel work, dependencies or a demo; otherwise list the milestone's capabilities only |
 | Feature spec | Proposal, spec delta, acceptance IDs | When the feature becomes near-term and its change is opened |
 | Detailed design and plan | design.md, tasks.md | Just before work starts, by the Implementer |

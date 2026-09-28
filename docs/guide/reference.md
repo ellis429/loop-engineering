@@ -151,7 +151,11 @@ Research 記錄「目前如何運作」，研究報告不是已批准的 spec。
 
 用於 A3。
 
-Roadmap 只有兩層：milestone 和 feature。Feature 是能單獨驗收的交付，每個受影響的 repo 一個審得動的 PR；task 寫在 feature 裡，不上 roadmap。Roadmap 會一直改，所以問題不是「切得越細越好」，而是哪些東西值得先寫：
+Roadmap 只有兩層：milestone 和 feature。Feature 是能單獨驗收的交付，以一個 use case 或一個共用元件為單位，每個受影響的 repo 一個審得動的 PR；milestone 是幾個 feature 加上時間條件（目標日期）；task 寫在 feature 裡，不上 roadmap。
+
+**切法是循環的**：先依 use case 或共用元件切 feature，再分組、加上目標日期成為 milestone；日期放不下就回頭拆小或延後。每個 feature 驗收後回到 A3 再看一次：design 發現某部分能單獨驗收就拆出去，依賴變了就調整順序。
+
+Roadmap 會一直改，所以問題不是「切得越細越好」，而是哪些東西值得先寫：
 
 - **Feature 清單很便宜**：只有名稱、一句範圍、依賴，以及對應需求輸入的哪幾條。當前 milestone 的切法有依據時，可以整個列出來，方便看平行和依賴。
 - **Spec 等 feature 排進近期才寫**：建立這個 Feature 的 spec、做 SA。細節看穩定度，不看遠近；依賴程式現況的部分寫太早，會過時並誤導 Agent。
@@ -165,8 +169,8 @@ Roadmap 只有兩層：milestone 和 feature。Feature 是能單獨驗收的交�
 
 | 層級 | 是什麼 | 怎麼追蹤 | Azure DevOps |
 | --- | --- | --- | --- |
-| Milestone | 一個可以展示的成果，把幾個 Feature 歸在一起 | roadmap；GitHub milestone | Feature 或 Epic |
-| Feature | 一個自成一體、能單獨驗收的交付：一份 spec、每個受影響的 repo 一個 PR、一張 ticket | ticket | PBI（Story） |
+| Milestone | 幾個 Feature 加上時間條件（目標日期），合起來是一個可以展示的成果 | roadmap；GitHub milestone | Feature 或 Epic |
+| Feature | 一個自成一體、能單獨驗收的交付，以一個 use case 或一個共用元件為單位：一份 spec、每個受影響的 repo 一個 PR、一張 ticket | ticket | PBI（Story） |
 | Task | 一個 session 做得完的工作，寫在 `tasks.md` | 不開 ticket | Task |
 
 - Feature 的結果不一定要讓外部使用者看到，由系統其他部分或工程條件觀察也可以；重點是用自己的 AC 就能驗收，不必等之後的 Feature。業務上完整的能力由 Milestone 驗收。
@@ -557,6 +561,7 @@ loop-engineering 自己開發 controller 時，預設 Opus 5.5 實作、GPT 審�
 | 多 repo 的 root 結構與跨 repo 的 Feature | D61 |
 | 驗收人預設是誰 | D62 |
 | 外圈三步各有一次確認；在確認 roadmap 時選下一個 Feature | D63 |
+| Feature 以 use case 或共用元件為單位；Milestone 加上時間；切法是循環的 | D65 |
 | Feature spec 屬於外圈；內圈是 Implement → Validate | D64 |
 | 有依賴的 Feature 等上游接受並 merge | D27 |
 | 示範專案的 Project 層先行 | D56 |

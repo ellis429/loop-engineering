@@ -61,7 +61,7 @@ _Avoid_: 把目標需求或上游 spec 放進 project spec
 專案的交付路徑，描述 milestones 的成果、優先順序與依賴，並逐步拆成可交付的 features。
 
 **Milestone**:
-Roadmap 上可驗證的成果節點，通常由多個 features 共同達成；不是單一 implementation task。
+Roadmap 上有時間條件（目標日期）的可驗證成果節點，由幾個 features 共同達成；不是單一 implementation task（D65）。
 
 **Feature high-level design**:
 Feature 的主要元件責任、對外契約、跨系統資料流與重要技術取捨，界定詳細設計必須遵守的邊界。

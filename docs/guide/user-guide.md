@@ -193,31 +193,42 @@ flowchart LR
 
 ### A3 Roadmap：安排交付
 
-**目的**：決定先做什麼，讓每次只交出一個 Feature。
+**目的**：決定先做什麼、什麼時候交，讓每次只交出一個 Feature。
+
+切法是一個循環：切 Feature → 分組成 Milestone、加上時間 → 時間放不下就回頭重切。每個 Feature 收尾後（A5）也回到這裡再切一次。
+
+- **Feature**：一個自成一體的 use case，或一個被多個 use case 共用的元件；能用自己的 AC 驗收。
+- **Milestone**：幾個 Feature 加上時間條件（目標日期），合起來是一個可以展示的成果。
 
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
-| 1 | Agent | 提出 Milestone：<br>• 可以展示的成果<br>• 完成條件 | skill [project-lead](../../skills/project-lead/SKILL.md) | roadmap（[範例](https://github.com/yschiang/cross-node-root/blob/main/docs/roadmap.md)） |
-| 2 | Agent | 切 Feature：<br>• 切法有依據：把當前 Milestone 切成 Feature<br>• 沒有依據：先列交付能力，但至少切出下一個能單獨驗收的 Feature | skill [project-lead](../../skills/project-lead/SKILL.md) | roadmap 的 Feature 表 |
+| 1 | Agent | 切 Feature：<br>• 一個 use case，或一個共用元件，切成一個 Feature<br>• 切法有依據：把能力清單整批切<br>• 沒有依據：先列交付能力，但至少切出下一個能單獨驗收的 Feature | skill [project-lead](../../skills/project-lead/SKILL.md) | roadmap 的 Feature 表 |
+| 2 | Project Lead ⇄ Agent | 排 Milestone：<br>• 把 Feature 分組，加上目標日期<br>• 時間放不下，回第 1 步拆小或延後 | skill [project-lead](../../skills/project-lead/SKILL.md) | roadmap（[範例](https://github.com/yschiang/cross-node-root/blob/main/docs/roadmap.md)） |
 | 3 | Project Lead | 排順序、決定範圍，標出接下來要做的 1–2 個 | — | 決策紀錄 |
 | 4 | Project Lead | ◆確認 roadmap：<br>• 選定下一個 Feature<br>• 指定誰做 Feature spec、誰是 Engineer | — | 決策紀錄 |
 
 **每一步怎麼做、怎樣算完成**
 
-1. **提出 Milestone**
-   - 怎麼做：每個 Milestone 寫一個可以展示的成果。
-   - 完成：`docs/roadmap.md` 每個 Milestone 都有
-     - [ ] 可以展示的成果
-     - [ ] 完成條件
-     - [ ] 交付的能力
-2. **切 Feature**
-   - 怎麼做：切法有依據（已經有實作、設計穩定）就整個 Milestone 切；沒有依據就先列交付能力，但至少切出下一個能單獨驗收的 Feature，第 4 步才有得選。
+1. **切 Feature**
+   - 怎麼做：
+     - 從能力清單與情境找出自成一體的 use case，每個切成一個 Feature
+     - 多個 use case 都要用到的元件，切成自己的 Feature，排在用到它的 Feature 前面
+     - 切法有依據（已經有實作、設計穩定）就整批切；沒有依據就先列交付能力，但至少切出下一個
    - 完成：Feature 表每一列都有
-     - [ ] 名稱與一句範圍
+     - [ ] 名稱與一句範圍：哪個 use case，或哪個共用元件
      - [ ] 依賴
      - [ ] 對應的需求
      - [ ] 「近期」或「暫定」
      - [ ] 能用自己的 AC 驗收
+2. **排 Milestone**
+   - 怎麼做：
+     - 把 Feature 分組，每組加上目標日期
+     - 時間放不下，就回第 1 步把 Feature 拆小，或延到下一個 Milestone
+   - 完成：`docs/roadmap.md` 每個 Milestone 都有
+     - [ ] 目標日期
+     - [ ] 可以展示的成果
+     - [ ] 完成條件
+     - [ ] 包含哪些 Feature
 3. **排順序**
    - 怎麼做：看依賴與風險排順序。
    - 完成：
@@ -228,7 +239,7 @@ flowchart LR
    - 完成：
      - [ ] 決策紀錄寫下確認、選中的 Feature 與負責的人
 
-每個 Feature 收尾後都回到這裡：只看變動的部分，再 ◆確認 roadmap、選下一個。
+每個 Feature 收尾後都回到這裡：只看變動的部分，重切必要的 Feature、調整 Milestone 的日期，再 ◆確認 roadmap、選下一個。
 
 **細節**：參考手冊的[Roadmap 要切多細](reference.md#roadmap-要切多細)、[工作層級](reference.md#工作層級milestonefeaturetask)。
 
