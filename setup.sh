@@ -255,7 +255,7 @@ install_project() {
     if ln -n "$TEMPLATE_TMP" "$repo/$name" 2>/dev/null && [ ! -L "$repo/$name" ] && [ "$repo/$name" -ef "$TEMPLATE_TMP" ]; then
       echo "copied   $repo/$name"
     else
-      rm -f "$repo/$name/${TEMPLATE_TMP##*/}"
+      if [ "$repo/$name/${TEMPLATE_TMP##*/}" -ef "$TEMPLATE_TMP" ]; then rm -f "$repo/$name/${TEMPLATE_TMP##*/}"; fi
       echo "SKIP     $repo/$name (exists; kept as is)"
     fi
     rm -f "$TEMPLATE_TMP"; TEMPLATE_TMP=""
