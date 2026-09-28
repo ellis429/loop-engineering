@@ -37,7 +37,7 @@ Both verdicts must be for the recorded version set. They go stale when a head ch
 
 ## 4. Fix loop, at most three rounds
 
-Collect every G2 blocking finding and G3 code failure of one version set into one batch. `plan-to-code` fixes the batch, each fix with a Red tied to its finding; push; record the new version set; run G1, G2 (resume the same reviewer session) and G3 again. A round is one batch; an acceptor's rejection of a PR Pass (recorded by `project-lead`) counts as one too.
+Collect every G2 blocking finding and G3 code failure of one version set into one batch. `plan-to-code` fixes the batch, each fix with a Red tied to its finding; push; record the new version set; run G1, G2 (resume the same reviewer session) and G3 again. A round is one batch, counted when it is dispatched; the fix batch for an acceptor's rejection of existing acceptance IDs (recorded by `project-lead`) counts the same way.
 
 - **Beyond the plan:** a fix that needs a new task, paths no task owns, or a change to what a task promises (behaviour, acceptance mapping, design, or rewriting or dropping a planned test) goes back to `spec-to-plan`: post a ticket comment that the start approval no longer covers the plan (name the finding) and set 下一步 to the Engineer revising it; amend the plan, get a clean plan review and a new start approval, then `plan-to-code`. A regression test for a finding inside the approved scope is part of the fix, not a plan change.
 - **Infrastructure failures** (runner lost, network, quota) are not code rounds: retry each at most twice, recorded separately; an unknown outcome is saved and stops the loop.
