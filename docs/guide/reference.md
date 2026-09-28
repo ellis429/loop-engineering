@@ -444,6 +444,10 @@ G1 缺原始證據、必要結果無法取得或出現未知執行狀態時，�
 
 Task 是 PR 內的工作單位，一個 session 做得完，不開 ticket。一個可獨立驗收的 Feature，在每個受影響的 repo 各對應一個 PR；做 design 時發現某部分能單獨驗收，或某個 repo 的 PR 大到審不動，就提議拆成另一個 Feature，由 Project Lead 確認。每個 task 一到幾個綠燈 commit，完成後由獨立 Reviewer 做一次局部 review，最後 G2 再看整個 PR。
 
+### 計畫要讓 TDD 有真的 Red
+
+計畫不放實作碼，但每個 task 要列出要寫的測試，寫明 **Red 應該失敗在哪個斷言**；好幾個 task 共用的 fixture、setup、指令入口或 stub，排成第一個 task 先做。只寫範圍、介面和驗證命令的精簡計畫，會讓 Implementer 自己決定測試怎麼寫：薄 controller 第一片的 8 個 task，第一次 review 全部要求修改，其中 6 個被指出 Red 停在共用 setup、缺的指令或回傳 `not_implemented` 的 stub，根本沒走到要測的行為。那樣的 Red 證明不了測試在檢查行為，只能靠之後的 review 抓，換來多輪返工。
+
 ### 計畫要讓 AC 真正能驗證
 
 每個 AC 都要有「怎麼驗、在哪裡驗、何謂通過、證據放哪」。以下只是寫法示例，並非已核准的 cross-node 功能需求：
@@ -531,6 +535,23 @@ feature loop 回來的結果只有兩種：
 
 Demo 結束時，觀眾應能沿一條路徑找到：「目標 → Milestone → Feature／AC → design／tasks → worktree／PR → TDD／review／CI → 人的決策 → 併入現況的 spec」。
 
+## OpenSpec 和 Superpowers 怎麼分工
+
+用於 A4、B1–B3、A5。**OpenSpec 管文件：放哪、長什麼樣、什麼時候變成現況；Superpowers 管做事的紀律。** 每種文件只有 OpenSpec 那一份，Superpowers 只借它的做法。
+
+| 步驟 | 文件（OpenSpec） | 怎麼寫、怎麼做 |
+| --- | --- | --- |
+| A4 Specify | `proposal.md`、`specs/<能力>/spec.md` | feature-to-spec：由上往下問（Matt Pocock 的 grilling） |
+| B1 Design | `design.md` | 在 A2 的邊界內決定；方案要比較時，借 Superpowers brainstorming 的做法 |
+| B1 Plan | `tasks.md` | Superpowers writing-plans 的寫法：每個 task 列測試與預期的 Red，不放實作碼（D68） |
+| B2 Build | 程式與測試；勾 `tasks.md` | Superpowers test-driven-development；要分派多個 Agent 時用 subagent-driven-development |
+| B3 Verify | PR、ticket 留言 | 另一個模型的獨立 Reviewer |
+| A5 Retro | `openspec archive` → `openspec/specs/` | OpenSpec |
+
+- **OpenSpec 的好處**：需求只有一份、每條有 ID；`openspec validate` 檢查格式；進行中的在 `changes/`，archive 後才進 `specs/`，Agent 不會把還沒做的當成已經有。
+- **Superpowers 的好處**：計畫拆多細、測試先寫、Red 一定先紅這些紀律；OpenSpec 只給格式，不管這些。
+- **不要讓 Superpowers 另寫一份**：brainstorming 預設寫 `docs/superpowers/specs/…`、writing-plans 預設寫 `docs/superpowers/plans/…`。照預設走，同一個 Feature 會有兩份 spec 或兩份計畫，遲早對不上。用它們時要求內容寫進上表的 OpenSpec 檔案。
+
 ## 會用哪些 skills 與工具
 
 在 loop-engineering 執行 `./setup.sh`，就會把下表的 skills 裝到 `~/.claude/skills`、`~/.agents/skills`、`~/.codex/skills`，並檢查 OpenSpec CLI 的版本。無法這樣安裝時，用 `./setup.sh --project <root repo>` 把它們複製進產品 root repo 的 `.claude/skills/` 與 `.agents/skills/`，由 root repo commit；從 root 開 session 就讀得到，OpenSpec 的 skills 則由 root 的 `openspec init --tools claude,codex` 產生。外部 skills 的來源與版本見 [SOURCES.md](../../skills/third-party/SOURCES.md)。這些 skills 在哪一層，見使用指南的[人、Agent 與工具的分層](user-guide.md#人agent-與工具的分層)。
@@ -543,7 +564,7 @@ Demo 結束時，觀眾應能沿一條路徑找到：「目標 → Milestone →
 | 看懂大的 codebase | skill graphify（[Graphify-Labs/graphify](https://github.com/Graphify-Labs/graphify)，Apache-2.0）：把程式與文件建成知識圖，產出在 `graphify-out/`。不在 `setup.sh` 裡，另外安裝：`uv tool install graphifyy==0.9.71`，再執行 `graphify install`（Codex 加 `--platform codex`）；安裝程式若建立了 `~/.claude/CLAUDE.md`，看過內容再決定要不要留 |
 | SA 問答、領域語言 | skill [grilling](../../skills/third-party/mattpocock/productivity/grilling/SKILL.md)、[domain-modeling](../../skills/third-party/mattpocock/engineering/domain-modeling/SKILL.md)（Matt Pocock），由 project-lead 按需叫用；[grill-with-docs](../../skills/third-party/mattpocock/engineering/grill-with-docs/SKILL.md) 只能由人輸入 `/grill-with-docs` 啟動 |
 | 規格 | OpenSpec CLI 1.13.1（[指令說明](https://github.com/Fission-AI/OpenSpec/blob/main/docs/cli.md)）；它的 skills 由 `openspec init` 產生 |
-| 單一 Feature 的 loop | skill orchestrate 呼叫薄 controller，第一片實作中 |
+| 單一 Feature 的內圈 | skill [spec-to-plan](../../skills/spec-to-plan/SKILL.md)（B1）、skill [plan-to-code](../../skills/plan-to-code/SKILL.md)（B2）、skill [to-pr](../../skills/to-pr/SKILL.md)（B3），每個停在一個人工停點（D69）；之後由 skill orchestrate 串起來並呼叫薄 controller，第一片實作中 |
 | TDD | skill [test-driven-development](../../skills/third-party/superpowers/test-driven-development/SKILL.md)（Superpowers）；每個行為 task 保存可追溯證據 |
 | 審查與修正 | 獨立 Reviewer（另一個模型、新 session），依 spec 與工程規則審查；Implementer 修正 |
 | Example 執行環境 | Herdr 管 sessions 與工作區；本機 OpenAI 經 OpenCode，Claude 直接用 Claude Code；Orca 是選配入口 |
@@ -568,7 +589,9 @@ loop-engineering 自己開發 controller 時，預設 Opus 5.5 實作、GPT 審�
 | Feature 以 use case 或共用元件為單位；Milestone 加上時間；切法是循環的 | D65 |
 | Feature spec 屬於外圈；內圈是 Implement → Validate | D64 |
 | 準備 Feature 的 skill 獨立成 feature-to-spec | D66 |
+| 內圈的三個 skill 與依複雜度決定 effort | D69 |
 | 每個 Feature 一條 feature branch；薄 ticket 的格式 | D67 |
+| 計畫列出測試與預期的 Red；共用測試骨架先做；Superpowers 的方法寫進 OpenSpec 的檔案 | D68 |
 | 有依賴的 Feature 等上游接受並 merge | D27 |
 | 示範專案的 Project 層先行 | D56 |
 | 薄 controller 第一片的核准 | D53 |
