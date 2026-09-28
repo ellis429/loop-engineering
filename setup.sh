@@ -7,7 +7,7 @@
 #   ./setup.sh --update   re-fetch skills/third-party at the commits in skills/third-party/SOURCES.md
 #
 # Existing real folders are never touched. Superpowers skills are not linked into ~/.claude/skills
-# when the Superpowers Claude Code plugin is installed, to avoid duplicates.
+# when the Superpowers Claude Code plugin is enabled, to avoid duplicates.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
@@ -16,25 +16,30 @@ TARGETS=("$HOME/.claude/skills" "$HOME/.agents/skills" "$HOME/.codex/skills")
 FORCE=0
 
 update_third_party() {
-  local sources="$ROOT/skills/third-party/SOURCES.md" tmp
-  tmp="$(mktemp -d)"
-  trap 'rm -rf "$tmp"' RETURN
+  local sources="$ROOT/skills/third-party/SOURCES.md" tp
+  tp="$(cd "$ROOT/skills/third-party" && pwd -P)"
+  if [ "$tp" != "$(cd "$ROOT" && pwd -P)/skills/third-party" ]; then
+    echo "refusing to update: skills/third-party resolves outside the repository ($tp)" >&2; exit 1
+  fi
+  # Staging lives inside the repository so the final swap is a rename on the same filesystem.
+  TMP="$(mktemp -d "$ROOT/.setup-update.XXXXXX")"
+  trap 'rm -rf "$TMP"' EXIT
   # Rows: | name | repo | upstream path | local path | commit | license |
   grep -E '^\| (mattpocock|superpowers) \|' "$sources" | while IFS='|' read -r _ name repo upath lpath commit _; do
     name="$(echo "$name" | xargs)"; repo="$(echo "$repo" | xargs)"; upath="$(echo "$upath" | xargs)"
     lpath="$(echo "$lpath" | xargs)"; commit="$(echo "$commit" | xargs)"
-    case "$lpath" in
-      *..*) echo "refusing to replace '$lpath': local path must not contain '..'" >&2; exit 1 ;;
-      skills/third-party/?*) ;;
-      *) echo "refusing to replace '$lpath': local path must be under skills/third-party/" >&2; exit 1 ;;
-    esac
+    if ! [[ "$lpath" =~ ^skills/third-party/[A-Za-z0-9_-][A-Za-z0-9._-]*$ ]]; then
+      echo "refusing to replace '$lpath': local path must be one folder directly under skills/third-party/" >&2; exit 1
+    fi
     echo "update $name: $repo@${commit:0:12} $upath -> $lpath"
-    git clone -q --filter=blob:none --no-checkout "https://github.com/$repo.git" "$tmp/$name"
-    git -C "$tmp/$name" sparse-checkout set --no-cone "/$upath/" "/LICENSE"
-    git -C "$tmp/$name" checkout -q "$commit"
-    rm -rf "${ROOT:?}/$lpath"
-    cp -R "$tmp/$name/$upath" "$ROOT/$lpath"
-    cp "$tmp/$name/LICENSE" "$ROOT/$lpath/LICENSE"
+    git clone -q --filter=blob:none --no-checkout "https://github.com/$repo.git" "$TMP/$name"
+    git -C "$TMP/$name" sparse-checkout set --no-cone "/$upath/" "/LICENSE"
+    git -C "$TMP/$name" checkout -q "$commit"
+    # Build the complete new folder first; the old one is replaced only after every copy succeeded.
+    cp -R "$TMP/$name/$upath" "$TMP/new-$name"
+    cp "$TMP/$name/LICENSE" "$TMP/new-$name/LICENSE"
+    if [ -e "$ROOT/$lpath" ]; then mv "$ROOT/$lpath" "$TMP/old-$name"; fi
+    mv "$TMP/new-$name" "$ROOT/$lpath"
   done
 }
 
@@ -48,8 +53,10 @@ check_openspec() {
   else echo "WARN     openspec CLI $v (this repo is tested with $OPENSPEC_VERSION)"; fi
 }
 
-superpowers_plugin_installed() {
-  compgen -G "$HOME/.claude/plugins/cache/*/superpowers" >/dev/null
+superpowers_plugin_enabled() {
+  # Enabled plugins are listed in the user settings as "superpowers@<marketplace>": true.
+  grep -Eqs '"superpowers@[^"]+"[[:space:]]*:[[:space:]]*true' \
+    "$HOME/.claude/settings.json" "$HOME/.claude/settings.local.json"
 }
 
 link_skill() {
@@ -58,7 +65,7 @@ link_skill() {
   if [ -L "$link" ]; then
     current="$(readlink "$link")"
     if [ "$current" = "$dir" ]; then echo "ok       $link"; return; fi
-    if [ -e "$link" ] && [ "$FORCE" -eq 0 ]; then
+    if [ "$FORCE" -eq 0 ]; then
       echo "SKIP     $link -> $current (points elsewhere; use --force)"; return
     fi
   elif [ -e "$link" ]; then
@@ -69,7 +76,7 @@ link_skill() {
 
 install_skills() {
   local skip_sp_claude=0 dir target
-  superpowers_plugin_installed && skip_sp_claude=1
+  superpowers_plugin_enabled && skip_sp_claude=1
   for target in "${TARGETS[@]}"; do
     mkdir -p "$target"
     while IFS= read -r dir; do
