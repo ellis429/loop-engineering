@@ -173,7 +173,21 @@ Roadmap 只有兩層：milestone 和 feature。Feature 是能單獨驗收的交�
 
 ## 多個 repo 的專案
 
-用於整個流程。結構見使用指南的[專案的 repo 結構](user-guide.md#專案的-repo-結構)。
+用於整個流程。每個產品一個 root repo 放規劃；只有一個 repo 的產品，root 就是它自己。
+
+```text
+<產品>-root/
+├── openspec/             spec：現況，以及進行中的 Feature
+├── docs/                 intent、roadmap、決策、設計
+├── AGENTS.md、CLAUDE.md  共用的 agent 規則
+├── repos.yaml            服務 repo 清單：名稱、URL、預設 branch、路徑、用途
+└── repos/                同步指令依清單 clone 進來（root 不追蹤）
+    ├── order-service/    各自的 origin、branch、PR、CI
+    └── payment-service/
+```
+
+- 一個 Feature 可以跨 repo：一份 spec 放在 root，每個受影響的 repo 一個 PR（root 也算一個），都連到同一張 ticket。
+- loop-engineering 是工具，不當產品的 root。
 
 **清單** `repos.yaml` 放在 root，每個服務 repo 一筆：
 
@@ -487,58 +501,43 @@ feature loop 回來的結果只有兩種：
 
 ## 給一個 goal，推進多個 Feature
 
-**Stacked PR 是還沒決定、也還沒實作的目標情境，現在不能這樣執行。** 現在能做的是：goal 拆成多個 feature，一個接一個推進。
-
-先對照現行規則與目標：
-
-![Stacked PR 對照：左為現行規則，下游等上游人工接受並 merge 後才開始實作；右為還沒決定的目標，PR C 以 PR B、PR B 以 PR A 為 base](stack.svg)
-
-未來可以這樣說：
-
-> 請用 project-lead skill 把〈已確認的 goal〉拆成可驗收的 features，提出 spec、依賴與 PR stack，讓我確認。在我授權的範圍內依序啟動 feature loop，每個 PR 都完成自己的 gates。達到 goal 後交出整組 PR、依賴順序、驗收證據與已知限制，保留 worktrees。
-
-```mermaid
-flowchart TD
-    A["Lead<br/>給 goal、完成條件與執行限制"]:::human
-    subgraph T["目標情境：還沒決定也還沒實作，現在不可用"]
-        B["Project Lead Agent<br/>拆 features、spec 與 PR 依賴"]:::agent
-        B2["Implementer Agent<br/>各 feature 的 design、plan 與驗法"]:::agent
-        C{"Lead／被授權的人<br/>確認 scope、stack 政策與各 feature 開工"}:::gate
-        D["PR A：base 為 main<br/>自己的 spec、TDD、review、CI"]:::agent
-        E["PR B：base 為 PR A<br/>自己的 spec、TDD、review、CI"]:::agent
-        F["PR C：base 為 PR B<br/>自己的 spec、TDD、review、CI"]:::agent
-        G["Project Lead 彙整<br/>各 PR 最新 gates＋goal 驗證＋依賴順序"]:::agent
-    end
-    H{"人類 Reviewer／驗收人<br/>按依賴 review 與驗收"}:::gate
-    I["回受影響 PR 的 feature loop<br/>重評下游結果"]:::mech
-    A -->|goal| B
-    B -->|feature spec 與依賴| B2
-    B2 -->|stack 與各 feature plan| C
-    C -->|核准各 feature 開工| D
-    E -->|base 是 PR A| D
-    F -->|base 是 PR B| E
-    D -->|各自的 gates| G
-    E -->|各自的 gates| G
-    F -->|各自的 gates| G
-    G -->|整組 PR 與驗收證據| H
-    H -->|指出受影響 PR| I
-    I -->|更新後的 gates| G
-    classDef human fill:#e9ebef,stroke:#7a8399,color:#2d3142
-    classDef agent fill:#ffffff,stroke:#2d3142,color:#2d3142
-    classDef gate fill:#fdf0ea,stroke:#eb6c36,color:#2d3142
-    classDef mech fill:#f5f5f5,stroke:#4f5d75,stroke-dasharray:4 3,color:#2d3142
-    style T fill:#fafafa,stroke:#9aa1b1,stroke-dasharray:6 4
-```
-
-圖中的 A／B／C 只是 stack 結構示例，不是已選定的 cross-node features。每個 PR 對應一個有界、可驗收的 feature；goal 不取代各 feature 的 spec、開工確認與 gates，也不能只用最後一個 PR 通過就宣告整組完成。
-
-**交給人 review 的內容**：goal 與達成情況、PR 依賴圖及閱讀順序、每個 PR 適用版本的 gates 與 AC 證據、整組成果的驗證方式、剩餘問題。
-
-**與目前規則的邊界**：現行規則要求相依 feature 等上游人工接受、實際 merge、採用 baseline 後才開始實作。未來啟用 stack 前，要先確認每個 PR 的依賴與 review base、上游變動後哪些證據失效，以及人工驗收與合併順序。B 相對 A 通過，不代表 B 可以直接合併 main。這件事還沒決定。
+現在能做的：把 goal 拆成多個 Feature，照依賴一個接一個推進；有依賴的 Feature 等上游接受並 merge 後才開始實作。Stacked PR（下游以還沒合併的上游 PR 為 base）還沒決定、也還沒實作，它的目標情境記在[設計文件](../workflow/stacked-pr.md)。
 
 ## 查進度
 
 你問進度時，Project Lead 應列出 roadmap 上每個 feature 的狀態：準備中、SA 已確認、feature loop 進行中（附 run ID）、PR Pass、已接受、已 merge 並 archive，或 Blocked 與原因。狀態來自文件、ticket、PR 與 controller 的唯讀狀態，不靠對話記憶。這個專案進度視圖的自動化列在 S2。
+
+## 演練路線：用 cross-node-file-transfer 跟走一遍
+
+這是後續演練路線，Feature 名稱與切法以示範專案確認的 roadmap 為準，本指南不另立產品 spec。示範專案分成 root repo `cross-node-root`（規劃、spec、ticket）與程式 repo `cross-node-file-transfer`（由 `repos.yaml` 拉進 `repos/`）。
+
+1. **定方向、排順序（A1–A3）**：Project Lead 把 gigaxfer 的 `docs/spec.md` 依能力拆開，當作需求輸入並記錄來源版本，不放進 `openspec/specs/`；再整理 domain、設計、共用限制與 roadmap。人確認拆法與適用性。
+2. **專案骨架（第一個 Feature）**：repo 骨架、CI 與工程規則。它沒有產品行為，但「乾淨 clone 能建置測試、PR 有必要 checks」可以單獨驗收，寫成工程能力（例如 `engineering-baseline`）的 spec，常稱 Sprint 0 或 bootstrap。在 orchestrate 可用前可以手動協調，歷程標明「人工協調」，再由人驗收。
+3. **交付第一個產品 Feature（B1–B6）**：Project Lead 準備 spec 與交接包，工程師帶 Implementer 完成 PR；另一個 session 的 Reviewer 審查。
+4. **驗證修正循環**：有真實 blocking finding 時，留下 finding → fix → re-review 的歷程。review 沒找到問題就如實記錄，不製造缺陷湊演示。
+5. **驗收與收尾（B7–B8）**：人驗收後，Project Lead 整理 Retro 候選、提出下一個 Feature；確認 merge 後再把 spec 併入現況。
+6. **接續下一個 Feature**：核對依賴、人工接受、merge 與基準；保存各 Feature 的 branch／worktree、文件與交付證據。
+7. **展示 Milestone（C）**：執行跨 Feature 的整合情境。真正的 stacked PR 展示，要等 stacked PR 的規則決定、能力驗證之後再加入。
+
+Demo 結束時，觀眾應能沿一條路徑找到：「目標 → Milestone → Feature／AC → design／tasks → worktree／PR → TDD／review／CI → 人的決策 → 併入現況的 spec」。
+
+## 分層：人、Agent 與工具
+
+```text
+人          Lead、工程師、驗收人                       做決定：方向、順序、spec、開工、驗收
+ │ 用自然語言交代、確認
+ADE         Herdr、OpenCode、Claude Code（Orca 選配）   開 session 與 worktree，讓多個 Agent 並排工作
+ │
+Skills      project-lead、orchestrate、research-codebase、TDD、OpenSpec   告訴 Agent 照什麼方法做
+ │
+Agents      Project Lead Agent ⇄ Implementer ⇄ Reviewer（不同模型）      做實際的分析、實作與審查
+ │
+紀錄與核對  共用的狀態：人和 Agent 靠它交接，不靠聊天
+            ├ 核對：controller 檢查版本、證據與三個 gates（第一片實作中）
+            └ 保存：Git branch／worktree、OpenSpec 檔案、GitHub Issue／PR／CI
+```
+
+**Workflow** 是 Project、Feature 兩層的步驟與規則，貫穿所有層；**Harness** 是讓這些規則真的被執行的 ADE、skills 和 controller。
 
 ## 會用哪些 skills 與工具
 
@@ -558,4 +557,16 @@ loop-engineering 自己開發 controller 時，預設 Opus 5.5 實作、GPT 審�
 
 ## 想知道為什麼
 
-這份參考和[使用指南](user-guide.md)一樣只說怎麼做。規則本身、設計理由與取捨在內部設計文件：[決策紀錄](../decisions.md)、[交接契約](../workflow/contracts.md)、[流程設計](../workflow/overview.md)、[SA 階段契約](../workflow/project-lead-sa.md)；手冊和它們有出入時，以設計文件為準。各主題對應哪條決策，見使用指南的[對照表](user-guide.md#想知道為什麼)。
+本手冊只說怎麼做。規則本身、設計理由與取捨在內部設計文件：[決策紀錄](../decisions.md)、[交接契約](../workflow/contracts.md)、[流程設計](../workflow/overview.md)、[SA 階段契約](../workflow/project-lead-sa.md)；追實作讀[最新 handoff](../handoffs/2026-09-27-controller-design.md)。手冊和它們有出入時，以設計文件為準。
+
+| 主題 | 依據 |
+| --- | --- |
+| 兩個 skill、控制只往下走 | D55 |
+| spec 放在 OpenSpec；需求依狀態放置 | D54、D58 |
+| 工作三層、Feature 的定義、每個 task 局部 review、小工作 | D57 |
+| 角色是工作；兼任時 SA 確認併入開工確認 | D59 |
+| 手動階段的交付紀錄放 ticket 留言 | D60 |
+| 多 repo 的 root 結構與跨 repo 的 Feature | D61 |
+| 有依賴的 Feature 等上游接受並 merge | D27 |
+| 示範專案的 Project 層先行 | D56 |
+| 薄 controller 第一片的核准 | D53 |

@@ -28,7 +28,7 @@
 
 | 位置 | 責任與目前狀態 |
 | --- | --- |
-| [guide/user-guide.md](guide/user-guide.md) | 使用指南：分層圖、流程大地圖、誰做什麼、活動卡、example 演練與進度；細節見 [參考](guide/reference.md)，圖見 [圖解頁](guide/visual.html) |
+| [guide/user-guide.md](guide/user-guide.md) | 使用指南：大圈包小圈的流程圖、誰做什麼、外圈與內圈的活動卡；細節、範例演練與工具分層見 [參考](guide/reference.md) |
 | [project-intent.md](project-intent.md) | 本專案目標、需求基線、D41／D42 成品與責任邊界 |
 | [decisions.md](decisions.md) | 已確認決策及未決項目，保留原決策 ID 與沿革 |
 | [workflow/overview.md](workflow/overview.md) | Project／Feature 流程、角色、人工介入、Retro；舊平台責任仍依 D41／D42 待對照 |

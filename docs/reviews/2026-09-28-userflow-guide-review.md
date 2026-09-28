@@ -30,8 +30,8 @@
 | 檔案 | 內容 |
 | --- | --- |
 | `docs/workflow/user-guide.md`（當時的位置；現在是 [docs/guide/user-guide.md](../guide/user-guide.md)） | 依 F1–F9 修改；新增「一張圖看全貌」；七張 Mermaid 圖共用人／Agent／關卡／機制配色 |
-| `docs/workflow/user-guide-visual.html`（當時的位置；現在是 [docs/guide/visual.html](../guide/visual.html)） | 新增圖解頁：全貌泳道圖、stacked PR 現行與目標對照。是兩張 SVG 的來源 |
-| `docs/workflow/user-guide-roles.svg`、`user-guide-stack.svg`（當時的位置；泳道圖後來因模型過時移除，stacked PR 圖現在是 [docs/guide/stack.svg](../guide/stack.svg)） | 依 skill 的 export 程序從圖解頁匯出，供指南內嵌 |
+| `docs/workflow/user-guide-visual.html`（當時的位置；後來移到 [docs/workflow/stacked-pr.html](../workflow/stacked-pr.html)，只留 stacked PR 圖） | 新增圖解頁：全貌泳道圖、stacked PR 現行與目標對照。是兩張 SVG 的來源 |
+| `docs/workflow/user-guide-roles.svg`、`user-guide-stack.svg`（當時的位置；泳道圖後來因模型過時移除，stacked PR 圖現在是 [docs/workflow/stacked-pr.svg](../workflow/stacked-pr.svg)） | 依 skill 的 export 程序從圖解頁匯出，供指南內嵌 |
 | [README.md](../../README.md) | 只補圖解頁的入口連結 |
 | [docs/README.md](../README.md) | 補圖解頁入口連結；依使用者要求更新「目前進度」（F10） |
 

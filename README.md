@@ -10,7 +10,7 @@
 
 ## 文件
 
-**第一次使用，先讀 [使用指南](docs/guide/user-guide.md)**：先用分層圖與流程大地圖說明整體，再照流程逐一說明每個活動的目的、分工、產出與完成條件；細節查 [參考](docs/guide/reference.md)。另有 [圖解頁](docs/guide/visual.html)。完整自動 loop 尚未完成，stacked PR 仍是待定政策下的目標流程。
+**第一次使用，先讀 [使用指南](docs/guide/user-guide.md)**：先看一張「大圈包小圈」的圖（外圈 Project、內圈 Feature），再照兩個圈逐一看每個活動的目的、分工、產出與完成條件；細節查 [參考](docs/guide/reference.md)。完整自動 loop 尚未完成，stacked PR 仍是待定政策下的目標流程。
 
 維護設計或接續開發時，再讀 [文件導覽](docs/README.md)：
 

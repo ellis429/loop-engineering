@@ -1,104 +1,51 @@
 # Loop Engineering 使用指南
 
-> 草案：流程已定，自動化還在做，現在可以照著人工演練。見[現在做到哪裡](#現在做到哪裡)。
+> 草案：流程已定，自動化還在做，現在可以照著人工演練。見[目前進度](../README.md)。
 
 **先決定要什麼，再一次交付一個 Feature；每交付一個，就回頭調整計畫。**
 
 就是熟悉的 SDLC，只是大部分工作由 Agent 做，人負責做決定。
 
-## 分層：人、Agent 與工具
+## 大圈包小圈
 
-```text
-人          Lead、工程師、驗收人                       做決定：方向、順序、spec、開工、驗收
- │ 用自然語言交代、確認
-ADE         Herdr、OpenCode、Claude Code（Orca 選配）   開 session 與 worktree，讓多個 Agent 並排工作
- │
-Skills      project-lead、orchestrate、research-codebase、TDD、OpenSpec   告訴 Agent 照什麼方法做
- │
-Agents      Project Lead Agent ⇄ Implementer ⇄ Reviewer（不同模型）      做實際的分析、實作與審查
- │
-紀錄與核對  共用的狀態：人和 Agent 靠它交接，不靠聊天
-            ├ 核對：controller 檢查版本、證據與三個 gates（第一片實作中）
-            └ 保存：Git branch／worktree、OpenSpec 檔案、GitHub Issue／PR／CI
+```mermaid
+flowchart TB
+  subgraph Project["外圈 Project｜逐步完成專案"]
+    P["定方向<br/>Project SA → 高層設計"]
+    R["排 Roadmap<br/>選下一個 Feature"]
+    subgraph Feature["內圈 Feature｜完成這一個功能"]
+      S["寫清楚需求"]
+      B["設計與實作"]
+      V{"人驗收"}
+      C["收尾"]
+      S --> B --> V
+      V -->|退回修正| B
+      V -->|接受| C
+    end
+    P --> R
+    R --> S
+    C -->|回顧、調整 Roadmap，再選下一個| R
+  end
+  style Project fill:#eff6ff,stroke:#2563eb,color:#172554
+  style Feature fill:#fff7ed,stroke:#c2410c,color:#431407
 ```
 
-**Workflow** 是 Project、Feature 兩層的步驟與規則，貫穿所有層；**Harness** 是讓這些規則真的被執行的 ADE、skills 和 controller。
-
-## 流程大地圖
-
-### 三段與人的確認點
-
-```text
-1. 定方向   為什麼做、做到哪算成功、用什麼技術     ◆① 可進入設計（Lead）
-2. 排順序   分成幾個 Milestone，各有哪些 Feature    ◆② 專案基準與 roadmap（Lead）
-                                                    ◆③ 下一個 Feature（Lead）
-3. 交付一個 Feature（重複）
-     講清楚 → 做出來 → 驗收                       ◆④ spec（Lead）
-                                                    ◆⑤ 開工（被授權的人）
-                                                    ◆⑥ 接受或退回（驗收人）
-     └─ 驗收後回到 2，調整順序
-```
-
-Lead 同時擔任工程師時，④ 併入 ⑤：spec、design、plan 一起確認一次。不同人擔任時分開，Lead 先確認 spec，工程師才開始設計。
-
-### 展開成活動
-
-```text
-A. 定方向、排順序（開始時一次，之後偶爾回來修）
-   A1 Project SA     為什麼做、做到哪算成功      ◆①
-   A2 高層設計       用什麼架構與技術
-   A3 Roadmap        Milestone → Feature          ◆②
-        │ ◆③ 選下一個 Feature
-        ▼
-B. 交付一個 Feature（每個 Feature 一圈）
-   講清楚  B1 開 Feature     建立這個 Feature 的 spec，開 ticket 追蹤
-           B2 Feature SA     寫 spec：需求與 AC        ◆④（兼任工程師時併入 ⑤）
-           B3 交接           交接包給工程師
-   做出來  B4 Design＋plan   怎麼做、拆成哪些 task     ◆⑤
-           B5 實作           逐 task：TDD、commit、局部 review
-           B6 PR             G2 review＋CI → PR Pass
-   驗收    B7 驗收、merge    人判斷是不是要的          ◆⑥
-           B8 收尾           做完的需求併入現況、Retro、回 A3 調整
-        │ 累積到一個 Milestone
-        ▼
-C. Milestone 驗收（跨 Feature 的整合驗證；怎麼控還在討論）
-```
+Project 外圈先釐清為什麼做、做到哪裡算完成，再安排 Roadmap，每次選一個 Feature。每個 Feature 都走自己的內圈：釐清需求、設計實作、人工驗收；退回就修正，接受後收尾。完成的需求在合併後成為系統現況，交付經驗帶回外圈，調整後續安排。Agent 負責大部分工作，人負責關鍵確認。
 
 ## 誰做什麼
 
-| | 人 | Agent | 機制 |
-| --- | --- | --- | --- |
-| 定方向、排順序、講清楚、收尾 | **Lead**：給目標與限制、回答問題、做確認 ①–④ | **Project Lead Agent**（`project-lead` skill）：研究、SA、寫文件、提建議 | 文件與版本是交接權威，聊天不是 |
-| 做出來 | **工程師**（Feature Builder）：安排技術交付；被授權時做確認 ⑤ | **Implementer**：design、plan、TDD、PR 與修正。**Reviewer**：獨立審查，不改被審 branch | **Orchestrate** 跑一個 Feature 的 loop；**controller** 核對版本、證據與 gates |
-| 驗收 | **驗收人**：看 AC 的證據與 demo，做確認 ⑥ | — | — |
+| 誰 | 做什麼 | 確認哪幾個 |
+| --- | --- | --- |
+| Lead | 給目標與限制、回答問題、選下一個 Feature | ①②③④ |
+| 工程師 | 安排技術交付、審設計與計畫 | ⑤（被授權時） |
+| 驗收人 | 看每條 AC 的證據與 demo | ⑥ |
+| Agent：Project Lead Agent、Implementer、Reviewer | 研究、寫文件、實作、審查；不做確認 | — |
 
-- **角色是工作，不是職位**。同一人兼任 Lead 與工程師是常態，這時 ④ 併入 ⑤。每個 Feature 開始時，寫明誰確認開工、誰裁決需求、誰驗收。
-- **Lead 和 Project Lead Agent 不同**：Lead 做決定，Agent 做分析與建議。驗收人也不是 Reviewer Agent 的另一個名稱。
-- **控制只往下走**：Project Lead 把交接包交給 orchestrate；orchestrate 不回頭呼叫 Project Lead，遇到需求或範圍問題就回報 Blocked，由人和 Project Lead 接手。
+- **角色是工作，不是職位**：同一人兼任 Lead 與工程師是常態，這時 ④ 併入 ⑤。每個 Feature 開始時，寫明誰確認開工、誰驗收。
+- **Lead 和 Project Lead Agent 不同**：Lead 做決定，Agent 做分析與建議。驗收人也不是審查程式的 Reviewer Agent。
 
-流程全貌與六個確認點見上方的[流程大地圖](#流程大地圖)；stacked PR 的現行規則與目標情境見[圖解頁](visual.html)。
-
-## 專案的 repo 結構
-
-每個產品一個 root repo 放規劃；只有一個 repo 的產品，root 就是它自己。
-
-```text
-<產品>-root/
-├── openspec/             spec：現況，以及進行中的 Feature
-├── docs/                 intent、roadmap、決策、設計
-├── AGENTS.md、CLAUDE.md  共用的 agent 規則
-├── repos.yaml            服務 repo 清單：名稱、URL、預設 branch、路徑、用途
-└── repos/                同步指令依清單 clone 進來（root 不追蹤）
-    ├── order-service/    各自的 origin、branch、PR、CI
-    └── payment-service/
-```
-
-- 一個 Feature 可以跨 repo：一份 spec 放在 root，每個受影響的 repo 一個 PR（root 也算一個），都連到同一張 ticket。
-- loop-engineering 是工具，不當產品的 root。
-
-## 活動卡
-
-每張卡是一個活動的正式定義：
+## 活動卡怎麼讀
+每個活動一張卡，卡是這個活動的正式定義：
 
 - **目的**：一句話。
 - **輸入**：開始前要有的東西。
@@ -107,6 +54,22 @@ C. Milestone 驗收（跨 Feature 的整合驗證；怎麼控還在討論）
 - **完成條件**：每一條都可以檢查。
 
 標「工程師」的卡，只帶專案的人可以跳過。
+
+## 外圈：Project
+
+```mermaid
+flowchart TB
+  A1["A1 Project SA<br/>為什麼做、做到哪算完成"] --> G1(["◆① 可進入設計<br/>Lead"])
+  G1 --> A2["A2 高層設計<br/>用什麼架構與技術"]
+  A2 --> A3["A3 Roadmap<br/>Milestone 與各自的 Feature"]
+  A3 --> G2(["◆② 專案基準與 roadmap<br/>Lead"])
+  G2 --> G3(["◆③ 選下一個 Feature<br/>Lead"])
+  G3 --> IN[["進入內圈：交付這個 Feature"]]
+  IN -->|接受後回顧| A3
+  classDef gate fill:#fdf0ea,stroke:#eb6c36,color:#2d3142
+  class G1,G2,G3 gate
+  style IN fill:#fff7ed,stroke:#c2410c,color:#431407
+```
 
 ### A1 Project SA
 
@@ -215,6 +178,26 @@ C. Milestone 驗收（跨 Feature 的整合驗證；怎麼控還在討論）
 - [ ] 人確認專案基準與 roadmap（◆②）
 
 切多細、Feature 的定義，見參考的[工作層級](reference.md#工作層級milestonefeaturetask)與[Roadmap 要切多細](reference.md#roadmap-要切多細)。
+
+## 內圈：一個 Feature
+
+```mermaid
+flowchart TB
+  B1["B1 開 Feature<br/>建立 spec 位置與 ticket"] --> B2["B2 需求與 AC"]
+  B2 --> G4(["◆④ spec 清楚<br/>Lead"])
+  G4 --> B3["B3 交接給工程師"]
+  B3 --> B4["B4 設計與計畫"]
+  B4 --> G5(["◆⑤ 開工<br/>被授權的人"])
+  G5 --> B56["B5–B6 逐 task 實作與審查<br/>→ PR"]
+  B56 --> G6(["◆⑥ 接受或退回<br/>驗收人"])
+  G6 -->|退回修正| B56
+  G6 -->|需求要改| B2
+  G6 -->|接受| B8["B8 收尾<br/>回到外圈"]
+  classDef gate fill:#fdf0ea,stroke:#eb6c36,color:#2d3142
+  class G4,G5,G6 gate
+```
+
+Lead 同時擔任工程師時，④ 併入 ⑤：spec、設計、計畫一起確認一次。不同人擔任時分開，Lead 先確認 spec，工程師才開始設計。
 
 ### B1 開 Feature
 
@@ -493,47 +476,9 @@ Gates 的證據要求、review-fix loop 與 Blocked，見參考的[做出來：�
 
 有依賴的 Feature 要等上游接受並 merge 後才開始實作。一個 goal 推進多個 Feature 的目標做法，見參考的[給一個 goal](reference.md#給一個-goal推進多個-feature)。
 
-### C Milestone 驗收
-
+## Milestone 驗收
 待定：跨 Feature 的整合驗證怎麼控還在討論。Milestone 驗收不能把一串 PR 綠燈直接加總成完成。
-
-## 用 cross-node-file-transfer 跟走一遍
-
-這是後續演練路線，Feature 名稱與切法以示範專案確認的 roadmap 為準，本指南不另立產品 spec。示範專案分成 root repo `cross-node-root`（規劃、spec、ticket）與程式 repo `cross-node-file-transfer`（由 `repos.yaml` 拉進 `repos/`）。
-
-1. **定方向、排順序（A1–A3）**：Project Lead 把 gigaxfer 的 `docs/spec.md` 依能力拆開，當作需求輸入並記錄來源版本，不放進 `openspec/specs/`；再整理 domain、設計、共用限制與 roadmap。人確認拆法與適用性。
-2. **專案骨架（第一個 Feature）**：repo 骨架、CI 與工程規則。它沒有產品行為，但「乾淨 clone 能建置測試、PR 有必要 checks」可以單獨驗收，寫成工程能力（例如 `engineering-baseline`）的 spec，常稱 Sprint 0 或 bootstrap。在 orchestrate 可用前可以手動協調，歷程標明「人工協調」，再由人驗收。
-3. **交付第一個產品 Feature（B1–B6）**：Project Lead 準備 spec 與交接包，工程師帶 Implementer 完成 PR；另一個 session 的 Reviewer 審查。
-4. **驗證修正循環**：有真實 blocking finding 時，留下 finding → fix → re-review 的歷程。review 沒找到問題就如實記錄，不製造缺陷湊演示。
-5. **驗收與收尾（B7–B8）**：人驗收後，Project Lead 整理 Retro 候選、提出下一個 Feature；確認 merge 後再把 spec 併入現況。
-6. **接續下一個 Feature**：核對依賴、人工接受、merge 與基準；保存各 Feature 的 branch／worktree、文件與交付證據。
-7. **展示 Milestone（C）**：執行跨 Feature 的整合情境。真正的 stacked PR 展示，要等 stacked PR 的規則決定、能力驗證之後再加入。
-
-Demo 結束時，觀眾應能沿一條路徑找到：「目標 → Milestone → Feature／AC → design／tasks → worktree／PR → TDD／review／CI → 人的決策 → 併入現況的 spec」。
-
-## 現在做到哪裡
-
-截至 2026-09-28。這份手冊描述的是預期流程；下方的開口句是預期的自然語言請求，還不是驗證過的指令。
-
-- **已有**：兩層 workflow 與交接設計、spec 的位置與格式、兩個 skill 的分工、工作三層、需求放置、角色與手動階段的紀錄位置；`project-lead` skill 草稿。
-- **實作中**：薄 controller 第一片的 design＋plan 已核准並合進 main，正在 `delivery/thin-controller` 分支依 tasks 實作；它只管單一 Feature。
-- **進行中**：cross-node-file-transfer 的 Project 層先用 project-lead skill 做，不等 orchestrate；專案骨架可手動並標明人工協調，第一個產品 Feature 等 orchestrate 可用。
-- **尚未完成**：orchestrate 與 controller 的完整 loop、project-lead skill 的實際演練、cross-node-file-transfer 的多 Feature 演練、跨人驗證與 stacked gating。
-
-設計核准與 skill 草稿都不代表已驗收。
 
 ## 想知道為什麼
 
-本手冊只說怎麼做。規則本身、設計理由與取捨在內部設計文件：[決策紀錄](../decisions.md)、[交接契約](../workflow/contracts.md)、[流程設計](../workflow/overview.md)、[SA 階段契約](../workflow/project-lead-sa.md)；追實作讀[最新 handoff](../handoffs/2026-09-27-controller-design.md)。手冊和它們有出入時，以設計文件為準。
-
-| 主題 | 依據 |
-| --- | --- |
-| 兩個 skill、控制只往下走 | D55 |
-| spec 放在 OpenSpec；需求依狀態放置 | D54、D58 |
-| 工作三層、Feature 的定義、每個 task 局部 review、小工作 | D57 |
-| 角色是工作；兼任時 SA 確認併入開工確認 | D59 |
-| 手動階段的交付紀錄放 ticket 留言 | D60 |
-| 多 repo 的 root 結構與跨 repo 的 Feature | D61 |
-| 有依賴的 Feature 等上游接受並 merge | D27 |
-| 示範專案的 Project 層先行 | D56 |
-| 薄 controller 第一片的核准 | D53 |
+本手冊只說怎麼做。規則本身、設計理由與取捨在內部設計文件：[決策紀錄](../decisions.md)、[交接契約](../workflow/contracts.md)、[流程設計](../workflow/overview.md)、[SA 階段契約](../workflow/project-lead-sa.md)；手冊和它們有出入時，以它們為準。各主題對應哪條決策，見參考的[想知道為什麼](reference.md#想知道為什麼)。工具分層、repo 結構與範例演練路線也在[參考](reference.md)。

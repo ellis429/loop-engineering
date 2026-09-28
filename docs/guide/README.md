@@ -4,8 +4,7 @@
 
 | 想做什麼 | 讀哪裡 |
 | --- | --- |
-| 第一次了解整個流程 | [使用指南](user-guide.md)：開場一句話、分層圖、流程大地圖、誰做什麼 |
-| 照著做某個活動 | [使用指南的活動卡](user-guide.md#活動卡)：目的、輸入、步驟、產出、完成條件 |
-| 跟著範例走一遍 | [用 cross-node-file-transfer 跟走一遍](user-guide.md#用-cross-node-file-transfer-跟走一遍) |
+| 第一次了解整個流程 | [使用指南](user-guide.md)：先看「大圈包小圈」那張圖 |
+| 照著做某個活動 | 使用指南的[外圈](user-guide.md#外圈project)與[內圈](user-guide.md#內圈一個-feature)：每個活動一張卡 |
+| 跟著範例走一遍 | 參考的[演練路線](reference.md#演練路線用-cross-node-file-transfer-跟走一遍) |
 | 查細節：需求放哪、欄位、常見問題 | [參考](reference.md) |
-| 看圖 | [圖解頁](visual.html) |
