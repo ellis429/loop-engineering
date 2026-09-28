@@ -444,6 +444,10 @@ G1 缺原始證據、必要結果無法取得或出現未知執行狀態時，�
 
 Task 是 PR 內的工作單位，一個 session 做得完，不開 ticket。一個可獨立驗收的 Feature，在每個受影響的 repo 各對應一個 PR；做 design 時發現某部分能單獨驗收，或某個 repo 的 PR 大到審不動，就提議拆成另一個 Feature，由 Project Lead 確認。每個 task 一到幾個綠燈 commit，完成後由獨立 Reviewer 做一次局部 review，最後 G2 再看整個 PR。
 
+### 計畫要讓 TDD 有真的 Red
+
+計畫不放實作碼，但每個 task 要列出要寫的測試，寫明 **Red 應該失敗在哪個斷言**；好幾個 task 共用的 fixture、setup、指令入口或 stub，排成第一個 task 先做。只寫範圍、介面和驗證命令的精簡計畫，會讓 Implementer 自己決定測試怎麼寫：薄 controller 第一片的 8 個 task，第一次 review 全部要求修改，其中 6 個被指出 Red 停在共用 setup、缺的指令或回傳 `not_implemented` 的 stub，根本沒走到要測的行為。那樣的 Red 證明不了測試在檢查行為，只能靠之後的 review 抓，換來多輪返工。
+
 ### 計畫要讓 AC 真正能驗證
 
 每個 AC 都要有「怎麼驗、在哪裡驗、何謂通過、證據放哪」。以下只是寫法示例，並非已核准的 cross-node 功能需求：
@@ -569,6 +573,7 @@ loop-engineering 自己開發 controller 時，預設 Opus 5.5 實作、GPT 審�
 | Feature spec 屬於外圈；內圈是 Implement → Validate | D64 |
 | 準備 Feature 的 skill 獨立成 feature-to-spec | D66 |
 | 每個 Feature 一條 feature branch；薄 ticket 的格式 | D67 |
+| 計畫列出測試與預期的 Red；共用測試骨架先做 | D68 |
 | 有依賴的 Feature 等上游接受並 merge | D27 |
 | 示範專案的 Project 層先行 | D56 |
 | 薄 controller 第一片的核准 | D53 |

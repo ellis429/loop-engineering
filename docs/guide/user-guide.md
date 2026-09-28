@@ -439,7 +439,7 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
 | --- | --- | --- | --- | --- |
 | 1 | Engineer，或獲授權的 Project Lead Agent | 啟動這個 Feature 的 loop | skill orchestrate（實作中，可用前由人協調）：開一個 Agent session，貼上：`/orchestrate 承接〈Feature〉。先由 Implementer 讀取它引用的 project intent、roadmap、spec／AC 與高層設計，提出 detailed design、可執行 tasks 及 AC 驗證方式，交我確認後開工。保留 worktree 與證據；終點是 PR Pass，等待人驗收。` | — |
 | 2 | Implementer | 寫詳細設計 | 指令 `openspec instructions design --change <id>` | design |
-| 3 | Implementer | • 拆 tasks，每個 task 一個 session 做得完<br>• 寫每條 AC 的驗法 | 指令 `openspec instructions tasks --change <id>` | • tasks<br>• AC 驗法：寫在 validation 文件或 tasks 的明確段落 |
+| 3 | Implementer | • 拆 tasks，每個 task 一個 session 做得完<br>• 需要共用的測試骨架時，排成第一個 task<br>• 每個 task 列出要寫的測試，寫明 Red 應該失敗在哪個斷言<br>• 寫每條 AC 的驗法 | • 指令 `openspec instructions tasks --change <id>`<br>• 寫法參考 skill [writing-plans](../../skills/third-party/superpowers/writing-plans/SKILL.md)（Superpowers），但不放實作碼 | • tasks<br>• AC 驗法：寫在 validation 文件或 tasks 的明確段落 |
 | 4 | 交接時指定的人 | ◆確認開工（兼任時連 spec 一起確認） | skill orchestrate（實作中，可用前由人協調），記成 ticket 留言 | 開工確認紀錄 |
 
 **每一步怎麼做、怎樣算完成**
@@ -459,9 +459,13 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
 3. **拆 tasks、寫 AC 驗法**
    - 怎麼做：
      - 每個 task 一個 session 做得完，註明改哪個 repo
+     - 不放實作碼，實作方式留給 Implementer；但每個 task 列出要寫的測試：名稱、斷言的可觀察行為、Red 應該失敗在哪個斷言、Green 的預期結果、執行指令
+     - 好幾個 task 都要用到的 fixture、setup、指令入口或回傳合理值的 stub，排成第一個 task 先做，後面每個 Red 才走得到要測的行為
      - 每條 AC 寫：怎麼驗、在哪驗、何謂通過、證據放哪
    - 完成：
      - [ ] tasks 有 ID、順序與依賴，每個 task 註明改哪個 repo、對到哪些 AC
+     - [ ] 每個 task 列出要寫的測試，每個測試寫明斷言、Red 應失敗的位置、Green 預期與指令
+     - [ ] 共用的測試骨架排在第一個 task；不需要時寫明理由
      - [ ] 每條 AC 都有驗法
      - [ ] scope、必要環境、風險與執行限制都寫明
 4. **◆確認開工**
@@ -478,16 +482,18 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
 
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
-| 1 | Implementer | TDD：<br>• 先寫會失敗的測試<br>• 再實作到通過 | skill [test-driven-development](../../skills/third-party/superpowers/test-driven-development/SKILL.md)（Superpowers） | • commits<br>• Red → Green 紀錄 |
+| 1 | Implementer | TDD：<br>• 照計畫先寫會失敗的測試<br>• 確認 Red 失敗在要測的斷言上<br>• 再實作到通過 | skill [test-driven-development](../../skills/third-party/superpowers/test-driven-development/SKILL.md)（Superpowers） | • commits<br>• Red → Green 紀錄 |
 | 2 | Reviewer（另一個模型） | 審這個 task 的 commit | 獨立 Reviewer | 局部 review 紀錄（ticket 留言） |
 | 2 | Implementer | 修掉 blocking，Reviewer 覆核 | — | 修正的 commits |
 
 **每一步怎麼做、怎樣算完成**
 
 1. **TDD**
-   - 怎麼做：一次一個 task，先 Red，再 Green。
+   - 怎麼做：一次一個 task：照計畫列的測試先寫、跑出 Red，確認它失敗在計畫寫的斷言上，再實作到 Green。Red 停在 setup、import 或 stub，代表骨架還沒好，先補骨架再重跑，不算數。
    - 完成：
      - [ ] 每個行為 task 都有 Red 與 Green
+     - [ ] 每個 Red 都失敗在對應的斷言上，不是停在 setup、import 或 stub
+     - [ ] 協調的人收件時檢查過 Red 的失敗位置，不對就退回
      - [ ] 純文件的 task 寫明理由，由 Reviewer 確認
 2. **局部 review 與修正**
    - 怎麼做：
