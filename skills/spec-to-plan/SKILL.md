@@ -12,6 +12,7 @@ Read repository instructions (AGENTS.md, CLAUDE.md, `openspec/config.yaml`) firs
 ## 0. Check the entry
 
 - Work in the feature's worktree on `feature/<id>` in the root repo (D67); in a multi-repo product, run the sync command and use a branch of the same name in each affected service repo.
+- The ticket state is `就緒（可設計）`, or `開發中` when `plan-to-code` or `to-pr` sent a fix beyond the approved plan back here; otherwise stop and report the state.
 - Read the handoff package (ticket comment): spec commit, spec confirmation or fold note, acceptance IDs, affected repos with base commits, start approver, acceptor. Anything missing or contradictory goes back to `feature-to-spec` as specific questions.
 - The spec is fixed here. A requirement that looks wrong is a question for the Project Lead, not an edit.
 

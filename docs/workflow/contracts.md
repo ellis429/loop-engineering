@@ -82,9 +82,9 @@ Validation 最小對照為 AC ID → 驗證方法／步驟 → 必要環境 → 
 | --- | --- | --- |
 | SA 確認 | Project：project-lead；Feature：feature-to-spec（D66） | Feature：proposal 的確認段；Project：決策紀錄 |
 | 交接包 | feature-to-spec（D66） | ticket 留言；ticket 本文的「交接包」連到它 |
-| 開工確認 | orchestrate（可用前由協調的人照同樣格式寫） | ticket 留言 |
-| 局部 review 結果 | orchestrate | ticket 留言，每個 task 一則 |
-| PR Pass 驗收包 | orchestrate | ticket 留言，連到 PR |
+| 開工確認 | spec-to-plan（D69） | ticket 留言 |
+| 局部 review 結果 | plan-to-code（D69） | ticket 留言，每個 task 一則 |
+| PR Pass 驗收包 | to-pr（D69） | ticket 留言，連到 PR |
 | 接受或退回 | project-lead | ticket 留言 |
 | Retro 候選 | project-lead | ticket 留言 |
 
@@ -192,7 +192,7 @@ Runtime preflight 核對安裝版本、工具權限、正確 repo/workspace/bran
 
 ## Skills 交接契約
 
-依 D55（修訂 D17），Project 層與 Retro 由 `project-lead` skill 承擔，feature 準備依 D66 由 `feature-to-spec` 承擔，單一 feature 的交付由 `orchestrate` skill 承擔；每個角色只需一個入口。控制方向往下：project-lead 選 feature，feature-to-spec 交出交接包，orchestrate 不回頭呼叫它們，也不另起競爭的外層 loop。
+依 D55（修訂 D17），Project 層與 Retro 由 `project-lead` skill 承擔，feature 準備依 D66 由 `feature-to-spec` 承擔，單一 feature 的交付依 D69 由 `spec-to-plan`、`plan-to-code`、`to-pr` 依序承擔，`orchestrate` 可用後把三者串起來；每一步只需一個入口。控制方向往下：project-lead 選 feature，feature-to-spec 交出交接包，內圈 skills 不回頭呼叫它們，也不另起競爭的外層 loop。
 
 | 分支 | Trigger / input | 方法與工具範圍 | 輸出／完成／Blocked |
 | --- | --- | --- | --- |

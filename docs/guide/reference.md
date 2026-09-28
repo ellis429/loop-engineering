@@ -327,11 +327,11 @@ feature loop 無法安全繼續時，改交 **Blocked**：run ID、問題、已�
 
 ### 控制方向與自主程度
 
-Project 層是人和 Agent 一來一回的對話，不需要派工或 gates；Feature 層有多個 Agent 並行，需要 controller 核對證據。所以分成三個 skill，控制只往下走：project-lead 排 roadmap、選 Feature；feature-to-spec 把選中的 Feature 寫成 spec，交接包交給 orchestrate；orchestrate 從不回頭呼叫它們。同一套 skill 有兩種自主程度：
+Project 層是人和 Agent 一來一回的對話，不需要派工或 gates；Feature 層有多個 Agent 並行，需要 controller 核對證據。所以控制只往下走：project-lead 排 roadmap、選 Feature；feature-to-spec 把選中的 Feature 寫成 spec，交接包交給內圈；內圈依序是 spec-to-plan、plan-to-code、to-pr，從不回頭呼叫前面的 skill。orchestrate 可用後把內圈三個 skill 串起來。同一套 skill 有兩種自主程度：
 
 | 模式 | 誰啟動每個 Feature | 適合 |
 | --- | --- | --- |
-| 手動 | 人拿 Project Lead Agent 準備好的交接包，自己啟動 orchestrate | 第一版、個人使用 |
+| 手動 | 人拿交接包，在 feature 的 worktree 依序啟動 spec-to-plan、plan-to-code、to-pr，每個停下後再啟動下一個 | 第一版、個人使用 |
 | 授權 | Project Lead Agent 在 Project Lead 核准的範圍內啟動；各 Feature 的 SA 確認須先完成，或註明併入開工確認。loop 產出 design＋plan 後停下，等人確認開工，Project Lead Agent 不能代批 | goal 模式、多 Feature 的 demo |
 
 

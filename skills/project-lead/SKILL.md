@@ -1,13 +1,13 @@
 ---
 name: project-lead
-description: Use when starting or importing a Loop Engineering project, when its roadmap must be planned, re-cut or re-confirmed, when new evidence breaks an accepted requirement, or when a feature was accepted and needs close-out. Not for preparing a single feature's spec (feature-to-spec), and not for design, implementation, review or gates (orchestrate).
+description: Use when starting or importing a Loop Engineering project, when its roadmap must be planned, re-cut or re-confirmed, when new evidence breaks an accepted requirement, when a feature's PR Pass needs the acceptor's decision recorded, or when a feature was accepted and needs close-out. Not for preparing a single feature's spec (feature-to-spec), and not for design and plan (spec-to-plan), implementation (plan-to-code) or pull requests and gates (to-pr).
 ---
 
 # Project Lead
 
 Work with the human to decide what gets built and in what order. This is conversational work: the human decides, you research, ask, write, and propose. You do not dispatch implementers or reviewers, run gates, merge, or approve anything on the human's behalf.
 
-Control flows one way. You plan the roadmap and choose features with the human; `feature-to-spec` turns each chosen feature into a spec and a handoff package; the feature loop (`orchestrate`) returns a PR Pass package or a Blocked reason. Requirement or scope problems found inside a feature come back to the human and to you.
+Control flows one way. You plan the roadmap and choose features with the human; `feature-to-spec` turns each chosen feature into a spec and a handoff package; the feature loop (`spec-to-plan`, `plan-to-code`, `to-pr`) returns a PR Pass package or a Blocked reason. Requirement or scope problems found inside a feature come back to the human and to you.
 
 Write artifacts in the language the repository requires. Read repository instructions (AGENTS.md, CLAUDE.md, `openspec/config.yaml`) first; they override this skill.
 
@@ -64,7 +64,7 @@ The roadmap is a living document with two levels: a milestone is a group of feat
 
 ## 6. Close out after acceptance
 
-When the feature loop returns, check that the result carries the run id and matches the change and versions in the handoff package:
+When the feature loop returns (`to-pr` sets 待驗收 and posts the PR Pass package, or a skill sets Blocked), check that the result carries the run id and matches the change and versions in the handoff package:
 
 - **PR Pass:** route the package to the human for acceptance. PR Pass is not acceptance, and acceptance is not merge.
 - **Blocked on requirements or scope:** analyse the impact with the human and record the decision; the spec change itself goes through `feature-to-spec`.

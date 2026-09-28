@@ -432,6 +432,17 @@ flowchart LR
 
 Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工：spec、設計、計畫一起確認一次。不同人擔任時分開，Project Lead 先確認 spec，Engineer 才開始設計。
 
+內圈在 feature 的 worktree 依序跑四個指令，每個停下、交給人之後才跑下一個：
+
+| 順序 | 指令 | 停在哪 | ticket 狀態 |
+| --- | --- | --- | --- |
+| 1 | `/spec-to-plan` | ◆確認開工 | 就緒（可設計）→ 開發中 |
+| 2 | `/plan-to-code` | 每個 task 都審過、沒有未解的 blocking | 開發中 |
+| 3 | `/to-pr` | PR Pass，等 ◆驗收 | 開發中 → 待驗收 |
+| 4 | `/project-lead` | 記下驗收結果 | 待驗收 → 已接受，或退回開發中 |
+
+中途卡住的 skill 會把狀態標成 Blocked，寫明原因與下一步找誰。
+
 ### B1 Design：寫實作 plan
 
 **目的**：決定怎麼做、拆成哪些 task。
@@ -561,7 +572,7 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
 | 1 | 驗收人 | 看驗收包和 demo，逐條對照 AC | — | — |
-| 2 | 驗收人 | ◆驗收：<br>• AC 沒達成：退回修正<br>• 需求要改：回 A4 | — | 接受或退回紀錄（ticket 留言） |
+| 2 | 驗收人 | ◆驗收：<br>• AC 沒達成：退回修正<br>• 需求要改：回 A4 | skill [project-lead](../../skills/project-lead/SKILL.md)：開一個 Agent session，貼上：`/project-lead 記錄〈Feature〉的驗收：〈驗收人〉〈接受／退回〉，原話〈…〉。` | 接受或退回紀錄（ticket 留言） |
 | 3 | 人 | merge：<br>• 接受、而且版本仍適用時才 merge<br>• 多個 PR 照依賴順序，提供方先<br>• 每個 PR 單獨 merge 都要安全（向後相容） | GitHub | merge |
 
 **每一步怎麼做、怎樣算完成**
