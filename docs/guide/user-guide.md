@@ -164,9 +164,8 @@ flowchart LR
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
 | 1 | Agent | 提出設計：<br>• 有既有設計：沿用，標出要改的地方<br>• 沒有：提出 2–3 個方案與比較 | skill [project-lead](../../skills/project-lead/SKILL.md) | 高層設計：`docs/design/`（[範例](https://github.com/yschiang/cross-node-root/blob/main/docs/design/system-design.md)） |
-| 2 | Project Lead | 在方案之間做選擇 | — | 決策紀錄 |
-| 3 | Agent | 把重要取捨寫成 ADR | skill [project-lead](../../skills/project-lead/SKILL.md) | ADR：`docs/adr/`（[範例](https://github.com/yschiang/cross-node-root/blob/main/docs/adr/0002-target-pull-over-http.md)） |
-| 4 | Project Lead | 看設計摘要，◆確認設計 | — | 決策紀錄 |
+| 2 | Project Lead ⇄ Agent | 選方案：<br>• Project Lead 在方案之間做選擇<br>• Agent 把選擇與取捨寫成 ADR | skill [project-lead](../../skills/project-lead/SKILL.md) | ADR：`docs/adr/`（[範例](https://github.com/yschiang/cross-node-root/blob/main/docs/adr/0002-target-pull-over-http.md)） |
+| 3 | Project Lead | 看設計摘要，◆確認設計 | — | 決策紀錄 |
 
 **每一步怎麼做、怎樣算完成**
 
@@ -178,15 +177,13 @@ flowchart LR
      - [ ] 對外介面
      - [ ] 技術選擇；還沒決定的，列成要選的方案
 2. **選方案**
-   - 怎麼做：照比較選一個，或要 Agent 補比較。
+   - 怎麼做：
+     - Project Lead 照比較選一個，或要 Agent 補比較
+     - Agent 把每個選擇寫成一份 ADR：背景、選項、決定、後果
    - 完成：
-     - [ ] 選擇與理由記進決策紀錄
-3. **寫 ADR**
-   - 怎麼做：每個重要取捨一份：背景、選項、決定、後果。
-   - 完成：
-     - [ ] 重要取捨都有 ADR
+     - [ ] 每個選擇都有一份 ADR，寫明誰選的
      - [ ] 高層設計連得到每份 ADR
-4. **◆確認設計**
+3. **◆確認設計**
    - 怎麼做：看設計摘要：元件責任、技術、重要取捨。
    - 完成：
      - [ ] 決策紀錄寫下誰、何時、原話和確認的版本

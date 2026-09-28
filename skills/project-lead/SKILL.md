@@ -102,7 +102,7 @@ Record the confirmation with who, when, their words, and the version confirmed (
 
 ## 5a. Project level: high-level design and roadmap
 
-Only after the human confirmed "ready for Design" at project level. First produce or reuse the high-level design: component responsibilities, main data flows, external contracts, technology choices; for an imported project, reference the existing design and ADRs. Record the human's technology choices in the decisions log, and write an ADR for each significant trade-off. Show a design summary and ask the human to confirm the design; record it in the decisions log. Then plan the roadmap and ask the human to confirm it and choose the next feature; record both in the decisions log. Project mode ends there (D63).
+Only after the human confirmed "ready for Design" at project level. First produce or reuse the high-level design: component responsibilities, main data flows, external contracts, technology choices; for an imported project, reference the existing design and ADRs. Record each design choice the human makes among options as one ADR (context, options, decision, consequences, who chose); the decisions log does not repeat it. Show a design summary and ask the human to confirm the design; record it in the decisions log. Then plan the roadmap and ask the human to confirm it and choose the next feature; record both in the decisions log. Project mode ends there (D63).
 
 
 The roadmap is a living document with two levels: milestones are demonstrable outcomes; a feature is one independently acceptable delivery: one change, and one reviewable PR per affected repo (D61). Tasks live in the feature's `tasks.md`, not on the roadmap. Detail costs differ a lot:
