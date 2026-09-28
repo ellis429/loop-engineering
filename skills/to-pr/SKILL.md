@@ -42,7 +42,7 @@ Collect every G2 blocking finding and G3 code failure of one version set into on
 - **Beyond the plan:** a fix that needs a new task, paths no task owns, or a change to what a task promises (behaviour, acceptance mapping, design, or rewriting or dropping a planned test) goes back to `spec-to-plan`: post a ticket comment that the start approval no longer covers the plan (name the finding) and set 下一步 to the Engineer revising it; amend the plan, get a clean plan review and a new start approval, then `plan-to-code`. A regression test for a finding inside the approved scope is part of the fix, not a plan change.
 - **Infrastructure failures** (runner lost, network, quota) are not code rounds: retry each at most twice, recorded separately; an unknown outcome is saved and stops the loop.
 - **Disputed finding:** send the rebuttal and its evidence to the independent reviewer once; only a blocking finding still disputed after that goes to the human.
-- **Limit:** when the limit is used without passing, stop: set the ticket to `Blocked：<reason>`, set 下一步 to the human who decides, post what was tried with evidence, and hand over.
+- **Limit:** when the limit is used without passing, stop: set the ticket to `Blocked：correction limit`, set 下一步 to the human who decides, post what was tried with evidence, and hand over.
 
 ## 5. PR Pass package
 
