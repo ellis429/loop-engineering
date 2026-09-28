@@ -4,6 +4,8 @@
 
 D41／D42 更新：成品包含多人方法論、開源 skills、可由 orchestrate 呼叫的薄 controller 與 cross-node-file-transfer 完整示例；詳見 [Project intent](../project-intent.md)。已有 S1 程式與 PR #2，但因範圍收斂停止修正，尚無 PR Pass／完整 E2E。以下交接語意保留；controller 自動派工、outbox／recovery 平台等舊承諾待逐項修訂，不能依舊表直接續派。
 
+2026-09-28 D54／D55 更新：spec 位置與回流採 OpenSpec；Project 層、feature 準備與 Retro 由 project-lead skill 承擔，orchestrate 只跑單一 feature loop，控制方向由 Project Lead 往下。本文直接相關的列已更新，其餘舊敘述若衝突以 D54、D55 為準。
+
 ## 1. 一個入口、兩層流程
 
 使用者透過所在環境的 agent 入口與目前角色協作（預設 OpenCode，亦可選 Orca 等已驗證入口），orchestrate 維持每個 feature 的唯一外層協調循環，呼叫 controller 核對狀態／派工許可／gates，再透過既有工具執行；controller 不自行啟動第二個 agent loop。Project Lead 負責需求、專案協調及高層設計，Implementer 負責詳細設計與交付，Reviewer 獨立審查與覆核。
@@ -46,7 +48,7 @@ flowchart TD
     HA -->|原 AC 未達成；核對剩餘預算| FIX
 ```
 
-圖只展開主路徑。SA 的確認與 D11 開工確認分開；已有適用成果與確認可沿用，不重做完整 grill。人工驗收的新需求／規格錯誤回 Project Lead 與使用者裁決，原 AC 缺陷才回同一 run 修正；到限仍為 Blocked。相依 feature 目前仍沿 D27；D42 的 stacked PR 目標需待 Q-STACK 確認及版本失效規則修訂後才啟用。Phase 0 的程式變更走相同 feature 流程，不繞 gates。
+圖只展開主路徑。SA 的確認與 D11 開工確認分開（同一人兼任時依 D59 合併）；已有適用成果與確認可沿用，不重做完整 grill。人工驗收的新需求／規格錯誤回 Project Lead 與使用者裁決，原 AC 缺陷才回同一 run 修正；到限仍為 Blocked。相依 feature 目前仍沿 D27；D42 的 stacked PR 目標需待 Q-STACK 確認及版本失效規則修訂後才啟用。Phase 0 的程式變更走相同 feature 流程，不繞 gates。
 
 Review clean 表示未解 blocking finding 為零；CI 綠燈或 agent done 均不能替代三 gates。所有 Pass 與接受帶版本，新 head／base／規格變更會觸發適用性重評；歷史 Red 可早於最終 SHA，但最終 Green／回歸適用整合 head。流程沒有自動 merge、關票、release 或 deploy。
 
@@ -56,7 +58,7 @@ OpenCode 是預設 agent runtime，可依角色選用 OpenAI／Claude models。C
 
 | 層次 | 責任／預設 | 選配與查核邊界 |
 | --- | --- | --- |
-| 使用入口 | OpenCode 中的角色 session＋orchestrate skill，或直接 controller CLI | 有 Orca 時可加上 console／session 整合；ChatGPT 等 UI 只在具備已驗證交接能力時接入，不推定存在派工 API |
+| 使用入口 | OpenCode 中的角色 session＋project-lead 或 orchestrate skill（D55），或直接 controller CLI | 有 Orca 時可加上 console／session 整合；ChatGPT 等 UI 只在具備已驗證交接能力時接入，不推定存在派工 API |
 | Controller | 狀態／交接／版本驗證、gates、findings、budget、允許動作；單次 CLI 呼叫 | 核心依賴抽象 adapter，不讀 Orca 專有 IDs 作必填條件，也不直接用模型回答取代 gate 計算 |
 | Agent runtime | OpenCode adapter 建立、查詢與恢復獨立 sessions，讀取原生 messages／結果 | Orca 派工、Codex CLI、Claude Code 為可選 adapter；未選用的接入缺失或斷線不阻斷 OpenCode 路徑 |
 | Provider／model | 每個角色有明確 provider、requested model、實際 model 證據 | 選 Claude model 不要求 Claude Code；選 OpenAI model 不要求 Codex CLI。精確模型與帳戶能力另查，不默默 fallback |
@@ -82,15 +84,15 @@ OpenCode 的 skills 與 session 接入研究見 [runtime 查核](../research/202
 
 ## 2. Project 共用產出物
 
-完整定義見 [Project baseline](../workflow/contracts.md#project-baseline)。此處列可被 project orchestrate 與各 feature 重用的內容；實體文件可合併或分開，保留原 repo／工具慣例。
+完整定義見 [Project baseline](../workflow/contracts.md#project-baseline)。此處列可被 project-lead 與各 feature 重用的內容；實體文件可合併或分開，保留原 repo／工具慣例。
 
 | 產出物角色 | 回答什麼 | 主要維護者／引用者 |
 | --- | --- | --- |
 | Mission／intent | 為誰解決什麼問題、目標、範圍與業務成功條件 | Project Lead＋使用者；選 feature 與 Replanning 使用 |
 | CONTEXT／domain | 標準用語、概念區別及領域邊界 | Project Lead；所有角色在相關領域工作前引用 |
-| Project spec | 跨 feature 的行為規則、責任與不變條件 | Project Lead；feature spec、design、review 共同引用 |
+| Project spec | 系統目前已實作並被接受的行為，包含已成立的共用限制；只由 archive 寫入（D58） | archive 寫入；feature spec、design、review 共同引用 |
 | Architecture／tech | 元件責任、主要資料流、技術選擇與設計限制 | Project Lead；Implementer 與 Reviewer 引用 |
-| Roadmap／milestones | 成果節點、完成條件、feature 切分與依賴順序 | Project Lead＋使用者；project orchestrate 選擇下一步 |
+| Roadmap／milestones | 成果節點、完成條件、feature 切分與依賴順序 | Project Lead＋使用者；依 D55 由 project-lead 提出下一步、使用者選定 |
 | 工程／驗證基準 | 適用工程規則、setup／build／test 與必要 CI | 引用 repo 規範、scripts／CI，避免維護重複副本 |
 | Research／必要 ADR | 現況證據、取捨理由、假設與待決事項 | 依當前範圍讀取，為需求及設計提供來源 |
 
@@ -117,7 +119,7 @@ Validation 的自動化測試、curl、UI 或人工檢查依 AC 選擇；標準�
 
 | 位置 | 從誰 → 給誰 | 至少交什麼 | 下一步條件 |
 | --- | --- | --- | --- |
-| C1 Project baseline | Project Lead → project orchestrate／所有 feature 角色 | Repo、mission、domain、project spec、design／tech、roadmap 的實際 references、版本、已確認／待決狀態 | 適用來源可讀且無影響當前工作的未解衝突；既有基準可引用 |
+| C1 Project baseline | Project Lead（project-lead skill）→ 所有 feature 角色 | Repo、mission、domain、project spec、design／tech、roadmap 的實際 references、版本、已確認／待決狀態 | 適用來源可讀且無影響當前工作的未解衝突；既有基準可引用 |
 | C2 Feature brief | Project Lead → Implementer | Feature／issue、所屬 milestone、baseline、scope／非目標、穩定 AC、設計邊界、依賴、SA 確認與剩餘待決項 | 足以 detailed design；需求阻擋回人，不自行補定 |
 | C3 開工 package | Implementer → 使用者確認，controller 核對 | Detailed design、唯一 plan／tasks、task→AC、依賴、修改範圍、validation 方法、版本 | D11 的適用確認已保存，才允許 implementation 派工 |
 | C4 Assignment／result／evidence | Controller → worker → controller | run/task/attempt、角色、runtime/model、repo/worktree/branch、版本、scope/tools、依賴、skills、AC、輸出位置；回傳實際版本、執行狀態、證據與待決事項 | IDs、scope、版本與證據可核對；task succeeded 不等於 gate passed |
@@ -136,10 +138,10 @@ Implementer 與 Reviewer 經 controller、以已保存結果交接；通知只�
 
 | 階段 | Skill／工作方法 | 工具與執行者 | 狀態／接合限制 |
 | --- | --- | --- | --- |
-| 共同入口 | orchestrate router，依階段載入工作指引 | 預設 OpenCode＋角色 agent；Orca 等入口選配，唯一 controller 管理派工 | 待開發；不是已可用的 slash command |
-| Research／SA | Project Lead SA 指引；Matt grilling／domain-modeling 方法 | Agent 讀 repo、rg／git、文件及必要官方來源 | 指引已寫；Matt skills 已安裝。每輪 1–3 題依 D34；graphiphy／research-codebase 的實際工具仍待對應，不假稱執行 |
+| 入口 | 依 D55 分兩個 skill：project-lead 承擔 Project 層、feature 準備與 Retro；orchestrate 只跑單一 feature loop | 預設 OpenCode＋角色 agent；Orca 等入口選配，唯一 controller 管理派工 | 待開發；不是已可用的 slash command |
+| Research／SA | [HumanLayer 衍生 research-codebase](../../skills/research-codebase/SKILL.md)；Project Lead SA 指引；Matt grilling／domain-modeling 方法 | Agent 讀 repo、rg／git、文件及必要官方來源 | Research skill 來源已由使用者指定並於 2026-09-28 安裝；先產現況研究，再供 SA 使用，尚未驗證完整接合。Matt skills 已安裝，每輪 1–3 題依 D34；graphiphy 仍待對應 |
 | Domain | Matt domain-modeling | Project Lead 維護 CONTEXT.md，按需 Context Map／ADR | 已安裝；保留原生文件職責 |
-| 互動 grill | Matt grill-with-docs 或明示整合 grilling／domain 方法 | 使用者＋Project Lead | 已安裝；原 grill-with-docs 為 user-only，orchestrate 不在背景偷叫原版 |
+| 互動 grill | Matt grill-with-docs 或明示整合 grilling／domain 方法 | 使用者＋Project Lead | 已安裝；原 grill-with-docs 為 user-only，project-lead 與 orchestrate 都不在背景偷叫原版 |
 | Feature spec | OpenSpec 分步規劃入口；Matt to-spec 為比較候選 | Project Lead＋OpenSpec CLI | 建議同一 change 接續交接。OpenSpec 1.13.1；to-spec 不設為必經、不另造第二份需求權威 |
 | Detailed design／plan | Writing Plans 方法細化 OpenSpec tasks | Implementer＋OpenSpec CLI | 候選；本機 Superpowers 6.3.0。明示改由 controller 接手執行，不能原封不動啟動另一個 Superpowers loop |
 | Implement／fix | Superpowers TDD；systematic-debugging／receiving-code-review 按需 | Implementer runtime＋git／測試 runner | TDD 依 D26 既定；技能已安裝。純文件例外仍需獨立 eligibility 核對，設定不自動豁免 |
@@ -158,4 +160,4 @@ Skills 管工作方法；工具執行讀寫與查詢；controller 核對版本�
 - 1.4.209 的舊 probes 保留其歷史結論；新版本仍需重驗 repo placement、worker 生命周期、Reviewer 隔離、crash／reconcile 與 GitHub 發布。Help 或 model catalog 可用不等於 V4／E2E 通過。
 - 預設 runtime 依 D38 為 OpenCode。D40 舊 design／tasks／validation 曾核准並實作；D41／D42 與 Herdr 新方向仍需 [AC／findings 對照](scope-reconciliation.md)、新版 design／plan、獨立 review 及適用的 D11 確認。不同 runtime／profile 的實證不能互相替代。
 
-工作順序維持 D33：先在 orca-delivery 測通這套 harness，再用 cross-node-file-transfer 匯入既有基準、從初始化驗完整交付。既有 gigaxfer／P03 PR 保留暫緩。
+工作順序依 D56 調整 D33：cross-node-file-transfer 的 Project 層現在開始、匯入既有基準；第一個真正的 feature 等 orchestrate 可用後，從 feature loop 驗完整交付。既有 gigaxfer／P03 PR 保留暫緩。

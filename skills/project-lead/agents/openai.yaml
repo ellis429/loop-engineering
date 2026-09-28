@@ -1,0 +1,4 @@
+interface:
+  display_name: "Project Lead"
+  short_description: "Research, SA, specs, roadmap, and feature handoff with a human"
+  default_prompt: "Use $project-lead to prepare this project or the next feature with me: research what exists, ask me the few questions that matter, write the spec into OpenSpec, and hand the feature to the feature loop when I confirm."

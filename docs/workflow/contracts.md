@@ -2,6 +2,8 @@
 
 > **2026-09-27 範圍更新（D41／D42）**：已確認改為 orchestrate 呼叫薄 controller，完整成品包含多人 Project／Feature 流程及 cross-node-file-transfer 多 feature 示範。見 [Project intent](../project-intent.md)。本文涉及 controller 自動派工、全面恢復及平台責任的舊設計待逐項對照，不能直接據此續派；三 gates、證據／版本及 finding 覆核仍保留。
 
+> **2026-09-28 更新（D54／D55）**：Spec 的位置與回流採 OpenSpec（D54）。Project 層改由 project-lead skill 承擔，orchestrate 只跑單一 feature loop，控制方向由 Project Lead 往下（D55，修訂 D17、D28）。直接相關的段落已更新；其他舊敘述若與此衝突，以本註記與 D54、D55 為準。
+
 日期：2026-09-26。配套 [workflow-design.md](overview.md) 的實作提案；欄位／enum 名稱尚未成為已實作 API。已確認語意以 [decisions.md](../decisions.md) 為準，包含 D24–D28 的 finding、TDD、相依 feature 與 Retro 政策；timeout 等未決實作預設另標示。
 
 ## 文件 binding 與控制權
@@ -30,17 +32,19 @@ Adopt 先唯讀查核：原 owner、workers、未提交內容、原生 SDD / pat
 
 ## Project 與 Feature 產出物
 
-本節將 D04／D19／D32 的文件角色與交接具體化，供 project orchestrate、Project Lead、Implementer 與 Reviewer 共用。內容角色沿用已確認需求；下列路徑只是示例，完整預設 layout／schema 仍待設計收斂。產出物不等於固定檔案數，也不要求 project SA 時完成全部技術設計或未來 features 的詳細規格。
+本節將 D04／D19／D32 的文件角色與交接具體化，供 project-lead、Project Lead、Implementer 與 Reviewer 共用。內容角色沿用已確認需求；下列路徑只是示例，完整預設 layout／schema 仍待設計收斂。產出物不等於固定檔案數，也不要求 project SA 時完成全部技術設計或未來 features 的詳細規格。
 
 ### Project baseline
 
 | 產出物角色 | 內容與範圍 | 準備者／主要讀取時機 | 檔案與整合原則 |
 | --- | --- | --- | --- |
-| Mission／intent | 目標對象、問題、改善方向、範圍與非目標、業務成功條件 | Project Lead 與使用者；project intake、feature 選擇及 Replanning | 沿用如本 repo 的 `docs/project-intent.md`；`mission.md` 是可選名稱 |
+| Repo 清單 | 產品的 root repo 與各服務 repo：名稱、URL、預設 branch、本機路徑、用途 | Project Lead 維護；所有角色開工前先同步 | root 的 `repos.yaml`，由同步指令拉進 `repos/`；單一 repo 的產品省略（D61） |
+| Mission／intent | 目標對象、問題、改善方向、範圍與非目標、業務成功條件；尚未實作的跨 feature 共用限制（列出並指向輸入） | Project Lead 與使用者；project intake、feature 選擇及 Replanning | 沿用如本 repo 的 `docs/project-intent.md`；`mission.md` 是可選名稱 |
 | Domain language／領域分析 | 核心概念、標準用語、語意區別與適用領域；領域規則與情境由適用 Spec 承載 | Project Lead 維護；所有角色在相關領域工作前讀取 | Matt domain-modeling 的 `CONTEXT.md` 保留原名與 glossary 職責；跨 context 才按需建立多份 CONTEXT 與 Context Map。複雜關係可在適用 Spec 引用模型圖，不強制另建 `domain-model.md` |
-| Project spec | 跨 feature 行為契約、系統責任、共用規則、必要非功能要求與驗收方向 | Project Lead 與使用者；feature SA、design 與 review | 可是既有 project spec 或多個能力規格，記實際 binding；mission／tech 不代替它 |
+| 需求輸入 | 人或上游提供、尚未承諾要做的需求；匯入專案時的上游 spec | Project Lead 整理並記錄來源版本；feature SA 從中挑出本次要做的需求 | 保留原檔，或依能力拆分並保存「原章節 → 能力」對照與來源版本；不放進 `openspec/specs/`（D58） |
+| Project spec | 系統目前已實作並被接受的行為，包含已成立的跨 feature 共用限制 | 由 archive 寫入；feature SA、design 與 review 讀取 | 依 D54、D58 為 `openspec/specs/<能力>/spec.md`，一個能力一份；只由人工接受並 merge 後的 archive 寫入，新專案開始時為空。共用限制由第一個讓它成立的 feature 以 ADDED 帶入，之後以 MODIFIED 擴充；mission／tech 不代替它 |
 | Architecture／tech | 主要元件責任、資料流、對外契約、技術棧、工程限制與重要取捨 | Project Lead 高層設計；Implementer detailed design、Reviewer 檢查設計邊界 | `tech.md`、既有 system design 與適用 ADR 可共同承載；不要求全部複製到單檔 |
-| Roadmap／milestones | 可展示的成果節點、完成條件、feature 候選、優先順序與依賴；近期較細、遠期可粗 | Project Lead 與使用者；選 feature、檢查 milestone、驗收後 Replanning | 保留實際 roadmap 路徑；project repo 路徑引用 binding；分開記 Pass／accepted／merged，不以各 PR 綠燈代替跨 feature 成果驗證 |
+| Roadmap／milestones | 可展示的成果節點、完成條件、feature 候選、優先順序與依賴；只有 milestone 與 feature 兩層，細節看穩定度（見 [SA 指引](project-lead-sa.md#roadmap-怎麼規劃)） | Project Lead 與使用者；選 feature、檢查 milestone、驗收後 Replanning | 保留實際 roadmap 路徑；project repo 路徑引用 binding；分開記 Pass／accepted／merged，不以各 PR 綠燈代替跨 feature 成果驗證 |
 | 工程與驗證基準 | 適用工程規則、可重現 setup／build／test、必要 CI checks、相關環境與限制 | Project Lead 查明，Phase 0／Implementer 建立所需能力；規劃、實作與 review 使用 | 引用 AGENTS／CLAUDE、工程文件及實際 scripts／CI；只保存必要入口與理由，不複製易過期的工具設定 |
 | Research／重要決策 | 現況證據、假設與限制、決策理由、尚未解決問題 | Project Lead／相關分析者；按當前決策與改動領域讀取 | Research、Spec 的待決段及必要 ADR 各自保存對應內容；不把研究結論全塞進 CONTEXT，也不要求每個回答建立 ADR |
 
@@ -52,18 +56,43 @@ Domain model 是對領域的理解，可涉及概念、關係、規則與邊界�
 
 | SDD 產出物 | 本流程對應 | 最小內容與負責人 | 檔名／狀態 |
 | --- | --- | --- | --- |
-| requirements | Feature spec／AC | Project Lead 定義行為、scope、依賴、重要例外、限制及可驗收結果；引用 project baseline | 可用 issue 內文或文件；採 OpenSpec 時以 change 的 specs 承載行為，proposal 承載動機／範圍。不再複製 requirements.md |
+| requirements | Feature spec／AC | A4 由 Project Lead 或 Engineer 帶 `feature-to-spec` 定義行為、scope、依賴、重要例外、限制及可驗收結果，Project Lead 確認（D64、D66）；引用 project intent、高層設計與 roadmap 的版本 | 依 D54 以 change 的 specs delta 承載行為與 AC，ticket 只保存摘要與引用；proposal 承載動機、範圍、「不做」與待決；由執行 `feature-to-spec` 的人（Project Lead 或 Engineer）帶 Agent 寫，Project Lead 確認，不放 design。不再複製 requirements.md |
 | 原三檔未獨立列出 | Design | Project Lead 提供必要高層邊界，Implementer 完成 detailed design／介面／失敗恢復／測試策略 | 可共用一份 design 或引用既有適用設計，標明責任與版本 |
-| plan | Implementation plan／tasks | Implementer 校準 task groups、順序／依賴、scope、AC 對應、具體步驟與完成驗法；Project Lead 可提草案 | 保留 OpenSpec tasks 或選定方法的原生路徑，唯一可派工計畫；草案與 checkbox 不代表開工批准 |
+| plan | Implementation plan／tasks | Implementer 校準 task groups、順序／依賴、scope、AC 對應、具體步驟與完成驗法；Project Lead 可提草案 | 保留 OpenSpec tasks 或選定方法的原生路徑，唯一可派工計畫；草案與 checkbox 不代表開工批准。依 D57，每個 task 一個 session 做得完、不開 ticket；commit 以 task 為單位且各自綠燈；每個 task 完成後由獨立 Reviewer 做局部 review，不取代 G2 |
 | validation | AC 驗證對照＋實際 evidence references | SA 定義可觀察通過條件；Implementer 在 design／plan 階段補方法、環境、通過標準、證據位置，執行後填結果；Reviewer 核查有效性 | 可用既有 validation 文件或 plan 中明確區段；不宣稱它是 OpenSpec 原生必有 artifact。實際 gate 結論由 controller state 保存 |
 
 Validation 最小對照為 AC ID → 驗證方法／步驟 → 必要環境 → 通過標準 → 預期證據位置；執行後補結果、實際證據與適用版本。方法可含自動化測試、curl 或 UI／人工檢查，按 AC 選擇；成功標準需可判定，不強制每項數值化。業務改善與功能符合要求分開記錄；人工 UI 檢查不代替適用 TDD／CI，檢查清單勾選也不取代三 gates 的證據。
 
 目前內容與交接契約已涵蓋；D40 的 proposal／specs／design／tasks／validation、S1 程式與歷史驗證證據均已存在。D41／D42 收斂後的正式修訂、Herdr 接合與完整 E2E 尚未完成；[範圍對照](../harness/scope-reconciliation.md) 是修訂輸入。文件存在、歷史測試通過、新設計核准與實際交付驗收是不同狀態。
 
+### 角色交接摘要
+
+| 交接 | 接收者至少要拿到 |
+| --- | --- |
+| Project Lead → feature loop（交接包） | Change ID 與檔案版本、每個受影響 repo 的 base branch 與 commit，以及預定要開的 PR（D61）、SA 確認（同一人兼任時註明併入開工確認，D59）、project baseline 引用、spec／AC、設計邊界、依賴與 base branch、未決問題與下一位 owner、開工與驗收的決策者（驗收人預設是 Project Lead，需求由別人提出時是那個人，D62） |
+| Implementer → 開工確認 | Detailed design、最終 tasks、scope、AC 驗法、必要環境、風險與執行限制 |
+| Orchestrate → 執行角色 | Run／task／attempt、角色、worktree／branch、允許範圍、文件版本、base／head、驗收與結果位置 |
+| Implementer → Reviewer | Spec／design、完整 PR 與 review base／head、實作證據及尚未覆核 findings |
+| Reviewer → 修正循環 | 穩定 finding ID、問題與依據、blocking 與否、預期行為、適用版本；後續修正及覆核證據 |
+| Feature loop → 人／Project Lead | PR Pass 驗收包或 Blocked 原因、AC 結果與限制；每個受影響 repo 的 PR、base／head commit、CI 與 review 連結（D61）；worktree、run ID |
+
+### 手動階段的紀錄位置（D60）
+
+| 紀錄 | 產生的 skill | 位置 |
+| --- | --- | --- |
+| SA 確認 | Project：project-lead；Feature：feature-to-spec（D66） | Feature：proposal 的確認段；Project：決策紀錄 |
+| 交接包 | feature-to-spec（D66） | ticket 留言；ticket 本文的「交接包」連到它 |
+| 開工確認 | orchestrate（可用前由協調的人照同樣格式寫） | ticket 留言 |
+| 局部 review 結果 | orchestrate | ticket 留言，每個 task 一則 |
+| PR Pass 驗收包 | orchestrate | ticket 留言，連到 PR |
+| 接受或退回 | project-lead | ticket 留言 |
+| Retro 候選 | project-lead | ticket 留言 |
+
+每則留言寫明誰、何時、原話或結果、適用版本與連結。ticket 本文的狀態、下一步與驗收勾選，由寫對應紀錄的 skill 一併更新（D67）。寫到 GitHub 需要授權；controller 可用後是否改由它保存另議。薄 controller 第一片已把開工決定與接受紀錄定在 `$LOOPCTL_HOME/features/<id>/feature.json`，PR Pass 驗收包由它產生（[D45-04 design](../design-candidate/d45-04/design.md)）；用它時以狀態檔為準，ticket 留言是摘要。
+
 ### 共用入口與版本交接
 
-Project orchestrate 保存／引用 project artifact index，feature 保存自己採用的 baseline references；沿用本文件既有 binding 欄位，不另建第二份內容權威。路徑可先由 README 導覽與既有交接記錄承載，機器 index 的 JSON／YAML 形式在 implementation design 定案。
+project-lead（依 D55）保存／引用 project artifact index，feature 保存自己採用的 baseline references；沿用本文件既有 binding 欄位，不另建第二份內容權威。路徑可先由 README 導覽與既有交接記錄承載，機器 index 的 JSON／YAML 形式在 implementation design 定案。
 
 每次 project resume、feature 準備／start 或 reviewer handoff，先讀適用指令與 artifact index，再載入 mission、domain、project spec 及與本次相關的設計／工程約束；選下一個 feature 時讀 roadmap，讀研究與 ADR 則依當前範圍。每項採用內容固定實際位置、版本、來源與決策狀態，必讀來源缺失／衝突時顯示原因，不靠聊天記憶補造。
 
@@ -114,7 +143,7 @@ Controller 先派獨立 Reviewer 做 N/A eligibility 檢查，核對真實 diff�
 
 ## Gate 評估與版本失效
 
-版本集合包含 repo、PR head、實際 base ref/tip、review merge-base、project/feature specs、design/plan/policy digests，以及執行的 skill/controller 版本。差異按來源語意評估，不只對 branch 名稱或檔名。
+版本集合包含 repo、PR head、實際 base ref/tip、review merge-base（多 repo 的 Feature 依 D61 逐 repo 各記一組：G1、G3 逐 repo 判定，G2 對整組 PR 判定，PR Pass 以 Feature 為單位；任一 PR 版本改變，整組的 G2 與 PR Pass 都要重評）、project/feature specs、design/plan/policy digests，以及執行的 skill/controller 版本。差異按來源語意評估，不只對 branch 名稱或檔名。
 
 | 變更 | 必要動作 |
 | --- | --- |
@@ -163,20 +192,20 @@ Runtime preflight 核對安裝版本、工具權限、正確 repo/workspace/bran
 
 ## Skills 交接契約
 
-依 D17，只有一個 `orchestrate` 使用入口；以下按分支載入 reference 的結構是建議，不各自擁有外層 loop。
+依 D55（修訂 D17），Project 層與 Retro 由 `project-lead` skill 承擔，feature 準備依 D66 由 `feature-to-spec` 承擔，單一 feature 的交付由 `orchestrate` skill 承擔；每個角色只需一個入口。控制方向往下：project-lead 選 feature，feature-to-spec 交出交接包，orchestrate 不回頭呼叫它們，也不另起競爭的外層 loop。
 
 | 分支 | Trigger / input | 方法與工具範圍 | 輸出／完成／Blocked |
 | --- | --- | --- | --- |
-| Project／Project Lead | Start project；mission、repo、既有成果 | Research → SA／domain／grill／high-level design 可迭代；候選 graphiphy、research-codebase、domain-modeling、grilling，實際版本與能力待核對 | 有來源的分析、baseline、roadmap／milestones 與 feature 候選；重要歧義明列，不擅自選 scope |
-| Feature preparation／Project Lead | 選定 feature；baseline、roadmap、相關 code/docs/issues | 聚焦 research／SA／grill 與必要高層設計，再用選定 authoring 方法整理規格；依授權更新文件／ticket | 唯一 spec／AC、設計邊界、依賴、研究來源及決策；重要未知不得藏入假設 |
+| Project／`project-lead` | Start project；mission、repo、既有成果 | Research → SA／domain／grill／high-level design 可迭代；research-codebase、grill-with-docs、grilling、domain-modeling 按實際可用版本使用 | 有來源的分析、baseline、roadmap／milestones 與 feature 候選；重要歧義明列，不擅自選 scope |
+| Feature preparation／`feature-to-spec`（D66） | 選定 feature；project intent、高層設計、roadmap、相關 code/docs/issues | 在 root 的 `feature/<id>` branch（D67）聚焦 research／SA／grill 與必要高層設計，依 D54 寫 OpenSpec proposal 與 spec delta，`openspec validate` 檢查格式；依授權開 root repo 的 ticket 並維持薄格式 | 唯一 spec／AC、設計邊界、依賴、研究來源及決策；交接包；重要未知不得藏入假設 |
 | Design / plan／Implementer | Feature spec／AC、高層設計、baseline、repo、deps、可選 tasks 草案 | 研究實作與測試接縫，完成 detailed design；Writing Plans／OpenSpec tasks 的整合為 Q-METHOD 候選 | 校準後唯一 plan、task IDs／DAG、scope、task→AC、介面、Red/Green 步驟、驗法與文件更新；交一次 design+plan 確認 |
 | Implement / fix | 已授權 assignment；task或finding batch | Superpowers TDD、review-response / debugging；只寫指定隔離 scope | Code/commit、實際 evidence、結構化 result、逐 finding 的 fix_submitted／disputed 回應；缺依賴或 scope 不符回 Blocked |
 | N/A eligibility | G1 前的純文件／註解 N/A 申請；理由、diff、適用檢查 | Controller 派獨立 Reviewer 核對實際行為影響；唯讀審查與隔離驗證 | 版本化接受／拒絕與證據；資訊不足回 Blocked，不產生 G2 clean |
 | Review | G1 通過、版本固定；spec/design/AC、完整 diff、舊 findings、經 controller 匯入的 disputed 依據（依 D25 一次覆核） | 由 controller 派出獨立 Codex session，按需讀 repo 規範與 context；隔離驗證 | Verdict/findings/verification refs；不寫作者分支、不自行更新 gate |
 | Adopt / resume | Existing feature 或 run ID | 讀外部實況、ownership、state/results；確定性核對由 helper | 保存真正缺口與唯一 next action；未知 writer 不重派 |
-| Retro | 人工接受後自動觸發，或使用者明確指定 feature；證據與回饋 | Orchestrate reference 明示整合 Matt 方法、必要 research；只產出候選 | 有依據時選 1–3 項 evidence→改善→owner→驗法；資料不足列限制，無改善不造待辦 |
+| 收尾與 Retro／`project-lead` | Retro：人工接受後，或使用者明確指定 feature；archive：人工接受且 merge 已核實後；證據與回饋 | 接受後明示整合 Matt 方法與必要 research，只產出 Retro 候選；merge 核實後以 OpenSpec archive 併回 project spec | 有依據時選 1–3 項 evidence→改善→owner→驗法；資料不足列限制，無改善不造待辦 |
 
-Matt to-spec、to-tickets、retro 的 user-only 呼叫限制必須保留。D28 授權 orchestrate 在人工接受後自動產出 Retro 候選，採明示整合方法的 reference，註明來源、版本與相對原版的觸發／交接差異；不在背景呼叫原版 user-only skill，也不暗中移除其限制。候選不自動成為規範或實作授權。
+Matt to-spec、to-tickets、retro 的 user-only 呼叫限制必須保留。D28（依 D55 修訂）由 project-lead 在人工接受後產出 Retro 候選，採明示整合方法的 reference，註明來源、版本與相對原版的觸發／交接差異；不在背景呼叫原版 user-only skill，也不暗中移除其限制。候選不自動成為規範或實作授權。
 
 D31 的方法組合已重新開放評估（Q-METHOD）。若採 Writing Plans 方法銜接 OpenSpec tasks，需明示任務格式、scope、依賴、介面、測試與自檢的映射，保留唯一 plan 權威；其預設檔案路徑可調整，不代表 execution handoff 已自動相容。原版要求的 subagent-driven-development／executing-plans 交棒若改由 controller 承接，必須記錄差異，不能聲稱原封不動執行原 skill。局部 task reviews 不擁有全 feature Pass 權；Matt 方法也不得以技能名稱隱式切換 TDD 或派工權。選型完成後固定套件與引用內容版本，後續更新用新版本啟動 run。
 

@@ -8,7 +8,7 @@
 
 已確認的三項交付：
 
-1. **方法與入口**：Project／Feature 兩層流程、角色及人工決策邊界；member 從 orchestrate 得知目前階段、適用方法、交接物與下一步。沿用開源 skills 的原生 artifacts 與限制，引用唯一權威版本，不要求每人自行重新挑選整套工具。
+1. **方法與入口**：Project／Feature 兩層流程、角色及人工決策邊界；member 從 project-lead（Project 層）與 orchestrate（單一 feature 的 loop）得知目前階段、適用方法、交接物與下一步（D55）。沿用開源 skills 的原生 artifacts 與限制，引用唯一權威版本，不要求每人自行重新挑選整套工具。
 2. **薄 controller**：orchestrate skill 所在 agent 可呼叫的確定性程式；保存 JSON／YAML 狀態、驗證交接／證據適用性、計算三 gates、記錄 findings 與允許的下一步。Orchestrate 是每個 feature 的唯一外層協調循環；controller 是狀態及品質規則的唯一寫入／判定入口，不另起持續運作的 agent supervisor。
 3. **可查閱的 example project**：依 D43，先在本 repo 測通最小真實 delivery loop，再以 Herdr、orchestrate skill 與薄 controller 執行 cross-node-file-transfer；依 D44，本機 OpenAI 使用 OpenCode，Claude 由 Herdr 直接啟動 Claude Code。沿用適用的既有基準，從 Project baseline、roadmap／milestones、Phase 0 到多個 features，留下新的 worktrees／branches、spec／design／plan、issues／PRs、review-fix-re-review、CI、人工決策及 Retro 歷程。人可在需要判斷的位置加入，從保存的文件及狀態接手；舊程式的驗證不能算成新 example 的交付證據。
 
@@ -53,13 +53,13 @@ Controller 每次呼叫讀取／核對輸入，完成一次狀態更新或判定
 
 ## Outcome
 
-使用者透過預設 OpenCode 或選配的 Orca 等入口，選擇含有或引用 feature spec 的 GitHub issue。系統協助研究與設計、產生可派工 plan、執行 TDD、整合 PR、獨立審查並查核 CI，再以 review/fix loop 推進到 PR Pass，或帶證據轉交人裁決。
+使用者透過預設 OpenCode 或選配的 Orca 等入口，選擇一張 feature 的 GitHub issue；issue 只保存摘要，並連到承載 feature spec 的 OpenSpec change（D54）。系統協助研究與設計、產生可派工 plan、執行 TDD、整合 PR、獨立審查並查核 CI，再以 review/fix loop 推進到 PR Pass，或帶證據轉交人裁決。
 
-Project spec 定義共用契約，feature spec 定義該交付的範圍與驗收。Feature ticket 可直接承擔 feature spec；每個可獨立驗收 feature 對應一個 PR，tasks 為派工單位。
+Project spec 是 archive 後的現況，只記已實作並被接受的行為（D58）；feature spec 由 OpenSpec change 承載，定義該交付的範圍與驗收，ticket 只保存摘要與連結（D54、D57）。每個可獨立驗收 feature 在每個受影響的 repo 各對應一個 PR（D61），tasks 為派工單位。
 
 依 D20／D32，Project Lead Agent 與使用者先做 research、SA、domain modeling、grill 與 high-level design，形成 project baseline、roadmap／milestones 並拆 features；每個 feature 再經聚焦分析，準備 spec／AC、設計邊界與 ticket。Implementer Agent 繼續研究，負責 detailed design、最終 plan／tasks、TDD 實作、整合與修正；Project Lead 可提工作包或任務草案，由 Implementer 校準。Reviewer Agent 獨立審查與覆核；依 D41，orchestrate 透過既有 runtime 執行派工，唯一 controller 管理派工許可、狀態與 gates；重要變更沿 D11 回人，不新增逐 task 簽核。
 
-依 D33，先在本 repo 測通 workflow、orchestrate 與預設工具組合，讓 member 可依同一入口及可追溯交接工作。後續用 cross-node-file-transfer 從既有需求／設計基準初始化，再跑完整 feature loop；文件保留來源與未決狀態，不重做已確認需求的完整 grill，新實作保存新證據。具體工具組合仍依 Q-METHOD 收斂。
+依 D56（調整 D33），cross-node-file-transfer 的 Project 層現在開始，從既有需求／設計基準初始化；第一個真正的 feature 等本 repo 的 orchestrate 可用後，再跑完整 feature loop，讓 member 可依同一入口及可追溯交接工作；文件保留來源與未決狀態，不重做已確認需求的完整 grill，新實作保存新證據。具體工具組合仍依 Q-METHOD 收斂。
 
 ## Confirmed constraints
 
@@ -73,7 +73,7 @@ Project spec 定義共用契約，feature spec 定義該交付的範圍與驗收
 8. 正常情況收齊同版本 review / CI 後合併成一個修正批次；stuck work 有 timeout 與有界 recovery。
 9. 狀態持久化，重啟後核對外部實況再接續；runtime／接入服務不可查詢時不能推論 worker 已停止並派出競爭實作者。
 10. 並行修改使用隔離 worktrees，依賴工作依序整合；review 與 CI 針對最終整合 PR。Reviewer 不修改被審查 branch。
-11. Skills 不擁有 feature gate；D41 的 orchestrate 是唯一外層協調入口，其他工作 skills 不另啟 dispatch loop。沿用現有方法並以薄封裝統一契約，保留已安裝版本的呼叫限制。
+11. Skills 不擁有 feature gate；D41 的 orchestrate 是每個 feature 唯一的外層協調 loop；依 D55，Project 層改由 project-lead 承擔，它和其他工作 skills 都不另啟 dispatch loop。沿用現有方法並以薄封裝統一契約，保留已安裝版本的呼叫限制。
 12. MVP 使用既有 agent 入口及 GitHub，不建立新 dashboard；OpenCode 是預設 runtime，Orca／Codex／Claude Code 為選配；交付終點 PR Pass，不包含 merge、close issue、release 或 deploy。
 13. 每個 feature 在 design+plan 完成後開工前由使用者確認一次；後續 scope/spec/AC 變更、設計缺陷或阻擋爭議回到使用者。
 14. 違反 spec/AC、可證明的正確性/安全缺陷、必要驗證缺失屬 blocking；風格偏好不阻擋。實作依序，review 與 CI 並行；每個 run 主動執行最多 4 小時、最多 3 輪 correction、每項 infra 操作最多額外重試 2 次，到限轉 Blocked。
