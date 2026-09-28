@@ -7,7 +7,8 @@
 #   ./setup.sh --update   re-fetch skills/third-party at the commits in skills/third-party/SOURCES.md
 #   ./setup.sh --project <repo>
 #                         copy the workflow's skills into <repo>/.claude/skills and <repo>/.agents/skills,
-#                         so sessions started in that repository have them without any install
+#                         so sessions started in that repository have them without any install; also places
+#                         templates/AGENTS.md and CLAUDE.md there when the repository has none
 #
 # Existing real folders are never touched. Superpowers skills are not linked into ~/.claude/skills
 # when the Superpowers Claude Code plugin is enabled, to avoid duplicates.
@@ -135,6 +136,7 @@ STAGE=""
 BACKUP=""
 TARGET=""
 MANIFEST_TMP=""
+TEMPLATE_TMP=""
 cleanup_project() {
   if [ -n "$BACKUP" ] && [ -e "$BACKUP/${TARGET##*/}" ] && [ ! -e "$TARGET" ]; then
     if ! mv "$BACKUP/${TARGET##*/}" "$TARGET"; then
@@ -145,6 +147,7 @@ cleanup_project() {
   [ -z "$STAGE" ] || rm -rf "$STAGE"
   [ -z "$BACKUP" ] || rm -rf "$BACKUP"
   [ -z "$MANIFEST_TMP" ] || rm -f "$MANIFEST_TMP"
+  [ -z "$TEMPLATE_TMP" ] || rm -f "$TEMPLATE_TMP"
   STAGE=""; BACKUP=""; TARGET=""; MANIFEST_TMP=""
 }
 
@@ -239,6 +242,25 @@ install_project() {
       echo "copied   $dest/$name"
     done
   done
+  # Agent instructions: placed only where the repo has none; an existing file (or symlink) is the repo's own.
+  # The complete copy is hard-linked into place, which fails rather than replace or follow any existing name.
+  for name in AGENTS.md CLAUDE.md; do
+    if [ -e "$repo/$name" ] || [ -L "$repo/$name" ]; then
+      echo "SKIP     $repo/$name (exists; kept as is)"; continue
+    fi
+    TEMPLATE_TMP="$(mktemp "$repo/.setup-template.XXXXXX")"
+    cp "$ROOT/templates/$name" "$TEMPLATE_TMP"
+    chmod 644 "$TEMPLATE_TMP"
+    # A directory appearing at the name since the check would receive the link inside it: undo that.
+    if ln -n "$TEMPLATE_TMP" "$repo/$name" 2>/dev/null && [ ! -L "$repo/$name" ] && [ "$repo/$name" -ef "$TEMPLATE_TMP" ]; then
+      echo "copied   $repo/$name"
+    else
+      if [ "$repo/$name/${TEMPLATE_TMP##*/}" -ef "$TEMPLATE_TMP" ]; then rm -f "$repo/$name/${TEMPLATE_TMP##*/}"; fi
+      echo "SKIP     $repo/$name (exists; kept as is)"
+    fi
+    rm -f "$TEMPLATE_TMP"; TEMPLATE_TMP=""
+  done
+  [ ! -f "$repo/AGENTS.md" ] || ! grep -q '〈待填' "$repo/AGENTS.md" || echo "NOTE     fill in the 〈待填〉 parts of $repo/AGENTS.md"
 }
 
 while [ $# -gt 0 ]; do

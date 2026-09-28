@@ -22,7 +22,7 @@
 ./setup.sh --project <root repo 的路徑>
 ```
 
-把流程用到的 skills 複製進那個 repo 的 `.claude/skills/` 與 `.agents/skills/`，再由該 repo commit。Claude Code、Codex、OpenCode 從 root 開 session 都讀得到。Claude Code 遇到同名時以 `~/.claude/skills` 的為準。要更新時，在這裡改好再重跑；在產品 repo 裡改過的 skill 資料夾不會被覆蓋，重跑時列為 SKIP，確定要換回這裡的版本再加 `--force`。
+把流程用到的 skills 複製進那個 repo 的 `.claude/skills/` 與 `.agents/skills/`，再由該 repo commit。Claude Code、Codex、OpenCode 從 root 開 session 都讀得到。Claude Code 遇到同名時以 `~/.claude/skills` 的為準。要更新時，在這裡改好再重跑；在產品 repo 裡改過的 skill 資料夾不會被覆蓋，重跑時列為 SKIP，確定要換回這裡的版本再加 `--force`。產品 repo 還沒有 `AGENTS.md`、`CLAUDE.md` 時，也會放入 [範本](templates/AGENTS.md)（agent 的共同規則：不做 temp fix、commit 訊息格式；`CLAUDE.md` 只有一行 `@AGENTS.md`，讓 Claude Code 讀同一份）；已經有的不動。範本裡標〈待填〉的 scope 表由 Project Lead 補上。
 
 ## 文件
 
