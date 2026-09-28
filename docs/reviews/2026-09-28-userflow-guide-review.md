@@ -1,6 +1,6 @@
 # Review：使用指南角色、兩層流程與交接圖
 
-任務 ID：`userflow-guide-review-20260928-01`。依 [交接指示](../handoffs/2026-09-28-userflow-guide-review.md) review 並改善 [使用指南](../workflow/user-guide.md)。日期 2026-09-28。
+任務 ID：`userflow-guide-review-20260928-01`。依 [交接指示](../handoffs/2026-09-28-userflow-guide-review.md) review 並改善 [使用指南](../guide/user-guide.md)。日期 2026-09-28。
 
 這是文件呈現的 review，不是 controller、example 或任何產品 gate 的驗收。
 
@@ -29,9 +29,9 @@
 
 | 檔案 | 內容 |
 | --- | --- |
-| [docs/workflow/user-guide.md](../workflow/user-guide.md) | 依 F1–F9 修改；新增「一張圖看全貌」；七張 Mermaid 圖共用人／Agent／關卡／機制配色 |
-| [docs/workflow/user-guide-visual.html](../workflow/user-guide-visual.html) | 新增圖解頁：全貌泳道圖、stacked PR 現行與目標對照。是兩張 SVG 的來源 |
-| [docs/workflow/user-guide-roles.svg](../workflow/user-guide-roles.svg)、[user-guide-stack.svg](../workflow/user-guide-stack.svg) | 依 skill 的 export 程序從圖解頁匯出，供指南內嵌 |
+| `docs/workflow/user-guide.md`（當時的位置；現在是 [docs/guide/user-guide.md](../guide/user-guide.md)） | 依 F1–F9 修改；新增「一張圖看全貌」；七張 Mermaid 圖共用人／Agent／關卡／機制配色 |
+| `docs/workflow/user-guide-visual.html`（當時的位置；現在是 [docs/guide/visual.html](../guide/visual.html)） | 新增圖解頁：全貌泳道圖、stacked PR 現行與目標對照。是兩張 SVG 的來源 |
+| `docs/workflow/user-guide-roles.svg`、`user-guide-stack.svg`（當時的位置；泳道圖後來因模型過時移除，stacked PR 圖現在是 [docs/guide/stack.svg](../guide/stack.svg)） | 依 skill 的 export 程序從圖解頁匯出，供指南內嵌 |
 | [README.md](../../README.md) | 只補圖解頁的入口連結 |
 | [docs/README.md](../README.md) | 補圖解頁入口連結；依使用者要求更新「目前進度」（F10） |
 
@@ -76,9 +76,9 @@ D53 核准的第一片只管單一 feature，adopt 與 delegate 已回 `unsuppor
 
 | 檔案 | 內容 |
 | --- | --- |
-| [user-guide.md](../workflow/user-guide.md) | 改為總覽：角色、控制方向、兩層介面、文件位置、工具、演練路線與進度 |
-| [user-guide-project-lead.md](../workflow/user-guide-project-lead.md) | 新增：進入 SA、完成 project level、spec 放哪與確認摘要、交出 feature、收尾、goal 與 stacked |
-| [user-guide-feature-builder.md](../workflow/user-guide-feature-builder.md) | 新增：收到交接包後的詳細設計、TDD、PR、review-fix loop、PR Pass 與交回的結果 |
+| [user-guide.md](../guide/user-guide.md) | 改為總覽：角色、控制方向、兩層介面、文件位置、工具、演練路線與進度 |
+| `user-guide-project-lead.md`（後來併入 `docs/guide/` 的 `user-guide.md` 與 `reference.md`） | 新增：進入 SA、完成 project level、spec 放哪與確認摘要、交出 feature、收尾、goal 與 stacked |
+| `user-guide-feature-builder.md`（後來併入 `docs/guide/` 的 `user-guide.md` 與 `reference.md`） | 新增：收到交接包後的詳細設計、TDD、PR、review-fix loop、PR Pass 與交回的結果 |
 | [skills/project-lead/](../../skills/project-lead/SKILL.md) | 新增 skill 草稿，尚未演練 |
 | [project-lead-sa.md](../workflow/project-lead-sa.md)、[contracts.md](../workflow/contracts.md)、[overview.md](../workflow/overview.md) | 依 D54、D55 更新；交接表移到契約的「角色交接摘要」 |
 | [openspec/config.yaml](../../openspec/config.yaml) | 加入 proposal、specs、design 的 per-artifact rules |
@@ -125,3 +125,17 @@ D53 核准的第一片只管單一 feature，adopt 與 delegate 已回 `unsuppor
 - **第 4 輪** `changes_requested`：R-01（blocking）skill 把 roadmap 步驟排在 SA 人工確認之前，與 SA 指引的順序相反；R-02（nonblocking，main 上既有）`docs/README.md` 連到不存在的 `src/delivery/`、`tests/`。審查者上線核對了參考文件的五個出處，沒有誇大。
 - **修正**：roadmap 步驟移到第 5 步之後，成為「5a. Project level: high-level design and roadmap」，並明寫先完成或沿用高層設計；README 那列改為純文字並說明舊程式所在的分支。
 - **第 5 輪** `clean`：兩項都 fixed，沒有新矛盾。
+
+### 第 6–21 輪：D57–D61 與使用手冊重整（Sol xhigh）
+
+第 5 輪之後，Lead 在 thread 2 陸續定下 D57（工作三層、Feature 是自成一體能單獨驗收的交付、小工作不開 change、每個 task 局部 review）、D58（需求依狀態放置，`openspec/specs/` 只放已實作）、D59（角色是工作不是職位，兼任時 SA 確認併入開工確認）、D60（手動階段的交付紀錄放 ticket 留言，由對應 skill 產生）、D61（多 repo 用 root repo 加 `repos.yaml`，Feature 可跨 repo、每個受影響 repo 一個 PR）。使用指南也依 Lead 的要求重排：先給分層圖與標出六個確認點的流程大地圖，再用 11 張正式活動卡（目的、輸入、步驟、產出、完成條件）說明每個活動；細節移到 `user-guide-reference.md`，兩份角色指南併入後刪除。
+
+審查者改用 GPT-6 Sol xhigh（Lead 指定），`codex exec` 唯讀、每輪新 session。每輪的 finding 都逐條核對後修正，再交同一模型覆核。主要類型：
+
+- **與決策不一致**：舊文件仍寫 D33 的啟動順序、兩層共用 `orchestrate`、ticket 可直接承擔 feature spec、Project 層把需求寫進 `openspec/specs/`、「一個 Feature 一個 PR」。審查每找到一處就改成 D55–D61 的說法，並搜尋同類字句一起改；後面幾輪仍陸續找到漏網的地方，見各輪結果。
+- **卡片與 skill、契約對不上**：A1 漏了匯入時先提「原章節 → 能力」對照並請人確認；A3 漏了切法沒有依據時先只列交付能力；B6 漏了在整合後的 head 先過 G1；B7 把退回也寫成要 merge；貼 ticket 留言沒有檢查授權。全部補上。
+- **用詞**：給人看的文字不再用 change 或「變更」指 Feature；範例改成示意、不當成紀錄；原本合併的確認點拆成六個並寫明誰確認。
+
+各輪結果（原始輸出留在協作者的 scratchpad，未入版控）：第 6 輪 7 條 blocking、1 條 nonblocking；第 7 輪 4 條新 blocking；第 8 輪 1 條；第 9 輪 2 條 blocking、3 條 nonblocking；第 10 輪 1 條 blocking、2 條 nonblocking；第 11 輪 1 條；第 12 輪（重排後）5 條；第 13 輪 7 條 blocking、7 條 nonblocking；第 14 輪 5 條 blocking、2 條 nonblocking；第 15 輪 4 條 blocking；第 16 輪 2 條 blocking（`overview.md` 的「單一 PR」與入口表仍指向 `orchestrate`）；第 17 輪 2 條 blocking（`overview.md` §2 的「共同 `orchestrate` 入口」、`project-intent.md` 的 issue「含有」spec）與 2 條 nonblocking（本段措辭）；第 18 輪請審查者一次列完所有殘留，共 33 條：2 條在手冊與 skill，當輪修掉；31 條在較舊的設計文件，大多在 PR #4 之前就已在 main，移到決策重整 thread 的內容 PR 處理。
+
+第 18 輪之後，Lead 定下文件分類：使用手冊只說怎麼做，設計文件是規則的唯一權威，skills 與 `openspec/config.yaml` 是給 Agent 的指令。手冊因此搬到 `docs/guide/`，內文拿掉決策代號（改在頁尾「想知道為什麼」列出依據），交接包與 PR Pass 驗收包的欄位定義只留在 `contracts.md`，過時的泳道圖移除。第 19 輪 5 條 blocking、2 條 nonblocking；第 20 輪 1 條 blocking；最後一輪的結論記在 PR #4。這是文件覆核，不是產品 gate。
