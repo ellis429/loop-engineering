@@ -436,10 +436,10 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
 
 | 順序 | 指令 | 停在哪 | ticket 狀態 |
 | --- | --- | --- | --- |
-| 1 | `/spec-to-plan` | ◆確認開工 | 就緒（可設計）→ 開發中 |
-| 2 | `/plan-to-code` | 每個 task 都審過、沒有未解的 blocking，接著直接跑 to-pr | 開發中 |
-| 3 | `/to-pr` | PR Pass，等 ◆驗收 | 開發中 → 待驗收 |
-| 4 | `/project-lead` | 記下驗收結果 | 待驗收 → 已接受，或退回開發中 |
+| 1 | [`/spec-to-plan`](../../skills/spec-to-plan/SKILL.md) | ◆確認開工 | 就緒（可設計）→ 開發中 |
+| 2 | [`/plan-to-code`](../../skills/plan-to-code/SKILL.md) | 每個 task 都審過、沒有未解的 blocking，接著直接跑 to-pr | 開發中 |
+| 3 | [`/to-pr`](../../skills/to-pr/SKILL.md) | PR Pass，等 ◆驗收 | 開發中 → 待驗收 |
+| 4 | [`/project-lead`](../../skills/project-lead/SKILL.md) | 記下驗收結果 | 待驗收 → 已接受，或退回開發中 |
 
 中途卡住的 skill 會把狀態標成 Blocked，寫明原因與下一步找誰。
 
