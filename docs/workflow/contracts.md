@@ -56,7 +56,7 @@ Domain model 是對領域的理解，可涉及概念、關係、規則與邊界�
 
 | SDD 產出物 | 本流程對應 | 最小內容與負責人 | 檔名／狀態 |
 | --- | --- | --- | --- |
-| requirements | Feature spec／AC | A4 由 Project Lead 或 Engineer 帶 `feature-to-spec` 定義行為、scope、依賴、重要例外、限制及可驗收結果，Project Lead 確認（D64、D66）；引用 project intent、高層設計與 roadmap 的版本 | 依 D54 以 change 的 specs delta 承載行為與 AC，ticket 只保存摘要與引用；proposal 承載動機、範圍、「不做」與待決；非範圍與待決由 Project Lead 寫，不放 design。不再複製 requirements.md |
+| requirements | Feature spec／AC | A4 由 Project Lead 或 Engineer 帶 `feature-to-spec` 定義行為、scope、依賴、重要例外、限制及可驗收結果，Project Lead 確認（D64、D66）；引用 project intent、高層設計與 roadmap 的版本 | 依 D54 以 change 的 specs delta 承載行為與 AC，ticket 只保存摘要與引用；proposal 承載動機、範圍、「不做」與待決；由執行 `feature-to-spec` 的人（Project Lead 或 Engineer）帶 Agent 寫，Project Lead 確認，不放 design。不再複製 requirements.md |
 | 原三檔未獨立列出 | Design | Project Lead 提供必要高層邊界，Implementer 完成 detailed design／介面／失敗恢復／測試策略 | 可共用一份 design 或引用既有適用設計，標明責任與版本 |
 | plan | Implementation plan／tasks | Implementer 校準 task groups、順序／依賴、scope、AC 對應、具體步驟與完成驗法；Project Lead 可提草案 | 保留 OpenSpec tasks 或選定方法的原生路徑，唯一可派工計畫；草案與 checkbox 不代表開工批准。依 D57，每個 task 一個 session 做得完、不開 ticket；commit 以 task 為單位且各自綠燈；每個 task 完成後由獨立 Reviewer 做局部 review，不取代 G2 |
 | validation | AC 驗證對照＋實際 evidence references | SA 定義可觀察通過條件；Implementer 在 design／plan 階段補方法、環境、通過標準、證據位置，執行後填結果；Reviewer 核查有效性 | 可用既有 validation 文件或 plan 中明確區段；不宣稱它是 OpenSpec 原生必有 artifact。實際 gate 結論由 controller state 保存 |
