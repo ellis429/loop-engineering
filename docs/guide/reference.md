@@ -590,6 +590,7 @@ loop-engineering 自己開發 controller 時，預設 Opus 5.5 實作、GPT 審�
 | Feature spec 屬於外圈；內圈是 Implement → Validate | D64 |
 | 準備 Feature 的 skill 獨立成 feature-to-spec | D66 |
 | 內圈的三個 skill 與依複雜度決定 effort | D69 |
+| 修正額度：三輪與到限後的追加 | D13、D70 |
 | 每個 Feature 一條 feature branch；薄 ticket 的格式 | D67 |
 | 計畫列出測試與預期的 Red；共用測試骨架先做；Superpowers 的方法寫進 OpenSpec 的檔案 | D68 |
 | 有依賴的 Feature 等上游接受並 merge | D27 |

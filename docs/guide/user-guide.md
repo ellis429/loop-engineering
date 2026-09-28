@@ -528,7 +528,7 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
 | 1 | Agent | G1：在全新 clone、要送出的版本跑完整測試，通過才送審 | • skill [to-pr](../../skills/to-pr/SKILL.md)：`/to-pr 送出〈Feature〉`<br>• skill [verification-before-completion](../../skills/third-party/superpowers/verification-before-completion/SKILL.md)（Superpowers） | 測試結果 |
 | 2 | Implementer | 每個受影響的 repo 開一個 PR，連到同一張 ticket；root 的 PR 就是 `feature/<id>` | GitHub | PR |
 | 3 | Reviewer＋CI | • G2：Reviewer 審整組 PR<br>• G3：CI 跑必要 checks | • 獨立 Reviewer<br>• GitHub Actions | review 與 CI 結果 |
-| 3 | Implementer | 修正，最多 3 輪，超過就標 Blocked 交給人；每次 push 都重新評估 | skill [plan-to-code](../../skills/plan-to-code/SKILL.md) 做修正，skill [to-pr](../../skills/to-pr/SKILL.md) 重跑 gates | 新的 commits |
+| 3 | Implementer | 修正，最多 3 輪，超過就標 Blocked 交給人，人可以追加輪數（D70）；每次 push 都重新評估 | skill [plan-to-code](../../skills/plan-to-code/SKILL.md) 做修正，skill [to-pr](../../skills/to-pr/SKILL.md) 重跑 gates | 新的 commits |
 | 4 | Agent | 三個 gates 都在目前版本通過後，整理驗收包 | • skill [to-pr](../../skills/to-pr/SKILL.md)：欄位列在 skill 裡<br>• 核對每個 gate 的證據都對應目前版本<br>• controller 可用後由它核對 | PR Pass 驗收包（ticket 留言） |
 
 **每一步怎麼做、怎樣算完成**

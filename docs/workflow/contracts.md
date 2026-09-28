@@ -166,9 +166,9 @@ Final Pass 前重新讀 head/base 與適用 artifacts。觀察不一致時放棄
 
 依 D25，`disputed` 反證由 controller 送獨立 Reviewer 覆核一次；沿用 finding ID、原 correction batch 與版本，持久化 counter-evidence result ID、覆核 assignment/result IDs 和已使用次數。重啟、重複結果、換 session 或新措辭不得重置同一爭議的次數。未改 code 時針對同一版本覆核；有新 head 時先取得適用 G1，再與必要的最新版本 review 合併。這次釐清不另開 batch、不增加 correction round；基礎設施失敗仍按 D13 的操作重試上限處理。Reviewer 接受反證時附依據更新 finding；仍有 blocking 爭議則 Blocked 交人，不自動進行第二次。範圍／規格／AC 或設計變更直接沿 D11 回人，不以一次覆核取代人工決策。
 
-人工驗收退回既有 AC 缺陷時沿用同一 run 與三輪上限；以被退回的交付版本為基準，不要求此前已 accepted。Controller 保存 `source=human_acceptance`、回饋 actor/來源/時間、版本與可重現差異；若是既有 finding 就沿用 ID，否則配置一次新的 stable ID，重複回饋以來源 identity 去重。退回使當前 Pass 失效，對受影響 gate 記錄原因並重評；先核對剩餘 correction 預算，再組 batch 派修，到限轉 Blocked。解除阻擋仍遵守 D09。
+人工驗收退回既有 AC 缺陷時沿用同一 run 與三輪上限（到限後人可追加，D70）；以被退回的交付版本為基準，不要求此前已 accepted。Controller 保存 `source=human_acceptance`、回饋 actor/來源/時間、版本與可重現差異；若是既有 finding 就沿用 ID，否則配置一次新的 stable ID，重複回饋以來源 identity 去重。退回使當前 Pass 失效，對受影響 gate 記錄原因並重評；先核對剩餘 correction 預算，再組 batch 派修，到限轉 Blocked。解除阻擋仍遵守 D09。
 
-已確認最多三輪 correction；同一 finding 重複出現或修正明顯擴大 scope 時先提出原因與裁決需求，不能無限重抽 reviewer。Infra 操作各最多兩次額外重試；診斷出是程式或測試錯誤就回 correction 流程。
+已確認最多三輪 correction，到限轉 Blocked，人可在 ticket 記錄追加（D70）；同一 finding 重複出現或修正明顯擴大 scope 時先提出原因與裁決需求，不能無限重抽 reviewer。Infra 操作各最多兩次額外重試；診斷出是程式或測試錯誤就回 correction 流程。
 
 依 D24，Reviewer 結果先保存，再由 publication adapter 將完整 review 發到 PR；原 issue 發可採取行動的摘要與 PR review 連結。每份紀錄帶 run/review/result ID、head/base/spec 版本與 finding IDs，可對回原文。GitHub 上使用 comment 或 review 不影響獨立性的定義，也不以帳號是否可按 approve 作 clean 證據。
 
