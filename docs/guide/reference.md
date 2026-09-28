@@ -564,7 +564,7 @@ Demo 結束時，觀眾應能沿一條路徑找到：「目標 → Milestone →
 | 看懂大的 codebase | skill graphify（[Graphify-Labs/graphify](https://github.com/Graphify-Labs/graphify)，Apache-2.0）：把程式與文件建成知識圖，產出在 `graphify-out/`。不在 `setup.sh` 裡，另外安裝：`uv tool install graphifyy==0.9.71`，再執行 `graphify install`（Codex 加 `--platform codex`）；安裝程式若建立了 `~/.claude/CLAUDE.md`，看過內容再決定要不要留 |
 | SA 問答、領域語言 | skill [grilling](../../skills/third-party/mattpocock/productivity/grilling/SKILL.md)、[domain-modeling](../../skills/third-party/mattpocock/engineering/domain-modeling/SKILL.md)（Matt Pocock），由 project-lead 按需叫用；[grill-with-docs](../../skills/third-party/mattpocock/engineering/grill-with-docs/SKILL.md) 只能由人輸入 `/grill-with-docs` 啟動 |
 | 規格 | OpenSpec CLI 1.13.1（[指令說明](https://github.com/Fission-AI/OpenSpec/blob/main/docs/cli.md)）；它的 skills 由 `openspec init` 產生 |
-| 單一 Feature 的 loop | skill orchestrate 呼叫薄 controller，第一片實作中 |
+| 單一 Feature 的內圈 | skill [spec-to-plan](../../skills/spec-to-plan/SKILL.md)（B1）、skill [plan-to-code](../../skills/plan-to-code/SKILL.md)（B2）、skill [to-pr](../../skills/to-pr/SKILL.md)（B3），每個停在一個人工停點（D69）；之後由 skill orchestrate 串起來並呼叫薄 controller，第一片實作中 |
 | TDD | skill [test-driven-development](../../skills/third-party/superpowers/test-driven-development/SKILL.md)（Superpowers）；每個行為 task 保存可追溯證據 |
 | 審查與修正 | 獨立 Reviewer（另一個模型、新 session），依 spec 與工程規則審查；Implementer 修正 |
 | Example 執行環境 | Herdr 管 sessions 與工作區；本機 OpenAI 經 OpenCode，Claude 直接用 Claude Code；Orca 是選配入口 |
@@ -589,6 +589,7 @@ loop-engineering 自己開發 controller 時，預設 Opus 5.5 實作、GPT 審�
 | Feature 以 use case 或共用元件為單位；Milestone 加上時間；切法是循環的 | D65 |
 | Feature spec 屬於外圈；內圈是 Implement → Validate | D64 |
 | 準備 Feature 的 skill 獨立成 feature-to-spec | D66 |
+| 內圈的三個 skill 與依複雜度決定 effort | D69 |
 | 每個 Feature 一條 feature branch；薄 ticket 的格式 | D67 |
 | 計畫列出測試與預期的 Red；共用測試骨架先做；Superpowers 的方法寫進 OpenSpec 的檔案 | D68 |
 | 有依賴的 Feature 等上游接受並 merge | D27 |

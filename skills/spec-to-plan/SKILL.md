@@ -1,0 +1,70 @@
+---
+name: spec-to-plan
+description: Use when a feature's handoff package is ready and its design and implementation plan must be written before work starts, or when a plan was sent back at the start-of-work approval. Used by the Engineer or the coordinator of the feature loop. Not for writing the spec (feature-to-spec) or for implementing tasks (plan-to-code).
+---
+
+# Spec to plan
+
+Turn a confirmed spec into `design.md` and `tasks.md` in the feature's OpenSpec change, have a different model review the plan, and stop at the start-of-work approval (◆確認開工). The plan holds no implementation code, but it states every test and where its Red must fail (D68, D69).
+
+Read repository instructions (AGENTS.md, CLAUDE.md, `openspec/config.yaml`) first; they override this skill.
+
+## 0. Check the entry
+
+- Work in the feature's worktree on `feature/<id>` in the root repo (D67); in a multi-repo product, run the sync command and use a branch of the same name in each affected service repo.
+- Read the handoff package (ticket comment): spec commit, spec confirmation or fold note, acceptance IDs, affected repos with base commits, start approver, acceptor. Anything missing or contradictory goes back to `feature-to-spec` as specific questions.
+- The spec is fixed here. A requirement that looks wrong is a question for the Project Lead, not an edit.
+
+## 1. Research the code
+
+Use `research-codebase` on the flows this feature touches: entry points, existing fixtures and test helpers, test seams, and the files each change will own. Save the report on the branch and commit it.
+
+## 2. Write design.md
+
+Run `openspec instructions design --change <id>` and write within the high-level design's boundaries: modules, interfaces, data flow, failure handling, and the seams tests will use. When two approaches need comparing, use the option comparison from superpowers:brainstorming, but write the outcome into `design.md`, never into `docs/superpowers/specs/`. A new high-level boundary goes back to the Project Lead.
+
+## 3. Write tasks.md, the only plan
+
+Run `openspec instructions tasks --change <id>` and apply superpowers:writing-plans for task size and ordering, with these overrides:
+
+- **No implementation code.** How to implement stays with the Implementer.
+- **Shared test harness first.** If tests need shared fixtures, setup helpers, a CLI entry point or parser, or stubs that return plausible values, make that the first task, with its own tests. Every later Red must be able to reach its assertion. The harness task is the one place where a Red may fail because the entry point is missing, and its assertions check the entry point's contract (arguments passed through, output format), not the feature's behaviour.
+- **Every task lists:** ID; owned paths per repo; dependencies; acceptance IDs covered; commit subject; Implementer and Reviewer effort; and its tests. For each test: name, the observable behaviour asserted, **the assertion its Red must fail on**, the expected Green, and the command.
+- **One session per task.** Split anything larger.
+- **Acceptance verification:** for each acceptance ID, how and where it is verified, what passing means, and where the evidence goes.
+- **Scope, environment, risks and execution limits** are written down.
+
+Effort per task (D69):
+
+| The task | Implementer | Reviewer |
+| --- | --- | --- |
+| Docs or configuration only | medium | high |
+| Ordinary behaviour, even when it touches several files | high | high |
+| A mistake could lose or corrupt data, break a concurrency or failure-recovery guarantee, or weaken security; or the task covers six or more acceptance rows | xhigh | xhigh |
+
+Red flags, each a sign the plan is not ready:
+
+| In the plan | Why it fails | Fix |
+| --- | --- | --- |
+| "Red: argparse rejects `cas`" or "fails with unknown command", in any task but the harness task | The Red proves the command is missing, not that the behaviour is | Add the parser and a stub in the harness task; the Red must fail on the behaviour's assertion |
+| "Red: ImportError" or "module not found" | Same | Create the module interface in the harness task |
+| Tests described only as "tests for AC-X pass" | The Implementer invents the tests | List each test with its assertion and expected Red |
+| No effort per task | Effort gets chosen ad hoc | Apply the table |
+
+Run `openspec validate <id>` and commit.
+
+## 4. Independent plan review
+
+A model different from the plan's author reviews the plan in a fresh session, read-only (D52), for example `codex exec -m gpt-6-sol -s read-only`. Ask it to check: the D68 rules above, every acceptance ID covered, task size, owned paths, effort, risks, and whether each listed Red can actually fail on its assertion. Fix and re-review in the same reviewer session until clean, at most three rounds; then report what remains. Keep the review result on the branch.
+
+## 5. Stop at the start-of-work approval
+
+Show the start approver a one-page summary: tasks in order with their effort, what each Red proves, risks and limits, the plan review result, and any decision they must make. When the Project Lead is also the Engineer, this approval also covers the spec (D59).
+
+When approved, record it as one ticket comment: who, when, their words, and the plan's commit; set the ticket state to `開發中` and 下一步 to implementation (D67). Every tracker write needs authorisation. Implementation continues with `plan-to-code`.
+
+## Boundaries
+
+- No implementation code, no commits outside the design, plan, research and review records.
+- No approval on the human's behalf; no spec edits.
+- One plan: `tasks.md`. No `docs/superpowers/plans/` file.

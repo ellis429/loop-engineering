@@ -53,7 +53,8 @@ Agent 做大部分工作；人在六個 ◆ 確認點做決定：
                      │
 ┌─ Harnessing ───────▼─────────────────────┐
 │ Skills: project-lead / feature-to-spec / │  約束 Agent 怎麼做：
-│         orchestrate / research-codebase  │  照哪個方法、用哪個模型、先寫什麼
+│         spec-to-plan / plan-to-code /    │  照哪個方法、用哪個模型、先寫什麼
+│         to-pr / research-codebase        │
 │ Model: chosen per role                   │  例如 Reviewer 和 Implementer 用不同模型
 │ TDD, spec-driven (OpenSpec)              │  先寫測試再實作；先寫 spec 再設計
 └────────────────────┬─────────────────────┘
@@ -437,20 +438,18 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
 
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
-| 1 | Engineer，或獲授權的 Project Lead Agent | 啟動這個 Feature 的 loop | skill orchestrate（實作中，可用前由人協調）：開一個 Agent session，貼上：`/orchestrate 承接〈Feature〉。先由 Implementer 讀取它引用的 project intent、roadmap、spec／AC 與高層設計，提出 detailed design、可執行 tasks 及 AC 驗證方式，交我確認後開工。保留 worktree 與證據；終點是 PR Pass，等待人驗收。` | — |
-| 2 | Implementer | 寫詳細設計 | 指令 `openspec instructions design --change <id>` | design |
-| 3 | Implementer | • 拆 tasks，每個 task 一個 session 做得完<br>• 需要共用的測試骨架時，排成第一個 task<br>• 每個 task 列出要寫的測試，寫明 Red 應該失敗在哪個斷言<br>• 寫每條 AC 的驗法 | • 指令 `openspec instructions tasks --change <id>`<br>• 寫法參考 skill [writing-plans](../../skills/third-party/superpowers/writing-plans/SKILL.md)（Superpowers），但不放實作碼 | • tasks<br>• AC 驗法：寫在 validation 文件或 tasks 的明確段落 |
-| 4 | 交接時指定的人 | ◆確認開工（兼任時連 spec 一起確認） | skill orchestrate（實作中，可用前由人協調），記成 ticket 留言 | 開工確認紀錄 |
+| 1 | Engineer | 開始寫設計與計畫 | skill [spec-to-plan](../../skills/spec-to-plan/SKILL.md)：開一個 Agent session，貼上：`/spec-to-plan 準備〈Feature〉的設計與計畫：讀交接包，寫 design.md 與 tasks.md，交另一個模型審到 clean，停在確認開工。` | — |
+| 2 | Agent | 寫詳細設計 | • skill [spec-to-plan](../../skills/spec-to-plan/SKILL.md)<br>• 指令 `openspec instructions design --change <id>` | design |
+| 3 | Agent | • 拆 tasks，每個 task 一個 session 做得完<br>• 需要共用的測試骨架時，排成第一個 task<br>• 每個 task 列出要寫的測試，寫明 Red 應該失敗在哪個斷言<br>• 每個 task 標出 Implementer 與 Reviewer 的 effort<br>• 寫每條 AC 的驗法<br>• 交另一個模型審計畫到 clean | • 指令 `openspec instructions tasks --change <id>`<br>• 寫法參考 skill [writing-plans](../../skills/third-party/superpowers/writing-plans/SKILL.md)（Superpowers），但不放實作碼 | • tasks<br>• AC 驗法：寫在 validation 文件或 tasks 的明確段落 |
+| 4 | 交接時指定的人 | ◆確認開工（兼任時連 spec 一起確認） | skill [spec-to-plan](../../skills/spec-to-plan/SKILL.md) 停在這裡，記成 ticket 留言 | 開工確認紀錄 |
 
 **每一步怎麼做、怎樣算完成**
 
-1. **啟動 loop**
-   - 怎麼做：
-     - 手動：Engineer 貼上 prompt，把〈Feature〉換成 change 的 id
-     - 授權：Project Lead Agent 在 Project Lead 核准的範圍內啟動，見參考手冊的[控制方向與自主程度](reference.md#控制方向與自主程度)
+1. **開始寫設計與計畫**
+   - 怎麼做：在 feature 的 worktree 貼上 prompt，把〈Feature〉換成 change 的 id。內圈三個 skill 依序是 `spec-to-plan`、`plan-to-code`、`to-pr`，各停在一個人工停點；之後由 orchestrate 串起來（見參考手冊的[控制方向與自主程度](reference.md#控制方向與自主程度)）。
    - 完成：
-     - [ ] Agent 回報已載入 orchestrate skill
-     - [ ] Implementer 讀完交接包，沒有要退回的問題
+     - [ ] Agent 回報已載入 spec-to-plan skill
+     - [ ] Agent 讀完交接包，沒有要退回的問題；研究報告已 commit
 2. **寫詳細設計**
    - 怎麼做：在 A2 定的邊界內，決定模組、介面與資料流。
    - 完成：
@@ -467,9 +466,11 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
      - [ ] 每個 task 列出要寫的測試，每個測試寫明斷言、Red 應失敗的位置、Green 預期與指令
      - [ ] 共用的測試骨架排在第一個 task；不需要時寫明理由
      - [ ] 每條 AC 都有驗法
+     - [ ] 每個 task 標出 Implementer 與 Reviewer 的 effort
      - [ ] scope、必要環境、風險與執行限制都寫明
+     - [ ] 另一個模型審過計畫，結果 clean，紀錄在 change 裡
 4. **◆確認開工**
-   - 怎麼做：看 design、tasks、驗法、scope、環境、風險與執行限制；兼任時連 spec 一起看。
+   - 怎麼做：看 Agent 給的一頁摘要：tasks 與 effort、每個 Red 證明什麼、風險、計畫審查結果、要你決定的事；兼任時連 spec 一起看。effort 可以在這裡調整。
    - 完成：
      - [ ] ticket 留言記下誰、何時、原話和確認的版本
      - [ ] ticket 狀態「開發中」
@@ -482,9 +483,9 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
 
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
-| 1 | Implementer | TDD：<br>• 照計畫先寫會失敗的測試<br>• 確認 Red 失敗在要測的斷言上<br>• 再實作到通過 | skill [test-driven-development](../../skills/third-party/superpowers/test-driven-development/SKILL.md)（Superpowers） | • commits<br>• Red → Green 紀錄 |
-| 2 | Reviewer（另一個模型） | 審這個 task 的 commit | 獨立 Reviewer | 局部 review 紀錄（ticket 留言） |
-| 2 | Implementer | 修掉 blocking，Reviewer 覆核 | — | 修正的 commits |
+| 1 | Implementer | TDD：<br>• 照計畫先寫會失敗的測試<br>• 確認 Red 失敗在要測的斷言上<br>• 再實作到通過 | • skill [plan-to-code](../../skills/plan-to-code/SKILL.md)：`/plan-to-code 實作〈Feature〉`，照每個 task 標的 effort 派工、收件檢查<br>• skill [test-driven-development](../../skills/third-party/superpowers/test-driven-development/SKILL.md)（Superpowers） | • commits<br>• Red → Green 紀錄 |
+| 2 | Reviewer（另一個模型，最好是另一家） | 審這個 task 的 commit，finding 分成現在修、PR 前修、開 ticket | 獨立 Reviewer，例如 `codex exec` | 局部 review 紀錄（ticket 留言） |
+| 2 | Implementer | 修掉 blocking，Reviewer 覆核；修正另開 commit，不改寫審過的 commit；每個 task 最多 3 次 | — | 修正的 commits |
 
 **每一步怎麼做、怎樣算完成**
 
@@ -513,11 +514,11 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
 
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
-| 1 | Implementer | G1：在整合後的版本跑完整測試，通過才送審 | skill [test-driven-development](../../skills/third-party/superpowers/test-driven-development/SKILL.md)（Superpowers） | 測試結果 |
+| 1 | Agent | G1：在全新 clone、要送出的版本跑完整測試，通過才送審 | • skill [to-pr](../../skills/to-pr/SKILL.md)：`/to-pr 送出〈Feature〉`<br>• skill [verification-before-completion](../../skills/third-party/superpowers/verification-before-completion/SKILL.md)（Superpowers） | 測試結果 |
 | 2 | Implementer | 每個受影響的 repo 開一個 PR，連到同一張 ticket；root 的 PR 就是 `feature/<id>` | GitHub | PR |
 | 3 | Reviewer＋CI | • G2：Reviewer 審整組 PR<br>• G3：CI 跑必要 checks | • 獨立 Reviewer<br>• GitHub Actions | review 與 CI 結果 |
-| 3 | Implementer | 修正，最多 3 輪；每次 push 都重新評估 | skill orchestrate（實作中，可用前由人協調） | 新的 commits |
-| 4 | 協調的人；orchestrate 可用後由它做 | 三個 gates 都在目前版本通過後，整理驗收包 | • 人工核對每個 gate 的證據都對應目前版本<br>• 照[交接契約](../workflow/contracts.md#角色交接摘要)的欄位寫<br>• controller 可用後由它核對 | PR Pass 驗收包（ticket 留言） |
+| 3 | Implementer | 修正，最多 3 輪，超過就標 Blocked 交給人；每次 push 都重新評估 | skill [plan-to-code](../../skills/plan-to-code/SKILL.md) 做修正，skill [to-pr](../../skills/to-pr/SKILL.md) 重跑 gates | 新的 commits |
+| 4 | Agent | 三個 gates 都在目前版本通過後，整理驗收包 | • skill [to-pr](../../skills/to-pr/SKILL.md)：欄位列在 skill 裡<br>• 核對每個 gate 的證據都對應目前版本<br>• controller 可用後由它核對 | PR Pass 驗收包（ticket 留言） |
 
 **每一步怎麼做、怎樣算完成**
 
