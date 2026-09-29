@@ -222,7 +222,7 @@ flowchart LR
 1. **切 Feature**
    - 怎麼做：
      - Agent 提出切法，Project Lead 調整
-     - 從能力清單與情境找出自成一體的 use case，每個切成一個 Feature
+     - 從能力清單與情境找出自成一體的 use case，每個切成一個 Feature，垂直切：一個看得到的行為，從操作一路走到資料與驗收測試；不要照技術層（資料庫、後端、API、前端）切
      - 多個 use case 都要用到的元件，切成自己的 Feature，排在用到它的 Feature 前面
      - 切法有依據（已經有實作、設計穩定）就整批切；沒有依據就先列交付能力，但至少切出下一個
    - 完成：Feature 表每一列都有
