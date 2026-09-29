@@ -4,7 +4,7 @@
 
 來源（皆為 `main@a1d8906`，另註明者除外）：
 
-- 需求輸入：[`docs/requirements/delivery-controller/`](requirements/delivery-controller/README.md)，四個 capability、36 條 requirement、88 條 AC；D53 採用，組成方式見同目錄的 `source-map.md`。原本放在 `openspec/changes/implement-delivery-loop/specs/`，依 D75 原樣搬移（見下方「退役」一節）。
+- 需求輸入：[`docs/requirements/delivery-controller/`](requirements/delivery-controller/README.md)，四個 capability、36 條 requirement、88 條 AC；D53 採用，組成方式見同目錄的 `adoption/source-map.md`。原本放在 `openspec/changes/implement-delivery-loop/specs/`，依 D75 原樣搬移（見下方「退役」一節）。
 - 高層設計：D45-04 revision-17（[`docs/design-candidate/d45-04/`](design-candidate/d45-04/)，D53 核准），以及[勘誤](design-candidate/d45-04-errata.md) E-1～E-3。驗法以其中的 `validation.md` 為準。
 - 既有實作：branch `delivery/thin-controller@fcefecc`，唯讀參考（D75），不 merge。6,054 行程式、8,825 行測試、549 個測試；完成 T1.1～T3.1、T6.1、T7.1，T4.x、T5.1、T6.2 沒做。
 - 行數、依賴與 AC 對照：[重切研究](research/2026-09-30/controller-recut.md)。
@@ -86,8 +86,9 @@
 2. 清查引用。目前約 40 個檔案提到這個 change 的路徑：
    - 現行入口改寫：`README.md` 的「接續狀態」，以及 `docs/README.md` 的目前進度與「先讀哪份」第 4 點。改指本 roadmap 與新的需求輸入；接續依據從 handoff 改成本 roadmap。
    - 受 hash 保護的檔案不改：D53 核准的 `docs/design-candidate/d45-04/` 候選原檔（`d11-approval.json` 綁定）。它們提到的舊路徑，在勘誤新增一項轉接到新位置，照「原檔＋勘誤」判讀。
-   - 決策紀錄的既有列不改：`docs/decisions.md` 的 D40、D53 等列是當時的紀錄；退役本身記成新的一列。
-   - 歷史紀錄（reviews、experiments、manifest、handoffs）是當時版本的證據，不改。在需求輸入的 README 寫明舊路徑與最後存在的 commit（`a1d8906`）。
+   - 決策紀錄的既有列不改內容：`docs/decisions.md` 的 D40、D53 等列是當時的紀錄；退役本身記成新的一列（D75）。
+   - 導覽會帶到的文件（`docs/decisions.md` 的 D40 列、`docs/harness/scope-reconciliation.md`、`docs/handoffs/2026-09-27-controller-design.md`）中指向已刪檔案的連結，改成 `a1d8906` 的固定連結，其他文字不改。
+   - 審查與實驗紀錄（reviews、experiments、manifest）是當時版本的證據，不改。需求輸入的 README 寫明舊路徑與最後存在的 commit（`a1d8906`）。
 3. 刪除 change 目錄，不 archive。這個 change 沒有交付；archive 會把還沒實作的行為寫進 `openspec/specs/`，違反 D58。`proposal.md`、`design.md`、`tasks.md`、`approval.json` 與 adoption 審查紀錄，以 `a1d8906` 的固定連結保存。
 4. D53 的核准保留為歷史紀錄。D45-04 design 改作高層設計的參考；每個 Feature 的 `design.md` 由 Implementer 依它的章節寫（D69）。
 5. 相關 issue：

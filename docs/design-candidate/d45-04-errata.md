@@ -26,3 +26,10 @@ D53 核准的候選檔（`docs/design-candidate/d45-04/`，publication-manifest 
 - 原文：h7 含 G2 失效與重新審查的格子，但 G2 由 T5.1 實作；T6.1 的 h7 測試只斷言 G1 與 G3。
 - 更正：h7 的 G2 格子歸 T5.1。T5.1 的派工、完成條件與測試都要涵蓋這些格子；T6.1 的完成條件只含 h7 的 G1、G3 格子，不為 G2 格子負責。
 - 影響：T5.1 重新派工時，派工內容要列出 h7 的 G2 格子。
+
+## E-4 需求輸入的位置
+
+- 來源：D75（roadmap 確認），2026-09-30。
+- 原文：本目錄的 `tasks.md` 等檔案以 `openspec/changes/implement-delivery-loop/` 指稱正式 change 與其中的 specs。
+- 更正：該 change 已退役並刪除。四份 capability 與 source-map 原樣搬到 `docs/requirements/delivery-controller/`（`specs/<capability>/spec.md`、`adoption/source-map.md`），sha256 不變；其餘檔案（proposal、design、tasks、approval、adoption 審查紀錄）以 commit `a1d8906` 的版本為準。
+- 影響：本目錄提到舊路徑的地方，照新位置讀；切法與執行順序改依 [roadmap](../roadmap.md)，本目錄的 tasks 執行表只作參考。

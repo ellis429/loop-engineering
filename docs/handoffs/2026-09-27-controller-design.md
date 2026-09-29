@@ -109,7 +109,7 @@ D39：本次 bootstrap 先由協作者協調 Opus 5.5 Implementer 與獨立 GPT�
 1. [Decisions](../decisions.md)：已確認 D01–D39、Q-METHOD／Q-RUNTIME／Q-PLATFORM；不要把候選當成定案。
 2. [Harness 總覽](../harness/overview.md)、[Workflow Design](../workflow/overview.md)、[執行契約](../workflow/contracts.md)：兩層流程、角色與交接。
 3. [Project Lead SA](../workflow/project-lead-sa.md)、[檔案狀態](../harness/history/file-state.md)：分析方法與持久化提案。
-4. [OpenSpec proposal](../../openspec/changes/implement-delivery-loop/proposal.md) 及同 change 的 `specs/`：唯一正式 feature 規格；比較稿留在 experiments，不是另一套權威。
+4. [OpenSpec proposal](https://github.com/yschiang/loop-engineering/blob/a1d8906/openspec/changes/implement-delivery-loop/proposal.md) 及同 change 的 `specs/`：唯一正式 feature 規格；比較稿留在 experiments，不是另一套權威。
 5. [本輪 review](../reviews/2026-09-27-design-review.md)、[planning preflight](../research/2026-09-27/planning-preflight.md) 與其引用研究：分清歷史 probe、現行能力與尚未實測。
 
 ## 已確認，不重新開題

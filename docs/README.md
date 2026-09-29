@@ -13,7 +13,7 @@
 
 這是本 repo 的文件安排，不強制下游專案搬動 OpenSpec 或其他 skills 的原生 artifacts。
 
-> **目前進度（2026-09-28）**：[D45-04 revision-17](design-candidate/d45-04/README.md) 的 design＋plan 已由 [D53](decisions.md) 完成 D11 開工確認，文件經 PR #3 合進 main，薄 controller 第一片正在 `delivery/thin-controller` 分支依 tasks 實作，完成狀態以該分支的驗證紀錄為準。D54 定下 spec 的位置與回流（OpenSpec），D55 把 Project 層交給 `project-lead` skill、orchestrate 只跑單一 feature loop；第一片不受影響。D56 讓 cross-node-file-transfer 的 Project 層先開始。D57–D59 定下工作三層（milestone、feature、task）與每個 task 的局部 review、需求依狀態放置（`openspec/specs/` 只放已實作的行為），角色不等於人，以及手動階段的交付紀錄放在 ticket 留言（D60）；說明見[總覽指南的需求放在哪](guide/reference.md#需求放在哪)。[88 AC 審核](reviews/2026-09-27-ac-audit/README.md)、[Opus 初審](reviews/2026-09-28-opus-review-d45-04.md)與[修正紀錄](reviews/2026-09-28-opus-review-d45-04-resolution.md)保留歷史；接續以 [handoff](handoffs/2026-09-27-controller-design.md) 最新段為準。
+> **目前進度（2026-09-30）**：薄 controller 依 [roadmap](roadmap.md)（D75）重切成四個 Feature 與 M1 驗收，下一步是 Feature 1「人工決策與下一步」的 feature-to-spec。D53 核准的單一切片在 `delivery/thin-controller` 做到 T7.1 後停下，保留為唯讀參考；[D45-04 revision-17](design-candidate/d45-04/README.md) 加[勘誤](design-candidate/d45-04-errata.md)改作高層設計。以下是 2026-09-28 時的決策摘要：D54 定下 spec 的位置與回流（OpenSpec），D55 把 Project 層交給 `project-lead` skill、orchestrate 只跑單一 feature loop；第一片不受影響。D56 讓 cross-node-file-transfer 的 Project 層先開始。D57–D59 定下工作三層（milestone、feature、task）與每個 task 的局部 review、需求依狀態放置（`openspec/specs/` 只放已實作的行為），角色不等於人，以及手動階段的交付紀錄放在 ticket 留言（D60）；說明見[總覽指南的需求放在哪](guide/reference.md#需求放在哪)。[88 AC 審核](reviews/2026-09-27-ac-audit/README.md)、[Opus 初審](reviews/2026-09-28-opus-review-d45-04.md)與[修正紀錄](reviews/2026-09-28-opus-review-d45-04-resolution.md)保留歷史；接續以 [handoff](handoffs/2026-09-27-controller-design.md) 最新段為準。
 
 ## 先讀哪份
 
@@ -22,7 +22,7 @@
 1. 了解目標：[Project intent](project-intent.md)、[已確認／待決事項](decisions.md)、[領域詞彙](../CONTEXT.md)。
 2. 了解方法：[Workflow](workflow/overview.md)、[交接契約](workflow/contracts.md)；準備需求時讀 [Project Lead SA](workflow/project-lead-sa.md)。
 3. 討論工具整合：[Herdr 設計](harness/herdr-integration.md)，包含四層概念圖、元件資料流與開工前缺項。它仍是提案；[範圍收斂對照](harness/scope-reconciliation.md) 逐項整理 88 個 AC 與 17 個未解 findings，作為正式修訂的輸入。
-4. 接續實作前核對：[正式 OpenSpec change](../openspec/changes/implement-delivery-loop/proposal.md)、[checkpoint](handoffs/2026-09-27-controller-design.md) 及 [AC 對照](validation/implement-delivery-loop.md)。design／tasks 已指向 D53 採用的 revision-17，D40 內容留在 Git 歷史。
+4. 接續實作前核對：[Roadmap](roadmap.md) 與[需求輸入](requirements/delivery-controller/README.md)；高層設計是 [D45-04 revision-17](design-candidate/d45-04/README.md) 加[勘誤](design-candidate/d45-04-errata.md)。原本的單一 change `implement-delivery-loop` 已依 D75 退役，最後版本在 commit `a1d8906`。
 
 ## 主要文件與狀態
 
