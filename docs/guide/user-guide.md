@@ -80,7 +80,7 @@ Agent 做大部分工作；人在六個 ◆ 確認點做決定：
 - **Step**：第幾步。
 - **Who**：誰做，每一列一個角色：Project Lead、Engineer、驗收人或 Agent。**同一個 Step 編號出現好幾列，代表同一件事由人和 Agent 來回做**，每列寫各自做的部分和用的東西；◆ 是要人確認的點，只由人做，見[誰做什麼](#誰做什麼)。
 - **Do**：做什麼。
-- **How**：用什麼。skill 會連到 repo 裡它的 `SKILL.md`；指令連到說明文件。prompt 開頭的 `/skill 名稱` 會直接叫用那個 skill，只寫「請用某某 skill」不保證會叫用：Claude Code 照寫 `/project-lead`；Codex 改成 `$project-lead`；OpenCode 沒有直接叫用的寫法，改成「請用 project-lead skill」，再看 Agent 有沒有說已載入。第一次使用前，在 loop-engineering 執行 `./setup.sh` 安裝這些 skills；產品的 root repo 若已用 `./setup.sh --project` 帶著 skills，從 root 開 session 就能直接用。
+- **How**：用什麼。skill 會連到 repo 裡它的 `SKILL.md`；指令連到說明文件。**每個活動只貼一次 prompt**，寫在人啟動的那一列：貼上後，同一個 Agent session 由那個 skill 接著做完表上 Agent 的各列，那些列的 How 寫「同一個 session」或這一步另外用到的指令與工具；人只在自己那幾列回答或確認。prompt 開頭的 `/skill 名稱` 會直接叫用那個 skill，只寫「請用某某 skill」不保證會叫用：Claude Code 照寫 `/project-lead`；Codex 改成 `$project-lead`；OpenCode 沒有直接叫用的寫法，改成「請用 project-lead skill」，再看 Agent 有沒有說已載入。第一次使用前，在 loop-engineering 執行 `./setup.sh` 安裝這些 skills；產品的 root repo 若已用 `./setup.sh --project` 帶著 skills，從 root 開 session 就能直接用。
 - **Output**：產出什麼。示範專案已經有的，附上範例連結；示範還沒走到的步驟先不放，示範專案推上 GitHub 之前，部分連結會打不開。
 
 Agent 寫 ticket 或 PR 留言之前，會先問人，或照人事先給的授權。controller 可用之前，交付紀錄都放在 ticket 留言；只有確認目的與需求、設計方案、roadmap 記在決策紀錄，確認 spec 記在 proposal。
@@ -106,12 +106,12 @@ flowchart LR
 
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
-| 1 | Project Lead | 說明要解決的問題和限制 | 開一個 Agent session，貼上：`/project-lead 做 project 的 SA。Repo 在〈路徑〉，既有資料在〈位置〉。我想解決的問題是〈一兩句〉。` | — |
+| 1 | Project Lead | 說明要解決的問題和限制 | skill [project-lead](../../skills/project-lead/SKILL.md)：開一個 Agent session，貼上：`/project-lead 做 project 的 SA。Repo 在〈路徑〉，既有資料在〈位置〉。我想解決的問題是〈一兩句〉。` | — |
 | 2 | Project Lead | 給要查的問題；讀報告，有疑問就追問 | — | — |
 | 2 | Agent | Research：分清現況的<br>• Facts<br>• Assumptions<br>• Unknown | • skill [research-codebase](../../skills/research-codebase/SKILL.md)<br>• codebase 大或第一次接手：先用 skill graphify（[說明](https://github.com/Graphify-Labs/graphify)） 建知識圖，`/graphify <路徑>` | • 研究報告：`docs/research/<日期>-<主題>.md`（[範例](../research/2026-09-25/integration-gaps.md)）<br>• 用了 graphify：`graphify-out/GRAPH_REPORT.md` |
 | 3 | Project Lead | （選用）把參考資料（客戶規格、上游 spec、會議紀錄）放進資料夾；確認分組 | — | — |
-| 3 | Agent | 解析參考資料：依能力分組、註明來源版本 | skill [project-lead](../../skills/project-lead/SKILL.md) | 需求輸入：`docs/research/<日期>-import/`（[範例](https://github.com/yschiang/cross-node-root/blob/main/docs/research/2026-09-28-import/README.md)） |
-| 4 | Agent | 由上往下問，每輪 1–3 題：<br>• 目標<br>• 範圍<br>• 情境<br>• 規則<br>• 例外<br>• 驗收 | skill [project-lead](../../skills/project-lead/SKILL.md) | • project intent（[範例](https://github.com/yschiang/cross-node-root/blob/main/docs/project-intent.md)）<br>• 共同詞彙 `CONTEXT.md`（[範例](https://github.com/yschiang/cross-node-root/blob/main/CONTEXT.md)） |
+| 3 | Agent | 解析參考資料：依能力分組、註明來源版本 | 同一個 session | 需求輸入：`docs/research/<日期>-import/`（[範例](https://github.com/yschiang/cross-node-root/blob/main/docs/research/2026-09-28-import/README.md)） |
+| 4 | Agent | 由上往下問，每輪 1–3 題：<br>• 目標<br>• 範圍<br>• 情境<br>• 規則<br>• 例外<br>• 驗收 | 同一個 session | • project intent（[範例](https://github.com/yschiang/cross-node-root/blob/main/docs/project-intent.md)）<br>• 共同詞彙 `CONTEXT.md`（[範例](https://github.com/yschiang/cross-node-root/blob/main/CONTEXT.md)） |
 | 4 | Project Lead | 回答、修正；想被追問得更深，自己輸入 `/grill-with-docs`（[說明](../../skills/third-party/mattpocock/engineering/grill-with-docs/SKILL.md)；只能由人啟動） | — | — |
 | 5 | Project Lead | 看一頁摘要，◆確認目的與需求：可以進入設計方案 | — | 決策紀錄（[範例](https://github.com/yschiang/cross-node-root/blob/main/docs/decisions.md)） |
 
@@ -169,10 +169,10 @@ flowchart LR
 
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
-| 1 | Agent | 提出設計：<br>• 有既有設計：沿用，標出要改的地方<br>• 沒有：提出 2–3 個方案與比較 | skill [project-lead](../../skills/project-lead/SKILL.md) | 高層設計：`docs/design/`（[範例資料夾](https://github.com/yschiang/cross-node-root/tree/main/docs/design)），先看：<br>• [網頁版](https://yschiang.github.io/cross-node-root/)<br>• [system-design.md](https://github.com/yschiang/cross-node-root/blob/main/docs/design/system-design.md)<br>• [design-decisions.md](https://github.com/yschiang/cross-node-root/blob/main/docs/design/design-decisions.md) |
+| 1 | Agent | 提出設計：<br>• 有既有設計：沿用，標出要改的地方<br>• 沒有：提出 2–3 個方案與比較 | 同一個 session | 高層設計：`docs/design/`（[範例資料夾](https://github.com/yschiang/cross-node-root/tree/main/docs/design)），先看：<br>• [網頁版](https://yschiang.github.io/cross-node-root/)<br>• [system-design.md](https://github.com/yschiang/cross-node-root/blob/main/docs/design/system-design.md)<br>• [design-decisions.md](https://github.com/yschiang/cross-node-root/blob/main/docs/design/design-decisions.md) |
 | 1 | Project Lead | 補充限制與偏好 | — | — |
 | 2 | Project Lead | 在方案之間做選擇 | — | — |
-| 2 | Agent | 把選擇與取捨寫成 ADR | skill [project-lead](../../skills/project-lead/SKILL.md) | ADR：`docs/adr/`（[範例](https://github.com/yschiang/cross-node-root/blob/main/docs/adr/0002-target-pull-over-http.md)） |
+| 2 | Agent | 把選擇與取捨寫成 ADR | 同一個 session | ADR：`docs/adr/`（[範例](https://github.com/yschiang/cross-node-root/blob/main/docs/adr/0002-target-pull-over-http.md)） |
 | 3 | Project Lead | 看設計摘要，◆確認設計方案 | — | 決策紀錄 |
 
 **每一步怎麼做、怎樣算完成**
@@ -209,11 +209,11 @@ flowchart LR
 
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
-| 1 | Agent | 提出切法：<br>• 一個 use case，或一個共用元件，切成一個 Feature<br>• 切法有依據：把能力清單整批切<br>• 沒有依據：先列交付能力，但至少切出下一個能單獨驗收的 Feature | skill [project-lead](../../skills/project-lead/SKILL.md) | roadmap 的 Feature 表 |
+| 1 | Agent | 提出切法：<br>• 一個 use case，或一個共用元件，切成一個 Feature<br>• 切法有依據：把能力清單整批切<br>• 沒有依據：先列交付能力，但至少切出下一個能單獨驗收的 Feature | 同一個 session | roadmap 的 Feature 表 |
 | 1 | Project Lead | 調整切法 | — | — |
-| 2 | Agent | 把 Feature 分組成 Milestone，提出目標日期 | skill [project-lead](../../skills/project-lead/SKILL.md) | roadmap（[範例](https://github.com/yschiang/cross-node-root/blob/main/docs/roadmap.md)） |
+| 2 | Agent | 把 Feature 分組成 Milestone，提出目標日期 | 同一個 session | roadmap（[範例](https://github.com/yschiang/cross-node-root/blob/main/docs/roadmap.md)） |
 | 2 | Project Lead | 定日期；放不下就回第 1 步拆小或延後 | — | — |
-| 3 | Agent | 依依賴與風險提出順序 | skill [project-lead](../../skills/project-lead/SKILL.md) | — |
+| 3 | Agent | 依依賴與風險提出順序 | 同一個 session | — |
 | 3 | Project Lead | 決定範圍與先後，標出接下來要做的 Feature | — | 決策紀錄 |
 | 4 | Project Lead | ◆確認 roadmap：<br>• 選定接下來要做的 Feature；沒有依賴的可以同時選幾個<br>• 指定誰做 Feature spec、誰是 Engineer | — | 決策紀錄 |
 
@@ -222,7 +222,7 @@ flowchart LR
 1. **切 Feature**
    - 怎麼做：
      - Agent 提出切法，Project Lead 調整
-     - 從能力清單與情境找出自成一體的 use case，每個切成一個 Feature
+     - 從能力清單與情境找出自成一體的 use case，每個切成一個 Feature，垂直切：一個看得到的行為，從操作一路走到資料與驗收測試；不要照技術層（資料庫、後端、API、前端）切
      - 多個 use case 都要用到的元件，切成自己的 Feature，排在用到它的 Feature 前面
      - 切法有依據（已經有實作、設計穩定）就整批切；沒有依據就先列交付能力，但至少切出下一個
    - 完成：Feature 表每一列都有
@@ -265,17 +265,17 @@ flowchart LR
 
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
-| 1 | Project Lead 或 Engineer | 交代要準備的 Feature；授權 Agent push branch、開 ticket | 開一個 Agent session，貼上：`/feature-to-spec 準備〈Feature〉：補足 spec、AC、必要高層設計與依賴，引用 project intent、高層設計與 roadmap 的版本。` | — |
-| 1 | Agent | 開 Feature：<br>• 專案第一次用時，先在更新過的 main 執行 `openspec init --tools claude,codex`，commit、push<br>• 在 root 從 `origin/main` 開 branch `feature/<id>` 與 worktree<br>• 在上面建立 change，commit、push<br>• 在 root repo 開 ticket，或把既有的 ticket 改成下方的格式 | • 指令 `git fetch origin`、`git worktree add ../<root>-<id> -b feature/<id> origin/main`<br>• 指令 `openspec new change <id>`（[說明](https://github.com/Fission-AI/OpenSpec/blob/main/docs/cli.md)）<br>• skill [feature-to-spec](../../skills/feature-to-spec/SKILL.md) | • Feature 資料夾（[範例](https://github.com/yschiang/cross-node-root/tree/main/openspec/changes/project-skeleton)）<br>• ticket，狀態「準備中」（[範例](https://github.com/yschiang/cross-node-root/issues/1)） |
+| 1 | Project Lead 或 Engineer | 交代要準備的 Feature；授權 Agent push branch、開 ticket | skill [feature-to-spec](../../skills/feature-to-spec/SKILL.md)：開一個 Agent session，貼上：`/feature-to-spec 準備〈Feature〉：補足 spec、AC、必要高層設計與依賴，引用 project intent、高層設計與 roadmap 的版本。` | — |
+| 1 | Agent | 開 Feature：<br>• 專案第一次用時，先在更新過的 main 執行 `openspec init --tools claude,codex`，commit、push<br>• 在 root 從 `origin/main` 開 branch `feature/<id>` 與 worktree<br>• 在上面建立 change，commit、push<br>• 在 root repo 開 ticket，或把既有的 ticket 改成下方的格式 | • 指令 `git fetch origin`、`git worktree add ../<root>-<id> -b feature/<id> origin/main`<br>• 指令 `openspec new change <id>`（[說明](https://github.com/Fission-AI/OpenSpec/blob/main/docs/cli.md)） | • Feature 資料夾（[範例](https://github.com/yschiang/cross-node-root/tree/main/openspec/changes/project-skeleton)）<br>• ticket，狀態「準備中」（[範例](https://github.com/yschiang/cross-node-root/issues/1)） |
 | 2 | Agent | Research：讀<br>• roadmap 上這個 Feature 那一列<br>• 需求輸入與共用限制<br>• 現況 spec、設計與 ADR<br>• 這次會碰到的程式 | • skill [research-codebase](../../skills/research-codebase/SKILL.md)<br>• 有 `graphify-out/` 時，先用 `/graphify query` 查 | 研究報告：`docs/research/<日期>-<主題>.md`（[範例](../research/2026-09-25/integration-gaps.md)） |
 | 2 | Project Lead 或 Engineer | 讀報告，有疑問就追問 | — | — |
-| 3 | Agent | 寫 proposal：<br>• 為什麼做<br>• 做什麼、不做什麼<br>• 待決與依賴 | skill [feature-to-spec](../../skills/feature-to-spec/SKILL.md) | proposal（[範例](https://github.com/yschiang/cross-node-root/blob/main/openspec/changes/project-skeleton/proposal.md)） |
+| 3 | Agent | 寫 proposal：<br>• 為什麼做<br>• 做什麼、不做什麼<br>• 待決與依賴 | 同一個 session | proposal（[範例](https://github.com/yschiang/cross-node-root/blob/main/openspec/changes/project-skeleton/proposal.md)） |
 | 3 | Project Lead 或 Engineer | 確認範圍：目標、做／不做 | — | — |
-| 4 | Agent | 寫 spec：<br>• 從需求輸入帶入需求（ADDED／MODIFIED）<br>• 由上往下問：流程 → 規則 → 例外 → 驗收，每輪 1–3 題<br>• 每條寫成帶 ID 的 Scenario | • skill [feature-to-spec](../../skills/feature-to-spec/SKILL.md)<br>• 指令 `openspec validate <id>`（[說明](https://github.com/Fission-AI/OpenSpec/blob/main/docs/cli.md)） | spec（[範例](https://github.com/yschiang/cross-node-root/blob/main/openspec/changes/project-skeleton/specs/engineering-baseline/spec.md)） |
+| 4 | Agent | 寫 spec：<br>• 從需求輸入帶入需求（ADDED／MODIFIED）<br>• 由上往下問：流程 → 規則 → 例外 → 驗收，每輪 1–3 題<br>• 每條寫成帶 ID 的 Scenario | 指令 `openspec validate <id>`（[說明](https://github.com/Fission-AI/OpenSpec/blob/main/docs/cli.md)） | spec（[範例](https://github.com/yschiang/cross-node-root/blob/main/openspec/changes/project-skeleton/specs/engineering-baseline/spec.md)） |
 | 4 | Project Lead 或 Engineer | 回答、修正 | — | — |
 | 5 | Project Lead | 看一頁摘要，◆確認 spec；同時是 Engineer 時，改到 B1 一起確認 | — | proposal 裡的確認紀錄 |
 | 6 | Project Lead | 指定：<br>• 誰確認開工<br>• 誰驗收 | — | — |
-| 6 | Agent | 交接：<br>• 組交接包，貼成 ticket 留言<br>• ticket 補上 AC ID，狀態改「就緒」 | skill [feature-to-spec](../../skills/feature-to-spec/SKILL.md) | • 交接包<br>• ticket 狀態「就緒」 |
+| 6 | Agent | 交接：<br>• 組交接包，貼成 ticket 留言<br>• ticket 補上 AC ID，狀態改「就緒」 | 同一個 session | • 交接包<br>• ticket 狀態「就緒」 |
 | 6 | Engineer | 核對交接包：能開始就開始，不行就退回具體問題 | — | — |
 
 **每一步怎麼做、怎樣算完成**
@@ -333,6 +333,7 @@ flowchart LR
      - [ ] 「驗收」列出每個 AC ID，名稱照抄 spec 的 Scenario 標題（未勾選）；標題漏了會改變判定的條件，就改 spec 的標題
      - [ ] 狀態「就緒（可設計）」，下一步是 Engineer 核對交接包
      - [ ] Engineer 在 ticket 回覆可以開始，或列出具體問題退回
+     - [ ] Agent 最後在對話裡給一份摘要：change id、branch 與 worktree、推上去的 commit 與 proposal／spec 連結、ticket 連結與狀態、交接包留言連結、AC ID、spec 確認、開工確認人與驗收人、待決事項，以及 Engineer 下一步要貼的 `/spec-to-plan` prompt
 
 ticket 長這樣（交接完成時）：
 
@@ -376,8 +377,8 @@ App 寫完檔案後，能拿到明確的發布結果：只有內容已發布才�
 
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
-| 1 | Agent | 接受後，整理 1–3 個有證據的改善建議 | skill [project-lead](../../skills/project-lead/SKILL.md) | Retro 候選（ticket 留言） |
-| 2 | Agent | 更新 roadmap，提出接下來的 Feature 候選 | skill [project-lead](../../skills/project-lead/SKILL.md) | roadmap |
+| 1 | Agent | 接受後，整理 1–3 個有證據的改善建議 | 同一個 session | Retro 候選（ticket 留言） |
+| 2 | Agent | 更新 roadmap，提出接下來的 Feature 候選 | 同一個 session | roadmap |
 | 3 | Agent | 所有 PR 都 merge 後，在 root 更新過的 main 上把 spec 併入現況，commit、push，再移除 feature worktree | 指令 `openspec archive <id> --yes`（[說明](https://github.com/Fission-AI/OpenSpec/blob/main/docs/cli.md)） | • 現況 spec<br>• 封存的 Feature 資料夾 |
 
 **每一步怎麼做、怎樣算完成**
@@ -436,10 +437,10 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
 
 | 順序 | 指令 | 停在哪 | ticket 狀態 |
 | --- | --- | --- | --- |
-| 1 | `/spec-to-plan` | ◆確認開工 | 就緒（可設計）→ 開發中 |
-| 2 | `/plan-to-code` | 每個 task 都審過、沒有未解的 blocking，接著直接跑 to-pr | 開發中 |
-| 3 | `/to-pr` | PR Pass，等 ◆驗收 | 開發中 → 待驗收 |
-| 4 | `/project-lead` | 記下驗收結果 | 待驗收 → 已接受，或退回開發中 |
+| 1 | [`/spec-to-plan`](../../skills/spec-to-plan/SKILL.md) | ◆確認開工 | 就緒（可設計）→ 開發中 |
+| 2 | [`/plan-to-code`](../../skills/plan-to-code/SKILL.md) | 每個 task 都審過、沒有未解的 blocking，接著直接跑 to-pr | 開發中 |
+| 3 | [`/to-pr`](../../skills/to-pr/SKILL.md) | PR Pass，等 ◆驗收 | 開發中 → 待驗收 |
+| 4 | [`/project-lead`](../../skills/project-lead/SKILL.md) | 記下驗收結果 | 待驗收 → 已接受，或退回開發中 |
 
 中途卡住的 skill 會把狀態標成 Blocked，寫明原因與下一步找誰。
 
@@ -461,9 +462,9 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
 | Step | Who | Do | How | Output |
 | --- | --- | --- | --- | --- |
 | 1 | Engineer | 開始寫設計與計畫 | skill [spec-to-plan](../../skills/spec-to-plan/SKILL.md)：開一個 Agent session，貼上：`/spec-to-plan 準備〈Feature〉的設計與計畫：讀交接包，寫 design.md 與 tasks.md，交另一個模型審到 clean，停在確認開工。` | — |
-| 2 | Agent | 寫詳細設計 | • skill [spec-to-plan](../../skills/spec-to-plan/SKILL.md)<br>• 指令 `openspec instructions design --change <id>` | design |
+| 2 | Agent | 寫詳細設計 | 指令 `openspec instructions design --change <id>` | design |
 | 3 | Agent | • 垂直切 tasks：每個 task 走完一條完整路徑、能單獨驗證、一個 session 做得完<br>• 先做讓後面好做的整理；需要共用的測試骨架時，排成第一個 task；legacy 路徑沒有測試保護時，第一個 task 補特性測試<br>• 每個 task 選計畫：預設，或 Engineer 指定的加一層程式碼計畫<br>• 每個 task 寫明依賴哪些 task、從它們拿到的介面與不變式<br>• 每個 task 列出要寫的測試，寫明 Red 應該失敗在哪個斷言<br>• 每個 task 標出 Implementer 與 Reviewer 的 effort<br>• 寫每條 AC 的驗法<br>• 交另一個模型審計畫到 clean | • 指令 `openspec instructions tasks --change <id>`<br>• 切法參考 skill [to-tickets](../../skills/third-party/mattpocock/engineering/to-tickets/SKILL.md)（Matt Pocock）的垂直切片規則，不放實作碼 | • tasks<br>• AC 驗法：寫在 validation 文件或 tasks 的明確段落 |
-| 4 | 交接時指定的人 | ◆確認開工（兼任時連 spec 一起確認） | skill [spec-to-plan](../../skills/spec-to-plan/SKILL.md) 停在這裡，記成 ticket 留言 | 開工確認紀錄 |
+| 4 | 交接時指定的人 | ◆確認開工（兼任時連 spec 一起確認） | 同一個 session，停在這裡；確認記成 ticket 留言 | 開工確認紀錄 |
 
 **每一步怎麼做、怎樣算完成**
 
@@ -547,8 +548,8 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
 | 1 | Agent | G1：在全新 clone、要送出的版本跑完整測試，通過才送審 | • skill [to-pr](../../skills/to-pr/SKILL.md)：`/to-pr 送出〈Feature〉`<br>• skill [verification-before-completion](../../skills/third-party/superpowers/verification-before-completion/SKILL.md)（Superpowers） | 測試結果 |
 | 2 | Implementer | 每個受影響的 repo 開一個 PR，連到同一張 ticket；root 的 PR 就是 `feature/<id>` | GitHub | PR |
 | 3 | Reviewer＋CI | • G2：Reviewer 審整組 PR<br>• G3：CI 跑必要 checks | • 建議用 skill [review-panel](../../skills/review-panel/SKILL.md)：兩家以上的 Reviewer 從不同角度審，finding 互相驗證；也可以只用一個 Reviewer<br>• GitHub Actions | review 與 CI 結果 |
-| 3 | Implementer | 修正，最多 3 輪，超過就標 Blocked 交給人，人可以追加輪數（D70）；每次 push 都重新評估 | skill [plan-to-code](../../skills/plan-to-code/SKILL.md) 做修正，skill [to-pr](../../skills/to-pr/SKILL.md) 重跑 gates | 新的 commits |
-| 4 | Agent | 三個 gates 都在目前版本通過後，整理驗收包 | • skill [to-pr](../../skills/to-pr/SKILL.md)：欄位列在 skill 裡<br>• 核對每個 gate 的證據都對應目前版本<br>• controller 可用後由它核對 | PR Pass 驗收包（ticket 留言） |
+| 3 | Implementer | 修正，最多 3 輪，超過就標 Blocked 交給人，人可以追加輪數（D70）；每次 push 都重新評估 | 同一個 session：to-pr 把修正交給 [plan-to-code](../../skills/plan-to-code/SKILL.md)，再重跑 gates | 新的 commits |
+| 4 | Agent | 三個 gates 都在目前版本通過後，整理驗收包 | • 同一個 session；欄位列在 [to-pr](../../skills/to-pr/SKILL.md) 裡<br>• 核對每個 gate 的證據都對應目前版本<br>• controller 可用後由它核對 | PR Pass 驗收包（ticket 留言） |
 
 **每一步怎麼做、怎樣算完成**
 

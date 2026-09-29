@@ -85,6 +85,22 @@ The feature loop continues on the same branch and worktree (design, tasks, code 
 
 A feature that depends on another may be prepared now; its implementation starts only after the upstream is accepted and merged (D27).
 
+## 7. Report what was opened
+
+End by showing the human one short summary, in the chat, of what now exists:
+
+- change id, branch, and the worktree path;
+- the pushed commit, with links to the proposal and the spec delta at that commit;
+- the ticket: link, state and 下一步;
+- the handoff comment's link;
+- acceptance IDs with their scenario titles;
+- the spec confirmation: the confirmed commit, or the fold note;
+- the start approver and the acceptor;
+- open items and dependencies, each with who decides;
+- the next step: after a manual hand-off, the prompt the Engineer pastes in the feature's worktree, ready to copy: `/spec-to-plan 準備〈change id〉的設計與計畫：讀交接包，寫 design.md 與 tasks.md，交另一個模型審到 clean，停在確認開工。`; when you started `spec-to-plan` yourself (authorised), where it stands and where it will stop instead.
+
+Anything the summary cannot show (not pushed, no ticket, no confirmation yet) is said plainly, with what is missing.
+
 ## Revise an existing feature
 
 Use this when the change already exists: a requirement changed while the feature was in the loop, the loop returned Blocked on scope, or the acceptor sent it back because the requirement changed.
@@ -94,6 +110,7 @@ Use this when the change already exists: a requirement changed while the feature
 3. The Project Lead confirms the new spec (or record the fold note); record the confirmed commit in `proposal.md`, then commit and push so the branch holds it.
 4. Post a new handoff comment that carries the complete package of step 2 of the handoff at the new versions, lists what changed, names the pushed commit, and supersedes the earlier one; relink it from the ticket. Rebuild the ticket's 驗收 list from the new spec: add new IDs, remove deleted ones, update renamed titles, and untick every ID whose scenario changed.
 5. A changed spec voids the start-of-work approval for the design and tasks it affects: set the state to `就緒（可設計）` and 下一步 to the Engineer, who revises the plan and gets a new start approval (D11).
+6. End with the summary of step 7, adding what changed and which approvals it voided.
 
 ## Boundaries
 
