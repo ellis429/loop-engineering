@@ -46,7 +46,7 @@ Any miss sends the task to a new attempt with the concrete reasons. At most thre
 
 ## 3. Per-task review
 
-A reviewer that is a different model from the Implementer (D52), preferably from another vendor (for example `codex exec -m gpt-6-sol -s read-only`), in a fresh session on a fresh clone, reviews the task's range (task base to accepted head) against `tasks.md`, `design.md` and the spec, at the task's planned Reviewer effort. Another effort, alias or session of the same model does not count.
+A reviewer that is a different model from the Implementer (D52), preferably from another vendor (for example `codex exec -m gpt-6-sol -s read-only`), in a fresh session on a fresh clone, reviews the task's range (task base to accepted head) against `tasks.md`, `design.md` and the spec, at the task's planned Reviewer effort. Another effort, alias or session of the same model does not count. For a task planned at xhigh, a `review-panel` is recommended (D73).
 
 Sort each finding:
 

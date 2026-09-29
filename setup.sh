@@ -23,7 +23,7 @@ PROJECT=""
 PROJECT_SKILLS=(project-lead feature-to-spec spec-to-plan plan-to-code to-pr research-codebase
                 grilling domain-modeling grill-with-docs brainstorming writing-plans test-driven-development
                 subagent-driven-development using-git-worktrees requesting-code-review
-                verification-before-completion finishing-a-development-branch)
+                verification-before-completion finishing-a-development-branch review-panel)
 MANIFEST=".loop-engineering-skills"
 
 # A vendored folder moved aside during --update is put back if the new one did not arrive,

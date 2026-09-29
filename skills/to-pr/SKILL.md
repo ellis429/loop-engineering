@@ -27,7 +27,7 @@ One pull request per affected repo from `feature/<id>` (D61); the root repo's is
 
 Record the version set: every pull request with its base and head commit. Then, in parallel:
 
-- **G2:** a reviewer that is a different model from every implementer of this feature (D52; a new session or another effort of the same model does not count), read-only, in a fresh session, reviews the whole set against the spec, `design.md` and `tasks.md`. Findings carry IDs and are blocking or not.
+- **G2:** a reviewer that is a different model from every implementer of this feature (D52; a new session or another effort of the same model does not count), read-only, in a fresh session, reviews the whole set against the spec, `design.md` and `tasks.md`. Findings carry IDs and are blocking or not. Recommended: run G2 as a `review-panel` (two or more reviewers from different vendors, different angles, cross-verified findings, D73); the Engineer may choose a single reviewer, and the record says which.
 - **G3:** the required CI checks at each pull request's head. Pending, cancelled, skipped or unknown is not success.
 
 Both verdicts must be for the recorded version set. They go stale when a head changes, a base moves (the default branch advanced), or the spec or `design.md` they were judged against changes.
