@@ -30,8 +30,8 @@
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | 1 | 人工決策與下一步 | 近期 | Engineer 登記一個 Feature run，含 spec、design 與 plan 的版本。人用 `decide` 記錄開工確認等決策。`status` 與 `next` 顯示持久狀態，以及唯一允許的下一步；中斷後從檔案接續。包含專案骨架，以及 CI `unit-linux`（D53）。 | T2.1、T2.2；T1.1 的 CLI、測試政策、CI、`workflow.yaml` | — | ORC-01、02、03、05、07、11、12；GAT-06；DUR-01、02、05、06、08；FIN-03、05 | #6 |
 | 2 | 派工與結果回收 | 暫定 | orchestrate 從交接包開始：叫 spec-to-plan，把 design 與 plan 登記到 loopctl，停在 ◆確認開工（D55、D69）。人確認後，依 `next` 用 preflight 驗證過的 profile（R1），經 Herdr 派出 Implementer。外部寫入先登記、再讀回，逾時轉成 unknown，由人用 `decide` 處理。結果先保存，再去重匯入。計算 active 預算（4 小時）與 worker 時限（45 分鐘），到期就拒絕派工。建立各接法分開的能力證據矩陣。 | T1.1 的 profiles 與 preflight、T1.2、T2.3；T7.1 的 worker 預算部分 | 1 | ORC-03、08；GAT-05、08；DUR-02、03、04、06、08、09 | E-1（#9）、E-2（#11）、#7 |
-| 3 | TDD 證據、PR 與 CI | 暫定 | Implementer 的結果匯入後，orchestrate 依 `next` 讓 loopctl 核對 G1：原始 Red 的資格、乾淨 checkout 的 Green、N/A 紀錄、整合 attempt，以及證據命令的時限。接著 push，建立或更新 PR，等待 CI（30 分鐘），只認 PR head 上 `unit-linux` 的 success 判定 G3。R2：orchestrate 在 probe branch 用 fixture 真實跑到 G1。 | T3.1、T6.1；T7.1 的證據與 CI 預算部分 | 2 | ORC-03；GAT-01、02、03、04、06、07；DUR-03、06、07、08 | #15 |
-| 4 | 獨立審查與 PR Pass | 暫定 | orchestrate 依 `next` 派獨立 Reviewer：不同模型、新 session，review 時限 30 分鐘。G2 綁定 head、base 與文件版本。finding 流程包含登記、合併成修正批次、覆核、一次爭議覆核、反覆 finding 提前升級，上限三輪。最後發布 review 與 PR Pass 驗收包。 | 無（T4.1、T5.1、T6.2 沒有實作） | 3 | ORC-01、05；GAT-01、03、05、06、07、08；DUR-04、06、07、08；FIN-01～07 | E-3（#12） |
+| 3 | TDD 證據、PR 與 CI | 暫定 | Implementer 的結果匯入後，orchestrate 依 `next` 讓 loopctl 核對 G1：原始 Red 的資格、乾淨 checkout 的 Green、N/A 紀錄、整合 attempt，以及證據命令的時限。接著 push，建立或更新 PR，等待 CI（30 分鐘），只認 PR head 上 `unit-linux` 的 success 判定 G3。R2：orchestrate 在 probe branch 用 fixture 真實跑到 G1。 | T3.1、T6.1；T7.1 的證據與 CI 預算部分 | 2 | ORC-03；GAT-01、02、03、04、06、07、08；DUR-03、06、07、08、09 | #15 |
+| 4 | 獨立審查與 PR Pass | 暫定 | orchestrate 依 `next` 派獨立 Reviewer：不同模型、新 session，review 時限 30 分鐘。G2 綁定 head、base 與文件版本。finding 流程包含登記、合併成修正批次、覆核、一次爭議覆核、反覆 finding 提前升級，上限三輪。最後發布 review 與 PR Pass 驗收包。 | 無（T4.1、T5.1、T6.2 沒有實作） | 3 | ORC-01、05；GAT-01、03、05、06、07、08；DUR-04、06、07、08、09；FIN-01～07 | E-3（#12） |
 
 **依賴**：四個 Feature 是一條鏈，依 D27 依序開工：上游接受並 merge 後，下游才開始實作。等上游時，可以先準備下游的 spec。
 
@@ -56,7 +56,7 @@
 | 項目 | 內容 | AC | Owner | 審查 |
 | --- | --- | --- | --- | --- |
 | R3 | 登記 baseline 後，選一個尚未實作的新行為，經自己的 D11 確認，由 orchestrate＋loopctl 跑完。三 gates 在目前版本都通過；改變行為的修正有綁定 finding 與 batch 的原始 Red；中斷一次後成功接續。Blocked 或沒有 finding 時 R3 維持 open，M1 不算完成（`validation.md` R3、AC-G20）。 | G01、G20、D14 的真實交付部分 | Project Lead 選 Feature；Engineer 執行 | G2 照常 |
-| Workflow 樣本 | 照 `validation.md` §3 的 W-A～W-F，每組一個正例與一個負例。正例盡量取自 M1 的真實紀錄（本 roadmap、交接包、◆確認開工、D27 的依序開工、orchestrate 的結果匯入）；「模板存在」不算通過。 只由樣本驗證的 11 條（F12、O04、O12、O13、O17、O20、O21、O24、O25、O27、O28）；O16（Feature 2 另有 orchestrate 的文件清單）；另 6 條的樣本部分（O01、O15、O19、O22、O23、O26） | 照 §3 各組的 owner | 獨立 Reviewer 依 rubric 審查，結果記在 `proof.md` |
+| Workflow 樣本 | 照 `validation.md` §3 的 W-A～W-F，每組一個正例與一個負例。正例盡量取自 M1 的真實紀錄（本 roadmap、交接包、◆確認開工、D27 的依序開工、orchestrate 的結果匯入）；「模板存在」不算通過。 | 只由樣本驗證的 11 條（F12、O04、O12、O13、O17、O20、O21、O24、O25、O27、O28）；O16（Feature 2 另有 orchestrate 的文件清單）；另 6 條的樣本部分（O01、O15、O19、O22、O23、O26） | 照 §3 各組的 owner | 獨立 Reviewer 依 rubric 審查，結果記在 `proof.md` |
 | 能力證據矩陣 | Feature 2 建立；Feature 3、4 與 R3 各自補上證據。每項能力分列 `fake`、`profile-probe`、`real-E2E`，依接法分開，未執行的格子標 `none`（§4）。 | G19、D22 | Engineer | 同上 |
 
 ## 延後到 M2
@@ -75,6 +75,7 @@
   - 唯讀的專案進度視圖（D55（7））；
   - 跨 Feature 依賴自動化、平行 worktree 與整合規則；
   - Q-STACK；
+  - 是否由 controller 強制逐 task 的獨立 review（D57（4）留給 S2，待決；Feature 4 的 G2 審整個 PR，不等於逐 task review）；
   - 多人交接（Q-DEMO-PEOPLE）。
 
 ## `implement-delivery-loop` 退役
@@ -83,7 +84,9 @@
 
 1. 把 `specs/` 的四份 capability 與 `adoption/source-map.md`，原樣搬到 `docs/requirements/delivery-controller/` 當需求輸入，不改寫內容。搬移前後核對每個檔案的 sha256 相同；D53 的核准快照（`d11-approval.json`）不受影響。
 2. 清查引用。目前約 40 個檔案提到這個 change 的路徑：
-   - 現行入口（`README.md`、`docs/decisions.md`、`docs/design-candidate/d45-04/`、`docs/validation/`）改指新的需求輸入。
+   - 現行入口改寫：`README.md` 的「接續狀態」，以及 `docs/README.md` 的目前進度與「先讀哪份」第 4 點。改指本 roadmap 與新的需求輸入；接續依據從 handoff 改成本 roadmap。
+   - 受 hash 保護的檔案不改：D53 核准的 `docs/design-candidate/d45-04/` 候選原檔（`d11-approval.json` 綁定）。它們提到的舊路徑，在勘誤新增一項轉接到新位置，照「原檔＋勘誤」判讀。
+   - 決策紀錄的既有列不改：`docs/decisions.md` 的 D40、D53 等列是當時的紀錄；退役本身記成新的一列。
    - 歷史紀錄（reviews、experiments、manifest、handoffs）是當時版本的證據，不改。在需求輸入的 README 寫明舊路徑與最後存在的 commit（`a1d8906`）。
 3. 刪除 change 目錄，不 archive。這個 change 沒有交付；archive 會把還沒實作的行為寫進 `openspec/specs/`，違反 D58。`proposal.md`、`design.md`、`tasks.md`、`approval.json` 與 adoption 審查紀錄，以 `a1d8906` 的固定連結保存。
 4. D53 的核准保留為歷史紀錄。D45-04 design 改作高層設計的參考；每個 Feature 的 `design.md` 由 Implementer 依它的章節寫（D69）。

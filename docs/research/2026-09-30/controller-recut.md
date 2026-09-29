@@ -105,8 +105,8 @@ AC-G19、AC-D22 的驗證欄只有 `proof.md` rubric（`validation.md` §4）：
 | AC-G17 | 3 → 4 | Base 或規格改變 |
 | AC-D14 | 4 → V | Controller restart |
 | AC-G20 | 4 → V | 真實 review 沒有 finding |
-| AC-D22 | 2 → V | 兩種接法分別驗證 |
-| AC-G19 | 2 → V | 模擬通過但 adapter 缺證據 |
+| AC-D22 | 2 → 3 → 4 → V | 兩種接法分別驗證 |
+| AC-G19 | 2 → 3 → 4 → V | 模擬通過但 adapter 缺證據 |
 | AC-O16 | 2 → V | Skills 交回 controller |
 | AC-O01 | 1 → V | 直接與 Implementer 協作 |
 | AC-O15 | 1 → V | 暫停的 P03 試用 |
