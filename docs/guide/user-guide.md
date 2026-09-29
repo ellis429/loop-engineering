@@ -272,7 +272,7 @@ flowchart LR
 | 3 | Agent | 寫 proposal：<br>• 為什麼做<br>• 做什麼、不做什麼<br>• 待決與依賴 | 同一個 session | proposal（[範例](https://github.com/yschiang/cross-node-root/blob/main/openspec/changes/project-skeleton/proposal.md)） |
 | 3 | Project Lead 或 Engineer | 確認範圍：目標、做／不做 | — | — |
 | 4 | Agent | 寫 spec：<br>• 從需求輸入帶入需求（ADDED／MODIFIED）<br>• 由上往下問：流程 → 規則 → 例外 → 驗收，每輪 1–3 題<br>• 每條寫成帶 ID 的 Scenario | 指令 `openspec validate <id>`（[說明](https://github.com/Fission-AI/OpenSpec/blob/main/docs/cli.md)） | spec（[範例](https://github.com/yschiang/cross-node-root/blob/main/openspec/changes/project-skeleton/specs/engineering-baseline/spec.md)） |
-| 4 | Project Lead 或 Engineer | 回答、修正；需求本來就模糊時，自己輸入 `/grill-me` 深問；只有某一條 AC 不確定時，要 Agent 只針對那條追問 | — | — |
+| 4 | Project Lead 或 Engineer | 回答、修正；需求本來就模糊時，自己輸入 `/grill-me` 深問（要同時寫 ADR 與詞彙表就用 `/grill-with-docs`）；只有某一條 AC 不確定時，要 Agent 只針對那條追問 | — | — |
 | 5 | Project Lead | 看一頁摘要，◆確認 spec；同時是 Engineer 時，改到 B1 一起確認 | — | proposal 裡的確認紀錄 |
 | 6 | Project Lead | 指定：<br>• 誰確認開工<br>• 誰驗收 | — | — |
 | 6 | Agent | 交接：<br>• 組交接包，貼成 ticket 留言<br>• ticket 補上 AC ID，狀態改「就緒」 | 同一個 session | • 交接包<br>• ticket 狀態「就緒」 |
