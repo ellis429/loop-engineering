@@ -155,7 +155,7 @@ Research 記錄「目前如何運作」，研究報告不是已批准的 spec。
 
 Roadmap 只有兩層：milestone 和 feature。Feature 是能單獨驗收的交付，以一個 use case 或一個共用元件為單位，每個受影響的 repo 一個審得動的 PR；milestone 是幾個 feature 加上時間條件（目標日期）；task 寫在 feature 裡，不上 roadmap。
 
-**垂直切**：每個 feature 交付一個看得到的行為，從使用者操作一路走到 UI／API、領域邏輯、資料與驗收測試，能單獨驗收。不要照技術層切（一個資料庫、一個後端、一個 API、一個前端）：那樣只製造整合依賴，每一片都無法單獨交付。水平的 feature 只用在多個 feature 共用的平台元件，例如 schema migration、共用 SDK／API、共用框架、測試基礎設施，也就是上面說的共用元件。好的切片＝一個看得到的行為＋最小的完整路徑＋清楚的驗收測試；可行時，一片就是每個受影響 repo 一個 PR。Feature 裡的 task 也照同樣原則切（見[做出來：Engineer 的細節](#做出來engineer-的細節)）。
+**垂直切**：每個 feature 交付一個看得到的行為，從使用者操作一路走到 UI／API、領域邏輯、資料與驗收測試，能單獨驗收。不要照技術層切（一個資料庫、一個後端、一個 API、一個前端）：那樣只製造整合依賴，每一片都無法單獨交付。水平的 feature 只用在多個 feature 共用的元件，例如 schema migration、共用 SDK／API、共用框架、測試基礎設施。好的切片＝一個看得到的行為＋最小的完整路徑＋清楚的驗收測試，做成一個 change、每個受影響 repo 一個 PR。Feature 裡的 task 另照 D71 切：預設垂直，整理和共用測試骨架先做（見[做出來：Engineer 的細節](#做出來engineer-的細節)）。
 
 **切法是循環的**：先依 use case 或共用元件切 feature，再分組、加上目標日期成為 milestone；日期放不下就回頭拆小或延後。每個 feature 驗收後回到 A3 再看一次：design 發現某部分能單獨驗收就拆出去，依賴變了就調整順序。
 
