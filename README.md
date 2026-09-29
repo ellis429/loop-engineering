@@ -4,7 +4,7 @@
 
 目前階段（2026-09-28）：薄 controller 第一片（D45-04 revision-17）已由 D53 核准，經 PR #3 採用進正式 OpenSpec change，正在 `delivery/thin-controller` 分支實作。D54、D55 定下 spec 的位置與 `project-lead`、`orchestrate` 兩個 skill 的分工。舊 S1 的 [PR #2](https://github.com/yschiang/loop-engineering/pull/2) 未合併，17 項獨立 review findings 尚未覆核關閉；不宣稱 PR Pass 或完整 E2E。完整成品與責任邊界見 [Project intent](docs/project-intent.md)。
 
-接續狀態：[Controller handoff](docs/handoffs/2026-09-27-controller-design.md)；正式 change 的 [design](openspec/changes/implement-delivery-loop/design.md)、[tasks](openspec/changes/implement-delivery-loop/tasks.md)、[AC 驗證對照](docs/validation/implement-delivery-loop.md) 都指向 D53 採用的版本，D40 內容留在 Git 歷史。
+接續狀態：[Roadmap](docs/roadmap.md)（D75）把薄 controller 重切成四個 Feature 與 M1 驗收；需求輸入在 [`docs/requirements/delivery-controller/`](docs/requirements/delivery-controller/README.md)。原本的單一 change `implement-delivery-loop` 已退役，`delivery/thin-controller` 保留為唯讀參考。
 
 目前優先事項（D56 調整 D33）：**cross-node-file-transfer 的 Project 層現在開始，第一個真正的 feature 等 orchestrate 可用後走 feature loop**。新專案沿用既有需求／設計／roadmap 基準，核對來源並映射文件結構，省去重做完整 grill；從初始化開始留下新的交付證據。目的讓 member 沿同一入口與預設方法工作，不必各自挑 skills。詳見 [測通與新專案順序](docs/workflow/overview.md#101-新專案的啟動順序d33d56-調整)。
 

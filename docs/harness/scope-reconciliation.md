@@ -211,4 +211,4 @@ Worktree 共用所屬 repo 的 Git 歷史：各 feature 的實作 worktrees 應�
 
 當時未修改 `src/delivery/`、`tests/` 或舊 OpenSpec artifacts／approval；未關閉任何 finding；未安裝 Herdr、啟動新實作、修改 gigaxfer 或建立 cross-node-file-transfer。Scope 對照完整不等於新 design 已完成或 E2E 已通過。
 
-來源：[Project intent](../project-intent.md)、[決策](../decisions.md)、[Herdr 整合草案](herdr-integration.md)、[正式 OpenSpec](../../openspec/changes/implement-delivery-loop/proposal.md)、[舊 S1 checkpoint](../handoffs/2026-09-27-controller-design.md)。
+來源：[Project intent](../project-intent.md)、[決策](../decisions.md)、[Herdr 整合草案](herdr-integration.md)、[正式 OpenSpec](https://github.com/yschiang/loop-engineering/blob/a1d8906/openspec/changes/implement-delivery-loop/proposal.md)、[舊 S1 checkpoint](../handoffs/2026-09-27-controller-design.md)。
