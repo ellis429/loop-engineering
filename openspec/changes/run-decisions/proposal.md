@@ -80,3 +80,11 @@ roadmap 的 Feature 1 列與[重切研究](../../../docs/research/2026-09-30/con
 | 解除 transition 衝突用哪個 decision（新種類，或沿用 `revise`） | 否，屬 design | Implementer |
 | GitHub branch protection 是否把 `unit-linux` 設為必要 check | 否；不影響本 Feature 的驗收 | Project Lead |
 | 參考實作 `delivery/thin-controller@fcefecc` 只作參考；沿用的程式照 TDD 重做，舊測試與審查不算證據（D75） | 否 | Implementer |
+
+## Spec 確認
+
+- 確認人：Project Lead（使用者本人，同時是 Engineer 與驗收人，D75）
+- 時間：2026-09-30
+- 原話：「現在確認」（回答「確認 Feature 1 的 spec（commit `85255da`）嗎？」）
+- 確認的版本：commit `85255da`（proposal 與三份 spec delta）
+- 這是 spec 確認，不是開工確認；開工確認在 spec-to-plan 寫完 design 與 tasks 後另外進行（D11）。
