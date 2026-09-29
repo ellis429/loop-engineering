@@ -1,0 +1,19 @@
+roadmap_commit=174fbd613aabf9705e9b8f20f750712f9ba1dce7
+thin_commit=fcefeccf2a5e76d11fc5a740e69a6b7ab53c557a
+1c0b9311a8917b1736dc12fdfa1555eec33b7ae141a1199b986f4808a386dcf0  docs/roadmap.md
+8eb92659e4bf94e4ce01f5f09ee236053ab552b9a88f9b15d90ce94a264cbea4  docs/research/2026-09-30/controller-recut.md
+e5887372f5e532aba6d1c4498a7646f955413dbd27a9a265ae5ca1a30ac7b654  docs/decisions.md
+6da22e28557d0bca54ff629971cbf43a700ed77f1add4b2205088ff54d226406  skills/project-lead/SKILL.md
+069bcec7dd3a8a2deb570ee8dd573da2b08317d0e281c6e7bbe9d1b0239a0d4e  docs/guide/user-guide.md
+84076c5c249d8b29d6983362851ffcd9554b5434a055cfc1004038dc86d2744e  docs/design-candidate/d45-04/coverage.md
+1a793b5a7e7d0397d25d7c89e956220976ad90b45712c2f569ac7e9100b77503  docs/design-candidate/d45-04/tasks.md
+bbf711923e22fd980c54e955e74407eed2fe03070732145129d7f431667ae81c  docs/design-candidate/d45-04-errata.md
+7cdf2ee0b1bd4f0be007169d6d0599e1e9320bef2a486e4ebd9285a550907a5f  openspec/changes/implement-delivery-loop/specs/delivery-gates/spec.md
+8eaafa4d14e135456727ec31f20645d3768894ce5b0865a7968b8ccc904f1a7f  openspec/changes/implement-delivery-loop/specs/delivery-orchestration/spec.md
+ace2b0e5b18f7c7b905a3a445975a92d317c101a3a5349507026b5c70b7db468  openspec/changes/implement-delivery-loop/specs/durable-delivery/spec.md
+e46512eb6061717adf7b54b48a6d6e2b285cc37f29167a4401594adc0f939cb2  openspec/changes/implement-delivery-loop/specs/finding-resolution/spec.md
+thread_id=01a0ef53-4002-72c3-bc1e-1de5b567a1a5
+native=gpt-6-astra xhigh read-only
+started_at=2026-09-29T22:40:04Z
+finished_at=2026-09-29T22:47:24Z
+verdict=verdict: changes_requested

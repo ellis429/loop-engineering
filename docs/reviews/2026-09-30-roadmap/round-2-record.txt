@@ -1,0 +1,9 @@
+roadmap_commit=50cc7114d37df5f1e8375c9b0dfad7adae3faa1b
+1fd604c8ba113177e442d87937b186efa5c947496c4c87ca1ed4022bff40bc45  docs/roadmap.md
+ee9d4189b52b29311ec93f864cd92139c2b15ca17611bc81439c6075db07b390  docs/research/2026-09-30/controller-recut.md
+2091012b0a04313b2308b3eed037c9d9ee326c09ea568aa0ec0d4f3c66d7da92  /private/tmp/claude-503/-Users-johnson-chiang-workspace-gigaxfer/6e10dd96-1983-439f-9bbe-3f41c79e55be/scratchpad/roadmap-review-2/review-1.md
+thread_id=01a0ef5e-7609-7533-8890-e38acfa94121
+native=gpt-6-astra xhigh read-only
+started_at=2026-09-29T22:52:17Z
+finished_at=2026-09-29T22:59:58Z
+verdict=verdict: changes_requested
