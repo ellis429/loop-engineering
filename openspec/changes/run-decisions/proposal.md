@@ -36,7 +36,7 @@
 - `delivery-gates`：GAT-06（必要 check 政策的宣告與綁定，以及本機與 CI 同一套測試政策；G3 判定在 Feature 3）。
 - `durable-delivery`：DUR-01、DUR-02、DUR-05、DUR-08。
 
-AC：D01、D02、D03、D09、D10、D11、D17、G13、O01、O02、O03、O05、O07、O15、O19、O22、O23、O26。
+AC（20 條）：D01、D02、D03、D09、D10、D11、D25、G21、G22、O01、O03、O05、O07、O15、O19、O22、O23、O26、O29、O30。其中 D25、G21、G22、O29、O30 是新 ID，依據見下一節。
 
 ### Modified Capabilities
 
@@ -48,7 +48,17 @@ AC：D01、D02、D03、D09、D10、D11、D17、G13、O01、O02、O03、O05、O07
 
 - `resolve_read`、`resolve_operation` 移到 Feature 2，AC-D13、D16 跟著移過去，所以 DUR-06 不在本 Feature。
 - `accept`、`return` 移到 Feature 4，AC-F11、O11 跟著移過去，所以 ORC-05、FIN-05 不在本 Feature。
-- `budget_extension` 的 `rounds` 目標在本 Feature 只有紀錄，由 AC-D17 涵蓋；FIN-03（AC-F07）整條留到 Feature 4。
+- `budget_extension` 的 `rounds` 目標在本 Feature 只有紀錄；FIN-03（AC-F07）整條留到 Feature 4。
+
+寫 spec delta 時，另有三條 AC 在本 Feature 連觸發情境都不存在，改由後面的 Feature 首先驗證；它們在本 Feature 成立的部分改用新 ID 表達，原 ID 不改寫、不重用：
+
+| 原 AC | 觸發情境 | 改到 | 本 Feature 成立的部分 |
+| --- | --- | --- | --- |
+| AC-O02 拒絕第二個外層 loop | 請求派發外層實作 | Feature 2 | 非 owner 只能讀取，已由 AC-D03 涵蓋 |
+| AC-D17 Active budget 到限與恢復 | 累計主動時間到 4h | Feature 2 | 預算調整只記錄人工裁決：新增 AC-D25 |
+| AC-G13 非成功 check 與空集合 | G3 判定必要 check | Feature 3 | 本機與 CI 同一測試政策：新增 AC-G21；必要 check 政策需要核准：新增 AC-G22 |
+
+另外兩個新 ID 來自 requirement 本文與已確認的範圍：AC-O29（binding 不齊時不能批准，#6）、AC-O30（`adopt`、`delegate` 回 `unsupported`，ORC-01）。
 
 roadmap 的 Feature 1 列與[重切研究](../../../docs/research/2026-09-30/controller-recut.md)的對照，在本 change 一起更新。
 

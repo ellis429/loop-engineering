@@ -117,6 +117,19 @@ AC-G19、AC-D22 的驗證欄只有 `proof.md` rubric（`validation.md` §4）：
 
 這 29 條在第一個階段只成立一部分，例如 1 只記錄延長輪次的人工決策，三輪用完轉 Blocked 要到 4 才有。OpenSpec 的 scenario 在 change archive 時必須已經成立（D58），所以 roadmap 的規則是：每個 Feature 的 spec delta 只寫它結束時成立的部分，原 AC 由最後一個 Feature 補齊（前面已 archive 的 requirement 用 MODIFIED）；V 的部分由「M1 驗收」的紀錄補齊，不寫進 Feature 的 spec。
 
+## Feature 1 範圍確定後的調整
+
+2026-09-30，Project Lead 確定 Feature 1（change `run-decisions`）的範圍：`decide` 的種類跟著產生對象的 Feature 走，spec delta 只寫本 Feature 觀察得到的部分。首先驗證的階段因此改變：
+
+| AC | 原本 | 改為 | 原因 |
+| --- | --- | --- | --- |
+| D13、D16 | 1 | 2 | `resolve_operation`、`resolve_read` 在 Feature 2 才有對象 |
+| O02、D17 | 1 | 2 | 觸發情境（派工、主動時間）在 Feature 2 才存在 |
+| G13 | 1 | 3 | 觸發情境是 G3 判定 |
+| F07、F11、O11 | 1 | 4 | 輪次效果與 `accept`／`return` 在 Feature 4 |
+
+Feature 1 另外新增五個 AC：D25、G21、G22、O29、O30，說明見該 change 的 proposal。上方各表維持重切當時的推導，不回頭改寫。
+
 ## 時間估計的依據
 
 夜間迴圈實測（`.delivery/bootstrap/thin-s1/loop-2-3/morning-report.md`，在 `fcefecc` 的 worktree）：T2.1–T3.1 共 48 個驗證案例，agent 時間 2 小時 39 分，牆鐘 2 小時 51 分；high 每案例約 1.4–2.0 分鐘，xhigh 約 3.7–4.6 分鐘。之後的逐 task 審查與修正沒有計時。
