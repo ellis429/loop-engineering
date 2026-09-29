@@ -15,7 +15,11 @@ Shared by `project-lead` (project SA, A1) and `feature-to-spec` (feature SA, A4)
 - Unanswerable now: record whether it can wait, what it blocks, and how to find out. Keep unaffected work moving.
 - After each round, write each answer into the document that owns it (table below), then tell the human what changed and what still blocks.
 - Silence is not agreement. Keep proposals, assumptions, and open items labelled as such.
-- Use `grilling` or `domain-modeling` when available and appropriate; say so when they are not. `grill-with-docs` cannot be invoked by an agent; when a deeper interview would help, suggest that the human start it with `/grill-with-docs`.
+- How hard to ask depends on how settled the input is:
+  - A feature cut from requirements already confirmed (for example at the project level): the measured asking above is enough; do not re-interview what is confirmed.
+  - A feature whose requirement is vague, or project-level direction still being set: a relentless interview helps. Suggest that the human start `/grill-me` (or `/grill-with-docs`, which also writes ADRs and glossary entries); agents cannot start either.
+  - One acceptance condition the human or you are unsure of: grill only that condition, with `grilling`, not the whole spec.
+- `domain-modeling` helps when the domain terms are unclear; say so when a skill you would use is not installed.
 
 ## Seven questions, four slots
 

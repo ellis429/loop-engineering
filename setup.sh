@@ -21,7 +21,7 @@ FORCE=0
 PROJECT=""
 # Skills a product repository needs to run the workflow; copied, not linked, by --project.
 PROJECT_SKILLS=(project-lead feature-to-spec spec-to-plan plan-to-code to-pr research-codebase
-                grilling domain-modeling grill-with-docs brainstorming writing-plans test-driven-development
+                grilling grill-me domain-modeling grill-with-docs brainstorming writing-plans test-driven-development
                 subagent-driven-development using-git-worktrees requesting-code-review
                 verification-before-completion finishing-a-development-branch review-panel)
 MANIFEST=".loop-engineering-skills"
