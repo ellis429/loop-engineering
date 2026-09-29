@@ -14,7 +14,7 @@ Read repository instructions first; they override this skill.
 ## 1. Set up the panel
 
 - **Scope:** the version set (each pull request's base and head) or the task's range; the spec, `design.md`, `tasks.md` and the acceptance IDs it must meet.
-- **Reviewers:** at least two, from different vendors (for example GPT-6 Sol through `codex exec`, Claude Opus through `claude -p`). Each is a different model from every implementer of the change (D52) and a strong model, at the planned Reviewer effort (the task's for a per-task review; the highest of the feature's tasks for G2), in a fresh session on its own fresh clone. It changes no tracked file; it may run the tests and write reproductions under an untracked `.review/` folder in its clone.
+- **Reviewers:** at least two, from different vendors (for example GPT-6 Sol through `codex exec`, Claude Opus through `claude -p`). Each is a different model from every implementer of the change (D52) and a strong model, at the planned Reviewer effort (the task's for a per-task review; the highest of the feature's tasks for G2), in a fresh session on its own fresh clone of the reviewed version. The review is read-only: it changes nothing in the repository and pushes nothing. It may run the tests, and writes any reproduction scripts and their output to a scratch folder outside the clone that the coordinator gives it; that folder is the only place it writes.
 - **Angles:** every reviewer gets the same inputs and reports anything it finds, but leads with one angle:
   1. **Spec and acceptance:** for each scenario, try to build an input or sequence that violates it.
   2. **State and failure paths:** repeated, resent, concurrent, interrupted and out-of-order operations, and what they leave in the state for later steps.
@@ -33,7 +33,7 @@ Read repository instructions first; they override this skill.
 
 ## 3. Re-review after fixes
 
-Every reviewer re-checks the whole merged list at the new head, not only its own findings, and reports anything the fixes broke. Resume each reviewer's session.
+Every reviewer re-checks the whole merged list at the new head, not only its own findings, and reports anything the fixes broke. Resume each reviewer's session. A new finding from the re-review joins the merged list and goes through step 2 like any other.
 
 ## 4. Record
 
