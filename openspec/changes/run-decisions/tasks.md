@@ -8,11 +8,12 @@
   - 每個 task 都用預設模式，plan 寫到設計、介面、不變式與測試為止。
   - Implementer 是 Claude Opus 5.5。Reviewer 是 GPT-6 Astra（另一家廠商），每個 task 在新 session、新 clone 上唯讀審查。
   - effort 依 D69 的表，逐 task 標在下方。
-- **順序**：依序實作 1.1 → 2.1 → 3.1 → 4.1 → 5.1 → 6.1（D13 實作序列）。依賴只從前往後，沒有循環。
+- **順序**：依序實作 1.1 → 2.1 → 3.1 → 4.1 → 5.1 → 6.1（D13 實作序列）。依賴只從前往後，沒有循環。每張測試表的列序就是撰寫順序。
 - **Red 的規則**（D68）：
-  - Red 必須是所列斷言的比較失敗（AssertionError）。ImportError、usage error、unknown command，或停在呼叫上的例外，都不算。harness 的 `Result` 會把未攔截的例外記在 `exc`，所以程式崩潰時，失敗也會落在第一個斷言上。
-  - 每個 Red 以同一 task 前面的測試已經 Green 為前提。
-  - 標「突變」的測試，預期會因為前面的實作而一寫就 Green。這時要以一次不提交的突變證明它會失敗在所列斷言上：暫時破壞表中寫明的行為，記下失敗，再還原。突變與輸出存成 Red 證據。
+  - Red 必須是所列斷言的比較失敗（AssertionError）。ImportError、usage error、unknown command，或停在呼叫上的例外，都不算。
+  - harness 的 `Result` 會把未攔截的例外記在 `exc`；巢狀欄位用不會拋例外的方式取值（D13）。所以程式崩潰或缺欄位時，失敗也會落在所列的斷言上。
+  - 每個 Red 都以同一 task 前面的測試已經 Green 為前提。
+  - 標「突變」的測試，預期會因為前面的實作而一寫就 Green。這時以一次不提交的突變證明它會失敗在所列斷言上：照表中寫明的方式暫時破壞行為，記下失敗，再還原。突變與輸出存成 Red 證據。
   - 沒有標「突變」的測試一寫就 Green → 停下，回報計畫有誤，不自行改測試。
 - **每個 task 的完成條件**：
   - 在 task 的 head 上，`uv run pytest && uv run ruff check . && uv run mypy src` 全部通過，前面 task 的測試也包含在內。1.1 與 2.1 另外要 `scripts/dist-smoke.sh` 通過。
@@ -20,7 +21,8 @@
 - **指令**：每張測試表註明檔案；單一測試的指令是 `uv run pytest <檔案> -k <名稱>`。pytest 的政策由 `pyproject.toml` 提供，所以不加任何旗標。
 - **證據**：每個 task 的 Red 與 Green 原始紀錄（命令、完整輸出、exit code、commit）存在 `.delivery/run-decisions/<task>/attempt-<n>/`，這個目錄不進 Git。逐 task 審查的結果貼在 #29。
 - **Commit**：
-  - 格式：`<type>(<scope>): <祈使句>`，英文，不超過 72 字元，scope 用模組名。
+  - 格式：`<type>(<scope>): <祈使句>`，英文，不超過 72 字元，scope 用模組名（`store`、`state`、`decisions`、`cli`、`next`）。
+  - 例外：`build` 與 `ci` 不帶 scope，寫成 `build: …`、`ci: …`。
   - `feat`、`fix`、`refactor` 的 body 要有 `Why:` 與 `Behavior:`。
   - 沒有 `Co-Authored-By` 或任何 AI 署名。
   - 每個 task 一到幾個 commit，各自綠燈。task 的核取方塊在它最後一個 commit 勾選。
@@ -30,12 +32,12 @@
 | 檔案 | 擁有順序 | 規則 |
 | --- | --- | --- |
 | `pyproject.toml`、`uv.lock` | 1.1 建立 → 2.1 加 dev 依賴 pyyaml | 兩者在同一個 commit 更新；全新 clone 的 `uv sync --frozen` 仍成功 |
-| `tests/conftest.py` | 1.1 建立（政策、`home`、`repo`、`cli`、`cli_proc`）→ 3.1 加 `started_run` | 只新增 fixture，不改既有 fixture 的行為 |
-| `src/loopctl/cli.py` | 1.1 建立（parser 與全部 stub）→ 3.1、4.1、5.1 依序把自己命令的 stub 換成實作 → 6.1 在 `status` 加 policy 狀態 | 不改參數與 envelope；`tests/test_cli.py` 仍通過 |
-| `src/loopctl/store.py` | 3.1 建立 → 4.1 加 transition 冪等、衝突與 `resolves` | 4.1 不改讀取時的不可信原因與提交順序（D4） |
+| `tests/conftest.py` | 1.1 建立（政策、`home`、`repo`、`cli`、`cli_proc`、`cli_proc_many`）→ 3.1 加 `started_run` | 只新增 fixture，不改既有 fixture 的行為 |
+| `src/loopctl/cli.py` | 1.1 建立（parser、`HANDLERS` 與全部 stub）→ 3.1、4.1、5.1 依序把自己命令的 stub 換成實作 → 6.1 在 `status` 加 policy 狀態 | 不改參數與 envelope；`tests/test_cli.py` 仍通過 |
+| `src/loopctl/store.py` | 3.1 建立（授權優先、讀取不寫檔、物件引用、fsync）→ 4.1 加 transition 冪等、衝突、`resolves` 與 `transition_rejected` | 4.1 只把冪等與衝突插在授權之後（D4 第 3、4 步），不改讀取時的不可信原因與寫入順序 |
 | `src/loopctl/next.py` | 3.1 → 4.1（衝突）→ 5.1（plan 阻擋、`dispatch`）→ 6.1（`plan_superseded`） | 只插入自己的判斷，保持 D7 的順序 |
-| `src/loopctl/state.py` | 3.1 → 4.1（`conflicts`）→ 5.1（plan、binding、核准）→ 6.1（policy） | 只新增視圖欄位 |
-| `src/loopctl/decisions.py` | 4.1 建立（完整 kind 表）→ 5.1（register、`approve_plan`）→ 6.1（`scope_change`、`policy_change`） | 不改共同核對的順序與紀錄欄位（D2、D10） |
+| `src/loopctl/state.py` | 3.1 → 4.1（`decisions`、`conflicts`）→ 5.1（plan、binding、核准）→ 6.1（policy） | 只新增視圖欄位 |
+| `src/loopctl/decisions.py` | 4.1 建立（完整 kind 表、`resolve_conflict` 的三種選擇、撤銷時標 `voided`）→ 5.1（register、`approve_plan`、`effect` 的記錄與還原）→ 6.1（`scope_change`、`policy_change`、`effect_overwritten`） | 不改共同核對的順序與紀錄欄位（D2、D10） |
 
 ### 總覽
 
@@ -44,15 +46,15 @@
 | 1.1 | 專案骨架、測試政策、CLI 入口與 stub、共用 fixture、dist-smoke | — | high／high | G21 |
 | 2.1 | CI `unit-linux` 與 `workflow.yaml` | 1.1 | medium／high | G21、G22（宣告） |
 | 3.1 | 持久的 run 狀態：`init`、`claim`、`status`、`next` | 1.1 | xhigh／xhigh | D01、D02、D03、D09、D10、D11、O01、O15 |
-| 4.1 | 人工決策紀錄：`decide`、冪等、衝突與解除、`unsupported` | 3.1 | xhigh／xhigh | D02、D03、D10、D11、D25、O19、O30 |
-| 5.1 | 登記原生文件與開工確認，核准後回報 `dispatch` | 4.1 | xhigh／xhigh | O01、O03、O05、O19、O22、O26、O29、D01 |
-| 6.1 | 範圍變更與政策核准 | 5.1 | xhigh／xhigh | O01、O07、O23、G22 |
+| 4.1 | 人工決策紀錄：`decide`、授權、冪等、衝突與三種解除、`unsupported` | 3.1 | xhigh／xhigh | D02、D03、D10、D11、D25、O19、O30 |
+| 5.1 | 登記原生文件與開工確認，核准後回報 `dispatch` | 4.1 | xhigh／xhigh | O01、O03、O05、O19、O22、O26、O29、D01、D10 |
+| 6.1 | 範圍變更與政策核准 | 5.1 | xhigh／xhigh | O01、O07、O23、G22、D10 |
 
 Effort 的依據（D69）：
 
 - 2.1 只改 CI 與設定。
 - 1.1 是一般行為。
-- 3.1 與 4.1 出錯會遺失或損毀狀態，或破壞並行與故障恢復的保證。
+- 3.1 與 4.1 出錯會遺失或損毀狀態，或破壞並行、授權與故障恢復的保證。
 - 5.1、6.1 守的是核准與政策這兩道授權；而且 5.1 涵蓋 6 列以上的 AC。
 
 ## 1. 共用測試骨架
@@ -69,15 +71,18 @@ Effort 的依據（D69）：
   - ruff 的 `select = ["E","F","I","B","UP"]`；mypy `strict = true`；
   - pytest 政策（D12）。
 - `uv.lock`。
-- `src/loopctl/{__init__,__main__,cli}.py`。parser 含 D2 的全部命令與參數，argparse 的錯誤轉成 exit 2 的 envelope。
-- **stub 契約**：每個命令都回 exit 0，envelope 為 `ok: true`、`result: {}`，其餘欄位 `null`，不寫任何檔案。形狀正確，內容是空的；之後每個 Red 都能走到行為斷言。
+- `src/loopctl/{__init__,__main__,cli}.py`：
+  - parser 含 D2 的全部命令與參數，parser 與 handler 的分工照 D2 的表；
+  - 以 `HANDLERS` 派送；
+  - argparse 的錯誤轉成 exit 2 的 envelope。
+- **stub 契約**：每個命令的 handler 都回 exit 0，envelope 為 `ok: true`、`result: {}`，其餘欄位 `null`，不寫任何檔案。形狀正確，內容是空的；之後每個 Red 都能走到行為斷言。
 - `tests/conftest.py`：
   - 政策 hook，平台由唯一的 `current_platform()` 決定；
   - autouse `home`：把 `LOOPCTL_HOME` 設到 `tmp_path`；
   - `repo`：範例文件（D13）；
   - `cli`：in-process；
-  - `cli_proc`：子程序，支援 `prelude` 與 barrier。
-- `scripts/dist-smoke.sh`。
+  - `cli_proc`、`cli_proc_many`：子程序。
+- `scripts/dist-smoke.sh`：三項具名檢查（D12）。
 
 **不在範圍**：任何狀態讀寫；`clock.py`，由 3.1 建立。
 
@@ -92,14 +97,14 @@ Effort 的依據（D69）：
 1. `build: add the loopctl project skeleton and test policy`：pyproject、uv.lock、`__init__.py`、conftest 的政策與 `home`／`repo`、`test_test_policy.py`。
 2. `feat(cli): add the loopctl entry point and JSON envelope`：其餘檔案。
 
-`tests/test_test_policy.py`：以 pytester 開子 session。子 session 載入 repo 的 `tests/conftest.py` 與 `pyproject.toml` 的 `[tool.pytest.ini_options]` 原文，不另寫一份；平台以 `current_platform()` 模擬。
+`tests/test_test_policy.py`：以 pytester 開子 session。子 session 載入 repo 的 `tests/conftest.py` 與 `pyproject.toml` 的 `[tool.pytest.ini_options]` 原文，不另寫一份；平台以 `current_platform()` 模擬。t5 排在 t2 之前：先寫 t2 的話，它的 skip 政策可能已經擋下 xfail，t5 就沒有 Red。
 
 | 測試 | 斷言的行為 | Red 失敗在 | Green |
 | --- | --- | --- | --- |
 | `test_t1_only_on_foreign_platform_skips_and_session_passes` | 模擬 darwin 時，`only_on("linux")` 的案例 skip，另一個案例通過 | `ret == 0`：`only_on` 尚未註冊，`--strict-markers` 讓子 session 以 exit ≠ 0 結束 | skip 1、pass 1、`ret == 0` |
-| `test_t2_skip_not_from_only_on_fails_session` | 參數：`only_on("linux")` 案例在 linux 上自行 `pytest.skip("missing tool")`；`skipif(True, reason="platform: linux only")`；`pytest.skip("platform")` | `ret != 0`：t1 的實作允許這些 skip，子 session exit 0 | `ret != 0`，summary 列出該案例 |
+| `test_t5_xfail_and_xpass_fail_session` | 參數：一個 xfail（非 strict 標記、測試本身失敗）、一個 xpass | `ret != 0`（xfail 參數）：t1 的實作只處理 `only_on`，非 strict 的 xfail 讓子 session exit 0 | 兩者 `ret != 0`，summary 列出該案例 |
+| `test_t2_skip_not_from_only_on_fails_session` | 參數：`only_on("linux")` 案例在 linux 上自行 `pytest.skip("missing tool")`；`skipif(True, reason="platform: linux only")`；`pytest.skip("platform")` | `ret != 0`（第一個參數）：t5 的實作只擋 xfail／xpass，一般的 skip 仍讓子 session exit 0 | `ret != 0`，summary 列出該案例 |
 | `test_t4_zero_collected_fails_session` | 參數：空目錄；`-k` 全部濾掉 | 突變：暫時讓 `pytest_sessionfinish` 把 `NO_TESTS_COLLECTED` 改成 `OK` → 失敗在 `ret != 0` | `ret != 0` |
-| `test_t5_xfail_and_xpass_fail_session` | 參數：一個 xfail、一個 xpass | `ret != 0`（xfail 參數）：非 strict 的 xfail 讓子 session exit 0 | 兩者 `ret != 0` |
 | `test_t6_expected_platform_mismatch_fails_session` | `LOOPCTL_EXPECT_PLATFORM=linux`，模擬 darwin | `ret != 0`：尚未核對，exit 0 | `ret != 0`，summary 說明平台不符 |
 
 `tests/test_cli.py`：
@@ -107,14 +112,16 @@ Effort 的依據（D69）：
 | 測試 | 斷言的行為 | Red 失敗在 | Green |
 | --- | --- | --- | --- |
 | `test_help_lists_every_command` | `--help` exit 0；stdout 以 `usage: loopctl` 開頭，列出 init、claim、status、next、register、decide、adopt、delegate | stdout 含 `usage: loopctl`：先建立空的 `main(argv) -> int`（回 0、不輸出） | 全部列出 |
-| `test_each_command_prints_one_json_envelope` | 參數：8 個命令各帶最少的合法參數。stdout 恰一行 JSON 物件，鍵恰為 `ok, revision, result, blocked, next, safety`；stderr 為空 | stdout 恰一行：parser 已有子命令，但 handler 還沒輸出 | 每個命令都輸出單行 envelope；本測試不斷言 exit code，後面的 task 換掉 stub 後仍然成立 |
-| `test_usage_errors_are_json_envelopes_with_exit_2` | 參數：沒有命令；`merge`；`init` 缺 `--repo`；`register other`；`--repo noslash`；`--repo ../x`；`--feature a/b`。每個都 exit 2，`ok` 為 false，`result.error == "usage"`，`result.message` 指出該參數或命令；stderr 沒有 argparse 的 usage 文字 | `result.error == "usage"`：argparse 預設丟出 `SystemExit(2)` 並寫 stderr，helper 記下 exit 2，但 stdout 是空的 | 全部參數通過 |
-| `test_python_m_loopctl_matches_the_in_process_entry` | `cli_proc("--help")` 與 `cli_proc("status", …)` 的 exit 與 stdout，都和 in-process 相同 | `code == 0`：沒有 `__main__.py`，子程序 exit 1 | 相同 |
+| `test_parsed_arguments_reach_the_handler_and_its_envelope_is_printed` | 參數：每個命令帶齊全部參數，例如：`init … --issue X --actor agent:impl`；`register binding … --role spec --content-from P`；`decide revise … --choice original --open-question q1 --open-question q2`；`adopt --anything x`。以 `monkeypatch.setitem(cli.HANDLERS, <命令>, <記錄用的假 handler>)` 換掉 handler，假 handler 回 `(7, <六欄的 envelope>)`。假 handler 恰被呼叫一次，收到的每個值都等於輸入（`open_question == ["q1", "q2"]`；`adopt` 的其餘參數原樣保留）；`main` 回 7；stdout 恰為假 envelope 的一行 JSON | `received.repo == "a/b"`：help 測試的實作只解析、不派送，假 handler 沒被呼叫，取值得到 `None` | 全部參數通過 |
+| `test_each_command_prints_one_json_envelope` | 參數：8 個命令各帶最少的合法參數，不換 handler。stdout 恰一行 JSON 物件，鍵恰為 `ok, revision, result, blocked, next, safety`；stderr 為空。不斷言 exit code，所以後面的 task 換掉 stub 後仍然成立 | stdout 恰一行：前一個測試的 `HANDLERS` 還是空表，查表失敗（記在 `exc`），沒有輸出 | 每個命令都輸出單行 envelope |
+| `test_usage_errors_are_json_envelopes_with_exit_2` | 參數：沒有命令；`merge`；`init` 缺 `--actor`；`register other`；`--repo noslash`；`--repo ../x`；`--feature a/b`。每個都 exit 2，`ok` 為 false，`result.error == "usage"`，`result.message` 指出該參數或命令；stderr 沒有 argparse 的 usage 文字 | `result.error == "usage"`：argparse 預設丟出 `SystemExit(2)` 並寫 stderr，helper 記下 exit 2，但 stdout 是空的 | 全部參數通過 |
+| `test_python_m_loopctl_matches_the_in_process_entry` | `cli_proc` 跑 `--help`、`merge`、`status --repo a/b --feature F-1`，exit code 與 stdout 都和 in-process 相同 | `merge` 的 `code == 2`：先建立只呼叫 `main()`、不把回傳值當 exit code 的 `__main__.py`，子程序回 0 | 三者都相同 |
+| `test_cli_proc_runs_the_prelude_first_and_starts_processes_together` | (a) `cli_proc("--help", prelude="import os; os._exit(9)")` → `code == 9`，stdout 為空，證明 prelude 先於 loopctl 執行。(b) `cli_proc_many(4, "--help")` → 4 個結果都 exit 0 並含 usage，而且 barrier 檔在 4 個程序都回報就緒之後才建立 | (a) 的 `code == 9`：helper 先實作成忽略 prelude，得到 0 | 兩者都成立 |
 
-另外，`scripts/dist-smoke.sh`：
+`scripts/dist-smoke.sh` 的三項具名檢查（D12）：
 
-- Red：`[project.scripts]` 加入前，全新 venv 裡找不到 `loopctl`（exit 127）。
-- Green：印出 `dist-smoke: ok`，exit 0；`import delivery` 失敗。
+- Red 以突變證明：暫時讓 `main` 在 envelope 之前多印一行 → 失敗在具名檢查 `envelope`（印出 `dist-smoke: FAIL: envelope`）。
+- Green：三項都通過，印出 `dist-smoke: ok`，exit 0。
 
 ## 2. CI 與政策檔
 
@@ -159,8 +166,8 @@ Effort 的依據（D69）：
 
 **交付**：
 
-- `src/loopctl/store.py`：D3、D4。transition 冪等與衝突不在本 task，屬 4.1。
-- `src/loopctl/state.py`：初始狀態、視圖、`--human`、token digest。
+- `src/loopctl/store.py`，照 D3、D4。其中授權先於一切，讀取與被拒的命令不寫檔，另有物件引用檢查與 fsync。transition 冪等與衝突（D4 第 3、4 步）屬 4.1。
+- `src/loopctl/state.py`：初始狀態（含 `coordinator`）、視圖（D11 的投影）、`--human`、token digest。
 - `src/loopctl/next.py`：`derive`，本 task 只有 `unclaimed` 與 `plan_not_registered` 兩條。
 - `src/loopctl/clock.py`。
 - `cli.py` 裡 `init`、`claim`、`status`、`next` 的 handler。
@@ -169,13 +176,16 @@ Effort 的依據（D69）：
 
 **擁有路徑**：上列各檔，以及 `tests/test_state.py`。
 
-**依賴**：1.1，從它取得三組介面：
+**依賴**：1.1，從它取得：
 
-- `main(argv) -> int`：只寫一行 envelope；exit code 照 D2。
-- fixture：`cli`／`cli_proc` 回傳 `Result(code, out, stdout, stderr, exc)`；未攔截的例外使 `code is None`。另有 `home`、`repo`。
+- `main(argv) -> int`：以 `HANDLERS` 派送，只寫一行 envelope；exit code 照 D2。
+- fixture：
+  - `cli`、`cli_proc`、`cli_proc_many`，回傳 `Result(code, out, stdout, stderr, exc)`；未攔截的例外使 `code is None`；
+  - `prelude` 先於 loopctl 執行；
+  - `home`、`repo`。
 - `init`、`claim`、`status`、`next` 的參數固定，本 task 不改。
 
-**AC**：D01（phase、owner、gate、blockers、next）、D02（手改）、D03、D09、D10（未提交的變更不被接受）、D11、O01（直接 `init` 後由 `claim` 保存協調者）、O15。
+**AC**：D01（phase、協調者、owner、gate、blockers、next）、D02（手改）、D03、D09、D10（未提交的變更不被接受）、D11、O01（`init` 保存協調者 identity）、O15。
 
 **Commit**：`feat(store): keep one durable state per repo and feature run`
 
@@ -183,44 +193,51 @@ Effort 的依據（D69）：
 
 | 測試 | 斷言的行為 | Red 失敗在 | Green |
 | --- | --- | --- | --- |
-| `test_init_creates_a_planning_run_per_repo_and_feature` | `init` exit 0、revision 1。`status` 回 repo、feature、issue、phase `planning`、owner `null`、三個 gate 為 `not_evaluated` 且原因非空、blockers `[unclaimed]`、next `{action: human, blockers: [unclaimed], decision_kinds: []}`。`runs/yschiang/loop-engineering/F-1/feature.json` 有相同的值，`history/1.json` 存在。另一個 repo 的同名 feature 也 exit 0，是另一個 run | `result.phase == "planning"`：stub 回 `{}` | 全部成立 |
-| `test_status_human_renders_the_same_view` | `status --human` 的 `result.human` 逐行含 phase、owner（unclaimed）、每個 gate 的狀態與原因、blockers、next | `"human" in result` | 成立 |
-| `test_init_never_overwrites_an_existing_run` | 同一 repo＋feature 再 `init`，issue 相同或不同都是 exit 1 `run_exists`；run 目錄的 bytes 不變 | `code == 1`：既有目錄讓 rename 失敗（記在 `exc`），或被覆寫 | 成立 |
-| `test_uninitialised_run_is_not_found_and_nothing_is_created` | 另有 F-2 已 `init` 並 `claim`。對 F-9 執行 `status`、`next`、`claim` 都是 exit 1 `run_not_found`；`$LOOPCTL_HOME` 的快照不變 | `code == 1`（`next`）：stub 回 0 | 成立 |
-| `test_exactly_one_concurrent_claim_wins_and_only_the_token_digest_is_stored` | 8 個 `cli_proc claim` 以不同 actor 同時開始：恰一個 exit 0，拿到 64 位 hex token；其餘 exit 1 `already_claimed`，並附得勝的 actor。落敗者執行 `status` 得到 exit 0、revision 2、得勝者為 owner。run 目錄裡沒有任何檔案含明文 token，`owner.token_digest` 是它的 sha256 | 得勝者恰為 1：stub 讓 8 個都 exit 0 | 成立 |
-| `test_interrupt_after_history_keeps_the_new_revision_once` | `claim` 時以 prelude 把 `os.replace` 換成 `os._exit(9)` → exit 9。之後 `status` exit 0、revision 2、owner 已設定；再 `claim` → `already_claimed`；history 只有 `1.json`、`2.json` | `revision == 2`：讀取只看 `feature.json`，得到 1 | 成立 |
+| `test_init_creates_a_planning_run_per_repo_and_feature` | `init --actor agent:implementer` exit 0、revision 1，而且沒有任何交接紀錄。`status`（D11 的投影）：repo、feature、issue；`coordinator.actor == "agent:implementer"`；owner `null`；phase `planning`；三個 gate 為 `not_evaluated` 且原因非空；blockers `[unclaimed]`；envelope 的 next 為 `{action: human, blockers: [unclaimed], decision_kinds: []}`。狀態檔 `runs/yschiang/loop-engineering/F-1/feature.json`：`coordinator`、`phase`、`owner`、`gates`、`blockers`、`next` 各自等於上列值；`history/1.json` 存在。另一個 repo 的同名 feature 也 exit 0，是另一個 run | `result.phase == "planning"`：stub 回 `{}` | 全部成立 |
+| `test_status_human_renders_the_same_view` | `status --human` 的 `result.human` 逐行含 phase、協調者、owner（unclaimed）、每個 gate 的狀態與原因、blockers、next | `"human" in result` | 成立 |
+| `test_init_never_overwrites_an_existing_run` | 同一 repo＋feature 再 `init`，issue 或 actor 相同或不同，都是 exit 1 `run_exists`；run 目錄的 bytes 不變 | `code == 1`：既有目錄讓 rename 失敗（記在 `exc`），或被覆寫 | 成立 |
+| `test_claim_grants_the_coordination_right_once_and_stores_only_the_token_digest` | 依序執行：`claim --actor agent:implementer` → exit 0，token 是 64 位 hex，revision 2；`status` 的 `owner.actor` 為該值，`coordinator` 不變。狀態檔的 `owner.token_digest` 是 token 的 sha256，run 目錄裡沒有任何檔案含明文 token。另一個 actor 再 `claim` → exit 1 `already_claimed`，並附目前的 owner | token 符合 64 位 hex：stub 沒有回 token | 成立 |
+| `test_uninitialised_run_is_not_found_and_nothing_is_created` | 另有 F-2 已 `init` 並 `claim`。對 F-9 執行 `status`、`next`、`claim`，都是 exit 1 `run_not_found`；`$LOOPCTL_HOME` 的快照不變 | `code == 1`（`next`）：`next` 的 handler 還是 stub，回 0 | 成立 |
+| `test_concurrent_claims_have_exactly_one_winner` | `cli_proc_many(8, "claim", …)`，各用不同 actor。prelude 把 `os.link` 包成先睡 0.2 秒再呼叫原函式，讓 8 個程序都先讀到沒有 owner 的狀態。結果：恰一個 exit 0；其餘 exit 1 `already_claimed` 並附得勝的 actor；落敗者 `status` exit 0 | 得勝者恰為 1：單次 `claim` 的實作還沒有 flock，每個程序都通過「還沒有 owner」的檢查。若單次 `claim` 已加 flock → 突變：暫時拿掉 flock | 成立 |
+| `test_interrupt_after_history_keeps_the_new_revision_once` | `claim` 時以 prelude 把 `os.replace` 換成 `os._exit(9)` → exit 9。之後 `status` exit 0、revision 2、owner 已設定；另一個 actor 再 `claim` → `already_claimed`；run 目錄的 bytes 在這兩個命令前後相同，也就是讀取與被拒的命令都不修復 `feature.json`；history 只有 `1.json`、`2.json` | `revision == 2`：讀取只看 `feature.json`，得到 1 | 成立 |
 | `test_interrupt_before_history_keeps_the_old_revision` | 以 prelude 把 `os.link` 換成 `os._exit(9)` → exit 9；`status` 回 revision 1、owner `null`；再 `claim` exit 0、revision 2 | 突變：暫時改成先替換 `feature.json` 再寫 history → 失敗在 `revision == 1` | 成立 |
-| `test_commit_with_a_stale_revision_writes_nothing` | `claim` 之後（rev 2），以 `store.commit(key, 1, …)` 提交 → `RevisionConflict`，run 目錄的 bytes 不變 | `pytest.raises(RevisionConflict)`；若 `claim` 已依 D4 核對 revision → 突變：暫時略過第 4 步 | 成立 |
+| `test_a_failed_sync_commits_nothing` | `claim` 時以 prelude 把 `os.fsync` 換成拋出 `OSError(EIO)` → `code != 0`；`status` 回 revision 1、owner `null`；history 只有 `1.json` | `code != 0`：提交路徑還沒有呼叫 fsync，`claim` 成功 | 成立 |
+| `test_commit_with_a_stale_revision_writes_nothing` | `claim` 之後（rev 2），以 `store.commit(key, 1, "t-x", payload, mutate, authorize=<不檢查>)` 提交 → `RevisionConflict`；run 目錄的 bytes 不變 | `pytest.raises(RevisionConflict)`。若 `claim` 已依 D4 核對 revision → 突變：暫時略過第 5 步 | 成立 |
+| `test_commit_rejects_missing_or_corrupt_object_references` | 以 `store.commit` 驗證，參數：(a) `mutate` 加入一個指向不存在物件的 `{"$object": d}`；(b) 先提交一個有效的引用，刪掉該物件檔後，再提交一個只改其他欄位的 transition；(c) 物件檔的內容被改掉。依序得到 `UntrustedState` 與原因 `object_missing:<d>`（(a)、(b)）或 `object_corrupt:<d>`（(c)），run 目錄的 bytes 不變。另外，一般的 `sha256:` 字串欄位照常提交 | `pytest.raises(UntrustedState)`（(a)）：提交路徑還沒有引用檢查 | 成立 |
 | `test_untrusted_state_stops_with_reason_and_files` | 參數：刪掉 `feature.json`（`state_missing`）；壞 JSON（`state_corrupt`）；`schema_version: 9`（`unknown_schema:9`）；刪掉 `history/2.json`（`history_missing:2`）；空的 run 目錄（`state_missing`）。`status`、`next`、`claim`、`init` 都 exit 5，`result.error == "untrusted_state"`，`reason` 如上，`files` 等於現存檔案排序後的相對路徑；bytes 不變；`init` 不建立任何東西 | `code == 5`：讀取時的例外記在 `exc` | 成立 |
-| `test_manual_edit_is_detected_and_never_trusted` | 參數：保持 JSON 與 schema 合法，但把 g1 改成 `passed`；把 phase 改成 `approved`；改 owner；插入一筆 `{kind: approve_plan, actor: human:x}` decision。`status`、`next`、`claim` 都 exit 5 `manual_edit`；輸出不含 `passed` 或 `approved`；bytes 不變 | `code == 5`：只核對 schema 時會照單全收 | 成立 |
+| `test_manual_edit_is_detected_and_never_trusted` | 參數（保持 JSON 與 schema 合法）：把 g1 改成 `passed`；把 phase 改成 `approved`；改 owner；插入一筆 `{kind: approve_plan, actor: human:x}` decision。`status`、`next`、`claim` 都 exit 5 `manual_edit`；輸出不含 `passed` 或 `approved`；bytes 不變 | `code == 5`：只核對 schema 時會照單全收 | 成立 |
 
 ## 4. 人工決策紀錄
 
-- [ ] 4.1 `decide` 的共同核對與紀錄、transition 冪等與衝突、`resolve_conflict`、`budget_extension`、`revise`、`handoff`，以及 `adopt`／`delegate` 與後續 kind 的 `unsupported`；驗證：`uv run pytest tests/test_decisions.py` 與完整的完成條件通過
+- [ ] 4.1 `decide` 的共同核對與紀錄、授權優先、transition 冪等與衝突、`resolve_conflict` 的三種選擇、`budget_extension`、`revise`、`handoff`，以及 `adopt`／`delegate` 與後續 kind 的 `unsupported`；驗證：`uv run pytest tests/test_decisions.py` 與完整的完成條件通過
 
 **模式與 effort**：預設模式（D72）；Implementer Claude Opus 5.5、Reviewer GPT-6 Astra；effort（Implementer／Reviewer）xhigh／xhigh。
 
 **交付**：
 
-- `src/loopctl/decisions.py`：D10 的完整 kind 表與 D2 的核對順序。
-  - `approve_plan`、`scope_change`、`policy_change` 在本 task 只做共同核對並記錄；它們的檢查與效果由 5.1、6.1 加上。這樣後面的 Red 會落在行為斷言上，不是 `unsupported`。
-- `store.py`：D4 第 2、3 步、`resolves`、D6。
+- `src/loopctl/decisions.py`：
+  - D10 的完整 kind 表與 D2 的核對順序；
+  - `approve_plan`、`scope_change`、`policy_change` 在本 task 只做共同核對並記錄，檢查與效果由 5.1、6.1 加上。這樣後面的 Red 會落在行為斷言上，不是 `unsupported`；
+  - `resolve_conflict` 的三種選擇（D6）。本 task 的撤銷只標 `voided`；`effect` 的記錄與還原屬 5.1，因為第一個有 `effect` 的 kind 在 5.1 生效。
+- `store.py`：D4 第 3、4 步、`resolves`、`TransitionRejected`、D6 的衝突紀錄。
 - `next.py`：衝突的 blocker。
-- `state.py`：`conflicts` 視圖。
-- `cli.py`：`decide`、`adopt`、`delegate` 的 handler。
+- `state.py`：`decisions` 與 `conflicts` 視圖。
+- `cli.py`：`decide`、`adopt`、`delegate` 的 handler；`register`、`decide` 的 `authorize` 核對 token。
 
 **擁有路徑**：上列各檔，以及 `tests/test_decisions.py`。
 
 **依賴**：3.1，從它取得：
 
 - **store**：
-  - `load(key) -> (rev, state)`，錯誤是 `RunNotFound`、`UntrustedState(reason, files)`；
-  - `commit(key, expected_revision, transition_id, payload, mutate)`：在 flock 內核對 revision，history-first（先 `os.link` 再 `os.replace`）；`derive(mutate(state))` 等於現況時是 no-op；`mutate` 必須是純函式，拋出 `Rejected` 時不寫任何檔；
+  - `load(key) -> (rev, state)`，錯誤是 `RunNotFound`、`UntrustedState(reason, files)`。
+  - `commit(key, expected_revision, transition_id, payload, mutate, *, authorize)` 的順序是：讀取 → `authorize`（在任何寫入之前）→ revision 核對 → `mutate` → 物件引用 → 寫入。寫入時 history 先 `os.link`，`feature.json` 後 `os.replace`。
+  - `derive(mutate(state))` 等於現況時是 no-op；`mutate` 必須是純函式，拋出 `Rejected` 時不寫任何檔。
+  - 讀取與被拒的命令不寫檔。
   - 呼叫端遇到 `RevisionConflict` 時重讀重做。
-- **順序限制**：transition 冪等與衝突插在 revision 核對之前（D4），不改不可信原因與寫入順序。
+- **順序限制**：冪等與衝突只能插在 `authorize` 之後、revision 核對之前（D4 第 3、4 步），不改不可信原因與寫入順序。
 - **fixture**：`started_run` 回傳 token。
 
-**AC**：D02（decision 只經 `decide` 產生，帶來源與影響）、D03（寫入要 token）、D10、D11（衝突）、D25、O19、O30。
+**AC**：D02（decision 只經 `decide` 產生，帶來源與影響）、D03（寫入要 token，非 owner 無法重送或製造衝突）、D10、D11（衝突）、D25、O19、O30。
 
 **Commit**：`feat(decisions): record human decisions once with their provenance`
 
@@ -228,40 +245,45 @@ Effort 的依據（D69）：
 
 | 測試 | 斷言的行為 | Red 失敗在 | Green |
 | --- | --- | --- | --- |
-| `test_a_human_decision_is_recorded_with_its_provenance` | 參數 `revise`、`handoff`：`human:alice` 帶齊欄位 → exit 0、revision +1；`status` 與 `feature.json` 的 `decisions[id]` 含 kind、actor、target、reason、source、impact、at、`seq == 1`；phase、owner、gates 不變 | `decisions[id].source == <值>`：stub 什麼都沒記 | 成立 |
+| `test_a_human_decision_is_recorded_with_its_provenance` | 參數 `revise`、`handoff`：`human:alice` 帶齊欄位 → exit 0、revision +1。`status` 的 `result.decisions[id]` 與狀態檔的 `decisions[id]`（兩者原樣投影，D11）都含 kind、actor、target、reason、source、impact、at、`seq == 1`、`status == "in_effect"`；phase、owner、gates 不變 | `result.decisions[id].source == <值>`：stub 什麼都沒記 | 成立 |
 | `test_only_human_actors_can_decide` | actor 為 `agent:implementer`、`project_lead`、`session:lead/child-1`、`human:`、`Human:alice`，kind 為 7 種 → exit 1 `actor_not_human`；revision 與 bytes 不變 | `code == 1`：前一個測試的實作照單全收 | 成立 |
-| `test_missing_fields_are_rejected` | id、actor、target、reason、source、impact 逐一缺少 → exit 1 `missing_fields`，並列出缺的欄位；另外 `approve_plan`、`policy_change` 缺 `--version` 也一樣；狀態不變 | `code == 1`：缺的欄位記成 `null` | 成立 |
-| `test_writes_need_the_coordinator_token` | 沒有 token 或 token 不符 → exit 4 `not_owner`，bytes 不變；同一個呼叫者 `status` exit 0 | `code == 4`：尚未核對 token | 成立 |
+| `test_missing_fields_are_rejected` | 參數：id、actor、target、reason、source、impact 逐一缺少；`approve_plan`、`policy_change` 缺 `--version`；`resolve_conflict` 缺 `--choice`。每個都是 exit 1，`result == {error: "missing_fields", fields: [<缺的欄位>]}`（精確比較），狀態不變 | 缺 `--source` 的參數，精確比較 `result == {error: "missing_fields", fields: ["source"]}`：前面的實作把 source 記成 `null`，exit 0 | 全部參數通過 |
+| `test_writes_need_the_coordinator_token` | 新的 decision，沒有 token 或 token 不符 → exit 4 `not_owner`，bytes 不變；同一個呼叫者 `status` exit 0 | `code == 4`：尚未核對 token | 成立 |
 | `test_resending_a_decision_takes_effect_once` | 同一筆 decision 送兩次 → 第二次 exit 0、`result.duplicate` 為 true、revision 不變、只有一筆、`seq` 不變。另一情境：第一次以 prelude 讓 `os.replace` 中斷，重送後結果相同，revision 等於已提交的那版 | revision 不變：3.1 的 store 對同一個 id 再提交一次 | 成立 |
-| `test_same_decision_id_with_other_content_blocks_the_run` | id X 先以 reason `a` 送出，再以 reason `b` 送出 → exit 3 `transition_conflict`。`conflicts[cid]` 含 transition_id、已提交的 revision 與 reason `b` 的完整 payload；`decisions[X].reason` 仍是 `a`。`status`、`next` 都 exit 3，blockers `[transition_conflict:<cid>]`、kinds `[resolve_conflict]`，`files` 含 `feature.json` 與 history。另一筆新的 decide → exit 3，不寫。重送 X/`a` → exit 0、duplicate | `code == 3`：前一個測試的實作把它當重送 | 成立 |
-| `test_a_human_resolve_conflict_clears_the_block` | 接著人工 `resolve_conflict --target <cid>` → exit 0；`resolved_by` 等於該 decision 的 id，嘗試的 payload 仍保存；`status` exit 0，next 回到衝突前的值；新的 decide 可以寫入。agent 送出 → exit 1，仍 Blocked；未知的 `cid` → exit 1 `unknown_target` | `code == 0`：所有寫入都被擋，exit 3 | 成立 |
-| `test_budget_extension_only_records_a_human_ruling` | 目標 `active:60`、`rounds:+1`、`attempts:1.1:+1`、`ci_wait:<40 hex>` → 各 exit 0，各一筆帶 actor 與 reason 的紀錄；`repo/workflow.yaml` 的 bytes 不變；`feature.json` 除了 `decisions`、`transitions`、`revision` 以外都不變。會被拒的（exit 1，revision 不變）：agent actor；缺 reason；目標 `active:0`、`rounds:+2`、`wallclock:30`、`ci_wait:abc` | `code == 1`（`rounds:+2`）：尚未核對目標 | 成立 |
-| `test_adopt_delegate_and_later_kinds_are_unsupported` | 頂層 `adopt --repo R --feature F`、`delegate --to x`；`decide adopt`、`delegate`、`accept`、`return`、`resolve_read`、`resolve_operation`、`resolve_finding`、`nonsense`，帶與不帶 token → 都 exit 2，`result.error == "unsupported"` 並指出命令或 kind；`$LOOPCTL_HOME` 的 bytes 不變（owner、核准、revision 都相同） | `code == 2`：stub 回 0 | 成立 |
+| `test_same_decision_id_with_other_content_blocks_the_run` | owner 以 id X 先送 reason `a`，再送 reason `b` → exit 3 `transition_conflict`。`conflicts[cid]` 含 transition_id、已提交的 revision，以及兩份完整 payload；`decisions[X].reason` 仍是 `a`。`status`、`next` 都 exit 3，blockers `[transition_conflict:<cid>]`、kinds `[resolve_conflict]`，`files` 含 `feature.json` 與 history。另一筆新的 decide → exit 3，不寫。重送 X/`a` → exit 0、duplicate | `code == 3`：前一個測試的實作把它當重送 | 成立 |
+| `test_non_owners_cannot_resend_or_create_conflicts` | 參數：(a) 以錯誤的 token 原樣重送一筆已提交的 decision；(b) 同上，但不帶 token；(c) 以錯誤的 token 送同一個 id、不同內容；(d) owner 的 decide 以 prelude 在 `os.replace` 中斷（history 領先一版）之後，非 owner 重送同一筆與不同內容。全部 exit 4 `not_owner`；run 目錄的 bytes（含落後的 `feature.json`）、revision 與 `conflicts` 都不變 | 突變：暫時把 `authorize` 移到 D4 第 3 步之後 → (a) 得到 exit 0 duplicate、(c) 得到 exit 3，失敗在 `code == 4` | 成立 |
+| `test_a_human_resolve_conflict_can_keep_the_original` | 接續衝突：人工 `resolve_conflict --target <cid> --choice original` → exit 0；`conflicts[cid]` 的 `resolved_by` 等於該 decision 的 id，`choice == "original"`，兩份 payload 仍在；`decisions[X]` 是 reason `a`、`in_effect`；`status` exit 0，next 回到衝突前的值。之後：重送 `a` → duplicate；重送 `b` → exit 1 `transition_rejected:<cid>`，不再 Blocked；第三種內容 → 新的衝突（exit 3）。被拒的情況：agent 送出 → `actor_not_human`，仍 Blocked；未知的 `cid` → `unknown_target`；`--choice maybe` → `invalid_choice` | `code == 0`：所有寫入都被擋，exit 3 | 成立 |
+| `test_resolve_conflict_can_take_the_attempted_content_or_abandon_it` | 參數（kind `revise`）：<br>`attempted` → `decisions[X].reason == "b"`，`replaces[0]` 是 reason `a` 的紀錄且帶 `voided_by`；重送 `b` → duplicate；重送 `a` → `transition_rejected:<cid>`。<br>`abandon` → `decisions[X]` 保留 reason `a`，但 `status == "voided"` 並帶 `voided_by`；重送 `a` → duplicate，回傳的紀錄是 `voided`；重送 `b` → `transition_rejected:<cid>`。<br>另外：被衝突的 decision 本身是 `resolve_conflict` 時，`attempted`／`abandon` → exit 1 `choice_not_allowed`，`original` 可以 | `decisions[X].reason == "b"`（`attempted` 參數）：前一個測試的實作把每種選擇都當 `original` | 成立 |
+| `test_budget_extension_only_records_a_human_ruling` | 目標 `active:60`、`rounds:+1`、`attempts:1.1:+1`、`ci_wait:<40 hex>` → 各 exit 0，各一筆帶 actor 與 reason 的紀錄；`repo/workflow.yaml` 的 bytes 不變；狀態檔除了 `decisions`、`transitions`、`revision` 以外都不變。會被拒的（exit 1，revision 不變）：agent actor；缺 reason；目標 `active:0`、`rounds:+2`、`wallclock:30`、`ci_wait:abc` | `result.error == "invalid_target"`（`rounds:+2`）：尚未核對目標，exit 0 | 成立 |
+| `test_adopt_delegate_and_later_kinds_are_unsupported` | 頂層 `adopt --repo R --feature F`、`delegate --to x` → exit 2，`result == {error: "unsupported", command: <名稱>}`。`decide` 的 `adopt`、`delegate`、`accept`、`return`、`resolve_read`、`resolve_operation`、`resolve_finding`、`nonsense`，帶與不帶 token → exit 2，`result == {error: "unsupported", kind: <值>}`（D2 的分工：頂層命令由 parser 認得、handler 回；kind 由 handler 回）。`$LOOPCTL_HOME` 的 bytes 不變（owner、核准、revision 都相同） | 頂層 `adopt` 的參數，精確比較 `result == {error: "unsupported", command: "adopt"}`：它的 handler 還是 1.1 的 stub，回 exit 0、`result == {}` | 成立 |
 
 ## 5. 登記原生文件與開工確認
 
-- [ ] 5.1 `register plan|binding|policy`、`approve_plan` 的檢查與效果、`status` 顯示版本與核准，以及核准後的 `dispatch`；驗證：`uv run pytest tests/test_approval.py` 與完整的完成條件通過
+- [ ] 5.1 `register plan|binding|policy`、`approve_plan` 的檢查與效果、`effect` 的記錄與還原、`status` 顯示版本與核准，以及核准後的 `dispatch`；驗證：`uv run pytest tests/test_approval.py` 與完整的完成條件通過
 
 **模式與 effort**：預設模式（D72）；Implementer Claude Opus 5.5、Reviewer GPT-6 Astra；effort（Implementer／Reviewer）xhigh／xhigh。
 
 **交付**：
 
-- `decisions.py`：D9 的登記、D10 的 `approve_plan`，以及已核准時的 `scope_change_required`。
+- `decisions.py`：
+  - D9 的登記、D10 的 `approve_plan`，以及已核准時的 `scope_change_required`；
+  - 每筆 decision 記下 `effect`，撤銷時還原 `before`（D10）。「已被改寫則拒絕」由 6.1 加上：本 task 之內，沒有 transition 會改寫另一筆 decision 的 `effect`。
 - `cli.py`：`register` 的 handler。在邊界讀取 locator 或 `--content-from`，並存成物件。
 - `next.py`：D7 的 plan 阻擋與 `dispatch`（D8）。
-- `state.py`：plan、binding、核准的視圖與 `--human` 的文字。
+- `state.py`：plan、binding、核准的投影與 `--human` 的文字。
 
 **擁有路徑**：上列各檔，以及 `tests/test_approval.py`。
 
-**依賴**：4.1，從它取得三組介面：
+**依賴**：4.1，從它取得：
 
-- `decide` 的共同核對：順序依 D2；錯誤是 `unsupported`／`missing_fields`／`actor_not_human`／`not_owner`。
-- 紀錄欄位與 `decide:<id>` 的 payload 冪等。
+- `decide` 的共同核對：順序依 D2；錯誤是 `unsupported`、`missing_fields`、`actor_not_human`、`not_owner`。
+- 紀錄欄位，以及 `decide:<id>` 的 payload 冪等。
+- `resolve_conflict` 三種選擇的流程：`attempted` 先撤銷，再把 A 當成同一個 id 的 decision 照常核對。本 task 只替撤銷補上 `effect` 的還原。
 - 未解的衝突會擋下所有寫入，`register` 也包括在內。
 
-3.1 的 store 與 `derive` 照舊。本 task 只把 `approve_plan` 的檢查與效果加進 mutate，不改共同核對。
+3.1 的 store（含物件引用檢查）與 `derive` 照舊。
 
-**AC**：O01（直接交付不需要交接紀錄，協調者不能自己批准）、O03、O05、O19（`approve_plan` 的情境）、O22、O26、O29、D01（版本與核准）。
+**AC**：O01（直接交付不需要交接紀錄，協調者不能自己批准）、O03、O05、O19（`approve_plan` 的情境）、O22、O26、O29、D01（版本與核准）、D10（已生效的核准發生衝突）。
 
 **Commit**：`feat(decisions): approve a calibrated plan with its bindings`
 
@@ -269,24 +291,28 @@ Effort 的依據（D69）：
 
 | 測試 | 斷言的行為 | Red 失敗在 | Green |
 | --- | --- | --- | --- |
-| `test_native_documents_are_registered_in_place_and_read_back` | 登記：plan `tasks.md`（implementer，帶 `--calibrated-from`）；兩份 spec、ac、design；locator 為 issue URL、內容來自 `--content-from issue-29.md` 的 binding。每筆 exit 0，登記項的 role、locator（原樣）、version、source、`digest == sha256(內容)` 與物件引用都正確；`objects/<hex>` 的 bytes 等於登記的內容，改掉原檔之後仍然相等；`repo` 的檔案清單不變 | `plan.locator == "tasks.md"`：stub 沒有登記 | 成立 |
+| `test_native_documents_are_registered_in_place_and_read_back` | 登記：plan `tasks.md`（implementer，帶 `--calibrated-from`）；兩份 spec、ac、design；locator 為 issue URL、內容來自 `--content-from issue-29.md` 的 binding。每筆 exit 0，登記項的 role、locator（原樣）、version、source、`digest == sha256(內容)` 與物件引用都正確；`objects/<hex>` 的 bytes 等於登記的內容，改掉原檔之後仍然相等；`repo` 的檔案清單不變 | 狀態檔 `plan.locator == "tasks.md"`：stub 沒有登記 | 成立 |
 | `test_unreadable_documents_are_not_registered` | 參數：locator 不存在；locator 是目錄；URL 但沒有 `--content-from`；`--content-from` 不存在；`policy` 帶 `--content-from` → exit 1 `locator_unreadable`，revision 不變。另外，沒有 token 或 token 不符的 `register` → exit 4 `not_owner`，bytes 不變 | `code == 1`：讀檔的例外記在 `exc` | 成立 |
-| `test_status_shows_versions_and_awaiting_approval` | 登記完成後：phase `awaiting_approval`；plan 的 locator、version、digest、producer、`calibrated_from`；spec、ac、design 各自的 version；`approval` 為 `{status: not_approved, plan_version: V}`；next 為 `human`、`[plan_not_approved]`、`[approve_plan]`；`feature.json` 相同；`--human` 含 plan、spec、design 的版本與核准這一行 | `result.approval == {status: not_approved, plan_version: V}`：視圖還沒有核准欄位 | 成立 |
-| `test_only_a_human_approve_plan_on_a_calibrated_plan_approves` | run 以直接 `init` 建立，由 `agent:implementer` `claim`，沒有任何交接紀錄。<br>(a) 沒有 decision，時鐘前進 30 天 → 仍未核准。<br>(b) 登記帶 source 的 `sa` binding → 仍是 `awaiting_approval`。<br>(c) `approve_plan --actor agent:implementer` → `actor_not_human`。<br>(d) plan 由 `project_lead` 登記 → `plan_not_calibrated`。<br>(e) implementer 的 plan 沒有 `--calibrated-from` → `plan_not_calibrated`。<br>(f) target 或 version 不是登記的 plan → `plan_version_mismatch`。<br>(g) 校準後的 plan 取代草案，人工 `approve_plan` → exit 0、phase `approved`；`approval` 含 decision、actor、at、plan 的釘選與 binding digest；狀態裡只有一份 `plan`；再以另一個 id 送 `approve_plan` → exit 1 `already_approved` | (d) `result.error == "plan_not_calibrated"`：4.1 只記錄，exit 0 | 全部成立 |
+| `test_status_shows_versions_and_awaiting_approval` | 登記完成後分兩個投影斷言（D11）：<br>`status`：phase `awaiting_approval`；plan 的 locator、version、digest、producer、`calibrated_from`；spec、ac、design 各自的 version；`approval == {status: "not_approved", plan_version: V}`；envelope 的 next 為 `human`、`[plan_not_approved]`、`[approve_plan]`；`--human` 含 plan、spec、design 的版本與核准這一行。<br>狀態檔：`approval is None`、`phase == "awaiting_approval"`、`plan.version == V`、`next` 等於 envelope 的 next | `status` 的 `approval == {status: "not_approved", plan_version: V}`：視圖還沒有核准的投影 | 成立 |
+| `test_only_a_human_approve_plan_on_a_calibrated_plan_approves` | run 以直接 `init` 建立，由 `agent:implementer` `claim`，沒有任何交接紀錄。<br>(a) 沒有 decision，時鐘前進 30 天 → 仍未核准。<br>(b) O26：登記 `sa` binding（version `2026-09-30`，source「Project Lead 確認，#29」）→ `status` 的 `bindings.sa[<locator>]` 與狀態檔的 `versions.bindings.sa[<locator>]` 都保存這個 version 與 source；`approval` 仍是 `not_approved`，phase 仍是 `awaiting_approval`。<br>(c) `approve_plan --actor agent:implementer` → `actor_not_human`。<br>(d) plan 由 `project_lead` 登記 → `plan_not_calibrated`。<br>(e) implementer 的 plan 沒有 `--calibrated-from` → `plan_not_calibrated`。<br>(f) target 或 version 不是登記的 plan → `plan_version_mismatch`。<br>(g) 校準後的 plan 取代草案，人工 `approve_plan` → exit 0、phase `approved`：`approval` 含 decision、actor、at、plan 的釘選，以及 spec、ac、design 的 binding digest，但不含 `sa`；狀態裡只有一份 `plan`；再以另一個 id 送 `approve_plan` → exit 1 `already_approved` | (d) 的 `result.error == "plan_not_calibrated"`：4.1 只記錄，exit 0 | 全部成立 |
 | `test_approve_plan_needs_spec_ac_and_design_bindings` | 已校準的 plan，只登記 spec、ac、design 的 7 種不完整子集 → exit 1 `missing_bindings`，恰好列出缺的角色，revision 不變，next 列出 `missing_binding:<role>`。三者都登記後，同一個 plan version 可以批准 | `code == 1`：前一個測試的實作不看 binding | 成立 |
-| `test_next_after_approval_reports_dispatch` | 核准後 next 為 `{action: dispatch, plan: {locator, version, digest}, approval: <id>}`，blockers `[]`；`status` 與 `feature.json` 相同 | `next.action == "dispatch"`：`derive` 對核准還沒有規則 | 成立 |
+| `test_next_after_approval_reports_dispatch` | 核准後，envelope 的 next 與狀態檔的 `next` 都是 `{action: dispatch, plan: {locator, version, digest}, approval: <id>}`；blockers `[]` | `next.action == "dispatch"`：`derive` 對核准還沒有規則 | 成立 |
 | `test_changing_an_approved_document_needs_scope_change` | 核准後，以下都 exit 1 `scope_change_required`，核准與 revision 不變：新的 plan version；同一個 plan locator 但 bytes 改了；spec、ac、design 的內容改了；新增一份 spec。內容相同的重登 → exit 0、revision 不變。登記 `sa` 或 `policy` → exit 0，核准保留 | `code == 1`：登記會直接取代 | 成立 |
+| `test_a_conflict_on_an_applied_approve_plan_follows_the_chosen_content` | 以 id X 人工批准（reason `a`），再以 X、reason `b` 重送 → exit 3。參數：<br>`original` → `approval.decision == X`，`decisions[X].reason == "a"`，phase `approved`。<br>`attempted` → phase `approved`，`approval.decision == X`，`decisions[X].reason == "b"`，`replaces[0]` 是 reason `a` 的紀錄並標 `voided_by`。<br>`abandon` → 狀態檔的 `approval is None`，phase `awaiting_approval`，next 回 `approve_plan`，`decisions[X].status == "voided"`；之後以新的 id Y 人工批准 → `approved`、`approval.decision == Y` | `abandon` 參數的狀態檔 `approval is None`：4.1 的撤銷只標 `voided`，不還原 `effect`（`attempted` 參數同樣失敗：沒還原就再批准，得到 `already_approved`） | 成立 |
 
 ## 6. 範圍變更與政策核准
 
-- [ ] 6.1 `scope_change` 撤銷核准並取代 plan，`policy_change` 綁定政策檔的 digest，`status` 顯示 policy 狀態；驗證：`uv run pytest tests/test_scope_policy.py` 與完整的完成條件通過
+- [ ] 6.1 `scope_change` 撤銷核准並取代 plan，`policy_change` 綁定政策檔的 digest，`status` 顯示 policy 狀態，撤銷已被改寫的 `effect` 時拒絕；驗證：`uv run pytest tests/test_scope_policy.py` 與完整的完成條件通過
 
 **模式與 effort**：預設模式（D72）；Implementer Claude Opus 5.5、Reviewer GPT-6 Astra；effort（Implementer／Reviewer）xhigh／xhigh。
 
 **交付**：
 
-- `decisions.py`：`scope_change`、`policy_change` 的檢查與效果，以及重登已被取代的 plan 時回 `plan_superseded`（D9）。
-- `approve_plan` 加上「未被取代」的檢查。
+- `decisions.py`：
+  - `scope_change`、`policy_change` 的檢查與效果（兩者都記 `effect`）；
+  - 重登已被取代的 plan 時回 `plan_superseded`（D9）；
+  - `approve_plan` 加上「未被取代」的檢查；
+  - 撤銷時的 `effect_overwritten`（D10）。
 - `next.py`：`plan_superseded`。
 - `state.py`／`cli.py`：policy 狀態，依 D11 在讀取時計算。
 
@@ -295,12 +321,12 @@ Effort 的依據（D69）：
 **依賴**：5.1，從它取得：
 
 - **登記項的形狀**：`plan`、`versions.bindings[role][locator]`、`versions.policy`，登記項帶 `path`、`digest`。
-- **`approval` 的形狀**。
+- **`approval` 的形狀，以及 `effect` 的記錄與還原**。
 - **`approve_plan` 的檢查順序**：「未被取代」插在「已校準」之後、「version 相符」之前。
 - **已核准時的 `scope_change_required`**。
 - **`derive` 的順序**：`plan_superseded` 放在 plan 阻擋中，不改其他條件的位置。
 
-**AC**：O01（協調者不能自己做 scope 變更）、O07、O23、G22。
+**AC**：O01（協調者不能自己做 scope 變更）、O07、O23、G22、D10（撤銷的界線）。
 
 **Commit**：`feat(decisions): revoke approval on scope_change and bind policy`
 
@@ -308,9 +334,10 @@ Effort 的依據（D69）：
 
 | 測試 | 斷言的行為 | Red 失敗在 | Green |
 | --- | --- | --- | --- |
-| `test_scope_change_stops_the_run_and_supersedes_the_plan` | 參數：已核准、等待核准。人工 `scope_change`，帶 impact、reason 與兩個 `--open-question` → exit 0。紀錄含 impact、reason、`open_questions` 與 `supersedes`（舊 plan 的釘選）；`approval` 為 `null`；phase `awaiting_approval`；`plan.superseded_by` 等於該 id；next 為 `human`、`[plan_superseded:<id>]`、`[]`。`agent:implementer` 送出 → `actor_not_human`，核准保留 | `approval is None`（已核准的參數）：4.1 只記錄 | 成立 |
+| `test_scope_change_stops_the_run_and_supersedes_the_plan` | 參數：已核准、等待核准。人工 `scope_change`，帶 impact、reason 與兩個 `--open-question` → exit 0。紀錄含 impact、reason、`open_questions` 與 `supersedes`（舊 plan 的釘選）；狀態檔的 `approval is None`；phase `awaiting_approval`；`plan.superseded_by` 等於該 id；next 為 `human`、`[plan_superseded:<id>]`、`[]`。`agent:implementer` 送出 → `actor_not_human`，核准保留 | 狀態檔 `approval is None`（已核准的參數）：4.1 只記錄 | 成立 |
 | `test_only_a_new_plan_version_is_approvable_after_scope_change` | 接續前一個測試：批准舊 plan → `plan_superseded`；以相同的 version 與 digest 重登 → `plan_superseded`。登記新 version 後，next 回 `approve_plan`；人工批准 → `approved`，next 為 `dispatch` | `code == 1`（批准舊 plan）：`approve_plan` 還不看是否被取代 | 成立 |
-| `test_policy_is_approved_only_by_policy_change_on_its_digest` | 未登記時 `policy.status` 為 `not_registered`，此時 `policy_change` → `policy_not_registered`。登記 `workflow.yaml` 後為 `not_approved`，帶 digest。以下都被拒：agent → `actor_not_human`；digest 不符 → `policy_digest_mismatch`；locator 不符 → `policy_digest_mismatch`。人工且正確 → exit 0，狀態 `approved`，帶 decision id 與 digest。`next` 不受 policy 影響 | `result.policy.status == "not_registered"`：視圖還沒有 policy | 成立 |
+| `test_voiding_a_decision_whose_effect_was_overwritten_is_refused` | 以 X 核准 plan P1 → 以 S 做 `scope_change` → 登記新 plan P2。以 S、不同內容重送 → exit 3。`--choice abandon` 與 `--choice attempted` → exit 1 `effect_overwritten`，列出 `plan`；bytes 不變，仍 Blocked。`--choice original` → exit 0，`plan` 仍是 P2 | `code == 1`（`abandon`）：5.1 的還原不看目前值，把 `plan` 改回 P1 並還原核准 | 成立 |
+| `test_policy_is_approved_only_by_policy_change_on_its_digest` | 未登記時，`policy.status` 為 `not_registered`，此時 `policy_change` → `policy_not_registered`。登記 `workflow.yaml` 後為 `not_approved`，帶 digest。以下都被拒：agent → `actor_not_human`；digest 不符 → `policy_digest_mismatch`；locator 不符 → `policy_digest_mismatch`。人工且正確 → exit 0，狀態 `approved`，帶 decision id 與 digest。`next` 不受 policy 影響 | `result.policy.status == "not_registered"`：視圖還沒有 policy | 成立 |
 | `test_policy_changed_after_approval_is_not_approved` | 接續前一個測試：改動 `workflow.yaml` → `digest_mismatch`，帶核准時與目前的 digest；刪檔 → `unreadable`；還原後以改過的內容重登 → `not_approved`；對新 digest 做 `policy_change` → `approved` | `policy.status == "digest_mismatch"`：前一個測試的實作只看狀態，回 `approved` | 成立 |
 
 ## 驗收驗證
@@ -321,7 +348,7 @@ Effort 的依據（D69）：
 
 | AC | 驗證的測試（task） | 通過代表 |
 | --- | --- | --- |
-| O01 | 3.1 `…exactly_one_concurrent_claim…`；5.1 `…only_a_human_approve_plan…`；6.1 `…scope_change_stops…` | 直接 `init` 就進入 planning；協調者 identity 由 `claim` 保存；沒有交接紀錄也能走到開工確認，但協調者既不能批准，也不能做 scope 變更 |
+| O01 | 3.1 `…creates_a_planning_run…`；5.1 `…only_a_human_approve_plan…`；6.1 `…scope_change_stops…` | 直接 `init` 就進入 planning，保存協調者 identity，不需要交接紀錄；協調者既不能批准，也不能做 scope 變更 |
 | O03 | 5.1 `…registered_in_place…`、`…unreadable_documents…` | 登記保存原生 locator、version、digest，登記時的內容可讀回；原檔不改名、不搬移；讀不到就拒絕，狀態不變 |
 | O05 | 5.1 `…status_shows_versions…`、`…only_a_human_approve_plan…`(a)(c) | 顯示等待開工確認與待確認的 plan 版本；時間經過或 agent 的表示都不產生核准 |
 | O07 | 6.1 前兩個測試 | `scope_change` 保存影響與理由、撤銷核准、舊 plan 標為被取代；新版本批准後 next 才是 `dispatch` |
@@ -329,17 +356,17 @@ Effort 的依據（D69）：
 | O19 | 4.1 `…only_human_actors_can_decide…`；5.1 (c)；6.1 agent 參數 | 非 `human:<name>` 的 actor 一律被拒，狀態不變 |
 | O22 | 5.1 (d)(e)(g) | 只有 Implementer 校準過的 plan 能被批准，而且只有一份現行 plan |
 | O23 | 6.1 前兩個測試（兩種起點） | 保存影響與待決事項；整個 run 停在等待批准，直到新版本被批准 |
-| O26 | 5.1 (b) | `sa` binding 保存版本與來源，但不產生核准 |
+| O26 | 5.1 (b)(g) | `sa` binding 保存確認的版本與來源，但不產生核准；之後只有人工 `approve_plan` 產生核准，而且核准不以 `sa` 為依據 |
 | O29 | 5.1 `…needs_spec_ac_and_design_bindings…` | 缺任一 binding 就拒絕並列出，三者都有之後同一個 plan 版本可以批准 |
 | O30 | 4.1 `…unsupported…` | `adopt`、`delegate` 回 `unsupported`，revision、owner、核准都不變 |
 | G21 | 1.1 t1、t2、t4、t5、t6；2.1 三個測試；PR 上的 `unit-linux` run | 違反政策時，本機的測試 session 以失敗結束；`unit-linux` 執行同一個命令、同一份設定，而且 t1～t6 在 Linux 上也通過 |
 | G22 | 2.1 `…declares_unit_linux…`；6.1 兩個 policy 測試；驗收示範（見下） | 宣告了必要 check，但沒有綁定目前 digest 的 `policy_change`，或核准後檔案被改 → `status` 顯示未核准或 digest 不符 |
-| D01 | 3.1 `…creates_a_planning_run…`、`…status_human…`；5.1 `…status_shows_versions…` | 狀態檔與 `status`（含 `--human`）都直接顯示 phase、owner、版本、核准、gate 的狀態與原因、blockers、next |
+| D01 | 3.1 `…creates_a_planning_run…`、`…status_human…`；5.1 `…status_shows_versions…` | 狀態檔與 `status`（含 `--human`）都直接顯示 phase、協調者、owner、版本、核准、gate 的狀態與原因、blockers、next |
 | D02 | 3.1 `…manual_edit…`；4.1 `…recorded_with_its_provenance…`、`…missing_fields…` | 手改被偵測、不覆寫，也不被當成決策；decision 只能經 `decide` 產生，並保存決策者、來源、理由與影響 |
-| D03 | 3.1 `…exactly_one_concurrent_claim…`；4.1 `…need_the_coordinator_token…`；5.1 `…unreadable_documents…`（`register` 的 token） | 恰一方取得協調權；另一方可以讀取，但寫入被拒 |
-| D09 | 3.1 兩個 interrupt 測試、`…stale_revision…` | 中斷後讀到完整的舊版或新版；revision 會被核對 |
-| D10 | 3.1 `…interrupt_before…`；4.1 `…takes_effect_once…`、`…blocks_the_run…`、`…resolve_conflict…` | 已提交的不重複生效；未提交的不被接受；內容不同時 Blocked，保留兩份內容，直到人工 decision 解除 |
-| D11 | 3.1 `…untrusted_state…`、`…never_overwrites…`；4.1 `…blocks_the_run…` | 顯示具體原因與現存檔案，原檔不變；`init` 不覆寫，也不建立空 run |
+| D03 | 3.1 `…claim_grants…`、`…concurrent_claims…`；4.1 `…need_the_coordinator_token…`、`…non_owners_cannot_resend…`；5.1 `…unreadable_documents…`（`register` 的 token） | 恰一方取得協調權；另一方可以讀取，但任何寫入（包括重送與不同內容的重送）都被拒，bytes 不變 |
+| D09 | 3.1 兩個 interrupt 測試、`…failed_sync…`、`…stale_revision…`、`…object_references…` | 中斷或 sync 失敗後讀到完整的舊版或新版；revision 會被核對；引用的物件缺失或毀損時不提交 |
+| D10 | 3.1 `…interrupt_before…`；4.1 `…takes_effect_once…`、`…blocks_the_run…`、兩個 `resolve_conflict` 測試；5.1 `…conflict_on_an_applied_approve_plan…`；6.1 `…effect_was_overwritten…` | 已提交的不重複生效；未提交的不被接受；內容不同時 Blocked，保留兩份內容，直到人工 decision 選定原內容、改採嘗試的內容或放棄 |
+| D11 | 3.1 `…untrusted_state…`、`…never_overwrites…`、`…object_references…`；4.1 `…blocks_the_run…` | 顯示具體原因與現存檔案，原檔不變；`init` 不覆寫，也不建立空 run |
 | D25 | 4.1 `…budget_extension…` | 四種目標各寫入一筆人工紀錄，`workflow.yaml` 與其他狀態不變；agent、缺理由、未知目標都被拒 |
 
 **G22 的驗收示範**：由 Project Lead 在驗收時執行，把本 repo 的 `workflow.yaml` 實際綁定一次。
@@ -362,15 +389,20 @@ Effort 的依據（D69）：
 
 - **本機**：macOS（Darwin arm64）；uv 0.11.24；CPython 3.12.13（uv 管理）；git 2.54。測試不需要網路。`scripts/dist-smoke.sh` 第一次執行可能要下載 `uv_build`。
 - **CI**：GitHub Actions 的 `ubuntu-24.04`；uv 釘版；只由 `pull_request` 觸發。
-- 兩個平台跑同一套測試。`fcntl.flock`、`os.link`、`F_FULLFSYNC` 在兩邊的行為都由 3.1 的測試覆蓋。
+- 兩個平台跑同一套測試。測試覆蓋的是：`flock` 下的並行 `claim`；`os.link`、`os.replace` 前後中斷的恢復；fsync 失敗時不提交。
+- 以下沒有測試證據，列為限制（design Risks）：`F_FULLFSYNC` 是否被呼叫、資料是否真的寫到裝置、斷電後的持久性。
 
 ## 風險
 
 - 產品層的風險見 design 的「Risks / Trade-offs」。
-- **並行測試（3.1）**：8 個程序加 barrier；斷言「恰一個得勝」與排程無關。若 flaky，追根因，保留嚴格斷言，不加 retry。
-- **突變 Red**：標「突變」的測試（t4、`…has_one_source`、`…interrupt_before…`，可能還有 `…stale_revision…`）靠一次不提交的突變證明 Red。Reviewer 要核對突變與輸出。
+- **並行測試（3.1）**：8 個程序加 barrier，prelude 讓每個 `os.link` 先睡 0.2 秒，所以「都先讀到同一版」不靠運氣；斷言「恰一個得勝」與排程無關。若 flaky，追根因，保留嚴格斷言，不加 retry。
+- **突變 Red**：標「突變」的測試靠一次不提交的突變證明 Red，Reviewer 要核對突變與輸出。這些測試是：t4、dist-smoke、`…has_one_source`、`…interrupt_before…`、`…non_owners_cannot_resend…`，以及可能需要的 `…concurrent_claims…`、`…stale_revision…`。
 - **`unit-linux` 第一次實跑在 to-pr**：結構已由 2.1 在本機檢查；實跑失敗走 to-pr 的修正迴圈。
-- **3.1、4.1 的份量**：各約一個 session。任一個超出時，依 D71 在 task 內部重排步驟，不拆成只做一層的 task。
+- **task 的份量**：3.1 與 4.1 各有 11～13 個測試，是最大的兩個。任何 task 超出一個 session 時，停下，依 D71 拆成更小的垂直切片，例如：
+  - 3.1 拆成「`init`、`status`、`next` 與不可信偵測」和「`claim`、並行與中斷恢復」；
+  - 4.1 拆成「紀錄、授權與冪等」和「衝突與三種解除」。
+
+  改過的計畫回到計畫審查，不在 task 內部硬塞。
 
 ## 執行界線
 

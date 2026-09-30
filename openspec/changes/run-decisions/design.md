@@ -51,18 +51,30 @@
 
 | 命令 | 參數 |
 | --- | --- |
-| `init` | `--repo R --feature F --issue I` |
+| `init` | `--repo R --feature F --issue I --actor A` |
 | `claim` | `--repo R --feature F --actor A` |
 | `status` | `--repo R --feature F [--human]` |
 | `next` | `--repo R --feature F` |
 | `register plan\|binding\|policy` | `--repo --feature --token --locator L --version V --source S [--content-from P] [--role spec\|ac\|design\|sa] [--producer implementer\|project_lead] [--calibrated-from C]` |
-| `decide <kind>` | `--repo --feature --token --id --actor --target --reason --source --impact [--version V] [--open-question Q]…` |
+| `decide <kind>` | `--repo --feature --token --id --actor --target --reason --source --impact [--version V] [--choice C] [--open-question Q]…` |
 | `adopt`、`delegate` | 接受任何參數，一律回 `unsupported` |
 
-- parser 只強制兩類參數：各命令的 `--repo`、`--feature`，以及 `register` 的 `--locator`、`--version`、`--source`；`kind`、`--role`、`--producer` 另核對選項。
-  - `--token` 在 parser 是選填：缺少時當作不符，回 exit 4。
-  - `decide` 的欄位也是選填，由 handler 核對。
-  - `binding` 缺 `--role`、`plan` 缺 `--producer` → exit 1 `missing_fields`。
+- `main(argv)` 解析參數後查 `cli.HANDLERS`（命令名 → `handler(args) -> (exit code, envelope)`），印出 envelope、回傳 exit code。這是 CLI 本來的派送結構；1.1 的骨架測試靠它驗證參數確實轉送。
+- parser 強制的參數：
+  - 每個命令的 `--repo`、`--feature`；
+  - `init` 的 `--issue`、`--actor`，以及 `claim` 的 `--actor`；
+  - `register` 的 `--locator`、`--version`、`--source`。
+- `--token` 與 `decide` 的欄位在 parser 都是選填：缺 token 當作不符（exit 4）；欄位由 handler 核對。`binding` 缺 `--role`、`plan` 缺 `--producer` → exit 1 `missing_fields`。
+- **parser 與 handler 的分工**，每種錯誤只由一方處理：
+
+  | 輸入 | 誰處理 | 結果 |
+  | --- | --- | --- |
+  | 未知的頂層命令（例如 `merge`）、缺少必填參數、`--repo`／`--feature` 格式不符 | parser | exit 2，`result.error == "usage"` |
+  | `register` 的種類不是 `plan\|binding\|policy`；`--role`、`--producer` 不在選項內 | parser | exit 2 `usage` |
+  | 頂層 `adopt`、`delegate`（parser 認得，接受任何參數） | handler | exit 2，`result == {error: "unsupported", command: <名稱>}` |
+  | `decide` 的 kind（parser 當自由字串）不在本 Feature 的集合 | handler | exit 2，`result == {error: "unsupported", kind: <值>}` |
+  | `decide --choice` 不是 `original\|attempted\|abandon` | handler | exit 1 `invalid_choice` |
+
 - stdout 永遠是一行 JSON，欄位為 `ok`、`revision`、`result`、`blocked`、`next`、`safety`。`safety` 在本 Feature 永遠是 `null`，保留欄位讓 envelope 形狀不變。
 - Exit code：
 
@@ -78,9 +90,8 @@
 - argparse 的錯誤不走 `SystemExit`：一律轉成 exit 2 的 envelope，`result.error` 為 `usage`，`result.message` 指出參數。`--help` 例外，exit 0 並印出 usage。
 - `--repo` 必須是 `owner/name`，`--feature` 必須是單一路徑段；兩段都以英數字開頭，只含 `[A-Za-z0-9._-]`。parser 核對格式，不合格回 exit 2，所以任何輸入都跳不出 `$LOOPCTL_HOME`。
 - `decide` 的核對順序：
-  1. 無狀態的核對：kind 不在本 Feature 的集合 → exit 2 `unsupported`，不讀也不寫狀態；缺欄位 → exit 1 `missing_fields`；actor 不符合 `human:<name>` → exit 1 `actor_not_human`。
-  2. 在 lock 內、對最新狀態：run 存在、token、該 kind 自己的檢查、效果。
-- 決策欄位在 handler 核對，不交給 argparse，這樣缺欄位與不合法的值走同一種拒絕格式。
+  1. 無狀態的核對，依序：kind 不在本 Feature 的集合 → exit 2 `unsupported`，不讀也不寫狀態；缺欄位 → exit 1，`result == {error: "missing_fields", fields: [...]}`；actor 不符合 `human:<name>` → exit 1 `actor_not_human`。
+  2. 在 lock 內、對最新狀態，依 D4 的順序：run 存在 → token（授權先於任何冪等、衝突處理或寫入）→ transition 的冪等與衝突 → 該 kind 自己的檢查 → 效果。
 - 參考實作以 `--feature` 為唯一鍵，而且 `status` 可以不帶參數；本 Feature 不採用，因為 DUR-01 與 DUR-02 以 repo＋feature 為單位。
 
 ### D3. 狀態佈局與欄位
@@ -102,14 +113,15 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
 | --- | --- | --- |
 | `schema_version`、`revision`、`transitions` | `1`；目前 revision；`transition_id → {revision, payload_digest}` | store |
 | `repo`、`feature`、`issue` | `init` 的參數 | `init` |
-| `owner` | `null` 或 `{actor, token_digest, claimed_at}` | `claim` |
+| `coordinator` | `{actor, at}`：直接交付時接下 feature 的協調者 identity（AC-O01）。只是紀錄，不授予協調權，也不授予任何決策權 | `init` |
+| `owner` | `null` 或 `{actor, token_digest, claimed_at}`：協調權，靠 token 證明 | `claim` |
 | `plan` | `null` 或登記項（D9），另有 `producer`、`calibrated_from`、`superseded_by` | `register plan`、`scope_change` |
 | `versions` | `{bindings: {spec\|ac\|design\|sa: {<locator>: 登記項}}, policy: 登記項 \| null}` | `register` |
 | `approval` | `null` 或 `{decision, actor, at, plan: {locator, version, digest}, bindings: {role: {locator: digest}}}` | `approve_plan`、`scope_change` |
 | `policy_approval` | `null` 或 `{decision, locator, digest}` | `policy_change` |
 | `gates` | `g1`、`g2`、`g3` 各為 `{status: "not_evaluated", reasons: ["not_started"]}` | `init`（本 Feature 不改） |
-| `decisions` | `id → 紀錄`（D10） | `decide` |
-| `conflicts` | `cid → {transition_id, committed_revision, committed_payload_digest, attempted_payload, detected_at, resolved_by}` | store |
+| `decisions` | `id → 紀錄`（D10）；紀錄帶 `status`（`in_effect` 或 `voided`） | `decide` |
+| `conflicts` | `cid → {transition_id, committed_revision, committed_payload, attempted_payload, detected_at, resolved_by, choice}` | store |
 | `phase`、`blockers`、`next` | 衍生欄位（D7） | store 每次提交時重算 |
 
 - 狀態檔只含 token 的 digest。明文 token 只在 `claim` 的輸出出現一次。
@@ -121,7 +133,7 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
 | --- | --- |
 | `load(key) -> (revision, state)` | 見下方「讀取」 |
 | `create(key, transition_id, payload, state) -> 1` | 在旁邊建好目錄，再 `os.rename` 到位；run 目錄已存在時不覆寫 |
-| `commit(key, expected_revision, transition_id, payload, mutate, *, resolves=None) -> revision` | 見下方「提交」 |
+| `commit(key, expected_revision, transition_id, payload, mutate, *, authorize, resolves=None) -> revision` | 見下方「提交」 |
 | `put_object(bytes) -> digest`、`get_object(digest) -> bytes` | content-addressed；讀取時核對 digest |
 
 **讀取**：run 目錄不存在 → `RunNotFound`。其餘情況回傳 `(revision, state)`，或拋出 `UntrustedState(reason, files)`：
@@ -133,25 +145,40 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
 | `schema_version` 不是 1 | `unknown_schema:<v>` |
 | 現行 revision 的 history 紀錄不存在 | `history_missing:<rev>` |
 | history 紀錄的 `state_digest` 不等於 `feature.json` 的 digest，或紀錄本身的 state 與它的 digest 不符 | `manual_edit` |
-| 下一版的 history 紀錄存在，而且它的 `prev_digest` 等於 `feature.json` 的 digest | 回傳那一版（已提交、但現行檔還沒替換）；讀取不寫檔 |
+| 下一版的 history 紀錄存在，而且它的 `prev_digest` 等於 `feature.json` 的 digest | 回傳那一版（已提交、但現行檔還沒替換）。讀取不寫檔；下一次成功的提交寫入更新的一版時，自然取代落後的 `feature.json` |
 | 下一版的 history 紀錄存在，但 `prev_digest` 對不上 | `history_fork:<rev>` |
 
 `files` 是 run 目錄下現存檔案的相對路徑，排序後輸出。
 
-**提交**（在 run 的 `flock` 內依序）：
+**提交**（在 run 的 `flock` 內依序；第 8 步之前任何一步失敗，都不寫任何檔）：
 
-1. 讀取；`feature.json` 落後一版時先替換成已提交的那版。
-2. `transition_id` 已提交過：payload digest 相同 → 回傳原 revision，不寫任何檔；不同 → 依 D6 記下衝突，然後拋出 `TransitionConflict(cid)`。
-3. 有未解的衝突，而且 `resolves` 不是其中一個 → `TransitionConflict`，不寫。
-4. 目前 revision 不等於 `expected_revision` → `RevisionConflict`，不寫。
-5. `new = derive(mutate(state))`。`mutate` 可以拋出 `decisions.Rejected`，這時什麼都不寫。`new` 與現況相同 → 回傳現行 revision，不寫（no-op）。store 自己寫的欄位（D6 的衝突紀錄、`resolves` 的 `resolved_by`）在 `derive` 之前寫入，所以 blockers 與 next 一併反映。
-6. 補上 bookkeeping，以 `os.link` write-once 寫入 `history/<rev+1>.json`，再以 `os.replace` 原子替換 `feature.json`。檔案與目錄都 fsync，darwin 另加 `F_FULLFSYNC`。
+1. 讀取（不寫）。
+2. **授權**：`authorize(state)`。`register`、`decide` 以它核對 `--token` 與 `owner.token_digest`，不符或缺少 → `NotOwner`（exit 4）。`claim` 傳入不檢查的 `authorize`，它自己的檢查（還沒有 owner）在 `mutate` 裡。授權先於冪等、衝突與任何寫入，所以非 owner 不能靠重送取得 duplicate 回應，也不能製造衝突。
+3. **transition 已提交過**，比對 payload digest：
+   - 等於目前接受的內容 → 回傳原 revision；
+   - 等於某個已解除衝突中被否決的內容 → `TransitionRejected(cid)`（exit 1）；
+   - 其他 → 依 D6 記下衝突，然後拋出 `TransitionConflict(cid)`。
+4. 有未解的衝突，而且 `resolves` 不是其中一個 → `TransitionConflict`。
+5. 目前 revision 不等於 `expected_revision` → `RevisionConflict`。
+6. `new = derive(mutate(state))`。
+   - `mutate` 可以拋出 `decisions.Rejected`。
+   - store 自己寫的欄位（D6 的衝突紀錄、`resolves` 的解除紀錄）在 `derive` 之前寫入，所以 blockers 與 next 一併反映。
+   - `new` 與現況相同 → 回傳現行 revision（no-op）。
+7. **物件引用**：`new` 裡每個 `{"$object": d}`，不論是這次新增的還是早就存在的，對應的物件都必須存在，而且內容的 digest 等於 `d`；否則 → `UntrustedState("object_missing:<d>" 或 "object_corrupt:<d>", files)`（exit 5）。登記項的 `digest` 是一般的 `sha256:` 字串，不是引用（高層設計 s6）。
+8. **寫入**：
+   1. 補上 bookkeeping；
+   2. 把 history 紀錄寫到暫存檔並 fsync；
+   3. 以 `os.link` write-once 連到 `history/<rev+1>.json`，再 fsync 目錄；
+   4. 把 `feature.json` 的新內容寫到暫存檔並 fsync，以 `os.replace` 原子替換，再 fsync 目錄；
+   5. darwin 對檔案另加 `F_FULLFSYNC`。
+
+   任何 `OSError` 都往上拋。在 `os.link` 之前失敗 → 沒有提交。
 
 呼叫端的規則：
 
 - `cli` 的寫入命令在 `mutate` 內對最新狀態重做全部有狀態的檢查。遇到 `RevisionConflict` 時重讀、重做，所以不會有改動在舊版本上核對過就提交。
 - 「已提交」的定義是 `history/<rev>.json` 存在。中斷在 `os.link` 之前 → 讀到舊版；中斷在 `os.link` 之後 → 讀到新版。crash 測試的接縫就是這兩個函式（D13）。
-- 本 Feature 的物件都在同一程序內先 `put_object` 再提交，而且 `get_object` 會核對 digest。所以不在提交時另查物件引用（高層設計 s6）。
+- 讀取與被拒的命令都不寫任何檔，包括落後的 `feature.json`。
 
 ### D5. Transition identity 與冪等
 
@@ -160,7 +187,7 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
 | `init` | 只走 `create`，不經 commit | run 已存在 → exit 1 `run_exists`，不覆寫 |
 | `claim` | `claim:<token digest>`，每次呼叫都不同 | 已有 owner → exit 1 `already_claimed`，附目前 owner |
 | `register` | `register:<rev>:<登記項 digest>` | 內容與現有登記相同 → no-op，revision 不變 |
-| `decide` | `decide:<id>` | payload 相同 → exit 0、`duplicate: true`、revision 不變；payload 不同 → 衝突（D6） |
+| `decide` | `decide:<id>` | 等於接受的內容 → exit 0、`duplicate: true`、revision 不變；其他內容 → 衝突，或在衝突解除後回 `transition_rejected`（D6） |
 
 - payload 是請求欄位的正規化 JSON，不含時間與 token。
 - 參考實作的冪等是「重跑 mutate，比對整份 state」。decision 紀錄帶有時間，重送必然不同，所以參考實作只好在 CLI 預先攔下 id 重複，而且只回拒絕（exit 1）。改比 payload 後，冪等與衝突都由 store 判定，也符合 DUR-05「內容不同時 Blocked」。
@@ -168,17 +195,28 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
 
 ### D6. Transition 衝突與解除（待決項之二）
 
-- 記錄：第一次發現某個衝突時，store 用 transition `conflict:<cid>` 提交一個新 revision，寫入 `conflicts[cid]`：
-  - 包含 `transition_id`、已提交的 revision 與 payload digest、這次嘗試的完整 payload、偵測時間；
-  - `cid` 取 `sha256(transition_id + attempted digest)` 的前 16 個 hex，所以同樣的嘗試再來一次會對到同一個衝突，不產生新 revision；
-  - 兩份內容都保留：已提交的在 history 與 `decisions`，嘗試的在 `conflicts[cid]`。
-- 未解期間：
+本 Feature 只有 `decide:<id>` 會衝突，因為 `claim` 與 `register` 的 transition id 每次都不同（D5）。以下以 C 表示已提交的內容，A 表示這次嘗試的內容。
+
+- **記錄**：第一次發現某個衝突時（已通過授權），store 用 transition `conflict:<cid>` 提交一個新 revision，寫入 `conflicts[cid]`：
+  - 內容是 `transition_id`、已提交的 revision、C 與 A 兩份完整 payload、偵測時間；
+  - `cid` 取 `sha256(transition_id + A 的 digest)` 的前 16 個 hex，所以同樣的嘗試再來一次會對到同一個衝突，不產生新 revision。
+- **未解期間**：
   - `status`、`next` 回 exit 3，blockers 為 `transition_conflict:<cid>`，`decision_kinds` 為 `[resolve_conflict]`；
   - 其他寫入一律 exit 3，不寫；
-  - 已提交過的相同請求重送，仍回原 revision（D4 第 2 步在第 3 步之前）。
-- **解除用新的 kind `resolve_conflict --target <cid>`**：
-  - 只收人工 decision；以 `resolves=<cid>` 提交，store 在同一個 revision 記下 `conflicts[cid].resolved_by = <decision id>`；
-  - 已提交的內容照常有效。要改採嘗試的內容，就在解除後以新的 identity 重送，照常經過全部核對；「放棄」就是只解除、不重送。兩者合起來涵蓋 AC-D10 的「選定其一或放棄」。
+  - owner 重送 C，仍回原 revision（D4 第 3 步在第 4 步之前）。
+- **解除用新的 kind**：`resolve_conflict --target <cid> --choice original|attempted|abandon`，只收人工 decision，以 `resolves=<cid>` 提交。三種選擇都在同一個 revision 記下 `resolved_by` 與 `choice`：
+
+  | 選擇 | 效果 | 之後 C 的 identity 接受的內容 |
+  | --- | --- | --- |
+  | `original` | C 照常有效；A 只留作診斷 | C |
+  | `attempted` | 依 D10 撤銷 C，再把 A 當成同一個 id 的 decision，在撤銷後的狀態上照常核對並生效。`decisions[id]` 變成 A 的紀錄，C 移到它的 `replaces`，標 `voided_by`。A 的核對不過 → 整個解除被拒，什麼都不寫，人可以改選另外兩種 | A |
+  | `abandon` | 依 D10 撤銷 C：`decisions[id].status = voided`，保留內容；A 不生效 | C（已撤銷） |
+
+  - 兩份內容都一直保留在 `conflicts[cid]`。
+  - 解除後，重送接受的內容 → `duplicate`；`abandon` 時回傳的紀錄顯示 `voided`。
+  - 重送被否決的內容 → exit 1 `transition_rejected:<cid>`，不再 Blocked。
+  - 送第三種內容 → 新的衝突。
+  - 被衝突的 decision 本身是 `resolve_conflict` 時，只能選 `original`（`choice_not_allowed`），因為撤銷一次解除沒有定義。
   - `cid` 不存在或已解除 → exit 1 `unknown_target`。
 - 為什麼不沿用 `revise`：
   - `revise` 在 Feature 3、4 會有效果（整合觸發、開修正批次）；用它解除衝突，會在解除時意外觸發那些效果；
@@ -242,8 +280,13 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
 
 ### D10. 決策種類與紀錄
 
-- 每筆紀錄的欄位：`id`、`kind`、`actor`、`target`、`reason`、`source`、`impact`、`version`（有才記）、`open_questions`（只有 `scope_change`）、`at`、`seq`。
-- 必填：`id`、`actor`、`target`、`reason`、`source`、`impact`。另外 `approve_plan` 與 `policy_change` 還需要 `version`。
+- 每筆紀錄的欄位：
+  - `id`、`kind`、`actor`、`target`、`reason`、`source`、`impact`；
+  - `version`（有才記）、`choice`（只有 `resolve_conflict`）、`open_questions`（只有 `scope_change`）；
+  - `at`、`seq`；
+  - `status`（`in_effect` 或 `voided`）、`voided_by`、`replaces`（D6）；
+  - `effect`（見下方的撤銷規則）。
+- 必填：`id`、`actor`、`target`、`reason`、`source`、`impact`。另外 `approve_plan` 與 `policy_change` 需要 `version`，`resolve_conflict` 需要 `choice`。
 
 | kind | 有狀態的檢查 | 效果 |
 | --- | --- | --- |
@@ -252,19 +295,31 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
 | `policy_change` | 已登記 policy（`policy_not_registered`）；`target`／`version` 等於它的 locator 與 digest（`policy_digest_mismatch`） | `policy_approval` |
 | `budget_extension` | `target` 必須符合 `active:<正整數分鐘>`、`rounds:+1`、`attempts:<unit>:+1`、`ci_wait:<40 hex>` 之一（`invalid_target`） | 只記錄；效果屬 Feature 2～4 |
 | `revise`、`handoff` | — | 只記錄 |
-| `resolve_conflict` | `target` 是未解的 `cid` | D6 |
+| `resolve_conflict` | `target` 是未解的 `cid`（`unknown_target`）；`choice` 是三者之一（`invalid_choice`）；被衝突的是 `resolve_conflict` 時只收 `original`（`choice_not_allowed`） | D6 |
 
+- **撤銷規則**（D6 的 `attempted` 與 `abandon` 使用）：
+  - 每筆 decision 記下 `effect`：它改變的頂層欄位（`approval`、`policy_approval`、`plan`）各自的 `before` 與 `after`。只記錄的 kind 沒有 `effect`。
+  - 撤銷時，只有這些欄位目前的值全部仍等於各自的 `after`，才全部還原成 `before`。只要有一欄已被之後的 transition 改寫 → exit 1 `effect_overwritten`，列出欄位，什麼都不寫；人可以改選 `original`。
+  - 被撤銷的 decision 留在 `decisions`，標 `status: voided` 與 `voided_by`。後續 Feature 讀 decision 時略過 `voided` 的紀錄。
+  - `approve_plan` 的 `already_approved` 看的是目前的 `approval`，所以撤銷一筆核准之後，可以用新的 id 再批准。
 - 其他 kind（包括 `adopt`、`delegate`、`accept`、`return`、`resolve_read`、`resolve_operation`、三種 finding kind）與頂層的 `adopt`、`delegate` 一律 exit 2 `unsupported`，狀態不讀不寫。
 
 ### D11. `status` 視圖
 
-- `result` 的欄位：
-  - `repo`、`feature`、`issue`、`phase`；
-  - `owner`：`{actor, claimed_at}`，不含 digest；
-  - `plan`；`bindings`：各角色的 locator、version、digest、source；
-  - `approval`：`{status: approved|not_approved, …}`，未核准時帶待確認的 plan version；
-  - `policy`、`gates`、`blockers`、`conflicts`、`revision`。
-- `next` 放在 envelope。`--human` 另加 `result.human`，是同一份內容的逐行文字。
+狀態檔與 `status` 是同一份狀態的兩種投影。測試分別斷言兩者，不要求它們逐欄相等。
+
+| `status` 的 `result` 欄位 | 由狀態檔怎麼投影 |
+| --- | --- |
+| `repo`、`feature`、`issue`、`phase`、`coordinator`、`plan`、`gates`、`blockers`、`decisions`、`conflicts` | 原樣 |
+| `revision` | 原樣 |
+| `owner` | `{actor, claimed_at}`，去掉 `token_digest` |
+| `bindings` | `versions.bindings` 原樣 |
+| `approval` | 狀態檔為 `null` 時是 `{status: "not_approved", plan_version: <plan.version 或 null>}`；否則是 `{status: "approved", decision, actor, at, plan, bindings}` |
+| `policy` | 讀取時計算（見下表），另帶登記項與 `policy_approval` |
+| `transitions` | 不顯示 |
+
+- 狀態檔裡的 `next` 原樣放在 envelope 的 `next`。
+- `--human` 另加 `result.human`，是同一份內容的逐行文字。
 - `policy` 在讀取時計算，唯讀地重讀登記的 `path`：
 
 | 狀態 | 條件 |
@@ -299,11 +354,10 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
 
   - 沿用高層設計的 `g3` 巢狀結構，Feature 3 可以在同一段加鍵；每次改動都需要新的 `policy_change`。
 - 對本 repo 這份檔案的實際 `policy_change`，由 Project Lead 在驗收示範中記錄（tasks「驗收驗證」）。
-- `scripts/dist-smoke.sh`：
-  1. `uv build` 出 wheel；
-  2. 在全新 venv 安裝；
-  3. 在 checkout 外執行 `loopctl --help`；
-  4. 確認 `import delivery` 失敗（D46 的隔離）。
+- `scripts/dist-smoke.sh`：`uv build` 出 wheel，安裝到全新 venv，然後在 checkout 外做三項具名檢查。任一項失敗就印出 `dist-smoke: FAIL: <檢查名>` 並 exit 1：
+  1. `help`：`loopctl --help` exit 0，而且輸出含 `usage: loopctl`；
+  2. `envelope`：`loopctl status --repo a/b --feature F-1` 的 stdout 恰為一行 JSON，鍵恰為六個 envelope 欄位；
+  3. `isolation`：`import delivery` 失敗（D46 的隔離）。
 
   不檢查 `loopctl.tools`，那屬於 Feature 2。
 
@@ -311,10 +365,14 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
 
 - **in-process**：fixture `cli(*argv)` 呼叫 `loopctl.cli.main(argv)`，回傳 `Result(code, out, stdout, stderr, exc)`：
   - `out` 是解析後的 envelope；
-  - 未攔截的例外記在 `exc`，此時 `code` 為 `None`。這樣程式崩潰的 Red 也會停在第一個斷言上，而不是停在呼叫。
-- **子程序**：fixture `cli_proc(*argv, prelude="")` 以 `python -m loopctl` 執行；`prelude` 在載入 loopctl 前執行。
-  - crash 測試用 prelude 把 `os.link` 或 `os.replace` 換成 `os._exit(9)`。
-  - 並行測試讓多個子程序在同一個 barrier 檔出現後才開始。
+  - 未攔截的例外記在 `exc`，此時 `code` 為 `None`；`SystemExit` 記成對應的 code，stdout 保持原樣。這樣程式崩潰的 Red 也會停在第一個斷言上，而不是停在呼叫。
+  - 巢狀欄位用不會拋例外的取值方式讀，缺值時得到 `None`，比較失敗才會是 AssertionError。
+- **派送**：以 `monkeypatch.setitem(cli.HANDLERS, <命令>, <記錄用的假 handler>)` 驗證參數轉送與輸出契約（1.1）。
+- **子程序**：fixture `cli_proc(*argv, prelude="")` 以 `python -m loopctl` 執行，`prelude` 在載入 loopctl 前執行；`cli_proc_many(n, *argv, prelude="")` 讓 n 個子程序都就緒後，才建立 barrier 檔讓它們一起開始。
+  - crash 測試用 prelude 把 `os.link` 或 `os.replace` 換成 `os._exit(9)`；
+  - sync 失敗測試把 `os.fsync` 換成拋出 `OSError(EIO)`；
+  - 並行測試把 `os.link` 包成先睡 0.2 秒再呼叫原函式，讓所有程序都先讀到同一版狀態。
+  - 1.1 以自測驗證 prelude 先於 loopctl 執行、barrier 讓程序一起開始。
 - **隔離**：autouse fixture 把 `LOOPCTL_HOME` 設到 `tmp_path`。這是產品本來就有的設定，不是測試旗標。
 - **時間**：以 `monkeypatch` 替換 `loopctl.clock.now`。
 - **文件**：fixture `repo` 在 `tmp_path` 建好範例 plan、草案、spec（兩份）、ac、design、sa、匯出的 issue 內文與 `workflow.yaml`。
@@ -331,17 +389,16 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
 | 高層設計 | 本 Feature | 依據 |
 | --- | --- | --- |
 | `features/<id>/`，以 feature id 為鍵；`status`／`next` 不帶參數 | `runs/<owner>/<name>/<feature>/`；每個命令都帶 `--repo --feature` | DUR-01、DUR-02 的 repo＋feature |
-| `init --repo-id` | 不收；Feature 3 讀 GitHub 時再加 repo identity | 本 Feature 不讀 GitHub，無法核對 |
+| `init --repo --repo-id --feature --issue`；只有 `claim` 記下 actor | 不收 `--repo-id`（Feature 3 讀 GitHub 時再加 repo identity）；加 `--actor`，保存協調者 identity，與 `claim` 的協調權分開 | 本 Feature 不讀 GitHub，無法核對；AC-O01 |
 | 13 種 `decide` | 6 種加 `resolve_conflict`，其餘回 `unsupported` | proposal「對象存在才收」；D6 |
 | `approve_plan` 只看 producer 與校準 | 另外要求 spec、ac、design binding | #6、AC-O29 |
 | binding 改變使核准失效（design §8 版本表） | 已核准時拒絕，要先 `scope_change` | ORC-03「經 `scope_change`」 |
 | decision 沒有來源與影響欄 | 有 `source`、`impact`，`scope_change` 另有 `open_questions` | DUR-01、AC-O23 |
 | `status` 不含版本與核准；不可信時只給原因 | 含 plan／spec／design 版本、核准、policy；不可信時列出檔案 | DUR-01、AC-D11 |
-| 衝突放在旁邊的 `conflicts/` 目錄，沒有解除方法 | 衝突記在現行狀態，以 `resolve_conflict` 解除 | DUR-05、AC-D10 |
+| 衝突放在旁邊的 `conflicts/` 目錄，沒有解除方法；token 在 mutate 裡核對 | 衝突記在現行狀態，以 `resolve_conflict` 選定原內容、改採嘗試的內容或放棄；授權先於冪等與衝突 | DUR-05、AC-D10、AC-D03 |
 | 以重跑 mutate 判定冪等 | 比對 payload digest | D5 |
 | 動作詞彙 8 個 | 加 `dispatch` | D8 |
 | 可只給 `--digest` 登記 | 必須讀得到內容；非檔案 locator 用 `--content-from` | ORC-02「讀不到的文件 SHALL 拒絕登記」 |
-| 提交時核對物件引用（s6） | 不核對；讀取時核對 digest | D4 |
 | 完整的 `workflow.yaml`；兩個 CI job；CI 有 commit-msg；dist-smoke 檢查 `loopctl.tools`；pyyaml 為執行依賴 | 只宣告 `unit-linux`；一個 job；沒有 commit-msg；不檢查 `loopctl.tools`；pyyaml 只在 dev | proposal 範圍；D53；validation §6.1、§6.3 |
 | gate 以 `pending` 加原因 `not_evaluated` 表示 | `status: not_evaluated`，原因 `not_started` | AC-D01「標明未評估」 |
 
@@ -350,7 +407,7 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
 - [token 遺失：協調者 session 消失，沒有人能再寫入這個 run] → 本 Feature 的 spec 沒有收回協調權的機制，`handoff` 只記錄。`status` 仍可讀。收回方法需要 spec 決定，是交給 Project Lead 的問題。
 - [actor 是自己聲明的：agent 可以打 `--actor human:x`] → 依 D50 的「可信本機協作」，controller 只核對格式。每筆決策都留下 history，可以稽核。真正的身分驗證不在範圍內。
 - [`flock` 只保護單一主機] → DUR-05 已排除共享磁碟與多主機。
-- [crash 測試只殺程序，沒有模擬斷電] → 程式照樣 fsync，darwin 加 `F_FULLFSYNC`；斷電的持久性沒有測試證據，在 validation 的限制中註明。
+- [crash 測試只殺程序，沒有模擬斷電] → 測試能證明的有兩件：`os.link`／`os.replace` 前後中斷的恢復，以及 fsync 失敗時不提交（3.1）。以下都沒有測試證據，在 validation 的限制中註明：fsync 是否真的把資料寫到裝置、darwin 的 `F_FULLFSYNC` 是否被呼叫、斷電後的持久性。
 - [並行測試依排程而定] → 用 8 個程序加 barrier。斷言「恰一個成功」與排程無關；若出現 flaky，追根因，不加 retry。
 - [存下的 `next` 在後續 Feature 可能依賴時間或外部讀取] → 本 Feature 的 `next` 只依狀態，所以一致。之後加入時間或外部輸入的 Feature 要在自己的 design 重新界定。
 - [`unit-linux` 第一次實際執行在 PR 開出時] → 2.1 在本機檢查結構；runner label 依當時的 GitHub 文件核對；PR 上的失敗走 to-pr 的修正迴圈。
