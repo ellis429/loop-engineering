@@ -151,13 +151,14 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
 
 `files` 是 run 目錄下現存檔案的相對路徑，排序後輸出。
 
-**人工還原**：Feature 1 沒有修復命令；讀到 `UntrustedState` 時 run 停在 exit 5，由人處理。完整的前一版在 `history/<rev>.json` 的 state 欄位（它的 digest 記在同一份紀錄）：
+**人工處理**：Feature 1 沒有修復命令；讀到 `UntrustedState` 時 run 停在 exit 5，不再寫入，由人處理。原則是只往最新的已提交版本修，絕不回退，也不刪除任何 history：
 
-1. 看 `files` 與 `reason`，找出最後一份可信的 `history/<rev>.json`（紀錄本身的 state 與 digest 相符）。
-2. 把那份 state 原樣寫回 `feature.json`，刪掉比它新的 history 紀錄；先把整個 run 目錄另存一份以便追查。
-3. 再執行 `status`：回到 exit 0，而且 revision 等於 `<rev>`，就表示還原完成。
+1. 先把整個 run 目錄原樣另存一份。
+2. 找出編號最大的 `history/<rev>.json`，確認它本身完整（紀錄的 state 與它記下的 digest 相符）。
+3. 它完整、而且問題只出在 `feature.json`（缺失、壞掉或被手改）時，把它的 state 原樣寫回 `feature.json`；再執行 `status`，回 exit 0 且 revision 等於 `<rev>`。
+4. 編號最大的 history 本身缺失或損毀、出現 `history_fork`，或無法判斷哪一版是最新的已提交狀態時，不要回退到較舊的版本：保留現況，交 Project Lead 決定。回退可能讓已提交的 decision 消失，例如讓已撤銷的核准重新生效。
 
-這是檔案操作，不是 decision，所以不留在狀態裡；需要紀錄時寫在 ticket 留言。
+這是檔案操作，不是 decision，所以不留在狀態裡；處理經過寫在 ticket 留言。
 
 **不變式：history 最多只領先 `feature.json` 一版。** 讀取因此只需要看下一版。維持它的是提交的第 8.1 步：每次真的要寫入新的 revision 之前，先把落後的 `feature.json` 前移到領先的那一版。
 
