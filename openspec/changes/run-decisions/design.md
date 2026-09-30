@@ -125,6 +125,7 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
 | `phase`、`blockers`、`next`、`plan.superseded_by` | 衍生欄位（D7） | store 每次提交時重算 |
 
 - 狀態檔只含 token 的 digest。明文 token 只在 `claim` 的輸出出現一次。
+- 明文 token 由呼叫者保存，放在 run 目錄以外、權限 600 的檔案；協調的 session 中斷後，新的 session 讀這個檔即可接續寫入。Feature 2 的 orchestrate 負責這一步，本 Feature 期間由人照做。token 沒有保存下來時無法收回協調權（見 Risks）。
 - 後續 Feature 可以新增自己的頂層欄位，讀取時缺欄位視為空。`schema_version` 只在不相容的改動時遞增。
 
 ### D4. Store 契約
@@ -432,7 +433,7 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
 
 ## Risks / Trade-offs
 
-- [token 遺失：協調者 session 消失，沒有人能再寫入這個 run] → 本 Feature 的 spec 沒有收回協調權的機制，`handoff` 只記錄。`status` 仍可讀。收回方法需要 spec 決定，是交給 Project Lead 的問題。
+- [token 遺失：協調者 session 消失，沒有人能再寫入這個 run] → 本 Feature 的 spec 沒有收回協調權的機制，`handoff` 只記錄。`status` 仍可讀。收回方法需要 spec 決定；Project Lead 選擇本 Feature 接受，另以 #34 追蹤。
 - [actor 是自己聲明的：agent 可以打 `--actor human:x`] → 依 D50 的「可信本機協作」，controller 只核對格式。每筆決策都留下 history，可以稽核。真正的身分驗證不在範圍內。
 - [`flock` 只保護單一主機] → DUR-05 已排除共享磁碟與多主機。
 - [crash 測試只殺程序，沒有模擬斷電] → 測試能證明的有兩件：`os.link`／`os.replace` 前後中斷（含連續兩次中斷）的恢復；第一個同步點失敗時不提交，這個同步點是 history 暫存檔的 fsync，在 `os.link` 之前。以下都沒有測試證據，在 validation 的限制中註明：`os.link` 之後的同步失敗（依 D4 的提交邊界處理）、fsync 是否真的把資料寫到裝置、darwin 的 `F_FULLFSYNC` 是否被呼叫、斷電後的持久性。
