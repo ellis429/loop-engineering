@@ -267,7 +267,7 @@ Effort 的依據（D69）：
 
 **交付**：
 
-- `store.py`：D4 第 3 步的其餘兩支（`TransitionRejected`、記下衝突）、第 4 步（Blocked 的優先序：`resolves` 不是未解衝突 → `unknown_target`，否則有未解衝突 → exit 3）、`resolves`、D6 的衝突紀錄。
+- `store.py`：D4 第 3 步的其餘兩支（`TransitionRejected`、記下衝突）、第 4 步（Blocked 的優先序：`resolves` 有值但不是未解衝突 → `unknown_target`；有效則繼續；沒有 `resolves` 且有未解衝突 → exit 3）、`resolves`、D6 的衝突紀錄。
 - `decisions.py`：`resolve_conflict` 的三種選擇（D6）。
   - 本 task 的撤銷只標 `voided`，因為只記錄的 kind 沒有效果可清；
   - D10 表中各 kind 的清除規則由 5.1（`approve_plan`）與 6.1（`scope_change`、`policy_change`）加上。
