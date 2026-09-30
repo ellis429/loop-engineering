@@ -145,10 +145,12 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
 | `schema_version` 不是 1 | `unknown_schema:<v>` |
 | 現行 revision 的 history 紀錄不存在 | `history_missing:<rev>` |
 | history 紀錄的 `state_digest` 不等於 `feature.json` 的 digest，或紀錄本身的 state 與它的 digest 不符 | `manual_edit` |
-| 下一版的 history 紀錄存在，而且它的 `prev_digest` 等於 `feature.json` 的 digest | 回傳那一版（已提交、但現行檔還沒替換）。讀取不寫檔；下一次成功的提交寫入更新的一版時，自然取代落後的 `feature.json` |
+| 下一版的 history 紀錄存在，而且它的 `prev_digest` 等於 `feature.json` 的 digest | 回傳那一版（已提交、但現行檔還沒替換）。讀取不寫檔 |
 | 下一版的 history 紀錄存在，但 `prev_digest` 對不上 | `history_fork:<rev>` |
 
 `files` 是 run 目錄下現存檔案的相對路徑，排序後輸出。
+
+**不變式：history 最多只領先 `feature.json` 一版。** 讀取因此只需要看下一版。維持它的是提交的第 8.1 步：每次真的要寫入新的 revision 之前，先把落後的 `feature.json` 前移到領先的那一版。
 
 **提交**（在 run 的 `flock` 內依序；第 8 步之前任何一步失敗，都不寫任何檔）：
 
@@ -166,19 +168,22 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
    - `new` 與現況相同 → 回傳現行 revision（no-op）。
 7. **物件引用**：`new` 裡每個 `{"$object": d}`，不論是這次新增的還是早就存在的，對應的物件都必須存在，而且內容的 digest 等於 `d`；否則 → `UntrustedState("object_missing:<d>" 或 "object_corrupt:<d>", files)`（exit 5）。登記項的 `digest` 是一般的 `sha256:` 字串，不是引用（高層設計 s6）。
 8. **寫入**：
-   1. 補上 bookkeeping；
-   2. 把 history 紀錄寫到暫存檔並 fsync；
-   3. 以 `os.link` write-once 連到 `history/<rev+1>.json`，再 fsync 目錄；
-   4. 把 `feature.json` 的新內容寫到暫存檔並 fsync，以 `os.replace` 原子替換，再 fsync 目錄；
-   5. darwin 對檔案另加 `F_FULLFSYNC`。
+   1. **前移**：第 1 步讀到的若是領先一版的 history，先把那一版寫到暫存檔並 fsync，以 `os.replace` 換成 `feature.json`，再 fsync 目錄。之後 history 與 `feature.json` 同版。這一步只在授權通過、而且確定要寫入新 revision 時發生。
+   2. 補上 bookkeeping；
+   3. 把 history 紀錄寫到暫存檔並 fsync；
+   4. 以 `os.link` write-once 連到 `history/<rev+1>.json`，再 fsync 目錄；
+   5. 把 `feature.json` 的新內容寫到暫存檔並 fsync，以 `os.replace` 原子替換，再 fsync 目錄；
+   6. darwin 對檔案另加 `F_FULLFSYNC`。
 
-   任何 `OSError` 都往上拋。在 `os.link` 之前失敗 → 沒有提交。
+   任何 `OSError` 都往上拋，提交的邊界就是 `os.link`：
+   - 在 `os.link` 之前失敗 → 沒有提交，讀到舊版；
+   - 在 `os.link` 之後失敗（目錄 fsync 或 `os.replace`）→ 已經提交；命令以錯誤結束，但之後讀到新版，重送同一個 transition 是 duplicate。
 
 呼叫端的規則：
 
 - `cli` 的寫入命令在 `mutate` 內對最新狀態重做全部有狀態的檢查。遇到 `RevisionConflict` 時重讀、重做，所以不會有改動在舊版本上核對過就提交。
 - 「已提交」的定義是 `history/<rev>.json` 存在。中斷在 `os.link` 之前 → 讀到舊版；中斷在 `os.link` 之後 → 讀到新版。crash 測試的接縫就是這兩個函式（D13）。
-- 讀取與被拒的命令都不寫任何檔，包括落後的 `feature.json`。
+- 讀取與被拒的命令（授權失敗、`Rejected`、duplicate、`TransitionRejected`、`RevisionConflict`）都不寫任何檔，包括落後的 `feature.json`。落後的 `feature.json` 只由下一個真的要提交的 transition 在第 8.1 步前移。
 
 ### D5. Transition identity 與冪等
 
@@ -276,7 +281,7 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
   - 登記會改變 plan 或 spec、ac、design binding 的內容 → exit 1 `scope_change_required`，狀態不變；
   - 內容相同的重登是 no-op；
   - `sa` binding 與 `policy` 不受核准涵蓋，照常登記。
-- `scope_change` 之後，重登已被取代的 plan（`version` 與 `digest` 都等於某筆 `scope_change` 的 `supersedes`）→ exit 1 `plan_superseded`。
+- `scope_change` 之後，重登已被取代的 plan（`version` 與 `digest` 都等於某筆 `in_effect` 的 `scope_change` 的 `supersedes`）→ exit 1 `plan_superseded`。
 
 ### D10. 決策種類與紀錄
 
@@ -284,8 +289,7 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
   - `id`、`kind`、`actor`、`target`、`reason`、`source`、`impact`；
   - `version`（有才記）、`choice`（只有 `resolve_conflict`）、`open_questions`（只有 `scope_change`）；
   - `at`、`seq`；
-  - `status`（`in_effect` 或 `voided`）、`voided_by`、`replaces`（D6）；
-  - `effect`（見下方的撤銷規則）。
+  - `status`（`in_effect` 或 `voided`）、`voided_by`、`replaces`（D6）。
 - 必填：`id`、`actor`、`target`、`reason`、`source`、`impact`。另外 `approve_plan` 與 `policy_change` 需要 `version`，`resolve_conflict` 需要 `choice`。
 
 | kind | 有狀態的檢查 | 效果 |
@@ -298,9 +302,19 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
 | `resolve_conflict` | `target` 是未解的 `cid`（`unknown_target`）；`choice` 是三者之一（`invalid_choice`）；被衝突的是 `resolve_conflict` 時只收 `original`（`choice_not_allowed`） | D6 |
 
 - **撤銷規則**（D6 的 `attempted` 與 `abandon` 使用）：
-  - 每筆 decision 記下 `effect`：它改變的頂層欄位（`approval`、`policy_approval`、`plan`）各自的 `before` 與 `after`。只記錄的 kind 沒有 `effect`。
-  - 撤銷時，只有這些欄位目前的值全部仍等於各自的 `after`，才全部還原成 `before`。只要有一欄已被之後的 transition 改寫 → exit 1 `effect_overwritten`，列出欄位，什麼都不寫；人可以改選 `original`。
-  - 被撤銷的 decision 留在 `decisions`，標 `status: voided` 與 `voided_by`。後續 Feature 讀 decision 時略過 `voided` 的紀錄。
+  - **不變式**：`approval` 只來自建立它的那筆 `approve_plan`，`policy_approval` 只來自建立它的那筆 `policy_change`。撤銷與解除衝突只會清掉核准，永遠不還原核准。
+  - 撤銷只清掉目前仍歸屬於該 decision 的效果；已被之後的 transition 改掉的，不再歸屬於它，也就不動：
+
+    | 被撤銷的 kind | 撤銷時做的事 |
+    | --- | --- |
+    | `approve_plan` X | `approval.decision == X` → `approval = null` |
+    | `policy_change` P | `policy_approval.decision == P` → `policy_approval = null` |
+    | `scope_change` S | `plan.superseded_by == S` → 清掉 `superseded_by`，plan 回到可批准；S 當初撤掉的核准不還原，run 停在 `awaiting_approval`，要對目前的 plan 與 binding 另做一次 `approve_plan` |
+    | 只記錄的 kind | 無 |
+
+  - 被撤銷的 decision 留在 `decisions`，標 `status: voided` 與 `voided_by`。
+    - D9 的 `plan_superseded` 只看 `in_effect` 的 `scope_change`。
+    - 後續 Feature 讀 decision 時略過 `voided` 的紀錄。
   - `approve_plan` 的 `already_approved` 看的是目前的 `approval`，所以撤銷一筆核准之後，可以用新的 id 再批准。
 - 其他 kind（包括 `adopt`、`delegate`、`accept`、`return`、`resolve_read`、`resolve_operation`、三種 finding kind）與頂層的 `adopt`、`delegate` 一律 exit 2 `unsupported`，狀態不讀不寫。
 
@@ -370,8 +384,11 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
 - **派送**：以 `monkeypatch.setitem(cli.HANDLERS, <命令>, <記錄用的假 handler>)` 驗證參數轉送與輸出契約（1.1）。
 - **子程序**：fixture `cli_proc(*argv, prelude="")` 以 `python -m loopctl` 執行，`prelude` 在載入 loopctl 前執行；`cli_proc_many(n, *argv, prelude="")` 讓 n 個子程序都就緒後，才建立 barrier 檔讓它們一起開始。
   - crash 測試用 prelude 把 `os.link` 或 `os.replace` 換成 `os._exit(9)`；
-  - sync 失敗測試把 `os.fsync` 換成拋出 `OSError(EIO)`；
-  - 並行測試把 `os.link` 包成先睡 0.2 秒再呼叫原函式，讓所有程序都先讀到同一版狀態。
+  - 連續中斷的測試把 `os.replace` 包成：換進去的內容的 `revision` 等於指定值時才 `os._exit(9)`。這樣前移（第 8.1 步）照常完成，只有該 revision 自己的替換被中斷；
+  - sync 失敗測試讓第一次 `os.fsync` 拋出 `OSError(EIO)`。依 D4，這是 history 暫存檔的 fsync，在 `os.link` 之前；
+  - 並行測試在 `os.link` 前設一道 gate：每個程序到達時寫一個就緒檔，等 n 個都就緒或 3 秒逾時後才繼續。
+    - 沒有 lock 時，每個程序都在讀完狀態之後才到 gate，所以一定一起搶同一個 write-once 的 history 檔；
+    - 有 lock 時，只有持 lock 的程序到得了 gate，逾時一次後其餘依序執行。
   - 1.1 以自測驗證 prelude 先於 loopctl 執行、barrier 讓程序一起開始。
 - **隔離**：autouse fixture 把 `LOOPCTL_HOME` 設到 `tmp_path`。這是產品本來就有的設定，不是測試旗標。
 - **時間**：以 `monkeypatch` 替換 `loopctl.clock.now`。
@@ -407,7 +424,7 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
 - [token 遺失：協調者 session 消失，沒有人能再寫入這個 run] → 本 Feature 的 spec 沒有收回協調權的機制，`handoff` 只記錄。`status` 仍可讀。收回方法需要 spec 決定，是交給 Project Lead 的問題。
 - [actor 是自己聲明的：agent 可以打 `--actor human:x`] → 依 D50 的「可信本機協作」，controller 只核對格式。每筆決策都留下 history，可以稽核。真正的身分驗證不在範圍內。
 - [`flock` 只保護單一主機] → DUR-05 已排除共享磁碟與多主機。
-- [crash 測試只殺程序，沒有模擬斷電] → 測試能證明的有兩件：`os.link`／`os.replace` 前後中斷的恢復，以及 fsync 失敗時不提交（3.1）。以下都沒有測試證據，在 validation 的限制中註明：fsync 是否真的把資料寫到裝置、darwin 的 `F_FULLFSYNC` 是否被呼叫、斷電後的持久性。
+- [crash 測試只殺程序，沒有模擬斷電] → 測試能證明的有兩件：`os.link`／`os.replace` 前後中斷（含連續兩次中斷）的恢復；第一個同步點失敗時不提交，這個同步點是 history 暫存檔的 fsync，在 `os.link` 之前。以下都沒有測試證據，在 validation 的限制中註明：`os.link` 之後的同步失敗（依 D4 的提交邊界處理）、fsync 是否真的把資料寫到裝置、darwin 的 `F_FULLFSYNC` 是否被呼叫、斷電後的持久性。
 - [並行測試依排程而定] → 用 8 個程序加 barrier。斷言「恰一個成功」與排程無關；若出現 flaky，追根因，不加 retry。
 - [存下的 `next` 在後續 Feature 可能依賴時間或外部讀取] → 本 Feature 的 `next` 只依狀態，所以一致。之後加入時間或外部輸入的 Feature 要在自己的 design 重新界定。
 - [`unit-linux` 第一次實際執行在 PR 開出時] → 2.1 在本機檢查結構；runner label 依當時的 GitHub 文件核對；PR 上的失敗走 to-pr 的修正迴圈。
