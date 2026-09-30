@@ -226,7 +226,7 @@ flowchart LR
      - 多個 use case 都要用到的元件，切成自己的 Feature，排在用到它的 Feature 前面
      - 切法有依據（已經有實作、設計穩定）就整批切；沒有依據就先列交付能力，但至少切出下一個
    - 完成：Feature 表每一列都有
-     - [ ] 名稱與一句範圍：哪個 use case，或哪個共用元件
+     - [ ] 名稱與一句範圍：哪個 use case，或哪個共用元件；名稱寫出做完後能做什麼，例如「loopctl：登記 run、記錄人工決策、查詢狀態與下一步」，不寫「人工決策與下一步」這種主題詞
      - [ ] 依賴
      - [ ] 對應的需求
      - [ ] 「近期」或「暫定」
@@ -284,7 +284,7 @@ flowchart LR
    - 怎麼做：
      - 填上 Feature 名稱；已知的限制或疑慮一起講
      - change id 用簡短的英文，例如 `finalize-protocol`；branch 就叫 `feature/<id>`
-     - ticket 照下方的格式：標題就是 Feature 名稱，不加前綴
+     - ticket 照下方的格式：標題就是 Feature 名稱，不加前綴，貼上 label `feature`（每個 repo 建一次）
    - 完成：
      - [ ] Agent 回報已載入 feature-to-spec skill
      - [ ] branch `feature/<id>` 從最新的 `origin/main` 開出、已 push，上面有 `openspec/changes/<id>/`；記下起點 commit

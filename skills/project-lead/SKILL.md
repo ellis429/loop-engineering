@@ -54,7 +54,7 @@ The roadmap is a living document with two levels: a milestone is a group of feat
 | Content | Holds | When |
 | --- | --- | --- |
 | Milestone | Target date, demonstrable outcome, completion condition, the features cut so far, and the capabilities not yet cut | At project start |
-| Roadmap feature | Name, one-line scope, dependencies, which input requirements it covers | For the current milestone when the cut is grounded (existing implementation, stable design) and the whole picture helps plan parallel work, dependencies or a demo; otherwise list the milestone's capabilities only |
+| Roadmap feature | Name (what someone can do once it is delivered, not a topic; it becomes the ticket title, D67), one-line scope, dependencies, which input requirements it covers | For the current milestone when the cut is grounded (existing implementation, stable design) and the whole picture helps plan parallel work, dependencies or a demo; otherwise list the milestone's capabilities only |
 | Feature spec | Proposal, spec delta, acceptance IDs | When the feature is chosen, with `feature-to-spec` |
 | Detailed design and plan | design.md, tasks.md | Just before work starts, by the Implementer |
 
