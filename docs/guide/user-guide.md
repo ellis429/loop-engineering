@@ -464,7 +464,8 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
 | 1 | Engineer | 開始寫設計與計畫 | skill [spec-to-plan](../../skills/spec-to-plan/SKILL.md)：開一個 Agent session，貼上：`/spec-to-plan 準備〈Feature〉的設計與計畫：讀交接包，寫 design.md 與 tasks.md，交另一個模型審到 clean，停在確認開工。` | — |
 | 2 | Agent | 寫詳細設計 | 指令 `openspec instructions design --change <id>` | design |
 | 3 | Agent | • 垂直切 tasks：每個 task 走完一條完整路徑、能單獨驗證、一個 session 做得完<br>• 先做讓後面好做的整理；需要共用的測試骨架時，排成第一個 task；legacy 路徑沒有測試保護時，第一個 task 補特性測試<br>• 每個 task 選計畫：預設，或 Engineer 指定的加一層程式碼計畫<br>• 每個 task 寫明依賴哪些 task、從它們拿到的介面與不變式<br>• 每個 task 列出要寫的測試，寫明 Red 應該失敗在哪個斷言<br>• 每個 task 標出 Implementer 與 Reviewer 的 effort<br>• 寫每條 AC 的驗法<br>• 交另一個模型審計畫到 clean | • 指令 `openspec instructions tasks --change <id>`<br>• 切法參考 skill [to-tickets](../../skills/third-party/mattpocock/engineering/to-tickets/SKILL.md)（Matt Pocock）的垂直切片規則，不放實作碼 | • tasks<br>• AC 驗法：寫在 validation 文件或 tasks 的明確段落 |
-| 4 | 交接時指定的人 | ◆確認開工（兼任時連 spec 一起確認） | 同一個 session，停在這裡；確認記成 ticket 留言 | 開工確認紀錄 |
+| 4 | Agent | 帶確認開工的人走過計畫：切法、高風險 task 的測試、AC 對照、計畫自己做的決定、風險 | 同一個 session，一次一段 | — |
+| 5 | 交接時指定的人 | ◆確認開工（兼任時連 spec 一起確認） | 同一個 session，停在這裡；確認記成 ticket 留言 | 開工確認紀錄 |
 
 **每一步怎麼做、怎樣算完成**
 
@@ -500,8 +501,19 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
      - [ ] 每個 task 標出模式、Implementer 的模型，以及 Implementer 與 Reviewer 的 effort（預設強模型；見參考手冊的[模型怎麼選](reference.md#模型怎麼選)）
      - [ ] scope、必要環境、風險與執行限制都寫明
      - [ ] 另一個模型審過計畫，結果 clean，紀錄在 change 裡
-4. **◆確認開工**
-   - 怎麼做：看 Agent 給的一頁摘要：tasks 各交付什麼、依賴與 effort，粒度是否太粗或太細、每個 Red 證明什麼、風險、計畫審查結果、要你決定的事；兼任時連 spec 一起看。effort 可以在這裡調整。
+4. **走過計畫**
+   - 怎麼做：Agent 先給一頁摘要，再一次帶你看一段：
+     1. 切法：task 表、依賴、effort，最可能超出一個 session 的 task
+     2. 高風險 task（xhigh，或對到最多 AC 的）的測試：每個測試斷言什麼行為、Red 證明什麼、Green 的預期；用來判斷做出來的會不會是你要的
+     3. AC 對照：每條 AC 由哪些測試證明，哪些留給後面的 Feature 或人工驗收
+     4. 計畫自己做的決定：交接包留給 Implementer 的待決項，以及和高層設計不同的地方與理由
+     5. 風險、限制與已接受的風險，包括測試證明不了的部分
+   - 每段看完可以提問、提出要改的地方；看夠了才進下一步。要跳過也可以，確認紀錄會寫明。
+   - 完成：
+     - [ ] 五段都走過，或確認紀錄寫明跳過
+     - [ ] 要改的地方都已記下
+5. **◆確認開工**
+   - 怎麼做：選一個：批准、只調 effort、改計畫、再多看一些。只調 effort 就更新 `tasks.md` 後直接記錄；改到測試、task、owned paths 或 design，就回到計畫審查，審到 clean 再確認；兼任時連 spec 一起確認。
    - 完成：
      - [ ] ticket 留言記下誰、何時、原話和確認的版本
      - [ ] ticket 狀態「開發中」
