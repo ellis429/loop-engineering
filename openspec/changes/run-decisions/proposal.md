@@ -1,4 +1,4 @@
-# Proposal：人工決策與下一步（run-decisions）
+# Proposal：loopctl：登記 run、記錄人工決策、查詢狀態與下一步（run-decisions）
 
 ## Why
 
