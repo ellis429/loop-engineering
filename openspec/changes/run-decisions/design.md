@@ -155,7 +155,7 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
 
 1. 先把整個 run 目錄原樣另存一份。
 2. 找出編號最大的 `history/<rev>.json`，確認它本身完整（紀錄的 state 與它記下的 digest 相符）。
-3. 它完整、而且問題只出在 `feature.json`（缺失、壞掉或被手改）時，把它的 state 原樣寫回 `feature.json`；再執行 `status`，回 exit 0 且 revision 等於 `<rev>`。
+3. 它完整、而且問題只出在 `feature.json`（缺失、壞掉或被手改）時，把它的 state 原樣寫回 `feature.json`；再執行 `status`：revision 等於 `<rev>`，而且不再回 `UntrustedState`；若這個狀態本來就有未解衝突，照 D6 仍回 exit 3。
 4. 編號最大的 history 本身缺失或損毀、出現 `history_fork`，或無法判斷哪一版是最新的已提交狀態時，不要回退到較舊的版本：保留現況，交 Project Lead 決定。回退可能讓已提交的 decision 消失，例如讓已撤銷的核准重新生效。
 
 這是檔案操作，不是 decision，所以不留在狀態裡；處理經過寫在 ticket 留言。
