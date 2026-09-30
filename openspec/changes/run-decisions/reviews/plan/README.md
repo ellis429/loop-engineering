@@ -10,4 +10,14 @@ Reviewer：GPT-6 Astra，effort xhigh，`codex exec` 唯讀沙箱；三輪在同
 | 4 | `020b046` | 2026-09-30T03:17:25Z～2026-09-30T03:25:06Z | **clean**：P1～P3 全部解決；P4-01 minor、不阻擋（4.2 摘要漏寫分支條件） |
 | 4 補 | `779da5c` | 2026-09-30T03:26:09Z～2026-09-30T03:26:34Z | **clean**：照 P4-01 的建議改一行，Reviewer 確認沒有其他變動 |
 
-第 3 輪後上限已到，依 spec-to-plan 第 4 步轉 Blocked；Project Lead 2026-09-30 決定「追加一輪審查」（ticket #29 留言），第 4 輪 clean。開工確認以 `779da5c` 為準。
+第 3 輪後上限已到，依 spec-to-plan 第 4 步轉 Blocked；Project Lead 2026-09-30 決定「追加一輪審查」（ticket #29 留言），第 4 輪 clean。第一次開工確認以 `779da5c` 為準。
+
+之後 Project Lead 在開工前走過計畫，design 補了兩段說明（人工處理不可信狀態、token 的保存與 #34），同一個 session 再確認：
+
+| 輪次 | 審查的 commit | 結果 |
+| --- | --- | --- |
+| 5 | `e899200` | changes_requested：P5-01 major（人工還原可能回退並刪掉已提交的 decision） |
+| 5 補 | `615ab12` | clean；P5-02 minor（還原後仍可能因未解衝突回 exit 3） |
+| 5 補 2 | `658ac7b` | clean |
+
+重新開工確認以 `658ac7b` 為準。
