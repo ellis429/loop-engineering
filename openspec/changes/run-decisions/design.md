@@ -115,14 +115,14 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
 | `repo`、`feature`、`issue` | `init` 的參數 | `init` |
 | `coordinator` | `{actor, at}`：直接交付時接下 feature 的協調者 identity（AC-O01）。只是紀錄，不授予協調權，也不授予任何決策權 | `init` |
 | `owner` | `null` 或 `{actor, token_digest, claimed_at}`：協調權，靠 token 證明 | `claim` |
-| `plan` | `null` 或登記項（D9），另有 `producer`、`calibrated_from`、`superseded_by` | `register plan`、`scope_change` |
+| `plan` | `null` 或登記項（D9），另有 `producer`、`calibrated_from`；`superseded_by` 是衍生欄位（D7） | `register plan` |
 | `versions` | `{bindings: {spec\|ac\|design\|sa: {<locator>: 登記項}}, policy: 登記項 \| null}` | `register` |
 | `approval` | `null` 或 `{decision, actor, at, plan: {locator, version, digest}, bindings: {role: {locator: digest}}}` | `approve_plan`、`scope_change` |
 | `policy_approval` | `null` 或 `{decision, locator, digest}` | `policy_change` |
 | `gates` | `g1`、`g2`、`g3` 各為 `{status: "not_evaluated", reasons: ["not_started"]}` | `init`（本 Feature 不改） |
 | `decisions` | `id → 紀錄`（D10）；紀錄帶 `status`（`in_effect` 或 `voided`） | `decide` |
 | `conflicts` | `cid → {transition_id, committed_revision, committed_payload, attempted_payload, detected_at, resolved_by, choice}` | store |
-| `phase`、`blockers`、`next` | 衍生欄位（D7） | store 每次提交時重算 |
+| `phase`、`blockers`、`next`、`plan.superseded_by` | 衍生欄位（D7） | store 每次提交時重算 |
 
 - 狀態檔只含 token 的 digest。明文 token 只在 `claim` 的輸出出現一次。
 - 後續 Feature 可以新增自己的頂層欄位，讀取時缺欄位視為空。`schema_version` 只在不相容的改動時遞增。
@@ -160,7 +160,9 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
    - 等於目前接受的內容 → 回傳原 revision；
    - 等於某個已解除衝突中被否決的內容 → `TransitionRejected(cid)`（exit 1）；
    - 其他 → 依 D6 記下衝突，然後拋出 `TransitionConflict(cid)`。
-4. 有未解的衝突，而且 `resolves` 不是其中一個 → `TransitionConflict`。
+4. **Blocked 的優先序**（仍在第 2 步授權之後、任何寫入之前）：
+   - `resolves` 有值（`resolve_conflict`）：它必須是目前未解的衝突，否則 → `Rejected(unknown_target)`（exit 1）。這一條不論是否還有其他未解衝突都適用；`resolves` 是未解的衝突時繼續往下，即使還有別的未解衝突。
+   - `resolves` 沒有值，而有未解的衝突 → `TransitionConflict`（exit 3）。
 5. 目前 revision 不等於 `expected_revision` → `RevisionConflict`。
 6. `new = derive(mutate(state))`。
    - `mutate` 可以拋出 `decisions.Rejected`。
@@ -207,7 +209,7 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
   - `cid` 取 `sha256(transition_id + A 的 digest)` 的前 16 個 hex，所以同樣的嘗試再來一次會對到同一個衝突，不產生新 revision。
 - **未解期間**：
   - `status`、`next` 回 exit 3，blockers 為 `transition_conflict:<cid>`，`decision_kinds` 為 `[resolve_conflict]`；
-  - 其他寫入一律 exit 3，不寫；
+  - 其他寫入一律 exit 3，不寫；只有指向未解衝突的 `resolve_conflict` 能通過（D4 第 4 步）；
   - owner 重送 C，仍回原 revision（D4 第 3 步在第 4 步之前）。
 - **解除用新的 kind**：`resolve_conflict --target <cid> --choice original|attempted|abandon`，只收人工 decision，以 `resolves=<cid>` 提交。三種選擇都在同一個 revision 記下 `resolved_by` 與 `choice`：
 
@@ -222,7 +224,7 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
   - 重送被否決的內容 → exit 1 `transition_rejected:<cid>`，不再 Blocked。
   - 送第三種內容 → 新的衝突。
   - 被衝突的 decision 本身是 `resolve_conflict` 時，只能選 `original`（`choice_not_allowed`），因為撤銷一次解除沒有定義。
-  - `cid` 不存在或已解除 → exit 1 `unknown_target`。
+  - `cid` 不存在或已解除 → exit 1 `unknown_target`，即使還有其他未解衝突也一樣（D4 第 4 步，先於一般的 Blocked 檢查）。
 - 為什麼不沿用 `revise`：
   - `revise` 在 Feature 3、4 會有效果（整合觸發、開修正批次）；用它解除衝突，會在解除時意外觸發那些效果；
   - 兩者的目標也不同：`revise` 指向 feature 的內容，解除指向一個 `cid`。
@@ -244,9 +246,12 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
 | 沒有 owner | `human`；`[unclaimed]` |
 | 有 `approval` | `dispatch`（D8） |
 | 沒有 `plan` | `human`；`[plan_not_registered]` |
-| plan 有任何阻擋 | `human`；列出全部阻擋，kinds `[]`。阻擋有三種：`plan_superseded:<id>`；`plan_not_calibrated`（producer 不是 implementer，或沒有 `calibrated_from`）；`missing_binding:<role>`（spec、ac、design 各一） |
+| plan 有任何阻擋 | `human`；列出全部阻擋，kinds `[]`。阻擋有三種：`plan_superseded:<id>`（`plan.superseded_by` 的每個 id 一條）；`plan_not_calibrated`（producer 不是 implementer，或沒有 `calibrated_from`）；`missing_binding:<role>`（spec、ac、design 各一） |
 | 其他 | `human`；`[plan_not_approved]`；kinds `[approve_plan]` |
 
+- `plan.superseded_by`：所有 `status` 為 `in_effect`、而且 `supersedes` 的 version 與 digest 等於目前 plan 的 `scope_change` 的 id，依 `seq` 排序。
+  - 「plan 被取代」就是這個清單不是空的。
+  - 登記（D9）、`approve_plan`（D10）與 next 都只用這一個判斷，所以同一個 plan 疊了幾筆 `scope_change`，就要全部失效之後才回到可批准。
 - `blockers`：`next.action` 為 `human` 時等於它的 blockers，否則為 `[]`。
 - 本 Feature 的 `next` 只由狀態決定，所以存下的值與 `status` 重算的一致。`policy` 的狀態在讀取時計算（D11），不影響 `next`。
 
@@ -281,7 +286,7 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
   - 登記會改變 plan 或 spec、ac、design binding 的內容 → exit 1 `scope_change_required`，狀態不變；
   - 內容相同的重登是 no-op；
   - `sa` binding 與 `policy` 不受核准涵蓋，照常登記。
-- `scope_change` 之後，重登已被取代的 plan（`version` 與 `digest` 都等於某筆 `in_effect` 的 `scope_change` 的 `supersedes`）→ exit 1 `plan_superseded`。
+- 登記的 plan 若一登記就會被 D7 判為被取代（`version` 與 `digest` 等於某筆 `in_effect` 的 `scope_change` 的 `supersedes`）→ exit 1 `plan_superseded`。
 
 ### D10. 決策種類與紀錄
 
@@ -294,12 +299,12 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
 
 | kind | 有狀態的檢查 | 效果 |
 | --- | --- | --- |
-| `approve_plan` | 依序：phase 不是 `approved`（`already_approved`）、有 plan、plan 已校準、未被取代、`target`／`version` 等於 plan 的 locator 與 version、spec、ac、design 都至少各有一份 binding（缺的全部列出，`missing_bindings`） | `approval` 釘住 plan 與 binding digest；phase 轉為 `approved` |
-| `scope_change` | — | 記錄 `supersedes`（plan 的 locator、version、digest）與 `open_questions`；`plan.superseded_by = id`；`approval = null` |
+| `approve_plan` | 依序：phase 不是 `approved`（`already_approved`）、有 plan、plan 已校準、未被取代（`plan.superseded_by` 為空，D7）、`target`／`version` 等於 plan 的 locator 與 version、spec、ac、design 都至少各有一份 binding（缺的全部列出，`missing_bindings`） | `approval` 釘住 plan 與 binding digest；phase 轉為 `approved` |
+| `scope_change` | — | 記錄 `supersedes`（plan 的 locator、version、digest）與 `open_questions`；`approval = null`。plan 因此被 D7 判為被取代 |
 | `policy_change` | 已登記 policy（`policy_not_registered`）；`target`／`version` 等於它的 locator 與 digest（`policy_digest_mismatch`） | `policy_approval` |
 | `budget_extension` | `target` 必須符合 `active:<正整數分鐘>`、`rounds:+1`、`attempts:<unit>:+1`、`ci_wait:<40 hex>` 之一（`invalid_target`） | 只記錄；效果屬 Feature 2～4 |
 | `revise`、`handoff` | — | 只記錄 |
-| `resolve_conflict` | `target` 是未解的 `cid`（`unknown_target`）；`choice` 是三者之一（`invalid_choice`）；被衝突的是 `resolve_conflict` 時只收 `original`（`choice_not_allowed`） | D6 |
+| `resolve_conflict` | `target` 是未解的 `cid`（`unknown_target`，由 D4 第 4 步核對）；`choice` 是三者之一（`invalid_choice`）；被衝突的是 `resolve_conflict` 時只收 `original`（`choice_not_allowed`） | D6 |
 
 - **撤銷規則**（D6 的 `attempted` 與 `abandon` 使用）：
   - **不變式**：`approval` 只來自建立它的那筆 `approve_plan`，`policy_approval` 只來自建立它的那筆 `policy_change`。撤銷與解除衝突只會清掉核准，永遠不還原核准。
@@ -309,12 +314,10 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
     | --- | --- |
     | `approve_plan` X | `approval.decision == X` → `approval = null` |
     | `policy_change` P | `policy_approval.decision == P` → `policy_approval = null` |
-    | `scope_change` S | `plan.superseded_by == S` → 清掉 `superseded_by`，plan 回到可批准；S 當初撤掉的核准不還原，run 停在 `awaiting_approval`，要對目前的 plan 與 binding 另做一次 `approve_plan` |
+    | `scope_change` S | 不需清除：S 標 `voided` 後，D7 的 `plan.superseded_by` 自動不再算它；其他仍 `in_effect` 的 `scope_change` 照樣讓 plan 不可批准。S 當初撤掉的核准不還原，run 停在 `awaiting_approval`，要對目前的 plan 與 binding 另做一次 `approve_plan` |
     | 只記錄的 kind | 無 |
 
-  - 被撤銷的 decision 留在 `decisions`，標 `status: voided` 與 `voided_by`。
-    - D9 的 `plan_superseded` 只看 `in_effect` 的 `scope_change`。
-    - 後續 Feature 讀 decision 時略過 `voided` 的紀錄。
+  - 被撤銷的 decision 留在 `decisions`，標 `status: voided` 與 `voided_by`。後續 Feature 讀 decision 時略過 `voided` 的紀錄。
   - `approve_plan` 的 `already_approved` 看的是目前的 `approval`，所以撤銷一筆核准之後，可以用新的 id 再批准。
 - 其他 kind（包括 `adopt`、`delegate`、`accept`、`return`、`resolve_read`、`resolve_operation`、三種 finding kind）與頂層的 `adopt`、`delegate` 一律 exit 2 `unsupported`，狀態不讀不寫。
 
@@ -386,8 +389,8 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
   - crash 測試用 prelude 把 `os.link` 或 `os.replace` 換成 `os._exit(9)`；
   - 連續中斷的測試把 `os.replace` 包成：換進去的內容的 `revision` 等於指定值時才 `os._exit(9)`。這樣前移（第 8.1 步）照常完成，只有該 revision 自己的替換被中斷；
   - sync 失敗測試讓第一次 `os.fsync` 拋出 `OSError(EIO)`。依 D4，這是 history 暫存檔的 fsync，在 `os.link` 之前；
-  - 並行測試在 `os.link` 前設一道 gate：每個程序到達時寫一個就緒檔，等 n 個都就緒或 3 秒逾時後才繼續。
-    - 沒有 lock 時，每個程序都在讀完狀態之後才到 gate，所以一定一起搶同一個 write-once 的 history 檔；
+  - 並行測試在 `os.link` 前設一道 gate：每個程序到達時寫一個就緒檔，等 n 個都到齊、或 3 秒逾時才放行。gate 把到達數與放行原因（`all_arrived` 或 `timeout`）寫進紀錄檔。
+    - 沒有 lock 時，程序都在讀完狀態之後才到 gate。只有 n 個都到齊才放行的那一次，才能確定它們一起搶了同一個 write-once 的 history 檔。逾時放行時競態不一定發生，那次執行不算 Red 證據。
     - 有 lock 時，只有持 lock 的程序到得了 gate，逾時一次後其餘依序執行。
   - 1.1 以自測驗證 prelude 先於 loopctl 執行、barrier 讓程序一起開始。
 - **隔離**：autouse fixture 把 `LOOPCTL_HOME` 設到 `tmp_path`。這是產品本來就有的設定，不是測試旗標。

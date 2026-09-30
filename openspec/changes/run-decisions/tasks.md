@@ -35,9 +35,9 @@
 | `tests/conftest.py` | 1.1 建立（政策、`home`、`repo`、`cli`、`cli_proc`、`cli_proc_many`）→ 3.1 加 `started_run` | 只新增 fixture，不改既有 fixture 的行為 |
 | `src/loopctl/cli.py` | 1.1 建立（parser、`HANDLERS` 與全部 stub）→ 3.1、4.1、5.1 依序把自己命令的 stub 換成實作 → 6.1 在 `status` 加 policy 狀態 | 不改參數與 envelope；`tests/test_cli.py` 仍通過 |
 | `src/loopctl/store.py` | 3.1 建立（授權優先、讀取不寫檔、物件引用、fsync）→ 4.1 加重送冪等與前移 → 4.2 加衝突、`resolves` 與 `TransitionRejected` | 冪等與衝突只插在授權之後（D4 第 3、4 步），前移只在第 8 步開頭；不改讀取時的不可信原因與寫入順序 |
-| `src/loopctl/next.py` | 3.1 → 4.2（衝突）→ 5.1（plan 阻擋、`dispatch`）→ 6.1（`plan_superseded`） | 只插入自己的判斷，保持 D7 的順序 |
+| `src/loopctl/next.py` | 3.1 → 4.2（衝突）→ 5.1（plan 阻擋、`dispatch`）→ 6.1（`plan.superseded_by` 的衍生與 `plan_superseded`） | 只插入自己的判斷，保持 D7 的順序 |
 | `src/loopctl/state.py` | 3.1 → 4.1（`decisions`）→ 4.2（`conflicts`）→ 5.1（plan、binding、核准）→ 6.1（policy） | 只新增視圖欄位 |
-| `src/loopctl/decisions.py` | 4.1 建立（完整 kind 表、共同核對、只記錄的 kind）→ 4.2（`resolve_conflict` 的三種選擇，撤銷時標 `voided`）→ 5.1（register、`approve_plan` 與它的清除規則）→ 6.1（`scope_change`、`policy_change` 與它們的清除規則） | 不改共同核對的順序與紀錄欄位（D2、D10） |
+| `src/loopctl/decisions.py` | 4.1 建立（完整 kind 表、共同核對、只記錄的 kind）→ 4.2（`resolve_conflict` 的三種選擇，撤銷時標 `voided`）→ 5.1（register、`approve_plan` 與它的清除規則）→ 6.1（`scope_change`、`policy_change`，以及 `policy_change` 的清除規則） | 不改共同核對的順序與紀錄欄位（D2、D10） |
 
 ### 總覽
 
@@ -199,7 +199,7 @@ Effort 的依據（D69）：
 | `test_init_never_overwrites_an_existing_run` | 同一 repo＋feature 再 `init`，issue 或 actor 相同或不同，都是 exit 1 `run_exists`；run 目錄的 bytes 不變 | `code == 1`：既有目錄讓 rename 失敗（記在 `exc`），或被覆寫 | 成立 |
 | `test_claim_grants_the_coordination_right_once_and_stores_only_the_token_digest` | 依序執行：`claim --actor agent:implementer` → exit 0，token 是 64 位 hex，revision 2；`status` 的 `owner.actor` 為該值，`coordinator` 不變。狀態檔的 `owner.token_digest` 是 token 的 sha256，run 目錄裡沒有任何檔案含明文 token。另一個 actor 再 `claim` → exit 1 `already_claimed`，並附目前的 owner | token 符合 64 位 hex：stub 沒有回 token | 成立 |
 | `test_uninitialised_run_is_not_found_and_nothing_is_created` | 另有 F-2 已 `init` 並 `claim`。對 F-9 執行 `status`、`next`、`claim`，都是 exit 1 `run_not_found`；`$LOOPCTL_HOME` 的快照不變 | `code == 1`（`next`）：`next` 的 handler 還是 stub，回 0 | 成立 |
-| `test_concurrent_claims_leave_one_owner_and_a_controlled_answer_for_every_loser` | `cli_proc_many(8, "claim", …)`，各用不同 actor；prelude 在 `os.link` 前設 D13 的 gate。結果：<br>- 恰一個 exit 0；<br>- 其餘 7 個都 exit 1，`result == {error: "already_claimed", owner: <得勝的 actor>}`（精確比較），沒有例外；<br>- 之後 `status` exit 0、revision 2、owner 為得勝者；history 恰為 `1.json`、`2.json` | 每個落敗者的 `result == {error: "already_claimed", owner: …}`：沒有 flock 時，8 個程序到 gate 之前都已讀到沒有 owner 的狀態，一起搶 write-once 的 `history/2.json`，只有一個成功，其餘拋 `FileExistsError`（記在 `exc`，沒有受控回應）。若單次 `claim` 已加 flock → 突變：暫時拿掉 flock，失敗在同一斷言 | 成立 |
+| `test_concurrent_claims_leave_one_owner_and_a_controlled_answer_for_every_loser` | `cli_proc_many(8, "claim", …)`，各用不同 actor；prelude 在 `os.link` 前設 D13 的 gate。結果：<br>- 恰一個 exit 0；<br>- 其餘 7 個都 exit 1，`result == {error: "already_claimed", owner: <得勝的 actor>}`（精確比較），沒有例外；<br>- 之後 `status` exit 0、revision 2、owner 為得勝者；history 恰為 `1.json`、`2.json` | 每個落敗者的 `result == {error: "already_claimed", owner: …}`：沒有 flock 時，8 個程序到 gate 之前都已讀到沒有 owner 的狀態；gate 等齊才放行時，它們一起搶 write-once 的 `history/2.json`，只有一個成功，其餘拋 `FileExistsError`（記在 `exc`，沒有受控回應）。若單次 `claim` 已加 flock → 突變：暫時拿掉 flock，失敗在同一斷言。存 Red 證據時一併存 gate 紀錄：到達數必須是 8、放行原因必須是 `all_arrived`；逾時放行的那次不算，重跑 | 成立 |
 | `test_interrupt_after_history_keeps_the_new_revision_once` | `claim` 時以 prelude 把 `os.replace` 換成 `os._exit(9)` → exit 9。之後 `status` exit 0、revision 2、owner 已設定；另一個 actor 再 `claim` → `already_claimed`；run 目錄的 bytes 在這兩個命令前後相同，也就是讀取與被拒的命令都不修復 `feature.json`；history 只有 `1.json`、`2.json` | `revision == 2`：讀取只看 `feature.json`，得到 1 | 成立 |
 | `test_interrupt_before_history_keeps_the_old_revision` | 以 prelude 把 `os.link` 換成 `os._exit(9)` → exit 9；`status` 回 revision 1、owner `null`；再 `claim` exit 0、revision 2 | 突變：暫時改成先替換 `feature.json` 再寫 history → 失敗在 `revision == 1` | 成立 |
 | `test_a_failed_sync_before_the_link_commits_nothing` | `claim` 時以 prelude 讓第一次 `os.fsync` 拋出 `OSError(EIO)`。依 D4 第 8 步，這是 history 暫存檔的 fsync，在 `os.link` 之前。結果：`code != 0`；`status` 回 revision 1、owner `null`；history 只有 `1.json`。`os.link` 之後的同步失敗不在本測試範圍（D4 的提交邊界） | `code != 0`：提交路徑還沒有呼叫 fsync，`claim` 成功 | 成立 |
@@ -267,7 +267,7 @@ Effort 的依據（D69）：
 
 **交付**：
 
-- `store.py`：D4 第 3 步的其餘兩支（`TransitionRejected`、記下衝突）、第 4 步、`resolves`、D6 的衝突紀錄。
+- `store.py`：D4 第 3 步的其餘兩支（`TransitionRejected`、記下衝突）、第 4 步（Blocked 的優先序：`resolves` 不是未解衝突 → `unknown_target`，否則有未解衝突 → exit 3）、`resolves`、D6 的衝突紀錄。
 - `decisions.py`：`resolve_conflict` 的三種選擇（D6）。
   - 本 task 的撤銷只標 `voided`，因為只記錄的 kind 沒有效果可清；
   - D10 表中各 kind 的清除規則由 5.1（`approve_plan`）與 6.1（`scope_change`、`policy_change`）加上。
@@ -293,7 +293,7 @@ Effort 的依據（D69）：
 | --- | --- | --- | --- |
 | `test_same_decision_id_with_other_content_blocks_the_run` | owner 以 id X 先送 reason `a`，再送 reason `b` → exit 3 `transition_conflict`。`conflicts[cid]` 含 transition_id、已提交的 revision，以及兩份完整 payload；`decisions[X].reason` 仍是 `a`。`status`、`next` 都 exit 3，blockers `[transition_conflict:<cid>]`、kinds `[resolve_conflict]`，`files` 含 `feature.json` 與 history。另一筆新的 decide → exit 3，不寫。重送 X/`a` → exit 0、duplicate | `code == 3`：4.1 的 store 只有「等於接受的內容」這一支，不同內容不會變成 Blocked | 成立 |
 | `test_non_owners_cannot_create_conflicts` | 參數：(a) 以錯誤的 token 送同一個 id、不同內容；(b) 不帶 token 同上；(c) owner 的 decide 以 prelude 在 `os.replace` 中斷之後，非 owner 送同一個 id、不同內容。全部 exit 4 `not_owner`；run 目錄的 bytes、revision 與 `conflicts` 都不變 | 突變：暫時把 `authorize` 移到 D4 第 3 步之後 → (a) 得到 exit 3，失敗在 `code == 4` | 成立 |
-| `test_a_human_resolve_conflict_can_keep_the_original` | 接續衝突：人工 `resolve_conflict --target <cid> --choice original` → exit 0；`conflicts[cid]` 的 `resolved_by` 等於該 decision 的 id，`choice == "original"`，兩份 payload 仍在；`decisions[X]` 是 reason `a`、`in_effect`；`status` exit 0，next 回到衝突前的值。之後：重送 `a` → duplicate；重送 `b` → exit 1 `transition_rejected:<cid>`，不再 Blocked；第三種內容 → 新的衝突（exit 3）。被拒的情況：agent 送出 → `actor_not_human`，仍 Blocked；未知的 `cid` → `unknown_target`；`--choice maybe` → `invalid_choice` | `code == 0`：所有寫入都被擋，exit 3 | 成立 |
+| `test_a_human_resolve_conflict_can_keep_the_original` | 接續衝突：人工 `resolve_conflict --target <cid> --choice original` → exit 0；`conflicts[cid]` 的 `resolved_by` 等於該 decision 的 id，`choice == "original"`，兩份 payload 仍在；`decisions[X]` 是 reason `a`、`in_effect`；`status` exit 0，next 回到衝突前的值。之後：重送 `a` → duplicate；重送 `b` → exit 1 `transition_rejected:<cid>`，不再 Blocked；第三種內容 → 新的衝突（exit 3）。被拒的情況，都不寫任何檔：agent 送出 → `actor_not_human`，仍 Blocked；衝突 K 還沒解時，以不存在的 `cid` 解除 → exit 1 `unknown_target`（不是 exit 3），K 仍未解；`--choice maybe` → `invalid_choice`；第三種內容造成新衝突 K2 之後，再解除已解除的 K → exit 1 `unknown_target`，K2 仍未解 | `code == 0`：所有寫入都被擋，exit 3 | 成立 |
 | `test_resolve_conflict_can_take_the_attempted_content_or_abandon_it` | 參數（kind `revise`）：<br>`attempted` → `decisions[X].reason == "b"`，`replaces[0]` 是 reason `a` 的紀錄且帶 `voided_by`；重送 `b` → duplicate；重送 `a` → `transition_rejected:<cid>`。<br>`abandon` → `decisions[X]` 保留 reason `a`，但 `status == "voided"` 並帶 `voided_by`；重送 `a` → duplicate，回傳的紀錄是 `voided`；重送 `b` → `transition_rejected:<cid>`。<br>另外：被衝突的 decision 本身是 `resolve_conflict` 時，`attempted`／`abandon` → exit 1 `choice_not_allowed`，`original` 可以 | `decisions[X].reason == "b"`（`attempted` 參數）：前一個測試的實作把每種選擇都當 `original` | 成立 |
 
 ## 5. 登記原生文件與開工確認
@@ -320,7 +320,7 @@ Effort 的依據（D69）：
   - 紀錄欄位，以及 `decide:<id>` 的 payload 冪等。
 - 4.2：
   - `resolve_conflict` 三種選擇的流程：`attempted` 先撤銷，再把 A 當成同一個 id 的 decision 照常核對。本 task 只替撤銷補上 `approve_plan` 的清除規則；
-  - 未解的衝突會擋下所有寫入，`register` 也包括在內。
+  - 未解的衝突會擋下所有寫入，`register` 也包括在內；只有指向未解衝突的 `resolve_conflict` 例外，指向其他 `cid` 的回 `unknown_target`（D4 第 4 步）。
 
 3.1 的 store（含物件引用檢查）與 `derive` 照舊。
 
@@ -351,10 +351,10 @@ Effort 的依據（D69）：
 
 - `decisions.py`：
   - `scope_change`、`policy_change` 的檢查與效果；
-  - 兩者在 D10 表中的清除規則；
-  - 重登已被取代的 plan 時回 `plan_superseded`（D9，只看 `in_effect` 的 `scope_change`）；
+  - `policy_change` 在 D10 表中的清除規則（`scope_change` 不需清除規則）；
+  - 重登已被取代的 plan 時回 `plan_superseded`（D9）；
   - `approve_plan` 加上「未被取代」的檢查。
-- `next.py`：`plan_superseded`。
+- `next.py`：`plan.superseded_by` 的衍生（D7）與 `plan_superseded` 阻擋。登記、`approve_plan` 與 next 都只用這一個衍生判斷 plan 是否被取代。
 - `state.py`／`cli.py`：policy 狀態，依 D11 在讀取時計算。
 
 **擁有路徑**：上列各檔，以及 `tests/test_scope_policy.py`。
@@ -375,9 +375,9 @@ Effort 的依據（D69）：
 
 | 測試 | 斷言的行為 | Red 失敗在 | Green |
 | --- | --- | --- | --- |
-| `test_scope_change_stops_the_run_and_supersedes_the_plan` | 參數：已核准、等待核准。人工 `scope_change`，帶 impact、reason 與兩個 `--open-question` → exit 0。紀錄含 impact、reason、`open_questions` 與 `supersedes`（舊 plan 的釘選）；狀態檔的 `approval is None`；phase `awaiting_approval`；`plan.superseded_by` 等於該 id；next 為 `human`、`[plan_superseded:<id>]`、`[]`。`agent:implementer` 送出 → `actor_not_human`，核准保留 | 狀態檔 `approval is None`（已核准的參數）：4.1 只記錄 | 成立 |
+| `test_scope_change_stops_the_run_and_supersedes_the_plan` | 參數：已核准、等待核准。人工 `scope_change`，帶 impact、reason 與兩個 `--open-question` → exit 0。紀錄含 impact、reason、`open_questions` 與 `supersedes`（舊 plan 的釘選）；狀態檔的 `approval is None`；phase `awaiting_approval`；`plan.superseded_by == [<id>]`；next 為 `human`、`[plan_superseded:<id>]`、`[]`。`agent:implementer` 送出 → `actor_not_human`，核准保留 | 狀態檔 `approval is None`（已核准的參數）：4.1 只記錄 | 成立 |
 | `test_only_a_new_plan_version_is_approvable_after_scope_change` | 接續前一個測試：批准舊 plan → `plan_superseded`；以相同的 version 與 digest 重登 → `plan_superseded`。登記新 version 後，next 回 `approve_plan`；人工批准 → `approved`，next 為 `dispatch` | `code == 1`（批准舊 plan）：`approve_plan` 還不看是否被取代 | 成立 |
-| `test_undoing_a_scope_change_never_restores_the_approval` | 參數都從「以 X 核准 plan P1 與 binding B1，再以 S 做 `scope_change`」開始：<br>(i) 只登記改過的 spec B2、plan 不變，以 S、不同內容重送 → exit 3，`--choice abandon` → exit 0。結果：狀態檔的 `approval is None`；`plan.superseded_by` 已清掉；`decisions[S].status == "voided"`；next 為 `human`、`[plan_not_approved]`、`[approve_plan]`。之後以新的 id Y 人工批准 → `approved`，`approval.decision == Y`，`approval.bindings` 釘住 B2。<br>(ii) 同 (i) 的起點，改選 `--choice attempted`（A 是 impact 不同的 `scope_change`）→ `approval is None`；`decisions[S]` 是 A 的內容，`replaces[0]` 是原內容並標 `voided_by`；`plan.superseded_by == S`；next 為 `human`、`[plan_superseded:S]`。<br>(iii) 登記新的 plan P2 之後，再對 S 製造衝突並選 `abandon` → exit 0；`approval is None`；P2 不受影響；next 回 `approve_plan` | (i) 的 `next.blockers == ["plan_not_approved"]`：5.1 的清除規則只處理 `approve_plan`，`plan.superseded_by` 仍是 S，next 是 `[plan_superseded:S]` | 全部成立 |
+| `test_undoing_a_scope_change_never_restores_the_approval` | 參數都從「以 X 核准 plan P1 與 binding B1，再以 S 做 `scope_change`」開始，每個參數都斷言狀態檔的 `approval is None`：<br>(i) 只登記改過的 spec B2、plan 不變，以 S、不同內容重送 → exit 3，`--choice abandon` → exit 0。結果：`plan.superseded_by == []`；`decisions[S].status == "voided"`；next 為 `human`、`[plan_not_approved]`、`[approve_plan]`。之後以新的 id Y 人工批准 → `approved`，`approval.decision == Y`，`approval.bindings` 釘住 B2。<br>(ii) 同 (i) 的起點，改選 `--choice attempted`（A 是 impact 不同的 `scope_change`）→ `decisions[S]` 是 A 的內容，`replaces[0]` 是原內容並標 `voided_by`；`plan.superseded_by == [S]`；next 為 `human`、`[plan_superseded:S]`。<br>(iii) 登記新的 plan P2 之後，再對 S 製造衝突並選 `abandon` → exit 0；P2 不受影響；next 回 `approve_plan`。<br>(iv) 疊加：S 之後，對同一個 P1 再做 `scope_change` S2；對 S2 製造衝突並選 `abandon` → exit 0。`plan.superseded_by == [S]`；next 為 `human`、`[plan_superseded:S]`；批准 P1 → exit 1 `plan_superseded`；以 P1 相同的 version 與 digest 重登 → exit 1 `plan_superseded` | (i) 的 `next.blockers == ["plan_not_approved"]`。若 p1 的實作已經只算 `in_effect` 的 `scope_change` → 突變：暫時把 `voided` 的也算進去，(i) 得到 `[plan_superseded:S]`，(iv) 得到兩條 | 全部成立 |
 | `test_policy_is_approved_only_by_policy_change_on_its_digest` | 未登記時，`policy.status` 為 `not_registered`，此時 `policy_change` → `policy_not_registered`。登記 `workflow.yaml` 後為 `not_approved`，帶 digest。以下都被拒：agent → `actor_not_human`；digest 不符 → `policy_digest_mismatch`；locator 不符 → `policy_digest_mismatch`。人工且正確 → exit 0，狀態 `approved`，帶 decision id 與 digest。`next` 不受 policy 影響 | `result.policy.status == "not_registered"`：視圖還沒有 policy | 成立 |
 | `test_policy_changed_after_approval_is_not_approved` | 接續前一個測試：改動 `workflow.yaml` → `digest_mismatch`，帶核准時與目前的 digest；刪檔 → `unreadable`；還原後以改過的內容重登 → `not_approved`；對新 digest 做 `policy_change` → `approved` | `policy.status == "digest_mismatch"`：前一個測試的實作只看狀態，回 `approved` | 成立 |
 | `test_undoing_a_policy_change_removes_its_policy_approval` | 以 P 核准 policy，再以 P、不同 reason 重送 → exit 3。參數：<br>`original` → `policy.status == "approved"`，decision 為 P 的原內容。<br>`attempted` → `approved`，`decisions[P]` 是新內容，`policy_approval.decision == P`。<br>`abandon` → `policy.status == "not_approved"`，狀態檔 `policy_approval is None`；之後以新的 id 做 `policy_change` → `approved` | `abandon` 參數的 `policy.status == "not_approved"`：5.1 的清除規則只處理 `approve_plan`，`policy_approval` 仍在 | 成立 |
@@ -393,11 +393,11 @@ Effort 的依據（D69）：
 | O01 | 3.1 `…creates_a_planning_run…`；5.1 `…only_a_human_approve_plan…`；6.1 `…scope_change_stops…` | 直接 `init` 就進入 planning，保存協調者 identity，不需要交接紀錄；協調者既不能批准，也不能做 scope 變更 |
 | O03 | 5.1 `…registered_in_place…`、`…unreadable_documents…` | 登記保存原生 locator、version、digest，登記時的內容可讀回；原檔不改名、不搬移；讀不到就拒絕，狀態不變 |
 | O05 | 5.1 `…status_shows_versions…`、`…only_a_human_approve_plan…`(a)(c) | 顯示等待開工確認與待確認的 plan 版本；時間經過或 agent 的表示都不產生核准 |
-| O07 | 6.1 前兩個測試 | `scope_change` 保存影響與理由、撤銷核准、舊 plan 標為被取代；新版本批准後 next 才是 `dispatch` |
+| O07 | 6.1 前兩個測試、`…undoing_a_scope_change…`(iv) | `scope_change` 保存影響與理由、撤銷核准、舊 plan 標為被取代；只要還有一筆有效的 `scope_change` 取代它，舊版就不能批准；新版本批准後 next 才是 `dispatch` |
 | O15 | 3.1 `…uninitialised_run_is_not_found…` | 沒有 `init` 的 run：查不到、不建立、不接管其他 run |
 | O19 | 4.1 `…only_human_actors_can_decide…`；5.1 (c)；6.1 agent 參數 | 非 `human:<name>` 的 actor 一律被拒，狀態不變 |
 | O22 | 5.1 (d)(e)(g) | 只有 Implementer 校準過的 plan 能被批准，而且只有一份現行 plan |
-| O23 | 6.1 前兩個測試（兩種起點） | 保存影響與待決事項；整個 run 停在等待批准，直到新版本被批准 |
+| O23 | 6.1 前兩個測試（兩種起點）、`…undoing_a_scope_change…`(iv) | 保存影響與待決事項；整個 run 停在等待批准，直到新版本被批准 |
 | O26 | 5.1 (b)(g) | `sa` binding 保存確認的版本與來源，但不產生核准；之後只有人工 `approve_plan` 產生核准，而且核准不以 `sa` 為依據 |
 | O29 | 5.1 `…needs_spec_ac_and_design_bindings…` | 缺任一 binding 就拒絕並列出，三者都有之後同一個 plan 版本可以批准 |
 | O30 | 4.1 `…unsupported…` | `adopt`、`delegate` 回 `unsupported`，revision、owner、核准都不變 |
@@ -437,13 +437,13 @@ Effort 的依據（D69）：
 ## 風險
 
 - 產品層的風險見 design 的「Risks / Trade-offs」。
-- **並行測試（3.1）**：gate 讓所有程序在 `os.link` 前會合，或在 3 秒後逾時。
-  - 沒有 lock 時，每個程序都一定先讀完狀態才到 gate；
+- **並行測試（3.1）**：gate 讓所有程序在 `os.link` 前會合，或在 3 秒後逾時，並記下到達數與放行原因。
+  - 沒有 lock 時，只有 8 個都到齊才放行的那次，才確定發生了競態；Red 證據要附這份 gate 紀錄，逾時放行的那次重跑。
   - 有 lock 時，只有持 lock 的程序到得了 gate，逾時一次後依序執行，所以這個測試約多花 3 秒。
   - 斷言「每個落敗者都得到受控的 `already_claimed`」與排程無關。若 flaky，追根因，保留嚴格斷言，不加 retry。
-- **突變 Red**：共 8 項，Reviewer 要核對每項的突變與輸出。
+- **突變 Red**：共 9 項，Reviewer 要核對每項的突變與輸出。
   - 固定要突變的：t4、dist-smoke、`…has_one_source`、`…interrupt_before…`、`…non_owners_cannot_resend`、`…non_owners_cannot_create_conflicts`。
-  - 視實作順序而定的：`…concurrent_claims…`（單次 `claim` 已加 flock 時）、`…stale_revision…`（已核對 revision 時）。
+  - 視實作順序而定的：`…concurrent_claims…`（單次 `claim` 已加 flock 時）、`…stale_revision…`（已核對 revision 時）、`…undoing_a_scope_change…`（p1 已只算 `in_effect` 時）。
 - **`unit-linux` 第一次實跑在 to-pr**：結構已由 2.1 在本機檢查；實跑失敗走 to-pr 的修正迴圈。
 - **task 的份量**：
   - 本版把原本的 4.1 拆成 4.1（紀錄、授權、重送、前移，9 個測試）與 4.2（衝突與三種解除，4 個測試）；
