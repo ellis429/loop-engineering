@@ -83,7 +83,7 @@ A model different from the plan's author reviews the plan in a fresh session, re
 
 Show the start approver a one-page summary: tasks in order with what each delivers, its blocking edges and its effort, and whether the granularity looks right (too coarse or too fine); what each Red proves, risks and limits, the plan review result, and any decision they must make. When the Project Lead is also the Engineer, this approval also covers the spec (D59).
 
-Then walk the approver through the plan before asking for approval; the summary alone is not enough to judge it. One part at a time, in the approver's language, with links to the lines in `design.md` and `tasks.md`:
+Then walk the approver through the plan before asking for approval; the summary alone is not enough to judge it. One part at a time, in the approver's language: open each part with a few plain lines (what it does, what could go wrong, anything they must decide), and give the details (tests, line links to `design.md` and `tasks.md`) only when they ask:
 
 1. **The cut:** the task table, blocking edges, effort, and the task most likely to overrun one session.
 2. **The tests of the riskiest tasks** (xhigh, or the ones covering the most acceptance IDs): for each test, the behaviour it asserts, what its Red proves, and the expected Green, so the approver can tell whether the code will do what they asked for.
