@@ -2,9 +2,17 @@
 
 from __future__ import annotations
 
+import io
+import json
 import os
+import subprocess
 import sys
+import time
+from collections.abc import Callable
+from contextlib import redirect_stderr, redirect_stdout
+from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -71,6 +79,186 @@ class PolicyPlugin:
 
 def pytest_configure(config: pytest.Config) -> None:
     config.pluginmanager.register(PolicyPlugin(), "loopctl-test-policy")
+
+
+def dig(value: Any, *path: str | int) -> Any:
+    """Read a nested field without raising; a missing step gives None."""
+    for key in path:
+        if isinstance(value, dict):
+            value = value.get(key)
+        elif isinstance(value, list) and isinstance(key, int):
+            value = value[key] if -len(value) <= key < len(value) else None
+        else:
+            return None
+    return value
+
+
+def parse_envelope(stdout: str) -> dict[str, Any] | None:
+    """The envelope when stdout is exactly one JSON object line, else None."""
+    lines = stdout.splitlines()
+    if len(lines) != 1:
+        return None
+    try:
+        value = json.loads(lines[0])
+    except ValueError:
+        return None
+    return value if isinstance(value, dict) else None
+
+
+@dataclass
+class Result:
+    """One loopctl invocation. An uncaught exception is kept in `exc` and
+    leaves `code` as None, so a crash fails on the first assertion."""
+
+    code: int | None
+    out: dict[str, Any] | None
+    stdout: str
+    stderr: str
+    exc: BaseException | str | None = None
+
+    def get(self, *path: str | int) -> Any:
+        return dig(self.out, *path)
+
+
+def _exit_code(exc: SystemExit) -> int:
+    if exc.code is None:
+        return 0
+    return exc.code if isinstance(exc.code, int) else 1
+
+
+@pytest.fixture
+def cli() -> Callable[..., Result]:
+    """Run loopctl in-process through loopctl.cli.main(argv)."""
+
+    def run(*argv: str) -> Result:
+        stdout, stderr = io.StringIO(), io.StringIO()
+        code: int | None = None
+        exc: BaseException | None = None
+        with redirect_stdout(stdout), redirect_stderr(stderr):
+            try:
+                from loopctl import cli as loopctl_cli
+
+                code = loopctl_cli.main(list(argv))
+            except SystemExit as error:
+                code = _exit_code(error)
+            except Exception as error:
+                exc = error
+        text = stdout.getvalue()
+        return Result(code, parse_envelope(text), text, stderr.getvalue(), exc)
+
+    return run
+
+
+EXC_MARK = "@@loopctl-test-uncaught@@ "
+
+# `python -m loopctl` is runpy.run_module(..., alter_sys=True); running it from
+# -c lets the prelude go first and lets an uncaught exception be reported.
+RUNNER = """\
+import os, runpy, sys
+try:
+    runpy.run_module("loopctl", run_name="__main__", alter_sys=True)
+except SystemExit:
+    raise
+except BaseException as error:
+    sys.stdout.flush()
+    sys.stderr.write("\\n" + MARK + repr(error) + "\\n")
+    sys.stderr.flush()
+    os._exit(70)
+"""
+
+
+def _proc_result(returncode: int, stdout: str, stderr: str) -> Result:
+    code: int | None = returncode
+    exc: str | None = None
+    if EXC_MARK in stderr:
+        code, exc = None, stderr.split(EXC_MARK, 1)[1].strip()
+    return Result(code, parse_envelope(stdout), stdout, stderr, exc)
+
+
+# Each process says it is ready, then waits for the `go` file of cli_proc_many.
+BARRIER_WAIT = """\
+import os as _os, time as _time
+_open = open
+_dir = {directory!r}
+_open(_os.path.join(_dir, "ready-%d" % _os.getpid()), "w").close()
+_deadline = _time.monotonic() + 60
+while not _os.path.exists(_os.path.join(_dir, "go")):
+    if _time.monotonic() > _deadline:
+        _os._exit(97)
+    _time.sleep(0.002)
+"""
+
+
+def _spawn(
+    argv: tuple[str, ...], prelude: str, barrier: Path | None = None
+) -> subprocess.Popen[str]:
+    source = prelude + "\n"
+    if barrier is not None:
+        source += BARRIER_WAIT.format(directory=str(barrier))
+    source += f"MARK = {EXC_MARK!r}\n" + RUNNER
+    return subprocess.Popen(
+        [sys.executable, "-c", source, *argv],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        cwd=os.getcwd(),
+    )
+
+
+@pytest.fixture
+def cli_proc() -> Callable[..., Result]:
+    """Run `python -m loopctl` in a subprocess after `prelude`."""
+
+    def run(*argv: str, prelude: str = "") -> Result:
+        proc = _spawn(argv, prelude)
+        stdout, stderr = proc.communicate(timeout=60)
+        return _proc_result(proc.returncode, stdout, stderr)
+
+    return run
+
+
+class Runs(list[Result]):
+    """Results of cli_proc_many, with what the barrier saw at release."""
+
+    barrier: dict[str, Any]
+
+
+@pytest.fixture
+def cli_proc_many(tmp_path: Path) -> Callable[..., Runs]:
+    """Run n `python -m loopctl` subprocesses that start together: each runs
+    its prelude, reports ready, and waits; the `go` file is created only once
+    all n are ready (or one has already exited, or 60 s passed)."""
+    counter = iter(range(1_000_000))
+
+    def run(n: int, *argv: str, prelude: str = "") -> Runs:
+        barrier = tmp_path / f"barrier-{next(counter)}"
+        barrier.mkdir()
+        procs = [_spawn(argv, prelude, barrier) for _ in range(n)]
+        deadline = time.monotonic() + 60
+        reason = "all_ready"
+        while len(ready := list(barrier.glob("ready-*"))) < n:
+            if any(proc.poll() is not None for proc in procs):
+                reason = "process_exited"
+                break
+            if time.monotonic() > deadline:
+                reason = "timeout"
+                break
+            time.sleep(0.002)
+        go = barrier / "go"
+        go.write_text(json.dumps({"ready": len(ready), "reason": reason}))
+        runs = Runs()
+        runs.barrier = {
+            "ready_at_release": len(ready),
+            "reason": reason,
+            "ready_ns": [path.stat().st_mtime_ns for path in ready],
+            "released_ns": go.stat().st_mtime_ns,
+        }
+        for proc in procs:
+            stdout, stderr = proc.communicate(timeout=60)
+            runs.append(_proc_result(proc.returncode, stdout, stderr))
+        return runs
+
+    return run
 
 
 @pytest.fixture(autouse=True)

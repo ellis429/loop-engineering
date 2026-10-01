@@ -1,0 +1,183 @@
+"""loopctl command line: parse, dispatch, print one JSON envelope (D2)."""
+
+from __future__ import annotations
+
+import argparse
+import json
+import re
+import sys
+from collections.abc import Callable
+from typing import Any, NoReturn
+
+Envelope = dict[str, Any]
+Handler = Callable[[argparse.Namespace], tuple[int, Envelope]]
+
+EXIT_USAGE = 2
+
+
+def envelope(
+    ok: bool,
+    result: dict[str, Any],
+    *,
+    revision: int | None = None,
+    blocked: Any = None,
+    next: Any = None,
+) -> Envelope:
+    """The one output shape of every command; `safety` is always null here."""
+    return {
+        "ok": ok,
+        "revision": revision,
+        "result": result,
+        "blocked": blocked,
+        "next": next,
+        "safety": None,
+    }
+
+
+def stub(args: argparse.Namespace) -> tuple[int, Envelope]:
+    """Placeholder until the command's task replaces it: right shape, no
+    content, writes nothing."""
+    return 0, envelope(True, {})
+
+
+HANDLERS: dict[str, Handler] = {
+    "init": stub,
+    "claim": stub,
+    "status": stub,
+    "next": stub,
+    "register": stub,
+    "decide": stub,
+    "adopt": stub,
+    "delegate": stub,
+}
+
+
+class UsageError(Exception):
+    """A command line the parser rejects; reported as exit 2 `usage`."""
+
+
+class HelpExit(Exception):
+    """`--help` was printed; main returns `status`."""
+
+    def __init__(self, status: int) -> None:
+        super().__init__(status)
+        self.status = status
+
+
+class Parser(argparse.ArgumentParser):
+    """argparse that raises instead of writing to stderr and exiting."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        kwargs.setdefault("allow_abbrev", False)
+        super().__init__(*args, **kwargs)
+
+    def error(self, message: str) -> NoReturn:
+        raise UsageError(message)
+
+    def exit(self, status: int = 0, message: str | None = None) -> NoReturn:
+        raise HelpExit(status)
+
+
+SEGMENT = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]*")
+
+
+def repo_name(value: str) -> str:
+    parts = value.split("/")
+    if len(parts) != 2 or not all(SEGMENT.fullmatch(part) for part in parts):
+        raise argparse.ArgumentTypeError(f"expected owner/name, got {value!r}")
+    return value
+
+
+def feature_id(value: str) -> str:
+    if not SEGMENT.fullmatch(value):
+        raise argparse.ArgumentTypeError(
+            f"expected a single path segment, got {value!r}"
+        )
+    return value
+
+
+def _run_options(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument("--repo", required=True, type=repo_name, help="owner/name")
+    parser.add_argument("--feature", required=True, type=feature_id)
+
+
+def build_parser() -> Parser:
+    parser = Parser(
+        prog="loopctl",
+        description="Durable run state and human decisions for one repo and feature.",
+    )
+    commands = parser.add_subparsers(dest="command", metavar="command", required=True)
+
+    init = commands.add_parser("init", help="start a run for a repo and feature")
+    _run_options(init)
+    init.add_argument("--issue", required=True)
+    init.add_argument("--actor", required=True)
+
+    claim = commands.add_parser("claim", help="take the coordination right")
+    _run_options(claim)
+    claim.add_argument("--actor", required=True)
+
+    status = commands.add_parser("status", help="show the run state")
+    _run_options(status)
+    status.add_argument("--human", action="store_true")
+
+    nxt = commands.add_parser("next", help="show the one allowed next step")
+    _run_options(nxt)
+
+    register = commands.add_parser("register", help="register a native document")
+    register.add_argument("kind", choices=["plan", "binding", "policy"])
+    _run_options(register)
+    register.add_argument("--token")
+    register.add_argument("--locator", required=True)
+    register.add_argument("--version", required=True)
+    register.add_argument("--source", required=True)
+    register.add_argument("--content-from")
+    register.add_argument("--role", choices=["spec", "ac", "design", "sa"])
+    register.add_argument("--producer", choices=["implementer", "project_lead"])
+    register.add_argument("--calibrated-from")
+
+    decide = commands.add_parser("decide", help="record a human decision")
+    decide.add_argument("kind")
+    _run_options(decide)
+    decide.add_argument("--token")
+    decide.add_argument("--id")
+    decide.add_argument("--actor")
+    decide.add_argument("--target")
+    decide.add_argument("--reason")
+    decide.add_argument("--source")
+    decide.add_argument("--impact")
+    decide.add_argument("--version")
+    decide.add_argument("--choice")
+    decide.add_argument("--open-question", action="append")
+
+    commands.add_parser("adopt", help="unsupported in this version")
+    commands.add_parser("delegate", help="unsupported in this version")
+    return parser
+
+
+PASSTHROUGH = ("adopt", "delegate")
+
+
+def parse(argv: list[str]) -> argparse.Namespace:
+    """Parse argv; `adopt` and `delegate` keep every other argument in `rest`."""
+    parser = build_parser()
+    args, rest = parser.parse_known_args(argv)
+    if args.command in PASSTHROUGH:
+        args.rest = rest
+    elif rest:
+        parser.error(f"unrecognized arguments: {' '.join(rest)}")
+    return args
+
+
+def main(argv: list[str] | None = None) -> int:
+    try:
+        args = parse(sys.argv[1:] if argv is None else argv)
+    except HelpExit as done:
+        return done.status
+    except UsageError as error:
+        code = EXIT_USAGE
+        out = envelope(False, {"error": "usage", "message": str(error)})
+    else:
+        code, out = HANDLERS[args.command](args)
+    print(json.dumps(out, ensure_ascii=False))
+    return code

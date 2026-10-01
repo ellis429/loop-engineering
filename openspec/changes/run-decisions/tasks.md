@@ -60,7 +60,7 @@ Effort 的依據（D69）：
 
 ## 1. 共用測試骨架
 
-- [ ] 1.1 建立專案骨架、測試政策、CLI 入口與 stub、共用 fixture；驗證：`uv run pytest && uv run ruff check . && uv run mypy src && scripts/dist-smoke.sh` 全部通過
+- [x] 1.1 建立專案骨架、測試政策、CLI 入口與 stub、共用 fixture；驗證：`uv run pytest && uv run ruff check . && uv run mypy src && scripts/dist-smoke.sh` 全部通過
 
 **模式與 effort**：預設模式（D72）；Implementer Claude Opus 5.5、Reviewer GPT-6 Astra；effort（Implementer／Reviewer）high／high。
 
