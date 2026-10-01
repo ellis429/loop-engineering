@@ -270,6 +270,22 @@ def home(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     return path
 
 
+@pytest.fixture
+def started_run(cli: Callable[..., Result]) -> Callable[[str, str, str], str]:
+    """`init` and `claim` a run in-process as `actor`; returns the claim token."""
+
+    def start(repo: str, feature: str, actor: str) -> str:
+        run = ["--repo", repo, "--feature", feature]
+        init = cli("init", *run, "--issue", "29", "--actor", actor)
+        assert init.code == 0, init
+        claim = cli("claim", *run, "--actor", actor)
+        token = claim.get("result", "token")
+        assert claim.code == 0 and isinstance(token, str), claim
+        return token
+
+    return start
+
+
 REPO_FILES = {
     "tasks.md": "# Tasks\n\n- [ ] 1.1 calibrated plan for F-1\n",
     "tasks-draft.md": "# Tasks (draft)\n\n- [ ] 1.1 Project Lead draft for F-1\n",

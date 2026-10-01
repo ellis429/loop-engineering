@@ -164,7 +164,7 @@ Effort 的依據（D69）：
 
 ## 3. 持久的 run 狀態
 
-- [ ] 3.1 以 repo＋feature 為鍵的 history-first store，以及 `init`、`claim`、`status [--human]`、`next`；驗證：`uv run pytest tests/test_state.py` 與完整的完成條件通過
+- [x] 3.1 以 repo＋feature 為鍵的 history-first store，以及 `init`、`claim`、`status [--human]`、`next`；驗證：`uv run pytest tests/test_state.py` 與完整的完成條件通過
 
 **模式與 effort**：預設模式（D72）；Implementer Claude Opus 5.5、Reviewer GPT-6 Astra；effort（Implementer／Reviewer）xhigh／xhigh。
 

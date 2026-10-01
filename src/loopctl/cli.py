@@ -5,9 +5,12 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import secrets
 import sys
 from collections.abc import Callable
 from typing import Any, NoReturn
+
+from loopctl import clock, state, store
 
 Envelope = dict[str, Any]
 Handler = Callable[[argparse.Namespace], tuple[int, Envelope]]
@@ -40,11 +43,105 @@ def stub(args: argparse.Namespace) -> tuple[int, Envelope]:
     return 0, envelope(True, {})
 
 
+def _key(args: argparse.Namespace) -> store.Key:
+    return args.repo, args.feature
+
+
+def refusal(code: int, error: str, **fields: Any) -> tuple[int, Envelope]:
+    return code, envelope(False, {"error": error, **fields})
+
+
+def guarded(handler: Handler) -> Handler:
+    """Turn the refusals of the store and of a state check into envelopes."""
+
+    def run(args: argparse.Namespace) -> tuple[int, Envelope]:
+        try:
+            return handler(args)
+        except store.RunNotFound:
+            return refusal(1, "run_not_found")
+        except store.RunExists:
+            return refusal(1, "run_exists")
+        except store.UntrustedState as error:
+            return refusal(
+                5, "untrusted_state", reason=error.reason, files=error.files
+            )
+        except state.AlreadyClaimed as error:
+            return refusal(1, "already_claimed", owner=error.owner)
+
+    return run
+
+
+def init(args: argparse.Namespace) -> tuple[int, Envelope]:
+    # An existing run, trusted or not, is never overwritten or recreated.
+    try:
+        store.load(_key(args))
+    except store.RunNotFound:
+        pass
+    else:
+        return refusal(1, "run_exists")
+    payload = {
+        "repo": args.repo,
+        "feature": args.feature,
+        "issue": args.issue,
+        "actor": args.actor,
+    }
+    initial = state.initial(
+        args.repo, args.feature, args.issue, args.actor, clock.now()
+    )
+    revision = store.create(_key(args), "init", payload, initial)
+    result = {"coordinator": initial["coordinator"]}
+    return 0, envelope(True, result, revision=revision)
+
+
+def unchecked(st: store.State) -> None:
+    """`authorize` for claim: its own check (no owner yet) is in mutate."""
+
+
+def claim(args: argparse.Namespace) -> tuple[int, Envelope]:
+    key = _key(args)
+    token = secrets.token_hex(32)
+    owner = {
+        "actor": args.actor,
+        "token_digest": state.token_digest(token),
+        "claimed_at": clock.now(),
+    }
+    while True:
+        expected, _ = store.load(key)
+        try:
+            revision = store.commit(
+                key,
+                expected,
+                f"claim:{owner['token_digest']}",
+                {"actor": args.actor},
+                lambda st: state.claim(st, owner),
+                authorize=unchecked,
+            )
+            break
+        except store.RevisionConflict:
+            continue  # another transition went first: re-read and redo
+    result = {"token": token, "owner": state.owner_view(owner)}
+    return 0, envelope(True, result, revision=revision)
+
+
+def status(args: argparse.Namespace) -> tuple[int, Envelope]:
+    revision, st = store.load(_key(args))
+    result = state.view(revision, st)
+    if args.human:
+        result["human"] = state.human(result, st["next"])
+    return 0, envelope(True, result, revision=revision, next=st["next"])
+
+
+def next_step(args: argparse.Namespace) -> tuple[int, Envelope]:
+    revision, st = store.load(_key(args))
+    result = {"phase": st["phase"], "blockers": st["blockers"]}
+    return 0, envelope(True, result, revision=revision, next=st["next"])
+
+
 HANDLERS: dict[str, Handler] = {
-    "init": stub,
-    "claim": stub,
-    "status": stub,
-    "next": stub,
+    "init": guarded(init),
+    "claim": guarded(claim),
+    "status": guarded(status),
+    "next": guarded(next_step),
     "register": stub,
     "decide": stub,
     "adopt": stub,
