@@ -16,6 +16,7 @@ loopctl = "loopctl.cli:main"
 dev = [
     "mypy",
     "pytest",
+    "pyyaml",
     "ruff",
 ]
 

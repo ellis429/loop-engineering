@@ -128,7 +128,7 @@ Effort 的依據（D69）：
 
 ## 2. CI 與政策檔
 
-- [ ] 2.1 建立 `unit-linux` 的 GitHub workflow 與 `workflow.yaml`，並檢查兩者的結構；驗證：`uv run pytest tests/test_ci.py` 與完整的完成條件通過
+- [x] 2.1 建立 `unit-linux` 的 GitHub workflow 與 `workflow.yaml`，並檢查兩者的結構；驗證：`uv run pytest tests/test_ci.py` 與完整的完成條件通過
 
 **模式與 effort**：預設模式（D72）；Implementer Claude Opus 5.5、Reviewer GPT-6 Astra；effort（Implementer／Reviewer）medium／high。
 
