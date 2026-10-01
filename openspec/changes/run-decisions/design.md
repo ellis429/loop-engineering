@@ -86,7 +86,11 @@
   | 3 | Blocked（有未解的 transition 衝突） |
   | 4 | `not_owner` |
   | 5 | 狀態不可信 |
+  | 6 | I/O 錯誤（見下） |
 
+- **I/O 錯誤**：store 讀寫時拋出的 `OSError`，由 CLI 邊界接住，不讓 traceback 取代 envelope。回 exit 6，`result == {error: "io_error", op: <失敗的操作>, errno: <名稱>, committed: true|false}`：
+  - `committed` 依 D4 的提交邊界判定：`os.link` 建立 history 紀錄之前失敗為 `false`，狀態維持舊版；之後失敗為 `true`，新版已提交，下次讀取會補上，原樣重送回 duplicate。
+  - 協調者據此決定重送或停下交人；不重試、不吞錯。
 - argparse 的錯誤不走 `SystemExit`：一律轉成 exit 2 的 envelope，`result.error` 為 `usage`，`result.message` 指出參數。`--help` 例外，exit 0 並印出 usage。
 - `--repo` 必須是 `owner/name`，`--feature` 必須是單一路徑段；兩段都以英數字開頭，只含 `[A-Za-z0-9._-]`。parser 核對格式，不合格回 exit 2，所以任何輸入都跳不出 `$LOOPCTL_HOME`。
 - `decide` 的核對順序：
@@ -133,7 +137,7 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
 | 函式 | 行為 |
 | --- | --- |
 | `load(key) -> (revision, state)` | 見下方「讀取」 |
-| `create(key, transition_id, payload, state) -> 1` | 在旁邊建好目錄，再 `os.rename` 到位；run 目錄已存在時不覆寫 |
+| `create(key, transition_id, payload, state) -> 1` | 在旁邊建好目錄（含 `lock` 檔），再 `os.rename` 到位；run 目錄已存在時不覆寫。檢查與 rename 之間若有別的程序建出空目錄，rename 會取代它：依 D48、D50 的可信本機協作接受為已知風險，以 #36 追蹤 |
 | `commit(key, expected_revision, transition_id, payload, mutate, *, authorize, resolves=None) -> revision` | 見下方「提交」 |
 | `put_object(bytes) -> digest`、`get_object(digest) -> bytes` | content-addressed；讀取時核對 digest |
 
@@ -142,6 +146,7 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
 | 情況 | 結果 |
 | --- | --- |
 | `feature.json` 不存在（包括空目錄） | `state_missing` |
+| `lock` 檔不存在（`init` 建立；其他命令只開啟既有的 lock，不建立） | `lock_missing` |
 | JSON 無法解析，或不是物件 | `state_corrupt` |
 | `schema_version` 不是 1 | `unknown_schema:<v>` |
 | 現行 revision 的 history 紀錄不存在 | `history_missing:<rev>` |

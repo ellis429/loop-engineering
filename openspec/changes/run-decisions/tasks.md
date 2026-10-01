@@ -164,7 +164,7 @@ Effort 的依據（D69）：
 
 ## 3. 持久的 run 狀態
 
-- [x] 3.1 以 repo＋feature 為鍵的 history-first store，以及 `init`、`claim`、`status [--human]`、`next`；驗證：`uv run pytest tests/test_state.py` 與完整的完成條件通過
+- [ ] 3.1 以 repo＋feature 為鍵的 history-first store，以及 `init`、`claim`、`status [--human]`、`next`；驗證：`uv run pytest tests/test_state.py` 與完整的完成條件通過
 
 **模式與 effort**：預設模式（D72）；Implementer Claude Opus 5.5、Reviewer GPT-6 Astra；effort（Implementer／Reviewer）xhigh／xhigh。
 
@@ -208,6 +208,8 @@ Effort 的依據（D69）：
 | `test_a_failed_sync_before_the_link_commits_nothing` | `claim` 時以 prelude 讓第一次 `os.fsync` 拋出 `OSError(EIO)`。依 D4 第 8 步，這是 history 暫存檔的 fsync，在 `os.link` 之前。結果：`code != 0`；`status` 回 revision 1、owner `null`；history 只有 `1.json`。`os.link` 之後的同步失敗不在本測試範圍（D4 的提交邊界） | `code != 0`：提交路徑還沒有呼叫 fsync，`claim` 成功 | 成立 |
 | `test_commit_with_a_stale_revision_writes_nothing` | `claim` 之後（rev 2），以 `store.commit(key, 1, "t-x", payload, mutate, authorize=<不檢查>)` 提交 → `RevisionConflict`；run 目錄的 bytes 不變 | `pytest.raises(RevisionConflict)`。若 `claim` 已依 D4 核對 revision → 突變：暫時略過第 5 步 | 成立 |
 | `test_commit_rejects_missing_or_corrupt_object_references` | 以 `store.commit` 驗證，參數：(a) `mutate` 加入一個指向不存在物件的 `{"$object": d}`；(b) 先提交一個有效的引用，刪掉該物件檔後，再提交一個只改其他欄位的 transition；(c) 物件檔的內容被改掉。依序得到 `UntrustedState` 與原因 `object_missing:<d>`（(a)、(b)）或 `object_corrupt:<d>`（(c)），run 目錄的 bytes 不變。另外，一般的 `sha256:` 字串欄位照常提交 | `pytest.raises(UntrustedState)`（(a)）：提交路徑還沒有引用檢查 | 成立 |
+| `test_io_errors_print_an_envelope_and_say_whether_the_change_committed` | 以 prelude 注入 `OSError(EIO)`，參數：(a) `claim` 時第一次 `os.fsync`（`os.link` 之前）；(b) `claim` 時 `os.link` 之後的目錄 fsync。兩者 stdout 都恰為一行 JSON，exit 6，`result.error == "io_error"`，含 `op`、`errno`。(a) `committed is False`，之後 `status` 回 revision 1、owner `null`；(b) `committed is True`，之後 `status` 回 revision 2、owner 已設定，原樣重送回 duplicate | `code == 6`：`OSError` 沒有被接住，程序以 traceback 結束、stdout 沒有 envelope（T3.1-01） | 成立 |
+| `test_a_rejected_command_never_creates_the_lock_file` | `init`、`claim` 後只刪掉 run 目錄的 `lock`，其餘不動。再執行 `status`、`next`、另一個 actor 的 `claim`：都 exit 5，`reason == "lock_missing"`，`files` 不含 `lock`；run 目錄的檔案集合與 bytes 都不變 | 檔案集合不變：開 lock 時用了 `O_CREAT`，被拒的 `claim` 又建出 `lock`（T3.1-03） | 成立 |
 | `test_untrusted_state_stops_with_reason_and_files` | 參數：刪掉 `feature.json`（`state_missing`）；壞 JSON（`state_corrupt`）；`schema_version: 9`（`unknown_schema:9`）；刪掉 `history/2.json`（`history_missing:2`）；空的 run 目錄（`state_missing`）。`status`、`next`、`claim`、`init` 都 exit 5，`result.error == "untrusted_state"`，`reason` 如上，`files` 等於現存檔案排序後的相對路徑；bytes 不變；`init` 不建立任何東西 | `code == 5`：讀取時的例外記在 `exc` | 成立 |
 | `test_manual_edit_is_detected_and_never_trusted` | 參數（保持 JSON 與 schema 合法）：把 g1 改成 `passed`；把 phase 改成 `approved`；改 owner；插入一筆 `{kind: approve_plan, actor: human:x}` decision。`status`、`next`、`claim` 都 exit 5 `manual_edit`；輸出不含 `passed` 或 `approved`；bytes 不變 | `code == 5`：只核對 schema 時會照單全收 | 成立 |
 
@@ -409,9 +411,9 @@ Effort 的依據（D69）：
 | D01 | 3.1 `…creates_a_planning_run…`、`…status_human…`；5.1 `…status_shows_versions…` | 狀態檔與 `status`（含 `--human`）都直接顯示 phase、協調者、owner、版本、核准、gate 的狀態與原因、blockers、next |
 | D02 | 3.1 `…manual_edit…`；4.1 `…recorded_with_its_provenance…`、`…missing_fields…` | 手改被偵測、不覆寫，也不被當成決策；decision 只能經 `decide` 產生，並保存決策者、來源、理由與影響 |
 | D03 | 3.1 `…claim_grants…`、`…concurrent_claims…`；4.1 `…need_the_coordinator_token…`、`…non_owners_cannot_resend`；4.2 `…non_owners_cannot_create_conflicts`；5.1 `…unreadable_documents…`（`register` 的 token） | 恰一方取得協調權，其餘得到受控的 `already_claimed`；另一方可以讀取，但任何寫入（包括重送與不同內容的重送）都被拒，bytes 不變 |
-| D09 | 3.1 兩個 interrupt 測試、`…failed_sync_before_the_link…`、`…stale_revision…`、`…object_references…`；4.1 `…consecutive_interruptions…` | 中斷或第一個同步點失敗後讀到完整的舊版或新版，連續兩次中斷也不遺漏已提交的 revision；revision 會被核對；引用的物件缺失或毀損時不提交 |
+| D09 | 3.1 兩個 interrupt 測試、`…failed_sync_before_the_link…`、`…io_errors_print_an_envelope…`、`…stale_revision…`、`…object_references…`；4.1 `…consecutive_interruptions…` | 中斷或第一個同步點失敗後讀到完整的舊版或新版，連續兩次中斷也不遺漏已提交的 revision；revision 會被核對；引用的物件缺失或毀損時不提交 |
 | D10 | 3.1 `…interrupt_before…`；4.1 `…takes_effect_once…`、`…consecutive_interruptions…`；4.2 `…blocks_the_run…`、兩個 `resolve_conflict` 測試；5.1 `…conflict_on_an_applied_approve_plan…`；6.1 兩個 `…undoing…` 測試 | 已提交的不重複生效；未提交的不被接受；內容不同時 Blocked，保留兩份內容，直到人工 decision 選定原內容、改採嘗試的內容或放棄；撤銷只清掉自己的效果，從不還原核准 |
-| D11 | 3.1 `…untrusted_state…`、`…never_overwrites…`、`…object_references…`；4.2 `…blocks_the_run…` | 顯示具體原因與現存檔案，原檔不變；`init` 不覆寫，也不建立空 run |
+| D11 | 3.1 `…untrusted_state…`、`…never_overwrites…`、`…never_creates_the_lock_file…`、`…object_references…`；4.2 `…blocks_the_run…` | 顯示具體原因與現存檔案，原檔不變；`init` 不覆寫，也不建立空 run |
 | D25 | 4.1 `…budget_extension…` | 四種目標各寫入一筆人工紀錄，`workflow.yaml` 與其他狀態不變；agent、缺理由、未知目標都被拒 |
 
 **G22 的驗收示範**：由 Project Lead 在驗收時執行，把本 repo 的 `workflow.yaml` 實際綁定一次。
