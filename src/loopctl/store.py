@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import contextlib
 import copy
+import dataclasses
 import errno
 import fcntl
 import hashlib
@@ -80,8 +81,44 @@ class ObjectError(Exception):
         self.reason = reason
 
 
+class IOFailure(OSError):
+    """An OSError of the store: the operation `op` that failed, and whether
+    the change was already committed when it failed (D2, D4)."""
+
+    def __init__(self, op: str, error: OSError, *, committed: bool) -> None:
+        super().__init__(error.errno, error.strerror)
+        self.op = op
+        self.committed = committed
+
+
+@dataclasses.dataclass
+class _Progress:
+    """The operation a store call is in, and whether its change is committed:
+    after the history link of `commit`, or after the rename of `create`."""
+
+    op: str
+    committed: bool = False
+
+
+@contextlib.contextmanager
+def _reporting(op: str) -> Iterator[_Progress]:
+    """Raise an OSError of the block as an IOFailure at its progress."""
+    progress = _Progress(op)
+    try:
+        yield progress
+    except IOFailure:
+        raise
+    except OSError as error:
+        raise IOFailure(progress.op, error, committed=progress.committed) from error
+
+
 def load(key: Key) -> tuple[int, State]:
     """The current (revision, state) of a run; reading never writes (D4)."""
+    with _reporting("read_state"):
+        return _load(key)
+
+
+def _load(key: Key) -> tuple[int, State]:
     path = run_dir(key)
     if not path.is_dir():
         raise RunNotFound()
@@ -140,7 +177,10 @@ def _intact_record(data: bytes) -> State | None:
 
 
 def create(key: Key, transition_id: str, payload: Any, state: State) -> int:
-    """Build the run beside its place, then rename it there; revision 1."""
+    """Build the run beside its place, then rename it there; revision 1.
+
+    The rename is the commit point: an OSError before it leaves no run, one
+    after it leaves revision 1 in place."""
     path = run_dir(key)
     payload_digest = digest(payload)
     state = derive(
@@ -162,28 +202,31 @@ def create(key: Key, transition_id: str, payload: Any, state: State) -> int:
         "committed_at": clock.now(),
         "state": state,
     }
-    path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = Path(tempfile.mkdtemp(dir=path.parent, prefix=f".tmp-{path.name}-"))
-    try:
-        (tmp / "history").mkdir()
-        _write_new(tmp / "history" / "1.json", _dump(record))
-        _write_new(tmp / "feature.json", _dump(state))
-        _write_new(tmp / "lock", b"")
-        _sync_dir(tmp / "history")
-        _sync_dir(tmp)
-        # rename would replace an empty directory; a non-empty one fails it.
-        if path.exists():
-            raise RunExists()
+    with _reporting("write_run") as progress:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        tmp = Path(tempfile.mkdtemp(dir=path.parent, prefix=f".tmp-{path.name}-"))
         try:
-            os.rename(tmp, path)
-        except OSError as error:
-            if error.errno in (errno.EEXIST, errno.ENOTEMPTY):
-                raise RunExists() from error
+            (tmp / "history").mkdir()
+            _write_new(tmp / "history" / "1.json", _dump(record))
+            _write_new(tmp / "feature.json", _dump(state))
+            _write_new(tmp / "lock", b"")
+            _sync_dir(tmp / "history")
+            _sync_dir(tmp)
+            # rename would replace an empty directory; a non-empty one fails it.
+            if path.exists():
+                raise RunExists()
+            progress.op = "rename_run"
+            try:
+                os.rename(tmp, path)
+            except OSError as error:
+                if error.errno in (errno.EEXIST, errno.ENOTEMPTY):
+                    raise RunExists() from error
+                raise
+        except BaseException:
+            shutil.rmtree(tmp, ignore_errors=True)
             raise
-    except BaseException:
-        shutil.rmtree(tmp, ignore_errors=True)
-        raise
-    _sync_dir(path.parent)
+        progress.op, progress.committed = "sync_run_parent", True
+        _sync_dir(path.parent)
     return 1
 
 
@@ -200,13 +243,17 @@ def commit(
 
     Every step before the history link writes nothing when it fails;
     `authorize` comes before any other check. Returns the new revision, or
-    the current one when `mutate` changes nothing."""
-    # A missing or untrusted run fails here, before the lock file is touched.
-    load(key)
-    with _locked(run_dir(key)):
-        return _commit(
-            key, expected_revision, transition_id, payload, mutate, authorize
-        )
+    the current one when `mutate` changes nothing. An OSError is raised as
+    an IOFailure that says whether the history link was already made."""
+    with _reporting("read_state") as progress:
+        # A missing or untrusted run fails here, before the lock file is touched.
+        load(key)
+        progress.op = "lock"
+        with _locked(run_dir(key)):
+            return _commit(
+                key, expected_revision, transition_id, payload, mutate, authorize,
+                progress,
+            )
 
 
 @contextlib.contextmanager
@@ -226,6 +273,7 @@ def _commit(
     payload: Any,
     mutate: Callable[[State], State],
     authorize: Callable[[State], None],
+    progress: _Progress,
 ) -> int:
     path = run_dir(key)
     revision, state = load(key)  # step 1
@@ -256,8 +304,8 @@ def _commit(
         "committed_at": clock.now(),
         "state": new,
     }
-    _link_history(path, revision + 1, record)
-    _replace_state(path, new)
+    _link_history(path, revision + 1, record, progress)
+    _replace_state(path, new, progress)
     return revision + 1
 
 
@@ -265,16 +313,17 @@ def put_object(data: bytes) -> str:
     """Store `data` under its sha256, write-once; returns `sha256:<hex>`."""
     hexdigest = hashlib.sha256(data).hexdigest()
     path = objects_dir() / hexdigest
-    if not path.exists():
-        path.parent.mkdir(parents=True, exist_ok=True)
-        tmp = _write_tmp(path.parent, data)
-        try:
-            os.link(tmp, path)
-        except FileExistsError:
-            pass
-        finally:
-            os.unlink(tmp)
-        _sync_dir(path.parent)
+    with _reporting("write_object"):
+        if not path.exists():
+            path.parent.mkdir(parents=True, exist_ok=True)
+            tmp = _write_tmp(path.parent, data)
+            try:
+                os.link(tmp, path)
+            except FileExistsError:
+                pass
+            finally:
+                os.unlink(tmp)
+            _sync_dir(path.parent)
     return "sha256:" + hexdigest
 
 
@@ -286,10 +335,11 @@ def get_object(ref: str) -> bytes:
     match = OBJECT_REF.fullmatch(ref) if isinstance(ref, str) else None
     if match is None:
         raise ObjectError(f"object_missing:{ref}")
-    try:
-        data = (objects_dir() / match[1]).read_bytes()
-    except FileNotFoundError:
-        raise ObjectError(f"object_missing:{ref}") from None
+    with _reporting("read_object"):
+        try:
+            data = (objects_dir() / match[1]).read_bytes()
+        except FileNotFoundError:
+            raise ObjectError(f"object_missing:{ref}") from None
     if hashlib.sha256(data).hexdigest() != match[1]:
         raise ObjectError(f"object_corrupt:{ref}")
     return data
@@ -350,24 +400,34 @@ def _write_tmp(directory: Path, data: bytes) -> Path:
     return Path(name)
 
 
-def _link_history(path: Path, revision: int, record: State) -> None:
+def _link_history(
+    path: Path, revision: int, record: State, progress: _Progress
+) -> None:
     """Write-once: os.link fails if this revision is already committed.
 
     The link is the commit point; a failure after it leaves the revision
     committed."""
+    progress.op = "write_history"
     tmp = _write_tmp(path, _dump(record))
+    progress.op = "link_history"
     try:
         os.link(tmp, path / "history" / f"{revision}.json")
-    finally:
+    except BaseException:
         os.unlink(tmp)
+        raise
+    progress.op, progress.committed = "sync_history", True
+    os.unlink(tmp)
     _sync_dir(path / "history")
 
 
-def _replace_state(path: Path, state: State) -> None:
+def _replace_state(path: Path, state: State, progress: _Progress) -> None:
+    progress.op = "write_state"
     tmp = _write_tmp(path, _dump(state))
+    progress.op = "replace_state"
     try:
         os.replace(tmp, path / "feature.json")
     except BaseException:
         os.unlink(tmp)
         raise
+    progress.op = "sync_state"
     _sync_dir(path)

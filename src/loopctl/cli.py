@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import errno
 import json
 import re
 import secrets
@@ -52,11 +53,20 @@ def refusal(code: int, error: str, **fields: Any) -> tuple[int, Envelope]:
 
 
 def guarded(handler: Handler) -> Handler:
-    """Turn the refusals of the store and of a state check into envelopes."""
+    """Turn the refusals of the store and of a state check, and the I/O
+    errors of the store, into envelopes."""
 
     def run(args: argparse.Namespace) -> tuple[int, Envelope]:
         try:
             return handler(args)
+        except store.IOFailure as error:
+            return refusal(
+                6,
+                "io_error",
+                op=error.op,
+                errno=errno.errorcode.get(error.errno) if error.errno else None,
+                committed=error.committed,
+            )
         except store.RunNotFound:
             return refusal(1, "run_not_found")
         except store.RunExists:

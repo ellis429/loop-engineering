@@ -376,6 +376,80 @@ def test_commit_rejects_missing_or_corrupt_object_references(
     assert snapshot(run_dir(home)) == before
 
 
+# The first os.fsync after a call of os.<call> fails with EIO: in claim the
+# sync of the history directory after os.link, in init the sync of the parent
+# directory after os.rename (D2: both after the commit boundary).
+FAIL_FSYNC_AFTER = """\
+import errno as _fe, os as _fo
+_fsync, _call, _armed = _fo.fsync, _fo.{call}, []
+
+def _arming_call(*args, **kwargs):
+    _done = _call(*args, **kwargs)
+    _armed.append(True)
+    return _done
+
+def _failing_fsync(fd):
+    if _armed:
+        _fo.fsync = _fsync
+        raise OSError(_fe.EIO, "injected EIO")
+    return _fsync(fd)
+
+_fo.{call}, _fo.fsync = _arming_call, _failing_fsync
+"""
+
+
+@pytest.mark.parametrize(
+    ("case", "prelude", "committed"),
+    [
+        pytest.param("claim", FAIL_FIRST_FSYNC, False, id="a-claim-before-link"),
+        pytest.param(
+            "claim", FAIL_FSYNC_AFTER.format(call="link"), True,
+            id="b-claim-after-link",
+        ),
+        pytest.param("init", FAIL_FIRST_FSYNC, False, id="c-init-before-rename"),
+        pytest.param(
+            "init", FAIL_FSYNC_AFTER.format(call="rename"), True,
+            id="d-init-after-rename",
+        ),
+    ],
+)
+def test_io_errors_print_an_envelope_and_say_whether_the_change_committed(
+    cli: Cli, cli_proc: Cli, home: Path, case: str, prelude: str, committed: bool
+) -> None:
+    if case == "claim":
+        cli("init", *RUN, "--issue", "29", "--actor", "agent:implementer")
+        failed = cli_proc("claim", *RUN, "--actor", "agent:a", prelude=prelude)
+    else:
+        failed = cli_proc(
+            "init", *RUN, "--issue", "29", "--actor", "agent:implementer",
+            prelude=prelude,
+        )
+    assert failed.code == 6, failed
+    assert len(failed.stdout.splitlines()) == 1 and failed.out is not None
+    assert failed.get("result", "error") == "io_error"
+    assert {"op", "errno"} <= set(failed.get("result") or {})
+    assert failed.get("result", "committed") is committed
+
+    st = cli("status", *RUN)
+    if case == "claim" and not committed:
+        assert st.get("revision") == 1
+        assert st.get("result", "owner") is None
+    elif case == "claim":
+        assert st.get("revision") == 2
+        assert st.get("result", "owner", "actor") == "agent:a"
+        before = snapshot(run_dir(home))
+        again = cli("claim", *RUN, "--actor", "agent:b")
+        assert again.code == 1
+        assert again.get("result") == {"error": "already_claimed", "owner": "agent:a"}
+        assert cli("status", *RUN).get("revision") == 2
+        assert snapshot(run_dir(home)) == before
+    elif not committed:
+        assert not run_dir(home).exists()
+        assert st.get("result") == {"error": "run_not_found"}
+    else:
+        assert st.get("revision") == 1
+
+
 def write_state(home: Path, state: Any) -> None:
     """Write feature.json the way the store does, outside the store."""
     text = json.dumps(state, sort_keys=True, indent=2, ensure_ascii=False) + "\n"
