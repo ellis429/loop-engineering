@@ -33,6 +33,13 @@
 | 3 | TDD 證據、PR 與 CI | 暫定 | Implementer 的結果匯入後，orchestrate 依 `next` 讓 loopctl 核對 G1：原始 Red 的資格、乾淨 checkout 的 Green、N/A 紀錄、整合 attempt，以及證據命令的時限。接著 push，建立或更新 PR，等待 CI（30 分鐘），只認 PR head 上 `unit-linux` 的 success 判定 G3。R2：orchestrate 在 probe branch 用 fixture 真實跑到 G1。 | T3.1、T6.1；T7.1 的證據與 CI 預算部分 | 2 | ORC-03；GAT-01、02、03、04、06、07、08；DUR-03、06、07、08、09 | #15 |
 | 4 | 獨立審查與 PR Pass | 暫定 | orchestrate 依 `next` 派獨立 Reviewer：不同模型、新 session，review 時限 30 分鐘。G2 綁定 head、base 與文件版本。finding 流程包含登記、合併成修正批次、覆核、一次爭議覆核、反覆 finding 提前升級，上限三輪。最後發布 review 與 PR Pass 驗收包。 | 無（T4.1、T5.1、T6.2 沒有實作） | 3 | ORC-01、05；GAT-01、03、05、06、07、08；DUR-04、06、07、08、09；FIN-01～07 | E-3（#12） |
 
+**D77 新增的 Feature**（排序見「依賴」；與上表合起來是 M1 的全部 Feature）：
+
+| # | Feature | 狀態 | 看得到的行為 | 依賴 | 相關需求輸入 |
+| --- | --- | --- | --- | --- | --- |
+| 2b | 只有 OpenCode 的環境也能派工 | 暫定 | 在只有 OpenCode 的環境（同樣有 Orca），Orca 把 Implementer 與 Reviewer 都開成 OpenCode worker；兩者以 OpenCode 設定檔指定不同的實際模型（D52）；兩個 profile 各跑 R1，effort 讀不回時記為未驗證。 | 2 | DUR-09（AC-D20、D24，原排 M2） |
+| 5 | 本日目標：互不依賴的多個 Feature 同時跑到 PR Pass | 暫定 | 人在的時候寫一份本日目標（幾個互不依賴的 Feature），協調者先把每個 Feature 的計畫寫好、審到 clean，人一次走過並確認開工；之後無人看守，各 Feature 同時（設上限）跑到 PR Pass，預算、逾時、卡住自動停下交人。merge 一律由人；merge 一個後，其他 PR 自動更新 base 並重跑檢查，衝突才停。不做 stacked。 | 4（與 2b） | ORC-01、DUR-02、DUR-08，以及 D11、D27 |
+
 **Runtime（D76）**：Feature 2 起，派工從 Herdr 改為 Orca。Implementer（Claude＋`claude-opus-5-5`）與 Reviewer（Codex＋`gpt-6-astra` xhigh）分別派進固定名稱的 Orca 工作區 `engineer`、`reviewer`；表中寫 Herdr 的地方照 D76 讀。Orca 版本改變時先重跑 R1；Orca 回 `consumer_fenced` 時停下交人；協調權與人工決策仍在 loopctl。engineer 工作區的 clear 時機在 Feature 2 實驗。
 
 **依賴**：四個 Feature 是一條鏈，依 D27 依序開工：上游接受並 merge 後，下游才開始實作。等上游時，可以先準備下游的 spec。
@@ -59,6 +66,7 @@
 | --- | --- | --- | --- | --- |
 | R3 | 用 cross-node-file-transfer 的第一個 Feature（D75）。登記 baseline 後，經它自己的 D11 確認，由 orchestrate＋loopctl 跑完。三 gates 在目前版本都通過；改變行為的修正有綁定 finding 與 batch 的原始 Red；中斷一次後成功接續。Blocked 或沒有 finding 時 R3 維持 open，M1 不算完成（`validation.md` R3、AC-G20）。 | G01、G20、D14 的真實交付部分 | Project Lead 選 Feature；Engineer 執行 | G2 照常 |
 | Workflow 樣本 | 照 `validation.md` §3 的 W-A～W-F，每組一個正例與一個負例。正例盡量取自 M1 的真實紀錄（本 roadmap、交接包、◆確認開工、D27 的依序開工、orchestrate 的結果匯入）；「模板存在」不算通過。 | 只由樣本驗證的 11 條（F12、O04、O12、O13、O17、O20、O21、O24、O25、O27、O28）；O16（Feature 2 另有 orchestrate 的文件清單）；另 6 條的樣本部分（O01、O15、O19、O22、O23、O26） | 照 §3 各組的 owner | 獨立 Reviewer 依 rubric 審查，結果記在 `proof.md` |
+| 本日目標實跑 | 一份本日目標，至少兩個互不依賴的 Feature；計畫一次確認後無人看守跑完，各自到 PR Pass 或 Blocked，紀錄可查。 | 跑完後依 Feature 驗收 | Project Lead 寫目標與確認；Engineer 執行 | G2 照常 |
 | 能力證據矩陣 | Feature 2 建立；Feature 3、4 與 R3 各自補上證據。每項能力分列 `fake`、`profile-probe`、`real-E2E`，依接法分開，未執行的格子標 `none`（§4）。 | G19、D22 | Engineer | 同上 |
 
 ## 延後到 M2
