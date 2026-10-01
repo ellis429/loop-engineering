@@ -89,7 +89,8 @@
   | 6 | I/O 錯誤（見下） |
 
 - **I/O 錯誤**：store 讀寫時拋出的 `OSError`，由 CLI 邊界接住，不讓 traceback 取代 envelope。回 exit 6，`result == {error: "io_error", op: <失敗的操作>, errno: <名稱>, committed: true|false}`：
-  - `committed` 依 D4 的提交邊界判定：`os.link` 建立 history 紀錄之前失敗為 `false`，狀態維持舊版；之後失敗為 `true`，新版已提交，下次讀取會補上，原樣重送回 duplicate。
+  - `committed` 依 D4 的提交邊界判定：`commit` 以 `os.link` 建立 history 紀錄成功為界，`create`（`init`）以 `os.rename` 發布 run 目錄成功為界。界線之前失敗為 `false`，狀態維持原樣；之後失敗為 `true`，新版已提交，之後的讀取讀回新版（讀取不修復 `feature.json`，D4）。
+  - 已提交後重送：同一個 transition identity 的重送回 duplicate；`claim` 每次是新的 transition，已有 owner 時照常回 `already_claimed`。`claim` 若在提交後、印出 token 前失敗，token 無法取回，屬 #34 的已知風險。
   - 協調者據此決定重送或停下交人；不重試、不吞錯。
 - argparse 的錯誤不走 `SystemExit`：一律轉成 exit 2 的 envelope，`result.error` 為 `usage`，`result.message` 指出參數。`--help` 例外，exit 0 並印出 usage。
 - `--repo` 必須是 `owner/name`，`--feature` 必須是單一路徑段；兩段都以英數字開頭，只含 `[A-Za-z0-9._-]`。parser 核對格式，不合格回 exit 2，所以任何輸入都跳不出 `$LOOPCTL_HOME`。
