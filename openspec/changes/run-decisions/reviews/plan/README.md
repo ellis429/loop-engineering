@@ -21,3 +21,12 @@ Reviewer：GPT-6 Astra，effort xhigh，`codex exec` 唯讀沙箱；三輪在同
 | 5 補 2 | `658ac7b` | clean |
 
 重新開工確認以 `658ac7b` 為準。
+
+開工後，task 3.1 的逐 task 審查要求改設計（T3.1-01、T3.1-02、T3.1-03）。Project Lead 決定修 01、03，接受 02 為風險（#36）；計畫修訂後由同一個 session 確認：
+
+| 輪次 | 審查的 commit | 結果 |
+| --- | --- | --- |
+| 6 | `7b6721d` | changes_requested：P6-01（提交後重送 claim 的預期與既有契約衝突）、P6-02（`init` 的提交邊界未定義） |
+| 6 補 | `7537cc9` | clean |
+
+重新開工確認以 `7537cc9` 為準。
