@@ -146,6 +146,55 @@ def test_parsed_arguments_reach_the_handler_and_its_envelope_is_printed(
     assert r.out == FAKE_ENVELOPE
 
 
+@pytest.mark.parametrize("command", ["adopt", "delegate"])
+@pytest.mark.parametrize(
+    "rest",
+    [
+        pytest.param(["-host", "example.com"], id="short-h-prefix"),
+        pytest.param(["--help=foo"], id="help-with-value"),
+        pytest.param(["--to", "x", "-hx"], id="h-cluster-after-option"),
+    ],
+)
+def test_adopt_and_delegate_keep_arguments_that_start_with_h(
+    cli: Cli,
+    monkeypatch: pytest.MonkeyPatch,
+    command: str,
+    rest: list[str],
+) -> None:
+    calls: list[argparse.Namespace] = []
+
+    def fake(args: argparse.Namespace) -> tuple[int, dict[str, object]]:
+        calls.append(args)
+        return 7, FAKE_ENVELOPE
+
+    monkeypatch.setitem(loopctl_cli.HANDLERS, command, fake)
+    r = cli(command, *rest)
+    assert len(calls) == 1, "handler called once"
+    assert calls[0].command == command
+    assert calls[0].rest == rest
+    assert r.code == 7
+    assert r.stdout.endswith("\n") and r.stdout.count("\n") == 1
+    assert r.out == FAKE_ENVELOPE
+
+
+@pytest.mark.parametrize("command", ["adopt", "delegate"])
+@pytest.mark.parametrize("flag", ["--help", "-h"])
+def test_adopt_and_delegate_explicit_help_prints_usage(
+    cli: Cli, monkeypatch: pytest.MonkeyPatch, command: str, flag: str
+) -> None:
+    calls: list[argparse.Namespace] = []
+
+    def fake(args: argparse.Namespace) -> tuple[int, dict[str, object]]:
+        calls.append(args)
+        return 7, FAKE_ENVELOPE
+
+    monkeypatch.setitem(loopctl_cli.HANDLERS, command, fake)
+    r = cli(command, flag)
+    assert r.code == 0
+    assert r.stdout.startswith(f"usage: loopctl {command}")
+    assert calls == []
+
+
 ENVELOPE_KEYS = ["ok", "revision", "result", "blocked", "next", "safety"]
 
 

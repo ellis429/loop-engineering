@@ -156,17 +156,22 @@ def build_parser() -> Parser:
 
 
 PASSTHROUGH = ("adopt", "delegate")
+HELP = {"-h", "--help"}
 
 
 def parse(argv: list[str]) -> argparse.Namespace:
-    """Parse argv; `adopt` and `delegate` keep every other argument in `rest`."""
+    """Parse argv; `adopt` and `delegate` keep every other argument in `rest`.
+
+    Their tail never reaches argparse, which would read `-host` as `-h` and
+    reject `--help=foo`; only an exact `-h` or `--help` prints their usage.
+    """
     parser = build_parser()
-    args, rest = parser.parse_known_args(argv)
-    if args.command in PASSTHROUGH:
-        args.rest = rest
-    elif rest:
-        parser.error(f"unrecognized arguments: {' '.join(rest)}")
-    return args
+    if argv and argv[0] in PASSTHROUGH:
+        command, rest = argv[0], argv[1:]
+        if HELP.intersection(rest):
+            parser.parse_args([command, "--help"])  # raises HelpExit
+        return argparse.Namespace(command=command, rest=rest)
+    return parser.parse_args(argv)
 
 
 def main(argv: list[str] | None = None) -> int:
