@@ -33,6 +33,8 @@
 | 3 | TDD 證據、PR 與 CI | 暫定 | Implementer 的結果匯入後，orchestrate 依 `next` 讓 loopctl 核對 G1：原始 Red 的資格、乾淨 checkout 的 Green、N/A 紀錄、整合 attempt，以及證據命令的時限。接著 push，建立或更新 PR，等待 CI（30 分鐘），只認 PR head 上 `unit-linux` 的 success 判定 G3。R2：orchestrate 在 probe branch 用 fixture 真實跑到 G1。 | T3.1、T6.1；T7.1 的證據與 CI 預算部分 | 2 | ORC-03；GAT-01、02、03、04、06、07、08；DUR-03、06、07、08、09 | #15 |
 | 4 | 獨立審查與 PR Pass | 暫定 | orchestrate 依 `next` 派獨立 Reviewer：不同模型、新 session，review 時限 30 分鐘。G2 綁定 head、base 與文件版本。finding 流程包含登記、合併成修正批次、覆核、一次爭議覆核、反覆 finding 提前升級，上限三輪。最後發布 review 與 PR Pass 驗收包。 | 無（T4.1、T5.1、T6.2 沒有實作） | 3 | ORC-01、05；GAT-01、03、05、06、07、08；DUR-04、06、07、08、09；FIN-01～07 | E-3（#12） |
 
+**Runtime（D76）**：Feature 2 起，派工從 Herdr 改為 Orca。Implementer（Claude＋`claude-opus-5-5`）與 Reviewer（Codex＋`gpt-6-astra` xhigh）分別派進固定名稱的 Orca 工作區 `engineer`、`reviewer`；表中寫 Herdr 的地方照 D76 讀。Orca 版本改變時先重跑 R1；Orca 回 `consumer_fenced` 時停下交人；協調權與人工決策仍在 loopctl。engineer 工作區的 clear 時機在 Feature 2 實驗。
+
 **依賴**：四個 Feature 是一條鏈，依 D27 依序開工：上游接受並 merge 後，下游才開始實作。等上游時，可以先準備下游的 spec。
 
 **跨 Feature 的 AC**：29 條 AC 的驗證跨兩個以上的階段，清單與各自的完成點見[重切研究](research/2026-09-30/controller-recut.md#跨階段的-ac)。

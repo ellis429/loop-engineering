@@ -15,3 +15,5 @@
 - 依 D75 從 `openspec/changes/implement-delivery-loop/` 原樣搬來，內容未改，五個檔案的 sha256 與搬移前相同。那個 change 已退役（刪除、不 archive），最後存在的版本是 [`a1d8906`](https://github.com/yschiang/loop-engineering/tree/a1d8906/openspec/changes/implement-delivery-loop)，其中的 proposal、design、tasks、approval 與 adoption 審查紀錄都在那裡。
 - D53 核准的組成方式與 hash 綁定見 [`d11-approval.json`](../../design-candidate/d45-04/d11-approval.json)；核准後的更正見[勘誤](../../design-candidate/d45-04-errata.md)。
 - 文中的「S1」「第一片」指 D53 的單一切片；重切後對應 roadmap 的 M1。延後到 S2 的部分列在 roadmap 的「延後到 M2」。
+
+- 依 D76（2026-10-02），第一條實作路徑的 runtime 從 Herdr 改為 Orca；需求原文提到 Herdr 的地方照 D76 與[勘誤 E-5](../../design-candidate/d45-04-errata.md) 讀，原文不改。
