@@ -127,9 +127,14 @@ def _load(key: Key) -> tuple[int, State]:
         return UntrustedState(reason, _files(path))
 
     try:
-        state = json.loads((path / "feature.json").read_bytes())
+        data = (path / "feature.json").read_bytes()
     except FileNotFoundError:
         raise untrusted("state_missing") from None
+    # Only init makes the lock file; no other command recreates it.
+    if not (path / "lock").is_file():
+        raise untrusted("lock_missing")
+    try:
+        state = json.loads(data)
     except ValueError:
         raise untrusted("state_corrupt") from None
     if not isinstance(state, dict):
@@ -258,7 +263,11 @@ def commit(
 
 @contextlib.contextmanager
 def _locked(path: Path) -> Iterator[None]:
-    fd = os.open(path / "lock", os.O_RDWR | os.O_CREAT, 0o600)
+    """Hold the flock of the run's existing lock file; never create it."""
+    try:
+        fd = os.open(path / "lock", os.O_RDWR)
+    except FileNotFoundError:
+        raise UntrustedState("lock_missing", _files(path)) from None
     try:
         fcntl.flock(fd, fcntl.LOCK_EX)
         yield

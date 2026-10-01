@@ -450,6 +450,38 @@ def test_io_errors_print_an_envelope_and_say_whether_the_change_committed(
         assert st.get("revision") == 1
 
 
+def files_of(root: Path) -> list[str]:
+    return sorted(
+        path.relative_to(root).as_posix() for path in root.rglob("*") if path.is_file()
+    )
+
+
+EVERY_COMMAND = [
+    ["status", *RUN],
+    ["next", *RUN],
+    ["claim", *RUN, "--actor", "agent:other"],
+    ["init", *RUN, "--issue", "29", "--actor", "agent:other"],
+]
+
+
+def test_a_rejected_command_never_creates_the_lock_file(
+    cli: Cli, home: Path, started_run: StartedRun
+) -> None:
+    started_run(REPO, "F-1", "agent:implementer")
+    (run_dir(home) / "lock").unlink()
+    files = files_of(run_dir(home))
+    before = snapshot(run_dir(home))
+    # Run every command first: the file set is the first thing checked.
+    results = [(argv[0], cli(*argv)) for argv in EVERY_COMMAND[:3]]
+    assert files_of(run_dir(home)) == files
+    assert snapshot(run_dir(home)) == before
+    for name, r in results:
+        assert r.code == 5, (name, r)
+        assert r.get("result", "reason") == "lock_missing", name
+        listed = r.get("result", "files")
+        assert isinstance(listed, list) and "lock" not in listed, (name, listed)
+
+
 def write_state(home: Path, state: Any) -> None:
     """Write feature.json the way the store does, outside the store."""
     text = json.dumps(state, sort_keys=True, indent=2, ensure_ascii=False) + "\n"
@@ -469,20 +501,6 @@ def break_run(home: Path, case: str) -> None:
     elif case == "empty-run-dir":
         shutil.rmtree(run)
         run.mkdir()
-
-
-def files_of(root: Path) -> list[str]:
-    return sorted(
-        path.relative_to(root).as_posix() for path in root.rglob("*") if path.is_file()
-    )
-
-
-EVERY_COMMAND = [
-    ["status", *RUN],
-    ["next", *RUN],
-    ["claim", *RUN, "--actor", "agent:other"],
-    ["init", *RUN, "--issue", "29", "--actor", "agent:other"],
-]
 
 
 @pytest.mark.parametrize(
