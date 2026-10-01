@@ -157,6 +157,7 @@ Effort 的依據（D69）：
 | --- | --- | --- | --- |
 | `test_workflow_yaml_declares_unit_linux_as_the_required_check` | `workflow.yaml` 的內容恰為 D12 的三個頂層鍵；`g3.required_checks == [{name: unit-linux, app: github-actions, workflow: .github/workflows/loopctl-ci.yml}]` | `required_checks` 相等：檔案不存在 | 相等 |
 | `test_required_check_is_a_pull_request_job_running_the_policy_command` | 觸發、權限、runner 與 timeout 都照 D12；每個必要 check 都有同名 job，步驟順序照 D12；pytest 步驟的 `run` 恰為 `uv run pytest`，而且 env 有 `LOOPCTL_EXPECT_PLATFORM=linux`；每個 `uses:` 都釘到 40 位 SHA；沒有 commit-msg 步驟 | 「`unit-linux` 有同名 job」：CI 檔不存在 | 全部成立 |
+| `test_unit_linux_verifies_the_head_and_uploads_the_tested_sha`（review T2.1-01 的回歸測試） | 實際以 `bash -e` 執行核對步驟：env 綁定 PR head SHA，HEAD 相符時 exit 0、不符時非 0；執行寫檔步驟，`tested-sha.json` 恰含 `run_id`、`run_attempt`、`job`、`check_name`、`tested_sha`；上傳的 `path` 就是該檔，且 `if-no-files-found: error`；uv 釘在 `0.11.24` | 突變（各自獨立）：核對改成 `echo git rev-parse HEAD` → 失敗在「不符時非 0」；上傳 path 改成 `/does-not-exist.json` → 失敗在 path 相等；uv 版本改成 `latest` → 失敗在版本相等 | 全部成立 |
 | `test_pytest_policy_has_one_source` | 沒有 `pytest.ini`、`tox.ini`，`setup.cfg` 沒有 pytest 段，`tests/` 以外沒有 `conftest.py`；pyproject 含 `--strict-markers`、`xfail_strict = true` 與 `only_on` marker | 突變：暫時加一個 `pytest.ini` → 失敗在「沒有其他 pytest 設定檔」 | 成立 |
 
 `unit-linux` 的實際執行在 to-pr 開 PR 時發生，是 G21 的 CI 證據。

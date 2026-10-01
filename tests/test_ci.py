@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import json
+import os
 import re
 import subprocess
 import tomllib
@@ -119,6 +121,93 @@ def test_required_check_is_a_pull_request_job_running_the_policy_command() -> No
         assert unpinned == []
         commit_msg = [step for step in steps if "commit-msg" in str(step)]
         assert commit_msg == []
+
+
+UV_VERSION = "0.11.24"
+
+
+def run_step(step: dict[str, Any], cwd: Path, env: dict[str, str]) -> int:
+    """Run a step's shell like the runner does, binding the PR head SHA."""
+    step_env = {
+        key: env["PR_HEAD_SHA"] if value == HEAD_SHA else str(value)
+        for key, value in (step.get("env") or {}).items()
+    }
+    # A step without `shell:` runs as `bash -e {0}` on a Linux runner.
+    done = subprocess.run(
+        ["bash", "-e", "-c", str(step.get("run", ""))],
+        cwd=cwd,
+        env={**env, **step_env},
+        capture_output=True,
+        text=True,
+    )
+    return done.returncode
+
+
+def git_repo(path: Path) -> str:
+    """A repository with one commit; returns that commit's SHA."""
+    git = ["git", "-C", str(path), "-c", "user.name=t", "-c", "user.email=t@t"]
+    subprocess.run(["git", "init", "-q", str(path)], check=True)
+    subprocess.run([*git, "commit", "-q", "--allow-empty", "-m", "t"], check=True)
+    head = subprocess.run(
+        [*git, "rev-parse", "HEAD"], capture_output=True, text=True, check=True
+    )
+    return head.stdout.strip()
+
+
+def test_unit_linux_verifies_the_head_and_uploads_the_tested_sha(
+    tmp_path: Path,
+) -> None:
+    steps = ((load(CI_FILE).get("jobs") or {}).get("unit-linux") or {}).get(
+        "steps"
+    ) or []
+    by_kind = {kind(step): step for step in steps}
+    assert set(STEP_ORDER) <= set(by_kind)
+
+    head = git_repo(tmp_path / "repo")
+    runner_temp = tmp_path / "runner-temp"
+    runner_temp.mkdir()
+    env = {
+        "PATH": os.environ["PATH"],
+        "HOME": str(tmp_path),
+        "RUNNER_TEMP": str(runner_temp),
+        "GITHUB_RUN_ID": "4711",
+        "GITHUB_RUN_ATTEMPT": "2",
+        "GITHUB_JOB": "unit-linux",
+    }
+
+    # The head check compares `git rev-parse HEAD` with the PR head SHA.
+    verify = by_kind["verify-head"]
+    assert HEAD_SHA in (verify.get("env") or {}).values()
+    matching = run_step(verify, tmp_path / "repo", {**env, "PR_HEAD_SHA": head})
+    assert matching == 0, "the head check rejects the PR head"
+    other = "0" * 40
+    mismatch = run_step(verify, tmp_path / "repo", {**env, "PR_HEAD_SHA": other})
+    assert mismatch != 0, "the head check accepts a different commit"
+
+    # The tested-sha file holds the run, the job, the check and the PR head.
+    write = by_kind["write-tested-sha"]
+    assert HEAD_SHA in (write.get("env") or {}).values()
+    assert run_step(write, tmp_path, {**env, "PR_HEAD_SHA": head}) == 0
+    written = list(runner_temp.iterdir())
+    assert [path.name for path in written] == ["tested-sha.json"]
+    assert json.loads(written[0].read_text(encoding="utf-8")) == {
+        "run_id": 4711,
+        "run_attempt": 2,
+        "job": "unit-linux",
+        "check_name": "unit-linux",
+        "tested_sha": head,
+    }
+
+    # The upload takes exactly that file and fails when it is missing.
+    upload = by_kind["upload-tested-sha"].get("with") or {}
+    path = str(upload.get("path", "")).replace(
+        "${{ runner.temp }}", str(runner_temp)
+    )
+    assert path == str(written[0])
+    assert upload.get("if-no-files-found") == "error"
+
+    # uv is pinned to the version the repository is checked with.
+    assert (by_kind["setup-uv"].get("with") or {}).get("version") == UV_VERSION
 
 
 def repository_files() -> list[str]:
