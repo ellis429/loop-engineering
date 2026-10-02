@@ -30,3 +30,12 @@ Reviewer：GPT-6 Astra，effort xhigh，`codex exec` 唯讀沙箱；三輪在同
 | 6 補 | `7537cc9` | clean |
 
 重新開工確認以 `7537cc9` 為準。
+
+task 4.2 的 Implementer 在 commit 前回報計畫缺口（衝突的 exit 3 只有 cli.py 能回，但 cli.py 不在 4.2 的擁有路徑；transitions 要保存 payload；attempted 的內容本身是 resolve_conflict 時要拒絕）。計畫修訂後由同一個 session 確認：
+
+| 輪次 | 審查的 commit | 結果 |
+| --- | --- | --- |
+| 7 | `45beb42` | changes_requested：P7-01（新的拒絕條件沒有獨立測試）、P7-02 minor（`create` 的 transitions 項目與 D3 不一致） |
+| 7 補 | `bc1e8e1` | clean |
+
+重新開工確認以 `bc1e8e1` 為準。
