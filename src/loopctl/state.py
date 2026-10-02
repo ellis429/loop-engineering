@@ -71,11 +71,35 @@ def view(revision: int, state: State) -> dict[str, Any]:
         "phase": state["phase"],
         "coordinator": state["coordinator"],
         "owner": owner_view(state["owner"]),
+        "plan": state["plan"],
+        "bindings": state["versions"]["bindings"],
+        "approval": approval_view(state),
         "gates": state["gates"],
         "blockers": state["blockers"],
         "decisions": state["decisions"],
         "conflicts": state["conflicts"],
     }
+
+
+def approval_view(state: State) -> dict[str, Any]:
+    """The approval with its status; when there is none, the plan version
+    that awaits it (D11)."""
+    approval = state["approval"]
+    if approval is None:
+        plan = state["plan"]
+        return {
+            "status": "not_approved",
+            "plan_version": None if plan is None else plan["version"],
+        }
+    return {"status": "approved", **approval}
+
+
+# The roles of bindings, in the order `--human` shows them.
+ROLES = ("spec", "ac", "design", "sa")
+
+
+def _document(entry: dict[str, Any] | None) -> str:
+    return "none" if entry is None else f"{entry['locator']} {entry['version']}"
 
 
 def human(result: dict[str, Any], nxt: dict[str, Any]) -> str:
@@ -87,7 +111,15 @@ def human(result: dict[str, Any], nxt: dict[str, Any]) -> str:
         "owner: unclaimed"
         if owner is None
         else f"owner: {owner['actor']} (claimed {owner['claimed_at']})",
+        f"plan: {_document(result['plan'])}",
     ]
+    for role in ROLES:
+        entries = result["bindings"].get(role, {}).values()
+        lines.append(f"{role}: {', '.join(map(_document, entries)) or 'none'}")
+    approval = dict(result["approval"])
+    status = approval.pop("status")
+    details = "; ".join(f"{name}: {value}" for name, value in approval.items())
+    lines.append(f"approval: {status} ({details})")
     for gate, value in result["gates"].items():
         lines.append(f"{gate}: {value['status']} ({', '.join(value['reasons'])})")
     lines.append(f"blockers: {_items(result['blockers'])}")

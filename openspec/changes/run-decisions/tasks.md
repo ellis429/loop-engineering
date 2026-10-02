@@ -316,7 +316,7 @@ Effort 的依據（D69）：
 
 ## 5. 登記原生文件與開工確認
 
-- [ ] 5.1 `register plan|binding|policy`、`approve_plan` 的檢查、效果與清除規則、`status` 顯示版本與核准，以及核准後的 `dispatch`；驗證：`uv run pytest tests/test_approval.py` 與完整的完成條件通過
+- [x] 5.1 `register plan|binding|policy`、`approve_plan` 的檢查、效果與清除規則、`status` 顯示版本與核准，以及核准後的 `dispatch`；驗證：`uv run pytest tests/test_approval.py` 與完整的完成條件通過
 
 **模式與 effort**：預設模式（D72）；Implementer Claude Opus 5.5、Reviewer GPT-6 Astra；effort（Implementer／Reviewer）xhigh／xhigh。
 

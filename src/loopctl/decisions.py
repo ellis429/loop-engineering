@@ -1,8 +1,9 @@
-"""decide: the checks and the record of a human decision, all pure (D2, D10).
+"""register and decide: the checks and the records of native documents and
+human decisions, all pure (D2, D9, D10).
 
-The command line reads the request and the clock; these functions see only
-the request, the time and the state, so the same request always gives the
-same payload (D5)."""
+The command line reads the request, the documents and the clock; these
+functions see only the request, the time and the state, so the same request
+always gives the same payload (D5)."""
 
 from __future__ import annotations
 
@@ -65,6 +66,88 @@ class Rejected(Exception):
         self.fields = fields
 
 
+# What a registration keeps besides the fields of every kind (D9); the
+# other request fields are ignored.
+OWN = {"plan": ("producer", "calibrated_from"), "binding": ("role",), "policy": ()}
+
+# What a registration cannot do without (D2).
+REGISTER_NEEDS = {"plan": ("producer",), "binding": ("role",)}
+
+# The roles of the bindings an approval needs and pins with the plan (D10);
+# never sa.
+APPROVED_ROLES = ("spec", "ac", "design")
+
+
+def registration(kind: str, fields: dict[str, Any]) -> dict[str, Any]:
+    """The payload of `register <kind>`: the fields of its entry without the
+    time (D5, D9), once its own fields are there. `path` is there only when
+    the locator is a local file."""
+    missing = [name for name in REGISTER_NEEDS.get(kind, ()) if not fields.get(name)]
+    if missing:
+        raise Rejected("missing_fields", fields=missing)
+    payload = {
+        "kind": kind,
+        **{name: fields[name] for name in ("locator", "version", "source", "digest")},
+    }
+    if fields.get("path") is not None:
+        payload["path"] = fields["path"]
+    for name in OWN[kind]:
+        payload[name] = fields.get(name)
+    return payload
+
+
+def registered(state: State, payload: dict[str, Any]) -> dict[str, Any] | None:
+    """The entry at the place `payload` registers to: the one plan, the one
+    policy, or the binding of its role and locator (D9)."""
+    entry: dict[str, Any] | None
+    if payload["kind"] == "plan":
+        entry = state["plan"]
+    elif payload["kind"] == "policy":
+        entry = state["versions"]["policy"]
+    else:
+        role_bindings = state["versions"]["bindings"].get(payload["role"], {})
+        entry = role_bindings.get(payload["locator"])
+    return entry
+
+
+def register(state: State, payload: dict[str, Any], at: str) -> State:
+    """`state` with the registration of `payload` at `at`, in the order of
+    D9: a change of what the approval covers needs scope_change first; the
+    same registration changes nothing; any other is written, or put in place
+    of the one at the same place."""
+    entry = {
+        **{name: value for name, value in payload.items() if name != "kind"},
+        "content": {"$object": payload["digest"]},
+        "registered_at": at,
+    }
+    same = _comparable(registered(state, payload)) == _comparable(entry)
+    covered = payload["kind"] == "plan" or payload.get("role") in APPROVED_ROLES
+    if state["approval"] is not None and covered and not same:
+        raise Rejected("scope_change_required")
+    if same:
+        return state
+    kind, versions = payload["kind"], state["versions"]
+    if kind == "plan":
+        return {**state, "plan": entry}
+    if kind == "policy":
+        return {**state, "versions": {**versions, "policy": entry}}
+    bindings, role = versions["bindings"], payload["role"]
+    role_bindings = {**bindings.get(role, {}), payload["locator"]: entry}
+    return {
+        **state,
+        "versions": {**versions, "bindings": {**bindings, role: role_bindings}},
+    }
+
+
+def _comparable(entry: dict[str, Any] | None) -> dict[str, Any] | None:
+    """An entry without what a re-registration may differ in and still be
+    the same registration: its time and the derived `superseded_by` (D9)."""
+    if entry is None:
+        return None
+    ignored = ("registered_at", "superseded_by")
+    return {name: value for name, value in entry.items() if name not in ignored}
+
+
 def request(kind: str, fields: dict[str, Any]) -> dict[str, Any]:
     """The payload of a decision: the request fields it records, without the
     time or the token (D5), once the checks that need no state pass (D2).
@@ -96,7 +179,38 @@ def decide(state: State, payload: dict[str, Any], at: str) -> State:
         raise Rejected("invalid_target")
     if kind == "resolve_conflict":
         return _resolve(state, payload, at)
+    if kind == "approve_plan":
+        state = {**state, "approval": _approval(state, payload, at)}
     return _record(state, payload, at)
+
+
+def _approval(state: State, payload: dict[str, Any], at: str) -> State:
+    """What approve_plan approves, once its checks pass in the order of D10:
+    the plan and the digests of its bindings."""
+    if state["approval"] is not None:
+        raise Rejected("already_approved")
+    plan = state["plan"]
+    if plan is None:
+        raise Rejected("plan_not_registered")
+    if plan["producer"] != "implementer" or not plan["calibrated_from"]:
+        raise Rejected("plan_not_calibrated")
+    if (payload["target"], payload["version"]) != (plan["locator"], plan["version"]):
+        raise Rejected("plan_version_mismatch")
+    bindings = state["versions"]["bindings"]
+    missing = [role for role in APPROVED_ROLES if not bindings.get(role)]
+    if missing:
+        raise Rejected("missing_bindings", roles=missing)
+    return {
+        "decision": payload["id"],
+        "actor": payload["actor"],
+        "at": at,
+        "plan": {name: plan[name] for name in ("locator", "version", "digest")},
+        "bindings": {
+            role: {locator: entry["digest"] for locator, entry in entries.items()}
+            for role, entries in bindings.items()
+            if role in APPROVED_ROLES
+        },
+    }
 
 
 def _record(state: State, payload: dict[str, Any], at: str) -> State:
@@ -142,7 +256,12 @@ def _resolve(state: State, payload: dict[str, Any], at: str) -> State:
 
 def void(state: State, decision_id: str, by: str) -> State:
     """Undo decision `decision_id` for the decision `by` (D10): it stays
-    recorded, marked voided. The kinds that only record have no effect to
-    clear."""
+    recorded, marked voided, and only the effects that still belong to it
+    are cleared; no approval is ever restored. The kinds that only record
+    have no effect to clear."""
     record = {**state["decisions"][decision_id], "status": "voided", "voided_by": by}
-    return {**state, "decisions": {**state["decisions"], decision_id: record}}
+    state = {**state, "decisions": {**state["decisions"], decision_id: record}}
+    approval = state["approval"]
+    if approval is not None and approval["decision"] == decision_id:
+        state = {**state, "approval": None}
+    return state

@@ -4,12 +4,14 @@ from __future__ import annotations
 
 import argparse
 import errno
+import hashlib
 import hmac
 import json
 import re
 import secrets
 import sys
 from collections.abc import Callable
+from pathlib import Path
 from typing import Any, NoReturn
 
 from loopctl import clock, decisions, state, store
@@ -39,12 +41,6 @@ def envelope(
         "next": next,
         "safety": None,
     }
-
-
-def stub(args: argparse.Namespace) -> tuple[int, Envelope]:
-    """Placeholder until the command's task replaces it: right shape, no
-    content, writes nothing."""
-    return 0, envelope(True, {})
 
 
 def _key(args: argparse.Namespace) -> store.Key:
@@ -252,6 +248,77 @@ def decide(args: argparse.Namespace) -> tuple[int, Envelope]:
     return 0, envelope(True, result, revision=int(revision), next=st["next"])
 
 
+def _read(path: Path) -> bytes | None:
+    """The bytes of a readable regular file, else None."""
+    try:
+        return path.read_bytes() if path.is_file() else None
+    except OSError:
+        return None
+
+
+def _content(args: argparse.Namespace) -> tuple[bytes, str | None]:
+    """What `register` adopts (D9): the locator when it is a readable local
+    file, relative to the cwd, else `--content-from`; with the locator's
+    absolute path when it is that file. A policy is re-read from its own
+    file (D11), so it never takes `--content-from`."""
+    if args.kind == "policy" and args.content_from is not None:
+        raise decisions.Rejected("locator_unreadable")
+    locator = Path(args.locator)
+    content = _read(locator)
+    if content is not None:
+        return content, str(locator.resolve())
+    if args.content_from is not None:
+        content = _read(Path(args.content_from))
+        if content is not None:
+            return content, None
+    raise decisions.Rejected("locator_unreadable")
+
+
+def register(args: argparse.Namespace) -> tuple[int, Envelope]:
+    """`register plan|binding|policy` in the order of D9: the checks that need
+    no state, the owner's token before anything is written, the content
+    stored, then the commit, which checks the token again."""
+    content, path = _content(args)
+    payload = decisions.registration(
+        args.kind,
+        {
+            "locator": args.locator,
+            "path": path,
+            "version": args.version,
+            "source": args.source,
+            "digest": "sha256:" + hashlib.sha256(content).hexdigest(),
+            "role": args.role,
+            "producer": args.producer,
+            "calibrated_from": args.calibrated_from,
+        },
+    )
+    key, authorize = _key(args), owner_token(args.token)
+    # A missing run, an untrusted state or a caller without the token is
+    # refused before anything is written, the object included.
+    _, current = store.load(key)
+    authorize(current)
+    store.put_object(content)
+    at = clock.now()
+    # As commit_latest, with the revision in the transition id (D5); the
+    # commit is a no-op, and `unchanged`, for the same registration (D9).
+    while True:
+        expected, _ = store.load(key)
+        try:
+            revision = store.commit(
+                key, expected, f"register:{expected}:{store.digest(payload)}",
+                payload, lambda st: decisions.register(st, payload, at),
+                authorize=authorize,
+            )
+        except store.RevisionConflict:
+            continue
+        break
+    st = revision.state
+    entry = decisions.registered(st, payload) or {}
+    result = {name: value for name, value in entry.items() if name != "content"}
+    result["unchanged"] = revision == expected
+    return 0, envelope(True, result, revision=int(revision), next=st["next"])
+
+
 def unsupported(args: argparse.Namespace) -> tuple[int, Envelope]:
     """`adopt` and `delegate`: not in this version; nothing is read or written."""
     return refusal(EXIT_USAGE, "unsupported", command=args.command)
@@ -262,7 +329,7 @@ HANDLERS: dict[str, Handler] = {
     "claim": guarded(claim),
     "status": guarded(status),
     "next": guarded(next_step),
-    "register": stub,
+    "register": guarded(register),
     "decide": guarded(decide),
     "adopt": unsupported,
     "delegate": unsupported,
