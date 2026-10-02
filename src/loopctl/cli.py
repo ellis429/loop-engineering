@@ -200,9 +200,19 @@ def reading(
     return 0, envelope(True, result, revision=revision, next=st["next"])
 
 
+def _policy_digest(st: store.State) -> str | None:
+    """The digest of the registered policy file as it is now, read only
+    (D11); None when there is none or it cannot be read."""
+    policy = st["versions"]["policy"]
+    if policy is None or policy.get("path") is None:
+        return None
+    content = _read(Path(policy["path"]))
+    return None if content is None else "sha256:" + hashlib.sha256(content).hexdigest()
+
+
 def status(args: argparse.Namespace) -> tuple[int, Envelope]:
     revision, st = store.load(_key(args))
-    result = state.view(revision, st)
+    result = state.view(revision, st, _policy_digest(st))
     if args.human:
         result["human"] = state.human(result, st["next"])
     return reading(_key(args), revision, st, result)

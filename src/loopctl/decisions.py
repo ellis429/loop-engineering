@@ -10,6 +10,8 @@ from __future__ import annotations
 import re
 from typing import Any
 
+from loopctl.next import superseded_by
+
 State = dict[str, Any]
 
 # The kinds of this version (D10); any other kind is unsupported.
@@ -112,9 +114,10 @@ def registered(state: State, payload: dict[str, Any]) -> dict[str, Any] | None:
 
 def register(state: State, payload: dict[str, Any], at: str) -> State:
     """`state` with the registration of `payload` at `at`, in the order of
-    D9: a change of what the approval covers needs scope_change first; the
-    same registration changes nothing; any other is written, or put in place
-    of the one at the same place."""
+    D9: a change of what the approval covers needs scope_change first; a
+    plan a scope_change superseded stays superseded; the same registration
+    changes nothing; any other is written, or put in place of the one at
+    the same place."""
     entry = {
         **{name: value for name, value in payload.items() if name != "kind"},
         "content": {"$object": payload["digest"]},
@@ -124,6 +127,8 @@ def register(state: State, payload: dict[str, Any], at: str) -> State:
     covered = payload["kind"] == "plan" or payload.get("role") in APPROVED_ROLES
     if state["approval"] is not None and covered and not same:
         raise Rejected("scope_change_required")
+    if payload["kind"] == "plan" and superseded_by({**state, "plan": entry}):
+        raise Rejected("plan_superseded")
     if same:
         return state
     kind, versions = payload["kind"], state["versions"]
@@ -179,9 +184,45 @@ def decide(state: State, payload: dict[str, Any], at: str) -> State:
         raise Rejected("invalid_target")
     if kind == "resolve_conflict":
         return _resolve(state, payload, at)
+    effects: dict[str, Any] = {}
     if kind == "approve_plan":
         state = {**state, "approval": _approval(state, payload, at)}
-    return _record(state, payload, at)
+    if kind == "scope_change":
+        # The plan of this moment, also when a resolution takes it in (D6).
+        effects["supersedes"] = _pin(_plan(state))
+        state = {**state, "approval": None}
+    if kind == "policy_change":
+        state = {**state, "policy_approval": _policy_approval(state, payload)}
+    return _record(state, payload, at, **effects)
+
+
+def _policy_approval(state: State, payload: dict[str, Any]) -> State:
+    """What policy_change approves (D10): the registered policy at its
+    digest. An approved policy can be approved again; the latest decision
+    takes the place of the earlier one."""
+    policy = state["versions"]["policy"]
+    if policy is None:
+        raise Rejected("policy_not_registered")
+    if (payload["target"], payload["version"]) != (policy["locator"], policy["digest"]):
+        raise Rejected("policy_digest_mismatch")
+    return {
+        "decision": payload["id"],
+        "locator": policy["locator"],
+        "digest": policy["digest"],
+    }
+
+
+def _plan(state: State) -> dict[str, Any]:
+    """The plan approve_plan and scope_change need (D10)."""
+    plan: dict[str, Any] | None = state["plan"]
+    if plan is None:
+        raise Rejected("plan_not_registered")
+    return plan
+
+
+def _pin(plan: dict[str, Any]) -> dict[str, Any]:
+    """How an approval, a scope_change and dispatch pin a plan (D9)."""
+    return {name: plan[name] for name in ("locator", "version", "digest")}
 
 
 def _approval(state: State, payload: dict[str, Any], at: str) -> State:
@@ -189,11 +230,11 @@ def _approval(state: State, payload: dict[str, Any], at: str) -> State:
     the plan and the digests of its bindings."""
     if state["approval"] is not None:
         raise Rejected("already_approved")
-    plan = state["plan"]
-    if plan is None:
-        raise Rejected("plan_not_registered")
+    plan = _plan(state)
     if plan["producer"] != "implementer" or not plan["calibrated_from"]:
         raise Rejected("plan_not_calibrated")
+    if superseded_by(state):
+        raise Rejected("plan_superseded")
     if (payload["target"], payload["version"]) != (plan["locator"], plan["version"]):
         raise Rejected("plan_version_mismatch")
     bindings = state["versions"]["bindings"]
@@ -204,7 +245,7 @@ def _approval(state: State, payload: dict[str, Any], at: str) -> State:
         "decision": payload["id"],
         "actor": payload["actor"],
         "at": at,
-        "plan": {name: plan[name] for name in ("locator", "version", "digest")},
+        "plan": _pin(plan),
         "bindings": {
             role: {locator: entry["digest"] for locator, entry in entries.items()}
             for role, entries in bindings.items()
@@ -213,10 +254,12 @@ def _approval(state: State, payload: dict[str, Any], at: str) -> State:
     }
 
 
-def _record(state: State, payload: dict[str, Any], at: str) -> State:
+def _record(state: State, payload: dict[str, Any], at: str, **effects: Any) -> State:
+    """`state` with the decision of `payload` in effect, with what its
+    effects keep in its record."""
     recorded = state["decisions"]
     seq = 1 + max((record["seq"] for record in recorded.values()), default=0)
-    record = {**payload, "at": at, "seq": seq, "status": "in_effect"}
+    record = {**payload, **effects, "at": at, "seq": seq, "status": "in_effect"}
     return {**state, "decisions": {**recorded, payload["id"]: record}}
 
 
@@ -257,11 +300,13 @@ def _resolve(state: State, payload: dict[str, Any], at: str) -> State:
 def void(state: State, decision_id: str, by: str) -> State:
     """Undo decision `decision_id` for the decision `by` (D10): it stays
     recorded, marked voided, and only the effects that still belong to it
-    are cleared; no approval is ever restored. The kinds that only record
-    have no effect to clear."""
+    are cleared; no approval is ever restored. A voided scope_change no
+    longer supersedes the plan (D7); the kinds that only record have no
+    effect to clear."""
     record = {**state["decisions"][decision_id], "status": "voided", "voided_by": by}
     state = {**state, "decisions": {**state["decisions"], decision_id: record}}
-    approval = state["approval"]
-    if approval is not None and approval["decision"] == decision_id:
-        state = {**state, "approval": None}
+    for field in ("approval", "policy_approval"):
+        approved = state[field]
+        if approved is not None and approved["decision"] == decision_id:
+            state = {**state, field: None}
     return state

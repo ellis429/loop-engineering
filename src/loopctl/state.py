@@ -61,8 +61,10 @@ def owner_view(owner: dict[str, Any] | None) -> dict[str, Any] | None:
     return {"actor": owner["actor"], "claimed_at": owner["claimed_at"]}
 
 
-def view(revision: int, state: State) -> dict[str, Any]:
-    """The `result` of `status`: the D11 projection of the state file."""
+def view(revision: int, state: State, policy_digest: str | None) -> dict[str, Any]:
+    """The `result` of `status`: the D11 projection of the state file, with
+    `policy_digest`, the digest of the registered policy file as it is now
+    (None when it cannot be read)."""
     return {
         "repo": state["repo"],
         "feature": state["feature"],
@@ -74,6 +76,7 @@ def view(revision: int, state: State) -> dict[str, Any]:
         "plan": state["plan"],
         "bindings": state["versions"]["bindings"],
         "approval": approval_view(state),
+        "policy": policy_view(state, policy_digest),
         "gates": state["gates"],
         "blockers": state["blockers"],
         "decisions": state["decisions"],
@@ -92,6 +95,32 @@ def approval_view(state: State) -> dict[str, Any]:
             "plan_version": None if plan is None else plan["version"],
         }
     return {"status": "approved", **approval}
+
+
+def policy_view(state: State, current_digest: str | None) -> dict[str, Any]:
+    """The policy, its registration, the policy_change that approved it, and
+    `current_digest`, the digest of its file as it is now (D11): approved
+    only while the approval, the registration and the file all have the
+    same digest."""
+    registration, approval = state["versions"]["policy"], state["policy_approval"]
+    if registration is None:
+        status = "not_registered"
+    elif current_digest is None:
+        status = "unreadable"
+    elif approval is None or approval["digest"] != registration["digest"]:
+        status = "not_approved"
+    elif current_digest != approval["digest"]:
+        status = "digest_mismatch"
+    else:
+        status = "approved"
+    return {
+        "status": status,
+        "registration": None
+        if registration is None
+        else {name: value for name, value in registration.items() if name != "content"},
+        "approval": approval,
+        "current_digest": current_digest,
+    }
 
 
 # The roles of bindings, in the order `--human` shows them.

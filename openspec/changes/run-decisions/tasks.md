@@ -371,7 +371,7 @@ Effort 的依據（D69）：
 
 ## 6. 範圍變更與政策核准
 
-- [ ] 6.1 `scope_change` 撤銷核准並取代 plan，`policy_change` 綁定政策檔的 digest，`status` 顯示 policy 狀態，兩者被撤銷時只清掉自己的效果、不還原核准；驗證：`uv run pytest tests/test_scope_policy.py` 與完整的完成條件通過
+- [x] 6.1 `scope_change` 撤銷核准並取代 plan，`policy_change` 綁定政策檔的 digest，`status` 顯示 policy 狀態，兩者被撤銷時只清掉自己的效果、不還原核准；驗證：`uv run pytest tests/test_scope_policy.py` 與完整的完成條件通過
 
 **模式與 effort**：預設模式（D72）；Implementer Claude Opus 5.5、Reviewer GPT-6 Astra；effort（Implementer／Reviewer）xhigh／xhigh。
 
