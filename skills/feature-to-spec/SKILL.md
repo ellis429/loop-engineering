@@ -23,7 +23,7 @@ Ask the human to authorise pushing the branch and writing the ticket; without it
 - First use in the repository: on an up-to-date default branch, run `openspec init --tools claude,codex`, then commit and push it before any feature branch exists.
 - Pick a short English change id (`finalize-protocol`). In the root repo, `git fetch origin`, then create the branch and its worktree from the remote default branch: `git worktree add ../<root>-<id> -b feature/<id> origin/<default-branch>`. Record that base commit; every later step works in this worktree (D67).
 - `openspec new change <id>`, commit, and push the branch.
-- Create the ticket in the root repo's tracker (service repos only get PRs), or bring an existing one to this shape. Title: the feature name, no prefix. Body, nothing else (D54, D67):
+- Create the ticket in the root repo's tracker (service repos only get PRs), or bring an existing one to this shape. Title: the feature name, no prefix; it says what someone can do once the feature is delivered (`loopctl：登記 run、記錄人工決策、查詢狀態與下一步`), not a topic (`人工決策與下一步`). If the roadmap name is only a topic, propose a concrete one and update the roadmap row when the human agrees. Label: `feature` (create it once per repository). Body, nothing else (D54, D67):
 
 ```markdown
 **Milestone：** <milestone>　**狀態：** 準備中
