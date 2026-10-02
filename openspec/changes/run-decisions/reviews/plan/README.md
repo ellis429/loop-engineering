@@ -39,3 +39,11 @@ task 4.2 的 Implementer 在 commit 前回報計畫缺口（衝突的 exit 3 只
 | 7 補 | `bc1e8e1` | clean |
 
 重新開工確認以 `bc1e8e1` 為準。
+
+task 4.2 的逐 task 審查找到 T4.2-01（同一 decision id 多個衝突保存過時內容）與 T4.2-02（回歸測試未列入）。Project Lead 選「同一個 transition identity 同時最多一個未解衝突」，計畫修訂後由同一個 session 確認：
+
+| 輪次 | 審查的 commit | 結果 |
+| --- | --- | --- |
+| 8 | `48b4201` | clean |
+
+重新開工確認以 `48b4201` 為準。
