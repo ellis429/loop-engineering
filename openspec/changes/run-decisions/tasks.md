@@ -270,7 +270,7 @@ Effort 的依據（D69）：
 
 **模式與 effort**：預設模式（D72）；Implementer Claude Opus 5.5、Reviewer GPT-6 Astra；effort（Implementer／Reviewer）xhigh／xhigh。
 
-**本次修訂**：4.2 還有一次 attempt（第 3 次，也是最後一次），只做兩件事：
+**本次修訂**：4.2 已做過 attempt 1～3。依 Project Lead 2026-10-02 的裁定，attempt 1 因計畫缺口停下、沒有 commit，不計入上限，所以已用兩次；接下來的 attempt 4 是最後一次，只做兩件事：
 
 - 依 D4 第 3 步的順序改 `store.py`：先 duplicate，再已否決的內容，再同一 identity 的未解衝突，最後記新衝突（T4.2-03；Fable DG-01 的歧義依此裁定）；
 - 加表末兩列測試（T4.2-03、DG-03）。
