@@ -292,15 +292,15 @@ def commit(
     """Commit `mutate` of the current state as the next revision (D4).
 
     `authorize` comes before any other check, and every check writes
-    nothing when it fails, except that the first different payload of a
-    committed transition is recorded as a conflict (D6). While a conflict is
-    unresolved, only the transition that `resolves` it goes through; the
-    payload of that transition gives the resolution's `id` and `choice`.
-    Only a transition that will be written first catches a lagging
-    feature.json up (step 8.1). Returns the new revision, or the current
-    one when `mutate` changes nothing or when `transition_id` was already
-    committed with this payload (a duplicate). An OSError is raised as an
-    IOFailure that says whether the history link was already made."""
+    nothing when it fails, except that a different payload of a committed
+    transition with no open conflict is recorded as one (D6). While a
+    conflict is unresolved, only the transition that `resolves` it goes
+    through; the payload of that transition gives the resolution's `id`
+    and `choice`. Only a transition that will be written first catches a
+    lagging feature.json up (step 8.1). Returns the new revision, or the
+    current one when `mutate` changes nothing or when `transition_id` was
+    already committed with this payload (a duplicate). An OSError is raised
+    as an IOFailure that says whether the history link was already made."""
     with _reporting("read_state") as progress:
         # A missing or untrusted run fails here, before the lock file is touched.
         load(key)
@@ -343,32 +343,36 @@ def _commit(
     if accepted is not None:
         if accepted["payload_digest"] == digest(payload):
             return Revision(revision, state, duplicate=True)
-        for cid, conflict in sorted(state["conflicts"].items()):
-            if (
-                conflict["transition_id"] == transition_id
-                and conflict["resolved_by"] is not None
-                and digest(_ruled_out(conflict)) == digest(payload)
-            ):
+        conflicts = state["conflicts"]
+        # One open conflict per transition: until a human resolves it, any
+        # other content, the same attempt included, is Blocked on it and
+        # recorded nowhere. So the content a conflict keeps as committed is
+        # always the one accepted when it was detected (D6).
+        for cid in unresolved(state):
+            if conflicts[cid]["transition_id"] == transition_id:
+                raise TransitionConflict([cid], _files(path))
+        for cid, conflict in sorted(conflicts.items()):
+            if conflict["transition_id"] == transition_id and digest(
+                _ruled_out(conflict)
+            ) == digest(payload):
                 raise TransitionRejected(cid)
         cid = conflict_id(transition_id, payload)
-        if cid not in state["conflicts"]:
-            # The same attempt again is the same conflict: no new revision.
-            conflict = {
-                "transition_id": transition_id,
-                "committed_revision": accepted["revision"],
-                "committed_payload": accepted["payload"],
-                "attempted_payload": payload,
-                "detected_at": clock.now(),
-                "resolved_by": None,
-                "choice": None,
-            }
-            _write(
-                path, revision, state, ahead, state["transitions"],
-                f"conflict:{cid}",
-                {"transition_id": transition_id, "attempted": digest(payload)},
-                derive({**state, "conflicts": {**state["conflicts"], cid: conflict}}),
-                progress,
-            )
+        conflict = {
+            "transition_id": transition_id,
+            "committed_revision": accepted["revision"],
+            "committed_payload": accepted["payload"],
+            "attempted_payload": payload,
+            "detected_at": clock.now(),
+            "resolved_by": None,
+            "choice": None,
+        }
+        _write(
+            path, revision, state, ahead, state["transitions"],
+            f"conflict:{cid}",
+            {"transition_id": transition_id, "attempted": digest(payload)},
+            derive({**state, "conflicts": {**conflicts, cid: conflict}}),
+            progress,
+        )
         raise TransitionConflict([cid], _files(path))
     blocking = unresolved(state)  # step 4
     if resolves is not None:

@@ -313,6 +313,58 @@ def test_attempted_cannot_apply_another_resolve_conflict(
     assert r.code == 0
 
 
+def test_one_open_conflict_per_decision_and_fresh_content_after_resolution(
+    cli: Cli, home: Path, started_run: StartedRun
+) -> None:
+    """Regression (review T4.2-01): while X has an open conflict, other content
+    for X records nothing, so a later conflict never keeps a stale payload."""
+    token = started_run(REPO, "F-1", "agent:implementer")
+    assert cli(*decide_args("revise", token, reason="a")).code == 0
+    blockers_before = cli("status", *RUN).get("result", "blockers")
+    assert cli(*decide_args("revise", token, reason="b")).code == 3
+    [kb] = conflict_ids(cli)
+    revision_before = cli("status", *RUN).get("revision")
+    before = snapshot(run_dir(home))
+
+    r = cli(*decide_args("revise", token, reason="c"))
+    assert r.code == 3
+    conflicts = cli("status", *RUN).get("result", "conflicts") or {}
+    assert len(conflicts) == 1, conflicts
+    assert set(conflicts) == {kb}
+    assert r.get("result", "error") == "transition_conflict"
+    assert r.get("result", "blockers") == [f"transition_conflict:{kb}"]
+    assert cli("status", *RUN).get("revision") == revision_before
+    assert snapshot(run_dir(home)) == before
+
+    assert cli(*resolve_args(token, kb, choice="attempted")).code == 0
+    assert cli("status", *RUN).get("result", "decisions", "d-x", "reason") == "b"
+
+    r = cli(*decide_args("revise", token, reason="c"))
+    assert r.code == 3
+    [kc] = conflict_ids(cli) - {kb}
+    assert r.get("result", "blockers") == [f"transition_conflict:{kc}"]
+    b, c = payload("revise", reason="b"), payload("revise", reason="c")
+    for where, conflict in {
+        "status": cli("status", *RUN).get("result", "conflicts", kc),
+        "state file": dig(read_state(home), "conflicts", kc),
+    }.items():
+        assert dig(conflict, "committed_payload") == b, where
+        assert dig(conflict, "attempted_payload") == c, where
+
+    assert cli(*resolve_args(token, kc, id="r-2")).code == 0
+    assert cli("status", *RUN).get("result", "decisions", "d-x", "reason") == "b"
+
+    for reason, cid in {"a": kb, "c": kc}.items():
+        before = snapshot(run_dir(home))
+        r = cli(*decide_args("revise", token, reason=reason))
+        assert r.code == 1, reason
+        assert r.get("result", "error") == f"transition_rejected:{cid}", reason
+        assert snapshot(run_dir(home)) == before, reason
+    st = cli("status", *RUN)
+    assert st.code == 0
+    assert st.get("result", "blockers") == blockers_before
+
+
 def test_every_transition_keeps_its_committed_payload(
     cli: Cli, home: Path, started_run: StartedRun
 ) -> None:

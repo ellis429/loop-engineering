@@ -266,7 +266,7 @@ Effort 的依據（D69）：
 | `test_budget_extension_only_records_a_human_ruling` | 目標 `active:60`、`rounds:+1`、`attempts:1.1:+1`、`ci_wait:<40 hex>` → 各 exit 0，各一筆帶 actor 與 reason 的紀錄；`repo/workflow.yaml` 的 bytes 不變；狀態檔除了 `decisions`、`transitions`、`revision` 以外都不變。會被拒的（exit 1，revision 不變）：agent actor；缺 reason；目標 `active:0`、`rounds:+2`、`wallclock:30`、`ci_wait:abc` | `result.error == "invalid_target"`（`rounds:+2`）：尚未核對目標，exit 0 | 成立 |
 | `test_adopt_delegate_and_later_kinds_are_unsupported` | 頂層 `adopt --repo R --feature F`、`delegate --to x` → exit 2，`result == {error: "unsupported", command: <名稱>}`。`decide` 的 `adopt`、`delegate`、`accept`、`return`、`resolve_read`、`resolve_operation`、`resolve_finding`、`nonsense`，帶與不帶 token → exit 2，`result == {error: "unsupported", kind: <值>}`（D2 的分工：頂層命令由 parser 認得、handler 回；kind 由 handler 回）。`$LOOPCTL_HOME` 的 bytes 不變（owner、核准、revision 都相同） | 頂層 `adopt` 的參數，精確比較 `result == {error: "unsupported", command: "adopt"}`：它的 handler 還是 1.1 的 stub，回 exit 0、`result == {}` | 成立 |
 
-- [ ] 4.2 同一 identity 內容不同時的衝突、非 owner 不能製造衝突，以及 `resolve_conflict` 的三種選擇；驗證：`uv run pytest tests/test_conflicts.py` 與完整的完成條件通過
+- [x] 4.2 同一 identity 內容不同時的衝突、非 owner 不能製造衝突，以及 `resolve_conflict` 的三種選擇；驗證：`uv run pytest tests/test_conflicts.py` 與完整的完成條件通過
 
 **模式與 effort**：預設模式（D72）；Implementer Claude Opus 5.5、Reviewer GPT-6 Astra；effort（Implementer／Reviewer）xhigh／xhigh。
 
