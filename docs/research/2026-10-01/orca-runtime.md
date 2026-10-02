@@ -141,7 +141,7 @@
 | 外部寫入登記（prepared → in_flight → succeeded／failed／unknown；讀回；unknown 交人） | 部分，只涵蓋 Orca 自己的 mutation。`--retry-request` 可自帶 UUID、可 replay、內容不同時拒絕；`request-show` 三態語意與 D45-04 §4 的 unknown 相近。receipt 會被清除；不涵蓋 `push`、`pr_ensure` | §E 實測 | registry 本身、GitHub 寫入、receipt 被清除後的判斷 |
 | `observe worker\|native`（有界讀取、讀取失敗預算、seq） | 部分。有 `worker-list`、`worker-show`、`worker-read`（`--source transcript\|terminal`、cursor），liveness 分 `live`／`unverifiable`／`exited`。沒有讀取預算 | §D | 讀取預算、seq、版本水位；pr／ci 觀察 |
 | Writer 結束判定（D04：result 已匯入且 native turn 完成，或 stop 經 process-info 確認） | 部分。`worker_done` 加上 Task settlement；`exited` liveness；`worker-stop` 有 stop verdict（capability `orchestration.worker-stop-verdict.v1`）。skill 同樣規定 absence 不授權任何動作 | §D；`orca status` capabilities | 判定規則與證據組合 |
-| Active 預算 4h、worker 時限 45 分、到期 stop | 否。只有啟動時限與三次失敗的 circuit breaker | §D | 全部 |
+| Active 預算 4h、worker 時限 45 分、到期 stop | 未找到（未驗證）。文件與 `--help` 只看到啟動時限（`--timeout-ms`）與三次失敗的 circuit breaker；是否有執行時限未查明 | §D | 全部 |
 | Preflight R1：兩個 profile（Claude Code＋`claude-opus-5-5` high；OpenCode＋`openai/gpt-6-astra` xhigh），native model 讀回、cwd 核對、權限負例、stop 確認 | 部分或否：<br>• Claude：可以 `--model`／`--effort`，有 `launch.effective`，但沒有 native 讀回；<br>• OpenCode：不收 `--model`，model 只能靠 OpenCode 設定，要求的 variant 無從表達；<br>• `worker-start` 沒有權限旗標 | §D | 整個 preflight 與 receipt；權限設定改由 runtime 自身設定承載 |
 | 使用者介入 | Orca 的 `ask` 是 worker 問 coordinator，不是問人 | §E | `next: human` 與 `decide` |
 
@@ -181,7 +181,7 @@
    - 沒有 digest；
    - 當時的 coordinator 不論是人或 agent，都能解決。
 4. Mailbox 是持久的 FIFO delivery，ack 前重複回傳；`--retry-request` 支援呼叫者自帶的 UUID，內容不同時拒絕。`ask` 需要 active 的 supervised Dispatch。
-5. `worker-start` 支援 claude、codex、opencode 等；`--model`／`--effort` 不適用於 opencode；沒有權限旗標；只有啟動時限。
+5. `worker-start` 支援 claude、codex、opencode 等；`--model`／`--effort` 不適用於 opencode；沒有權限旗標；文件與 `--help` 只看到啟動時限，執行時限未找到（未驗證）。
 6. Orca 是 MIT 授權，支援 Linux；headless 需要 Xvfb。本機六天四個版本，並開啟自動更新。
 
 **推論**（由事實推得，未驗證）

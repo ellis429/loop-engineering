@@ -17,7 +17,7 @@
 
 | Milestone | 目標日期 | 可以展示的成果 | 完成條件 | 交付能力 |
 | --- | --- | --- | --- | --- |
-| **M1：薄 controller 可用** | 未定（D75） | 一個真實 Feature 由 orchestrate 透過 loopctl，從交接包走到 PR Pass 或 Blocked。過程包含派工、三 gates、finding → fix → re-review，中途中斷一次後接續；狀態與證據都可查。 | 1. 四個 Feature 都已接受、merge 並 archive。<br>2. 「M1 驗收」三項都完成（見下）。 | 人工決策與可追溯狀態；派工與結果回收；三 gates；finding 迴圈與 PR Pass |
+| **M1：薄 controller 可用** | 未定（D75） | 一個真實 Feature 由 orchestrate 透過 loopctl，從交接包走到 PR Pass 或 Blocked。過程包含派工、三 gates、finding → fix → re-review，中途中斷一次後接續；狀態與證據都可查。 | 1. M1 的全部 Feature（1、2、2b、3、4、5，D77）都已接受、merge 並 archive。<br>2. 「M1 驗收」四項都完成（見下）。 | 人工決策與可追溯狀態；派工與結果回收；三 gates；finding 迴圈與 PR Pass |
 | **M2：example 與延後能力**（暫不切） | M1 完成後定 | cross-node-file-transfer 由 orchestrate＋loopctl 從 Project 跑到多個 Feature（D43、D56） | M1 完成後定 | 見下方「延後到 M2」 |
 
 目標日期依 D75 暫不設：Feature 1 接受後，依它的實際時間再定，屆時記入決策紀錄。原先的估法（約 7 個工作日加一週緩衝）見[重切研究](research/2026-09-30/controller-recut.md#時間估計的依據)。
@@ -37,12 +37,12 @@
 
 | # | Feature | 狀態 | 看得到的行為 | 依賴 | 相關需求輸入 |
 | --- | --- | --- | --- | --- | --- |
-| 2b | 只有 OpenCode 的環境也能派工 | 暫定 | 在只有 OpenCode 的環境（同樣有 Orca），Orca 把 Implementer 與 Reviewer 都開成 OpenCode worker；兩者以 OpenCode 設定檔指定不同的實際模型（D52）；兩個 profile 各跑 R1，effort 讀不回時記為未驗證。 | 2 | DUR-09（AC-D20、D24，原排 M2） |
+| 2b | 只有 OpenCode 的環境也能派工 | 暫定 | 在只有 OpenCode 的環境（同樣有 Orca），Orca 把 Implementer 與 Reviewer 都開成 OpenCode worker；兩者以 OpenCode 設定檔指定不同的實際模型（D52）；兩個 profile 各跑 R1，effort 讀不回時記為未驗證。 | 2 | DUR-09（AC-D24，原排 M2；AC-D20 要求環境沒有 Orca，仍在 M2） |
 | 5 | 本日目標：互不依賴的多個 Feature 同時跑到 PR Pass | 暫定 | 人在的時候寫一份本日目標（幾個互不依賴的 Feature），協調者先把每個 Feature 的計畫寫好、審到 clean，人一次走過並確認開工；之後無人看守，各 Feature 同時（設上限）跑到 PR Pass，預算、逾時、卡住自動停下交人。merge 一律由人；merge 一個後，其他 PR 自動更新 base 並重跑檢查，衝突才停。不做 stacked。 | 4（與 2b） | ORC-01、DUR-02、DUR-08，以及 D11、D27 |
 
 **Runtime（D76）**：Feature 2 起，派工從 Herdr 改為 Orca。Implementer（Claude＋`claude-opus-5-5`）與 Reviewer（Codex＋`gpt-6-astra` xhigh）分別派進固定名稱的 Orca 工作區 `engineer`、`reviewer`；表中寫 Herdr 的地方照 D76 讀。Orca 版本改變時先重跑 R1；Orca 回 `consumer_fenced` 時停下交人；協調權與人工決策仍在 loopctl。engineer 工作區的 clear 時機在 Feature 2 實驗。
 
-**依賴**：四個 Feature 是一條鏈，依 D27 依序開工：上游接受並 merge 後，下游才開始實作。等上游時，可以先準備下游的 spec。
+**依賴**：上表四個 Feature 是一條鏈，依 D27 依序開工；2b、5 的位置見「D77 新增的 Feature」：上游接受並 merge 後，下游才開始實作。等上游時，可以先準備下游的 spec。
 
 **跨 Feature 的 AC**：29 條 AC 的驗證跨兩個以上的階段，清單與各自的完成點見[重切研究](research/2026-09-30/controller-recut.md#跨階段的-ac)。
 
@@ -60,7 +60,7 @@
 
 ## M1 驗收
 
-四個 Feature 都 merge 後進行。它不是 Feature，而是 M1 的完成條件；紀錄放在 `validation.md` §3–§5 指定的位置，用一個 docs PR 交付。
+M1 的全部 Feature 都 merge 後進行。它不是 Feature，而是 M1 的完成條件；紀錄放在 `validation.md` §3–§5 指定的位置，用一個 docs PR 交付。
 
 | 項目 | 內容 | AC | Owner | 審查 |
 | --- | --- | --- | --- | --- |
@@ -71,12 +71,12 @@
 
 ## 延後到 M2
 
-- **整條延後的 6 條 AC**（D45-04 tasks「延後」一節）：
+- **整條延後的 5 條 AC**（D45-04 tasks「延後」一節；AC-D24 依 D77 提前到 M1 的 Feature 2b）：
   - adopt（O08、O09）；
   - Project Lead 委派（O18）：依 D55 縮為「授權啟動 run」的紀錄；
   - Retro（O14）：依 D55 改由 project-lead skill 承接，不做 controller 的 Retro op；
-  - OpenCode-only 部署（D20）；
-  - 同一個 OpenCode 承載兩個角色（D24）。
+  - OpenCode-only 部署（D20，環境沒有 Orca）；
+  - OpenCode-only 部署指的是沒有 Orca 的環境（AC-D20）；有 Orca 的 OpenCode 環境由 M1 的 Feature 2b 承接。
 - **M1 只成立一部分的 AC**：
   - O23：M1 在 scope 變更時停下整個 run；只停受影響的工作、其餘繼續，延到 M2。
   - G15：M1 只驗整合 SHA 無法映射時轉 unknown；映射能力延到 M2。
@@ -107,6 +107,8 @@
    - #8 隨重做失效：新的 commit 各自綠燈。
 
 ## 已確認（D75）
+
+以下是 2026-09-30 確認時的內容；之後 D76（runtime 改為 Orca）與 D77（新增 Feature 2b、5 與本日目標實跑）修訂了 Feature 清單與 M1 完成條件，以上方的表格為準。
 
 1. **切法與順序**：四個 Feature，照 1 → 2 → 3 → 4 依序做，四個都 merge 後做 M1 驗收。
 2. **M1 目標日期**：暫不設；Feature 1 接受後依實際速度定。
