@@ -83,6 +83,16 @@ A model different from the plan's author reviews the plan in a fresh session, re
 
 Show the start approver a one-page summary: tasks in order with what each delivers, its blocking edges and its effort, and whether the granularity looks right (too coarse or too fine); what each Red proves, risks and limits, the plan review result, and any decision they must make. When the Project Lead is also the Engineer, this approval also covers the spec (D59).
 
+Then walk the approver through the plan before asking for approval; the summary alone is not enough to judge it. One part at a time, in the approver's language: open each part with a few plain lines (what it does, what could go wrong, anything they must decide), and give the details (tests, line links to `design.md` and `tasks.md`) only when they ask:
+
+1. **The cut:** the task table, blocking edges, effort, and the task most likely to overrun one session.
+2. **The tests of the riskiest tasks** (xhigh, or the ones covering the most acceptance IDs): for each test, the behaviour it asserts, what its Red proves, and the expected Green, so the approver can tell whether the code will do what they asked for.
+3. **Acceptance mapping:** each acceptance ID with the tests that prove it, and anything left to a later feature or to manual acceptance.
+4. **Decisions the plan made on its own:** open items the handoff left to the Implementer, and each place the design departs from the high-level design, with the reason.
+5. **Risks, limits and accepted risks**, including what the tests cannot prove.
+
+After each part, answer questions and note requested changes. Ask for approval only when the approver says they have seen enough; the question offers "approve", "change only effort", "change the plan" and "walk through more first". An approver may skip the walkthrough; record that they did.
+
 If the approver changes only a task's effort, update `tasks.md` and commit before recording. Any other change (tests, acceptance mapping, owned paths, tasks, design) goes back through step 4 until the review is clean, and the approval is asked again. When approved, record it as one ticket comment: who, when, their words, and the plan's commit, naming any approval it supersedes (D60); set the ticket state to `開發中` and 下一步 to implementation (D67). Every tracker write needs authorisation. Implementation continues with `plan-to-code`.
 
 ## Boundaries
