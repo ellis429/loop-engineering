@@ -33,7 +33,7 @@
 | --- | --- | --- |
 | `pyproject.toml`、`uv.lock` | 1.1 建立 → 2.1 加 dev 依賴 pyyaml | 兩者在同一個 commit 更新；全新 clone 的 `uv sync --frozen` 仍成功 |
 | `tests/conftest.py` | 1.1 建立（政策、`home`、`repo`、`cli`、`cli_proc`、`cli_proc_many`）→ 3.1 加 `started_run` | 只新增 fixture，不改既有 fixture 的行為 |
-| `src/loopctl/cli.py` | 1.1 建立（parser、`HANDLERS` 與全部 stub）→ 3.1、4.1、5.1 依序把自己命令的 stub 換成實作 → 6.1 在 `status` 加 policy 狀態 | 不改參數與 envelope；`tests/test_cli.py` 仍通過 |
+| `src/loopctl/cli.py` | 1.1 建立（parser、`HANDLERS` 與全部 stub）→ 3.1、4.1 依序把自己命令的 stub 換成實作 → 4.2 把衝突對應到 exit 3、`transition_rejected` 與 `unknown_target` 對應到 exit 1，`decide resolve_conflict` 以 `resolves=<cid>` 提交，`status`／`next` 在有未解衝突時回 exit 3 → 5.1 換掉 `register` 的 stub → 6.1 在 `status` 加 policy 狀態 | 不改參數與 envelope；`tests/test_cli.py` 仍通過 |
 | `src/loopctl/store.py` | 3.1 建立（授權優先、讀取不寫檔、物件引用、fsync）→ 4.1 加重送冪等與前移 → 4.2 加衝突、`resolves` 與 `TransitionRejected` | 冪等與衝突只插在授權之後（D4 第 3、4 步），前移只在第 8 步開頭；不改讀取時的不可信原因與寫入順序 |
 | `src/loopctl/next.py` | 3.1 → 4.2（衝突）→ 5.1（plan 阻擋、`dispatch`）→ 6.1（`plan.superseded_by` 的衍生與 `plan_superseded`） | 只插入自己的判斷，保持 D7 的順序 |
 | `src/loopctl/state.py` | 3.1 → 4.1（`decisions`）→ 4.2（`conflicts`）→ 5.1（plan、binding、核准）→ 6.1（policy） | 只新增視圖欄位 |
@@ -278,6 +278,7 @@ Effort 的依據（D69）：
   - D10 表中各 kind 的清除規則由 5.1（`approve_plan`）與 6.1（`scope_change`、`policy_change`）加上。
 - `next.py`：衝突的 blocker。
 - `state.py`：`conflicts` 視圖。
+- `cli.py`：衝突對應到 exit 3（`result == {error: "transition_conflict", blockers: [...], files: [...]}`），`TransitionRejected`、`unknown_target` 對應到 exit 1；`decide resolve_conflict` 以 `resolves=<cid>` 提交；`status`、`next` 在有未解衝突時回 exit 3（D2、D6）。
 
 **擁有路徑**：上列各檔，以及 `tests/test_conflicts.py`。
 

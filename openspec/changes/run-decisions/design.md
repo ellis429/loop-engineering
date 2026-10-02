@@ -116,7 +116,7 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
 
 | 欄位 | 內容 | 寫入者 |
 | --- | --- | --- |
-| `schema_version`、`revision`、`transitions` | `1`；目前 revision；`transition_id → {revision, payload_digest}` | store |
+| `schema_version`、`revision`、`transitions` | `1`；目前 revision；`transition_id → {revision, payload_digest, payload}`（保存已提交的 payload，衝突時才能記下兩份完整內容，D6） | store |
 | `repo`、`feature`、`issue` | `init` 的參數 | `init` |
 | `coordinator` | `{actor, at}`：直接交付時接下 feature 的協調者 identity（AC-O01）。只是紀錄，不授予協調權，也不授予任何決策權 | `init` |
 | `owner` | `null` 或 `{actor, token_digest, claimed_at}`：協調權，靠 token 證明 | `claim` |
@@ -239,7 +239,7 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
   - 解除後，重送接受的內容 → `duplicate`；`abandon` 時回傳的紀錄顯示 `voided`。
   - 重送被否決的內容 → exit 1 `transition_rejected:<cid>`，不再 Blocked。
   - 送第三種內容 → 新的衝突。
-  - 被衝突的 decision 本身是 `resolve_conflict` 時，只能選 `original`（`choice_not_allowed`），因為撤銷一次解除沒有定義。
+  - 被衝突的 decision 本身是 `resolve_conflict` 時，只能選 `original`（`choice_not_allowed`），因為撤銷一次解除沒有定義。嘗試的內容 A 本身是 `resolve_conflict` 時也不能選 `attempted`（`choice_not_allowed`）：那等於在解除的同時再套用另一次解除。
   - `cid` 不存在或已解除 → exit 1 `unknown_target`，即使還有其他未解衝突也一樣（D4 第 4 步，先於一般的 Blocked 檢查）。
 - 為什麼不沿用 `revise`：
   - `revise` 在 Feature 3、4 會有效果（整合觸發、開修正批次）；用它解除衝突，會在解除時意外觸發那些效果；
