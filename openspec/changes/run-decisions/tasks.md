@@ -272,7 +272,7 @@ Effort 的依據（D69）：
 
 **交付**：
 
-- `store.py`：D4 第 3 步的其餘兩支（`TransitionRejected`、記下衝突）、第 4 步（Blocked 的優先序：`resolves` 有值但不是未解衝突 → `unknown_target`；有效則繼續；沒有 `resolves` 且有未解衝突 → exit 3）、`resolves`、D6 的衝突紀錄。
+- `store.py`：每個 transitions 項目都保存已提交的 payload，包括 `create`（`init`）寫的第一筆（D3）；D4 第 3 步的其餘兩支（`TransitionRejected`、記下衝突）、第 4 步（Blocked 的優先序：`resolves` 有值但不是未解衝突 → `unknown_target`；有效則繼續；沒有 `resolves` 且有未解衝突 → exit 3）、`resolves`、D6 的衝突紀錄。
 - `decisions.py`：`resolve_conflict` 的三種選擇（D6）。
   - 本 task 的撤銷只標 `voided`，因為只記錄的 kind 沒有效果可清；
   - D10 表中各 kind 的清除規則由 5.1（`approve_plan`）與 6.1（`scope_change`、`policy_change`）加上。
@@ -301,6 +301,7 @@ Effort 的依據（D69）：
 | `test_non_owners_cannot_create_conflicts` | 參數：(a) 以錯誤的 token 送同一個 id、不同內容；(b) 不帶 token 同上；(c) owner 的 decide 以 prelude 在 `os.replace` 中斷之後，非 owner 送同一個 id、不同內容。全部 exit 4 `not_owner`；run 目錄的 bytes、revision 與 `conflicts` 都不變 | 突變：暫時把 `authorize` 移到 D4 第 3 步之後 → (a) 得到 exit 3，失敗在 `code == 4` | 成立 |
 | `test_a_human_resolve_conflict_can_keep_the_original` | 接續衝突：人工 `resolve_conflict --target <cid> --choice original` → exit 0；`conflicts[cid]` 的 `resolved_by` 等於該 decision 的 id，`choice == "original"`，兩份 payload 仍在；`decisions[X]` 是 reason `a`、`in_effect`；`status` exit 0，next 回到衝突前的值。之後：重送 `a` → duplicate；重送 `b` → exit 1 `transition_rejected:<cid>`，不再 Blocked；第三種內容 → 新的衝突（exit 3）。被拒的情況，都不寫任何檔：agent 送出 → `actor_not_human`，仍 Blocked；衝突 K 還沒解時，以不存在的 `cid` 解除 → exit 1 `unknown_target`（不是 exit 3），K 仍未解；`--choice maybe` → `invalid_choice`；第三種內容造成新衝突 K2 之後，再解除已解除的 K → exit 1 `unknown_target`，K2 仍未解 | `code == 0`：所有寫入都被擋，exit 3 | 成立 |
 | `test_resolve_conflict_can_take_the_attempted_content_or_abandon_it` | 參數（kind `revise`）：<br>`attempted` → `decisions[X].reason == "b"`，`replaces[0]` 是 reason `a` 的紀錄且帶 `voided_by`；重送 `b` → duplicate；重送 `a` → `transition_rejected:<cid>`。<br>`abandon` → `decisions[X]` 保留 reason `a`，但 `status == "voided"` 並帶 `voided_by`；重送 `a` → duplicate，回傳的紀錄是 `voided`；重送 `b` → `transition_rejected:<cid>`。<br>另外：被衝突的 decision 本身是 `resolve_conflict` 時，`attempted`／`abandon` → exit 1 `choice_not_allowed`，`original` 可以 | `decisions[X].reason == "b"`（`attempted` 參數）：前一個測試的實作把每種選擇都當 `original` | 成立 |
+| `test_attempted_cannot_apply_another_resolve_conflict` | run 有兩個未解衝突：K1（被衝突的 C 是 `revise`）與 K2。以同一個 id 重送一筆 `resolve_conflict --target K2` 製造 K1，使 K1 的嘗試內容 A 是 `resolve_conflict`。對 K1 選 `attempted` → exit 1 `choice_not_allowed`，revision、`decisions`、`conflicts` 與檔案都不變；改選 `original` 或 `abandon` → exit 0 | `code == 1`：突變——暫時拿掉「A 是 `resolve_conflict` 時拒絕 attempted」，保留「C 是 `resolve_conflict` 時拒絕」，選 attempted 會照常生效（exit 0） | 成立 |
 
 ## 5. 登記原生文件與開工確認
 
