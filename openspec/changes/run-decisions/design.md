@@ -223,6 +223,7 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
 - **記錄**：第一次發現某個衝突時（已通過授權），store 用 transition `conflict:<cid>` 提交一個新 revision，寫入 `conflicts[cid]`：
   - 內容是 `transition_id`、已提交的 revision、C 與 A 兩份完整 payload、偵測時間；
   - `cid` 取 `sha256(transition_id + A 的 digest)` 的前 16 個 hex，所以同樣的嘗試再來一次會對到同一個衝突，不產生新 revision。
+  - **同一個 transition identity 同時最多一個未解衝突**：已有未解衝突 K 時，對同一 identity 送來的任何不同內容都回 exit 3、指向 K，不記新衝突、不寫。所以每個衝突記下的 C 都是當下接受的內容，不會過時。
 - **未解期間**：
   - `status`、`next` 回 exit 3，blockers 為 `transition_conflict:<cid>`，`decision_kinds` 為 `[resolve_conflict]`；
   - 其他寫入一律 exit 3，不寫；只有指向未解衝突的 `resolve_conflict` 能通過（D4 第 4 步）；
@@ -237,8 +238,8 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
 
   - 兩份內容都一直保留在 `conflicts[cid]`。
   - 解除後，重送接受的內容 → `duplicate`；`abandon` 時回傳的紀錄顯示 `voided`。
-  - 重送被否決的內容 → exit 1 `transition_rejected:<cid>`，不再 Blocked。
-  - 送第三種內容 → 新的衝突。
+  - 重送曾被這個 identity 的任何一次解除否決的內容 → exit 1 `transition_rejected:<否決它的 cid>`，不再 Blocked。
+  - 送其他內容 → 新的衝突，C 是解除後當下接受的內容。
   - 被衝突的 decision 本身是 `resolve_conflict` 時，只能選 `original`（`choice_not_allowed`），因為撤銷一次解除沒有定義。嘗試的內容 A 本身是 `resolve_conflict` 時也不能選 `attempted`（`choice_not_allowed`）：那等於在解除的同時再套用另一次解除。
   - `cid` 不存在或已解除 → exit 1 `unknown_target`，即使還有其他未解衝突也一樣（D4 第 4 步，先於一般的 Blocked 檢查）。
 - 為什麼不沿用 `revise`：
