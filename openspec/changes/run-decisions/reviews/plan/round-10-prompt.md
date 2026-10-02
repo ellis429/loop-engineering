@@ -1,0 +1,1 @@
+P6-01、P6-02 已修，HEAD 是 `7537cc9`（`git diff 7b6721d HEAD`）：committed 分別以 commit 的 history link、create 的 rename 為界；讀取讀回新版不修復；claim 已提交後再 claim 回 already_claimed，token 未交付屬 #34；測試加 init 的 (c)(d) 兩個參數。請確認已解決、沒有其他問題。第一行 `verdict: clean` 或 `verdict: changes_requested`。

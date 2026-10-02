@@ -1,0 +1,5 @@
+schema_version: 1
+repo: yschiang/loop-engineering
+g3:
+  required_checks:
+    - {name: unit-linux, app: github-actions, workflow: .github/workflows/loopctl-ci.yml}

@@ -1,0 +1,1 @@
+P5-01 已修，HEAD 是 `615ab12`（`git diff e899200 HEAD`，只改 design.md 的人工處理段）：只往編號最大且完整的 history 修回 feature.json，絕不回退、不刪 history；最新 history 有問題或無法判斷時保留現況交 Project Lead。請確認 P5-01 已解決、沒有其他問題。第一行 `verdict: clean` 或 `verdict: changes_requested`。

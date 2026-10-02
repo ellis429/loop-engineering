@@ -1,0 +1,1 @@
+P7-01、P7-02 已修，HEAD 是 `bc1e8e1`（`git diff 45beb42 HEAD`）：4.2 加具名測試 `test_attempted_cannot_apply_another_resolve_conflict`（Red 以拿掉 A 條件的突變證明）；store 的交付明列 create 的第一筆也保存 payload。請確認已解決、沒有其他問題。第一行 `verdict: clean` 或 `verdict: changes_requested`。

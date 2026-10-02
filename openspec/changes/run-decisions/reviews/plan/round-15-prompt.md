@@ -1,0 +1,1 @@
+P9-01 已修，HEAD 是 `5a0a92f`（`git diff 9bab1ca HEAD`，tasks.md 一句）：attempt 1～3 已做；依 Project Lead 裁定 attempt 1（計畫缺口、未 commit）不計，接下來 attempt 4 是最後一次。請確認已解決、沒有其他變動。第一行 `verdict: clean` 或 `verdict: changes_requested`。

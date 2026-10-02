@@ -1,0 +1,3 @@
+計畫修訂確認（同一個計畫審查 session，唯讀）。開工後 task 3.1 的逐 task 審查要求改設計，Project Lead 決定修 T3.1-01、把 T3.1-02 接受為風險（#36）。HEAD 是 `7b6721d`；請看 `git diff 658ac7b 7b6721d -- openspec/changes/run-decisions/design.md openspec/changes/run-decisions/tasks.md`（其間的 tasks.md 變動是 1.1、2.1 實作時勾選與兩個回歸測試列，以及 3.1 的勾選）。逐 task 審查原文：/Users/johnson.chiang/workspace/loop-engineering-run-decisions/.delivery/run-decisions/tasks/3.1/review-1/result.json。
+
+請確認：D2 的 exit 6 `io_error` 與 `committed` 的判定和 D4 的提交邊界一致；D4 的 `lock_missing` 與「讀取、被拒的命令不寫檔」一致；兩個新測試的 Red 能失敗在所寫的斷言上；#36 的風險描述正確；沒有影響其他 task 的介面。第一行 `verdict: clean` 或 `verdict: changes_requested`，有問題照前面的 finding 格式（P6-01……）。
