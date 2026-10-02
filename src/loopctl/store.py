@@ -344,6 +344,15 @@ def _commit(
         if accepted["payload_digest"] == digest(payload):
             return Revision(revision, state, duplicate=True)
         conflicts = state["conflicts"]
+        # Content a resolution ruled out stays refused, even while a later
+        # conflict on the same transition is open.
+        for cid, conflict in sorted(conflicts.items()):
+            if (
+                conflict["transition_id"] == transition_id
+                and conflict["resolved_by"] is not None
+                and digest(_ruled_out(conflict)) == digest(payload)
+            ):
+                raise TransitionRejected(cid)
         # One open conflict per transition: until a human resolves it, any
         # other content, the same attempt included, is Blocked on it and
         # recorded nowhere. So the content a conflict keeps as committed is
@@ -351,11 +360,6 @@ def _commit(
         for cid in unresolved(state):
             if conflicts[cid]["transition_id"] == transition_id:
                 raise TransitionConflict([cid], _files(path))
-        for cid, conflict in sorted(conflicts.items()):
-            if conflict["transition_id"] == transition_id and digest(
-                _ruled_out(conflict)
-            ) == digest(payload):
-                raise TransitionRejected(cid)
         cid = conflict_id(transition_id, payload)
         conflict = {
             "transition_id": transition_id,

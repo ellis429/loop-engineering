@@ -382,3 +382,32 @@ def test_every_transition_keeps_its_committed_payload(
     assert dig(transitions, "decide:d-x", "payload") == payload("revise")
     [claim] = [entry for tid, entry in transitions.items() if tid.startswith("claim:")]
     assert dig(claim, "payload") == {"actor": "agent:implementer"}
+
+
+@pytest.mark.parametrize(
+    ("choice", "ruled_out"), [("attempted", "a"), ("original", "b")], ids=["a", "b"]
+)
+def test_a_rejected_content_stays_rejected_while_a_later_conflict_is_open(
+    cli: Cli, home: Path, started_run: StartedRun, choice: str, ruled_out: str
+) -> None:
+    """Regression (review T4.2-03): D4 step 3 refuses content an earlier
+    resolution ruled out before it looks for the open conflict on the id."""
+    token = started_run(REPO, "F-1", "agent:implementer")
+    assert cli(*decide_args("revise", token, reason="a")).code == 0
+    assert cli(*decide_args("revise", token, reason="b")).code == 3
+    [kb] = conflict_ids(cli)
+    assert cli(*resolve_args(token, kb, choice=choice)).code == 0
+    assert cli(*decide_args("revise", token, reason="c")).code == 3
+    [kc] = conflict_ids(cli) - {kb}
+    status_before = cli("status", *RUN)
+    before = snapshot(run_dir(home))
+
+    r = cli(*decide_args("revise", token, reason=ruled_out))
+    assert r.code == 1
+    assert r.get("result") == {"error": f"transition_rejected:{kb}"}
+    assert snapshot(run_dir(home)) == before
+    st = cli("status", *RUN)
+    assert st.get("revision") == status_before.get("revision")
+    assert st.get("result", "conflicts") == status_before.get("result", "conflicts")
+    assert st.get("result", "conflicts", kc, "resolved_by") is None
+    assert st.code == 3
