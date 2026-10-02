@@ -411,3 +411,30 @@ def test_a_rejected_content_stays_rejected_while_a_later_conflict_is_open(
     assert st.get("result", "conflicts") == status_before.get("result", "conflicts")
     assert st.get("result", "conflicts", kc, "resolved_by") is None
     assert st.code == 3
+
+
+def test_attempted_is_refused_when_the_attempted_content_fails_its_checks(
+    cli: Cli, home: Path, started_run: StartedRun
+) -> None:
+    """DG-03: the target check is the kind's own, after the conflict (D2), so
+    an invalid A is recorded as a conflict, and only `attempted` is refused."""
+    token = started_run(REPO, "F-1", "agent:implementer")
+    assert cli(*decide_args("budget_extension", token, target="active:60")).code == 0
+    assert cli(*decide_args("budget_extension", token, target="rounds:+2")).code == 3
+    [k] = conflict_ids(cli)
+    status_before = cli("status", *RUN)
+    before = snapshot(run_dir(home))
+
+    r = cli(*resolve_args(token, k, choice="attempted"))
+    assert r.code == 1
+    assert r.get("result") == {"error": "invalid_target"}
+    assert snapshot(run_dir(home)) == before
+    st = cli("status", *RUN)
+    assert st.get("revision") == status_before.get("revision")
+    for field in ("decisions", "conflicts"):
+        assert st.get("result", field) == status_before.get("result", field), field
+    assert st.get("result", "conflicts", k, "resolved_by") is None
+    assert st.code == 3
+
+    r = cli(*resolve_args(token, k, choice="original"))
+    assert r.code == 0
