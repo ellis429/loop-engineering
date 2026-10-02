@@ -155,6 +155,7 @@ $LOOPCTL_HOME/                        預設 ~/.loopctl
 | history 紀錄的 `state_digest` 不等於 `feature.json` 的 digest，或紀錄本身的 state 與它的 digest 不符 | `manual_edit` |
 | 下一版的 history 紀錄存在，而且它的 `prev_digest` 等於 `feature.json` 的 digest | 回傳那一版（已提交、但現行檔還沒替換）。讀取不寫檔 |
 | 下一版的 history 紀錄存在，但 `prev_digest` 對不上 | `history_fork:<rev>` |
+| 有比下一版更新的 history 紀錄（編號大於 `feature.json` 的 revision＋1） | `history_ahead:<最大編號>`。正常提交讓 history 最多領先一版（寫入前先前移，第 8.1 步）；領先更多表示 `feature.json` 被換成較舊的版本，不信任、不回退（G2-01） |
 
 `files` 是 run 目錄下現存檔案的相對路徑，排序後輸出。
 
