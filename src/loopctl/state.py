@@ -74,6 +74,7 @@ def view(revision: int, state: State) -> dict[str, Any]:
         "gates": state["gates"],
         "blockers": state["blockers"],
         "decisions": state["decisions"],
+        "conflicts": state["conflicts"],
     }
 
 

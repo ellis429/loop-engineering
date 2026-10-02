@@ -19,7 +19,7 @@ from pathlib import Path
 from typing import Any
 
 from loopctl import clock
-from loopctl.next import derive
+from loopctl.next import derive, unresolved
 
 State = dict[str, Any]
 Key = tuple[str, str]
@@ -71,6 +71,29 @@ class UntrustedState(Exception):
         super().__init__(reason)
         self.reason = reason
         self.files = files
+
+
+class TransitionConflict(Exception):
+    """Conflicts no human has resolved yet block the run: exit 3 with the
+    conflicts and the files that exist (D6)."""
+
+    def __init__(self, conflicts: list[str], files: list[str]) -> None:
+        super().__init__(", ".join(conflicts))
+        self.conflicts = conflicts
+        self.files = files
+
+
+class TransitionRejected(Exception):
+    """The content that the resolved conflict `cid` ruled out for its
+    transition: exit 1, no longer Blocked (D6)."""
+
+    def __init__(self, cid: str) -> None:
+        super().__init__(cid)
+        self.cid = cid
+
+
+class UnknownTarget(Exception):
+    """`resolves` names no unresolved conflict: exit 1 (D4 step 4)."""
 
 
 class ObjectError(Exception):
@@ -211,21 +234,18 @@ def create(key: Key, transition_id: str, payload: Any, state: State) -> int:
     The rename is the commit point: an OSError before it leaves no run, one
     after it leaves revision 1 in place."""
     path = run_dir(key)
-    payload_digest = digest(payload)
     state = derive(
         {
             **state,
             "schema_version": SCHEMA_VERSION,
             "revision": 1,
-            "transitions": {
-                transition_id: {"revision": 1, "payload_digest": payload_digest}
-            },
+            "transitions": {transition_id: _accepted(1, payload)},
         }
     )
     record = {
         "revision": 1,
         "transition_id": transition_id,
-        "payload_digest": payload_digest,
+        "payload_digest": digest(payload),
         "prev_digest": None,
         "state_digest": digest(state),
         "committed_at": clock.now(),
@@ -267,16 +287,20 @@ def commit(
     mutate: Callable[[State], State],
     *,
     authorize: Callable[[State], None],
+    resolves: str | None = None,
 ) -> Revision:
     """Commit `mutate` of the current state as the next revision (D4).
 
     `authorize` comes before any other check, and every check writes
-    nothing when it fails. Only a transition that will be written first
-    catches a lagging feature.json up (step 8.1). Returns the new revision,
-    or the current one when `mutate` changes nothing or when
-    `transition_id` was already committed with this payload (a duplicate).
-    An OSError is raised as an IOFailure that says whether the history link
-    was already made."""
+    nothing when it fails, except that the first different payload of a
+    committed transition is recorded as a conflict (D6). While a conflict is
+    unresolved, only the transition that `resolves` it goes through; the
+    payload of that transition gives the resolution's `id` and `choice`.
+    Only a transition that will be written first catches a lagging
+    feature.json up (step 8.1). Returns the new revision, or the current
+    one when `mutate` changes nothing or when `transition_id` was already
+    committed with this payload (a duplicate). An OSError is raised as an
+    IOFailure that says whether the history link was already made."""
     with _reporting("read_state") as progress:
         # A missing or untrusted run fails here, before the lock file is touched.
         load(key)
@@ -284,7 +308,7 @@ def commit(
         with _locked(run_dir(key)):
             return _commit(
                 key, expected_revision, transition_id, payload, mutate, authorize,
-                progress,
+                resolves, progress,
             )
 
 
@@ -309,20 +333,111 @@ def _commit(
     payload: Any,
     mutate: Callable[[State], State],
     authorize: Callable[[State], None],
+    resolves: str | None,
     progress: _Progress,
 ) -> Revision:
     path = run_dir(key)
     revision, state, ahead = _read(key)  # step 1
     authorize(state)  # step 2
-    payload_digest = digest(payload)
     accepted = state["transitions"].get(transition_id)  # step 3
-    if accepted is not None and accepted["payload_digest"] == payload_digest:
-        return Revision(revision, state, duplicate=True)
+    if accepted is not None:
+        if accepted["payload_digest"] == digest(payload):
+            return Revision(revision, state, duplicate=True)
+        for cid, conflict in sorted(state["conflicts"].items()):
+            if (
+                conflict["transition_id"] == transition_id
+                and conflict["resolved_by"] is not None
+                and digest(_ruled_out(conflict)) == digest(payload)
+            ):
+                raise TransitionRejected(cid)
+        cid = conflict_id(transition_id, payload)
+        if cid not in state["conflicts"]:
+            # The same attempt again is the same conflict: no new revision.
+            conflict = {
+                "transition_id": transition_id,
+                "committed_revision": accepted["revision"],
+                "committed_payload": accepted["payload"],
+                "attempted_payload": payload,
+                "detected_at": clock.now(),
+                "resolved_by": None,
+                "choice": None,
+            }
+            _write(
+                path, revision, state, ahead, state["transitions"],
+                f"conflict:{cid}",
+                {"transition_id": transition_id, "attempted": digest(payload)},
+                derive({**state, "conflicts": {**state["conflicts"], cid: conflict}}),
+                progress,
+            )
+        raise TransitionConflict([cid], _files(path))
+    blocking = unresolved(state)  # step 4
+    if resolves is not None:
+        if resolves not in blocking:
+            raise UnknownTarget()
+    elif blocking:
+        raise TransitionConflict(blocking, _files(path))
     if revision != expected_revision:  # step 5
         raise RevisionConflict()
-    new = derive(mutate(copy.deepcopy(state)))  # step 6
+    new = mutate(copy.deepcopy(state))  # step 6
+    transitions = state["transitions"]
+    if resolves is not None:
+        # The store's record of the resolution, before derive sees it.
+        conflict = {
+            **new["conflicts"][resolves],
+            "resolved_by": payload["id"],
+            "choice": payload["choice"],
+        }
+        new["conflicts"] = {**new["conflicts"], resolves: conflict}
+        if conflict["choice"] == "attempted":
+            # From now on the identity accepts the attempted content.
+            transitions = {
+                **transitions,
+                conflict["transition_id"]: _accepted(
+                    revision + 1, conflict["attempted_payload"]
+                ),
+            }
+    new = derive(new)
     if new == state:
         return Revision(revision, state)
+    new = _write(
+        path, revision, state, ahead, transitions, transition_id, payload, new,
+        progress,
+    )
+    return Revision(revision + 1, new)
+
+
+def conflict_id(transition_id: str, payload: Any) -> str:
+    """The conflict of attempting `payload` on `transition_id` (D6)."""
+    text = transition_id + digest(payload)
+    return hashlib.sha256(text.encode()).hexdigest()[:16]
+
+
+def _ruled_out(conflict: State) -> Any:
+    """The content a resolved conflict ruled out for its transition (D6)."""
+    if conflict["choice"] == "attempted":
+        return conflict["committed_payload"]
+    return conflict["attempted_payload"]
+
+
+def _accepted(revision: int, payload: Any) -> State:
+    """What `transitions` keeps of the content a transition accepts; the
+    payload itself too, so a later conflict can show it (D6)."""
+    return {"revision": revision, "payload_digest": digest(payload), "payload": payload}
+
+
+def _write(
+    path: Path,
+    revision: int,
+    state: State,
+    ahead: bool,
+    transitions: State,
+    transition_id: str,
+    payload: Any,
+    new: State,
+    progress: _Progress,
+) -> State:
+    """Commit `new` as the revision after `state` (D4 steps 7 and 8), with
+    `transitions` and this transition as its bookkeeping."""
     for ref in _references(new):  # step 7
         try:
             get_object(ref)
@@ -335,13 +450,13 @@ def _commit(
         _replace_state(path, state, progress, name="lagging_state")
     new["revision"] = revision + 1
     new["transitions"] = {
-        **state["transitions"],
-        transition_id: {"revision": revision + 1, "payload_digest": payload_digest},
+        **transitions,
+        transition_id: _accepted(revision + 1, payload),
     }
     record = {
         "revision": revision + 1,
         "transition_id": transition_id,
-        "payload_digest": payload_digest,
+        "payload_digest": digest(payload),
         "prev_digest": digest(state),
         "state_digest": digest(new),
         "committed_at": clock.now(),
@@ -349,7 +464,7 @@ def _commit(
     }
     _link_history(path, revision + 1, record, progress)
     _replace_state(path, new, progress)
-    return Revision(revision + 1, new)
+    return new
 
 
 def put_object(data: bytes) -> str:
@@ -398,6 +513,12 @@ def _references(value: Any) -> Iterator[Any]:
     elif isinstance(value, list):
         for item in value:
             yield from _references(item)
+
+
+def files(key: Key) -> list[str]:
+    """The files of a run, as sorted relative paths; reading never writes."""
+    with _reporting("list_files"):
+        return _files(run_dir(key))
 
 
 def _files(path: Path) -> list[str]:

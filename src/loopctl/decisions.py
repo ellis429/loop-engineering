@@ -32,6 +32,9 @@ NEEDS = {
     "resolve_conflict": ("choice",),
 }
 
+# What resolve_conflict can choose (D6).
+CHOICES = ("original", "attempted", "abandon")
+
 # Only a person decides: `human:<name>`, the name a single segment.
 HUMAN = re.compile(r"human:[A-Za-z0-9][A-Za-z0-9._-]*")
 
@@ -91,7 +94,55 @@ def decide(state: State, payload: dict[str, Any], at: str) -> State:
     kind = payload["kind"]
     if kind == "budget_extension" and not BUDGET_TARGET.fullmatch(payload["target"]):
         raise Rejected("invalid_target")
+    if kind == "resolve_conflict":
+        return _resolve(state, payload, at)
+    return _record(state, payload, at)
+
+
+def _record(state: State, payload: dict[str, Any], at: str) -> State:
     recorded = state["decisions"]
     seq = 1 + max((record["seq"] for record in recorded.values()), default=0)
     record = {**payload, "at": at, "seq": seq, "status": "in_effect"}
     return {**state, "decisions": {**recorded, payload["id"]: record}}
+
+
+def _resolve(state: State, payload: dict[str, Any], at: str) -> State:
+    """resolve_conflict (D6): keep the committed decision C, take the
+    attempted content A in its place, or abandon C. The store checks that
+    the target is unresolved and records the resolution on it."""
+    choice = payload["choice"]
+    if choice not in CHOICES:
+        raise Rejected("invalid_choice")
+    conflict = state["conflicts"][payload["target"]]
+    committed, attempted = conflict["committed_payload"], conflict["attempted_payload"]
+    # A resolution is never undone, nor taken in as another one's content.
+    if (committed["kind"] == "resolve_conflict" and choice != "original") or (
+        attempted["kind"] == "resolve_conflict" and choice == "attempted"
+    ):
+        raise Rejected("choice_not_allowed")
+    state = _record(state, payload, at)
+    if choice == "original":
+        return state
+    state = void(state, committed["id"], payload["id"])
+    if choice == "abandon":
+        return state
+    # A is checked as decision C's id on the state without C; if its checks
+    # fail, the whole resolution is refused.
+    replaced = state["decisions"][committed["id"]]
+    state = decide(state, attempted, at)
+    record = {
+        **state["decisions"][committed["id"]],
+        "replaces": [
+            {name: value for name, value in replaced.items() if name != "replaces"},
+            *replaced.get("replaces", []),
+        ],
+    }
+    return {**state, "decisions": {**state["decisions"], committed["id"]: record}}
+
+
+def void(state: State, decision_id: str, by: str) -> State:
+    """Undo decision `decision_id` for the decision `by` (D10): it stays
+    recorded, marked voided. The kinds that only record have no effect to
+    clear."""
+    record = {**state["decisions"][decision_id], "status": "voided", "voided_by": by}
+    return {**state, "decisions": {**state["decisions"], decision_id: record}}

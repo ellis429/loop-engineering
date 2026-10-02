@@ -13,11 +13,13 @@ from collections.abc import Callable
 from typing import Any, NoReturn
 
 from loopctl import clock, decisions, state, store
+from loopctl.next import unresolved
 
 Envelope = dict[str, Any]
 Handler = Callable[[argparse.Namespace], tuple[int, Envelope]]
 
 EXIT_USAGE = 2
+EXIT_BLOCKED = 3
 
 
 def envelope(
@@ -96,6 +98,17 @@ def guarded(handler: Handler) -> Handler:
             return refusal(
                 5, "untrusted_state", reason=error.reason, files=error.files
             )
+        except store.TransitionConflict as error:
+            return refusal(
+                EXIT_BLOCKED,
+                "transition_conflict",
+                blockers=conflict_blockers(error.conflicts),
+                files=error.files,
+            )
+        except store.TransitionRejected as error:
+            return refusal(1, f"transition_rejected:{error.cid}")
+        except store.UnknownTarget:
+            return refusal(1, "unknown_target")
         except state.AlreadyClaimed as error:
             return refusal(1, "already_claimed", owner=error.owner)
         except NotOwner:
@@ -141,6 +154,7 @@ def commit_latest(
     mutate: Callable[[store.State], store.State],
     *,
     authorize: Callable[[store.State], None],
+    resolves: str | None = None,
 ) -> store.Revision:
     """Commit at the current revision; when another transition went first,
     re-read and redo, so every check runs on the latest state (D4)."""
@@ -148,7 +162,8 @@ def commit_latest(
         expected, _ = store.load(key)
         try:
             return store.commit(
-                key, expected, transition_id, payload, mutate, authorize=authorize
+                key, expected, transition_id, payload, mutate,
+                authorize=authorize, resolves=resolves,
             )
         except store.RevisionConflict:
             continue
@@ -172,18 +187,35 @@ def claim(args: argparse.Namespace) -> tuple[int, Envelope]:
     return 0, envelope(True, result, revision=revision)
 
 
+def conflict_blockers(cids: list[str]) -> list[str]:
+    return [f"transition_conflict:{cid}" for cid in cids]
+
+
+def reading(
+    key: store.Key, revision: int, st: store.State, result: dict[str, Any]
+) -> tuple[int, Envelope]:
+    """What status and next answer: exit 3 with the files of the run while a
+    conflict is unresolved (D6), else exit 0."""
+    if unresolved(st):
+        result = {**result, "error": "transition_conflict", "files": store.files(key)}
+        return EXIT_BLOCKED, envelope(
+            False, result, revision=revision, next=st["next"]
+        )
+    return 0, envelope(True, result, revision=revision, next=st["next"])
+
+
 def status(args: argparse.Namespace) -> tuple[int, Envelope]:
     revision, st = store.load(_key(args))
     result = state.view(revision, st)
     if args.human:
         result["human"] = state.human(result, st["next"])
-    return 0, envelope(True, result, revision=revision, next=st["next"])
+    return reading(_key(args), revision, st, result)
 
 
 def next_step(args: argparse.Namespace) -> tuple[int, Envelope]:
     revision, st = store.load(_key(args))
     result = {"phase": st["phase"], "blockers": st["blockers"]}
-    return 0, envelope(True, result, revision=revision, next=st["next"])
+    return reading(_key(args), revision, st, result)
 
 
 def decide(args: argparse.Namespace) -> tuple[int, Envelope]:
@@ -208,6 +240,8 @@ def decide(args: argparse.Namespace) -> tuple[int, Envelope]:
         payload,
         lambda st: decisions.decide(st, payload, at),
         authorize=owner_token(args.token),
+        # Only resolve_conflict goes through while its conflict blocks the run.
+        resolves=payload["target"] if payload["kind"] == "resolve_conflict" else None,
     )
     # A duplicate answers with the record accepted for this id (D5).
     st = revision.state
