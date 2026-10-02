@@ -1,0 +1,164 @@
+{
+  "task": "G2 run-decisions",
+  "reviewed_ranges": ["2ab642d...3e98902"],
+  "verdict": "changes_requested",
+  "findings": [
+    {
+      "id": "G2-01",
+      "blocking": true,
+      "severity": "major",
+      "category": "spec_design",
+      "location": "src/loopctl/store.py:195-213; openspec/changes/run-decisions/design.md:146-170",
+      "problem": "The reader trusts a historical snapshot without detecting newer committed history beyond revision + 1. Restoring an older feature.json can therefore conceal a committed scope_change and expose its revoked approval as active. The approved D4 algorithm assumes the one-revision invariant instead of checking it against manual edits.",
+      "failure_scenario": "Create and claim a run, then register a calibrated plan and spec/ac/design bindings (revision 6). Commit approve_plan ap-1 (revision 7), then scope_change s-1 (revision 8). Restore only feature.json to its saved revision-6 bytes, leaving all history intact. Confirmed using production load and next handlers with in-memory file reads: next returns exit 0, revision 7, action dispatch, approval ap-1; committed history/8.json still contains the revocation. No forged digest or modified history is needed.",
+      "basis": "AC-D02 requires direct state-file edits to be detected on the next read and never treated as approval. DUR-01 requires controller-only state changes. D4 itself warns that restoring older state can revive revoked approvals. Existing manual-edit tests cover changed fields, but not restoration of a valid historical snapshot.",
+      "expected_fix": "Revise D4 and the regression plan to detect inconsistent or rolled-back current state before returning an older revision. Return untrusted_state with a concrete reason and file list, preserving files. Add tests for this approval/revocation sequence, legitimate one-revision crash recovery, and concurrent reads/writes so detection does not reject valid concurrent progress.",
+      "still_at_current_head": "yes",
+      "requires_spec_change": true
+    }
+  ],
+  "ac_rows": [
+    {
+      "row": "AC-O01",
+      "tests": "tests/test_state.py::test_init_creates_a_planning_run_per_repo_and_feature; tests/test_approval.py::test_only_a_human_approve_plan_on_a_calibrated_plan_approves; tests/test_scope_policy.py::test_scope_change_stops_the_run_and_supersedes_the_plan",
+      "asserts_row": true,
+      "red_valid": "not_applicable",
+      "note": "Covered: direct init preserves coordinator identity; it grants neither approval nor scope-change authority."
+    },
+    {
+      "row": "AC-O03",
+      "tests": "tests/test_approval.py::test_native_documents_are_registered_in_place_and_read_back; test_unreadable_documents_are_not_registered",
+      "asserts_row": true,
+      "red_valid": "not_applicable",
+      "note": "Covered: native locators, versions, digests and retained content; unreadable registrations are refused."
+    },
+    {
+      "row": "AC-O05",
+      "tests": "tests/test_approval.py::test_status_shows_versions_and_awaiting_approval; test_only_a_human_approve_plan_on_a_calibrated_plan_approves",
+      "asserts_row": true,
+      "red_valid": "not_applicable",
+      "note": "Covered: waiting state/version, thirty-day clock advance, and agent approval refusal."
+    },
+    {
+      "row": "AC-O07",
+      "tests": "tests/test_scope_policy.py::test_scope_change_stops_the_run_and_supersedes_the_plan; test_only_a_new_plan_version_is_approvable_after_scope_change; test_undoing_a_scope_change_never_restores_the_approval",
+      "asserts_row": true,
+      "red_valid": "not_applicable",
+      "note": "Controller transitions are covered: revocation, supersession and renewed approval. G2-01 can conceal that revocation after a state-file restore."
+    },
+    {
+      "row": "AC-O15",
+      "tests": "tests/test_state.py::test_uninitialised_run_is_not_found_and_nothing_is_created",
+      "asserts_row": true,
+      "red_valid": "not_applicable",
+      "note": "Covered: status, next and claim report run_not_found without creating or disturbing runs."
+    },
+    {
+      "row": "AC-O19",
+      "tests": "tests/test_decisions.py::test_only_human_actors_can_decide; tests/test_approval.py::test_only_a_human_approve_plan_on_a_calibrated_plan_approves; tests/test_scope_policy.py::test_scope_change_stops_the_run_and_supersedes_the_plan",
+      "asserts_row": true,
+      "red_valid": "not_applicable",
+      "note": "Covered across all seven supported decision kinds, including unchanged state on actor refusal."
+    },
+    {
+      "row": "AC-O22",
+      "tests": "tests/test_approval.py::test_only_a_human_approve_plan_on_a_calibrated_plan_approves; test_next_names_every_blocker_of_the_plan",
+      "asserts_row": true,
+      "red_valid": "not_applicable",
+      "note": "Covered: draft and uncalibrated plans cannot be approved; the calibrated registration replaces the single current plan."
+    },
+    {
+      "row": "AC-O23",
+      "tests": "tests/test_scope_policy.py::test_scope_change_stops_the_run_and_supersedes_the_plan; test_only_a_new_plan_version_is_approvable_after_scope_change; test_undoing_a_scope_change_never_restores_the_approval",
+      "asserts_row": true,
+      "red_valid": "not_applicable",
+      "note": "Covered for controller transitions: impact/questions persist and superseded plans remain blocked, including stacked scope changes. G2-01 affects restored state."
+    },
+    {
+      "row": "AC-O26",
+      "tests": "tests/test_approval.py::test_only_a_human_approve_plan_on_a_calibrated_plan_approves",
+      "asserts_row": true,
+      "red_valid": "not_applicable",
+      "note": "Covered: SA version/source are preserved without approval; subsequent human approval pins spec/ac/design, excluding SA."
+    },
+    {
+      "row": "AC-O29",
+      "tests": "tests/test_approval.py::test_approve_plan_needs_spec_ac_and_design_bindings",
+      "asserts_row": true,
+      "red_valid": "not_applicable",
+      "note": "Covered: all seven incomplete binding subsets are refused with exact missing roles; completing bindings permits the same plan version."
+    },
+    {
+      "row": "AC-O30",
+      "tests": "tests/test_decisions.py::test_adopt_delegate_and_later_kinds_are_unsupported",
+      "asserts_row": true,
+      "red_valid": "not_applicable",
+      "note": "Covered: unsupported responses preserve revision, owner, approval and filesystem contents."
+    },
+    {
+      "row": "AC-G21",
+      "tests": "tests/test_test_policy.py::test_t1_only_on_foreign_platform_skips_and_session_passes; test_t2_skip_not_from_only_on_fails_session; test_t4_zero_collected_fails_session; test_t5_xfail_and_xpass_fail_session; test_t6_expected_platform_mismatch_fails_session; tests/test_ci.py",
+      "asserts_row": true,
+      "red_valid": "not_applicable",
+      "note": "Required outcomes and shared command/configuration are asserted. Actual PR Linux execution was not independently verified."
+    },
+    {
+      "row": "AC-G22",
+      "tests": "tests/test_ci.py::test_workflow_yaml_declares_unit_linux_as_the_required_check; tests/test_scope_policy.py::test_policy_is_approved_only_by_policy_change_on_its_digest; test_policy_changed_after_approval_is_not_approved",
+      "asserts_row": true,
+      "red_valid": "not_applicable",
+      "note": "Covered: declaration alone is insufficient; approval binds the digest, and changed content is reported. The human acceptance demonstration remains unverified."
+    },
+    {
+      "row": "AC-D01",
+      "tests": "tests/test_state.py::test_init_creates_a_planning_run_per_repo_and_feature; test_status_human_renders_the_same_view; tests/test_approval.py::test_status_shows_versions_and_awaiting_approval; test_next_after_approval_reports_dispatch",
+      "asserts_row": true,
+      "red_valid": "not_applicable",
+      "note": "Required state-file, JSON and human-view fields are covered. G2-01 can cause the reader to select an obsolete state."
+    },
+    {
+      "row": "AC-D02",
+      "tests": "tests/test_state.py::test_manual_edit_is_detected_and_never_trusted; tests/test_decisions.py::test_a_human_decision_is_recorded_with_its_provenance; test_missing_fields_are_rejected",
+      "asserts_row": false,
+      "red_valid": "not_applicable",
+      "note": "Fails for restoring a valid historical snapshot: the edit is accepted and revoked approval reappears. Existing tests do not detect this case; see G2-01."
+    },
+    {
+      "row": "AC-D03",
+      "tests": "tests/test_state.py::test_claim_grants_the_coordination_right_once_and_stores_only_the_token_digest; test_concurrent_claims_leave_one_owner_and_a_controlled_answer_for_every_loser; tests/test_decisions.py::test_writes_need_the_coordinator_token; test_non_owners_cannot_resend; tests/test_conflicts.py::test_non_owners_cannot_create_conflicts; tests/test_approval.py::test_unreadable_documents_are_not_registered",
+      "asserts_row": true,
+      "red_valid": "not_applicable",
+      "note": "Covered: one claim winner, controlled losers, continued reads, and authorization before duplicate/conflict handling or object writes."
+    },
+    {
+      "row": "AC-D09",
+      "tests": "tests/test_state.py::test_interrupt_after_history_keeps_the_new_revision_once; test_interrupt_before_history_keeps_the_old_revision; test_a_failed_sync_before_the_link_commits_nothing; test_io_errors_print_an_envelope_and_say_whether_the_change_committed; test_commit_with_a_stale_revision_writes_nothing; test_commit_rejects_missing_or_corrupt_object_references; tests/test_decisions.py::test_consecutive_interruptions_keep_every_committed_revision",
+      "asserts_row": true,
+      "red_valid": "not_applicable",
+      "note": "Covered for process interruption and injected I/O errors, including consecutive interrupted commits and commit-boundary reporting."
+    },
+    {
+      "row": "AC-D10",
+      "tests": "tests/test_decisions.py::test_resending_a_decision_takes_effect_once; test_consecutive_interruptions_keep_every_committed_revision; tests/test_conflicts.py; tests/test_approval.py::test_a_conflict_on_an_applied_approve_plan_follows_the_chosen_content; tests/test_scope_policy.py::test_undoing_a_scope_change_never_restores_the_approval; test_undoing_a_policy_change_removes_its_policy_approval",
+      "asserts_row": true,
+      "red_valid": "not_applicable",
+      "note": "Covered: duplicate suppression, retained conflicting payloads, all resolution choices, rejected attempted content, and ownership-aware effect clearing."
+    },
+    {
+      "row": "AC-D11",
+      "tests": "tests/test_state.py::test_untrusted_state_stops_with_reason_and_files; test_init_never_overwrites_an_existing_run; test_a_rejected_command_never_creates_the_lock_file; test_commit_rejects_missing_or_corrupt_object_references; tests/test_conflicts.py::test_same_decision_id_with_other_content_blocks_the_run",
+      "asserts_row": true,
+      "red_valid": "not_applicable",
+      "note": "Specified missing/corrupt/schema/conflict cases assert reasons, files and preservation. Historical-snapshot restoration is the separate undetected case in G2-01."
+    },
+    {
+      "row": "AC-D25",
+      "tests": "tests/test_decisions.py::test_budget_extension_only_records_a_human_ruling",
+      "asserts_row": true,
+      "red_valid": "not_applicable",
+      "note": "Covered: four valid targets retain provenance; invalid requests are refused; policy and unrelated state remain unchanged."
+    }
+  ],
+  "scope": "Reviewed the complete product change, acceptance tests, planning artifacts, applicable decisions/high-level design, CI/packaging and commit text at the requested head. No additional blocking scope or commit-convention issue found. Production contains no dispatch execution, GitHub reads, G1/G3 evaluation, test-only hooks or temporary stubs. CI structure matches D12 and validation §6.1, including SHA pins and verified PR-head checkout. No files were modified.",
+  "limits": "Full pytest, lint, mypy and distribution checks were not rerun under the strict read-only constraint; coordinator-reported G1 results remain supplied evidence. G2-01 was reproduced with Python 3.12 using production reader/CLI code and in-memory file reads, not physical filesystem mutation. Historical Red evidence was not checked. GitHub API connectivity failed, so actual PR checks, artifacts and action-SHA resolution were not verified. The G22 acceptance demonstration and physical power-loss durability were not verified."
+}

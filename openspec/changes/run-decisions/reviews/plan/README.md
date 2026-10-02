@@ -56,3 +56,12 @@ task 4.2 的逐 task 審查找到 T4.2-01（同一 decision id 多個衝突保�
 | 9 補 | `5a0a92f` | clean |
 
 重新開工確認以 `5a0a92f` 為準。
+
+to-pr 的 G2（PR #37，另一個 Astra session，[結果](../g2/round-1-result.json)）找到 G2-01：還原較舊的 `feature.json` 會藏住更新的 history。計畫修訂（修正批次 B1，第 1 輪）由同一個計畫審查 session 確認：
+
+| 輪次 | 審查的 commit | 結果 |
+| --- | --- | --- |
+| 10 | `309f45e` | changes_requested：P10-01（回歸測試還原錯版本）、P10-02（讀取與並行提交交錯會誤報） |
+| 10 補 | `dda8909` | clean |
+
+重新開工確認以 `dda8909` 為準。

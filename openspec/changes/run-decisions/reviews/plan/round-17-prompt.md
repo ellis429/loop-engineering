@@ -1,0 +1,1 @@
+P10-01、P10-02 已修，HEAD 是 `dda8909`（`git diff 309f45e HEAD`）：(b) 改還原未核准版本，加正向參數 (c)（只落後一版 → 讀回撤銷版）；D4 判定 history_ahead 前，非 commit 路徑在既有 lock 上取共享鎖重讀（不建立 lock、不寫檔），commit 路徑已持獨佔鎖直接判定；加交錯測試 `test_a_read_racing_a_commit_is_not_mistaken_for_a_restore`。請確認已解決、Red 可達、沒有新問題（例如共享鎖與 commit 的獨佔鎖在同一程序內不會互鎖）。第一行 `verdict: clean` 或 `verdict: changes_requested`。
