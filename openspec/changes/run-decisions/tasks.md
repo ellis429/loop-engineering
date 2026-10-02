@@ -215,7 +215,7 @@ Effort 的依據（D69）：
 
 ## 4. 人工決策紀錄
 
-- [ ] 4.1 `decide` 的共同核對與紀錄、授權優先、重送冪等、history 的前移、`budget_extension`、`revise`、`handoff`，以及 `adopt`／`delegate` 與後續 kind 的 `unsupported`；驗證：`uv run pytest tests/test_decisions.py` 與完整的完成條件通過
+- [x] 4.1 `decide` 的共同核對與紀錄、授權優先、重送冪等、history 的前移、`budget_extension`、`revise`、`handoff`，以及 `adopt`／`delegate` 與後續 kind 的 `unsupported`；驗證：`uv run pytest tests/test_decisions.py` 與完整的完成條件通過
 
 **模式與 effort**：預設模式（D72）；Implementer Claude Opus 5.5、Reviewer GPT-6 Astra；effort（Implementer／Reviewer）xhigh／xhigh。
 

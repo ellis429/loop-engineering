@@ -91,6 +91,23 @@ class IOFailure(OSError):
         self.committed = committed
 
 
+class Revision(int):
+    """What `commit` returns: the revision the run is at, with the state at
+    that revision. `duplicate` is true when the transition was already
+    committed with the same payload, so nothing was written (D4 step 3)."""
+
+    state: State
+    duplicate: bool
+
+    def __new__(
+        cls, revision: int, state: State, *, duplicate: bool = False
+    ) -> Revision:
+        value = super().__new__(cls, revision)
+        value.state = state
+        value.duplicate = duplicate
+        return value
+
+
 @dataclasses.dataclass
 class _Progress:
     """The operation a store call is in, and whether its change is committed:
@@ -114,11 +131,18 @@ def _reporting(op: str) -> Iterator[_Progress]:
 
 def load(key: Key) -> tuple[int, State]:
     """The current (revision, state) of a run; reading never writes (D4)."""
+    revision, state, _ = _read(key)
+    return revision, state
+
+
+def _read(key: Key) -> tuple[int, State, bool]:
+    """`load`, and whether the state is the committed history record one
+    revision ahead of feature.json."""
     with _reporting("read_state"):
         return _load(key)
 
 
-def _load(key: Key) -> tuple[int, State]:
+def _load(key: Key) -> tuple[int, State, bool]:
     path = run_dir(key)
     if not path.is_dir():
         raise RunNotFound()
@@ -158,12 +182,12 @@ def _load(key: Key) -> tuple[int, State]:
     try:
         ahead = _intact_record((history / f"{revision + 1}.json").read_bytes())
     except FileNotFoundError:
-        return revision, state
+        return revision, state, False
     if ahead is None or ahead["state"].get("revision") != revision + 1:
         raise untrusted("manual_edit")
     if ahead.get("prev_digest") != digest(state):
         raise untrusted(f"history_fork:{revision + 1}")
-    return revision + 1, ahead["state"]
+    return revision + 1, ahead["state"], True
 
 
 def _intact_record(data: bytes) -> State | None:
@@ -243,13 +267,16 @@ def commit(
     mutate: Callable[[State], State],
     *,
     authorize: Callable[[State], None],
-) -> int:
+) -> Revision:
     """Commit `mutate` of the current state as the next revision (D4).
 
-    Every step before the history link writes nothing when it fails;
-    `authorize` comes before any other check. Returns the new revision, or
-    the current one when `mutate` changes nothing. An OSError is raised as
-    an IOFailure that says whether the history link was already made."""
+    `authorize` comes before any other check, and every check writes
+    nothing when it fails. Only a transition that will be written first
+    catches a lagging feature.json up (step 8.1). Returns the new revision,
+    or the current one when `mutate` changes nothing or when
+    `transition_id` was already committed with this payload (a duplicate).
+    An OSError is raised as an IOFailure that says whether the history link
+    was already made."""
     with _reporting("read_state") as progress:
         # A missing or untrusted run fails here, before the lock file is touched.
         load(key)
@@ -283,22 +310,29 @@ def _commit(
     mutate: Callable[[State], State],
     authorize: Callable[[State], None],
     progress: _Progress,
-) -> int:
+) -> Revision:
     path = run_dir(key)
-    revision, state = load(key)  # step 1
+    revision, state, ahead = _read(key)  # step 1
     authorize(state)  # step 2
+    payload_digest = digest(payload)
+    accepted = state["transitions"].get(transition_id)  # step 3
+    if accepted is not None and accepted["payload_digest"] == payload_digest:
+        return Revision(revision, state, duplicate=True)
     if revision != expected_revision:  # step 5
         raise RevisionConflict()
     new = derive(mutate(copy.deepcopy(state)))  # step 6
     if new == state:
-        return revision
+        return Revision(revision, state)
     for ref in _references(new):  # step 7
         try:
             get_object(ref)
         except ObjectError as error:
             raise UntrustedState(error.reason, _files(path)) from None
     # step 8
-    payload_digest = digest(payload)
+    if ahead:
+        # 8.1: catch feature.json up with the committed record it lags
+        # behind first, so history is never more than one revision ahead.
+        _replace_state(path, state, progress, name="lagging_state")
     new["revision"] = revision + 1
     new["transitions"] = {
         **state["transitions"],
@@ -315,7 +349,7 @@ def _commit(
     }
     _link_history(path, revision + 1, record, progress)
     _replace_state(path, new, progress)
-    return revision + 1
+    return Revision(revision + 1, new)
 
 
 def put_object(data: bytes) -> str:
@@ -429,14 +463,17 @@ def _link_history(
     _sync_dir(path / "history")
 
 
-def _replace_state(path: Path, state: State, progress: _Progress) -> None:
-    progress.op = "write_state"
+def _replace_state(
+    path: Path, state: State, progress: _Progress, *, name: str = "state"
+) -> None:
+    """Replace feature.json with `state`; `name` names the operations."""
+    progress.op = f"write_{name}"
     tmp = _write_tmp(path, _dump(state))
-    progress.op = "replace_state"
+    progress.op = f"replace_{name}"
     try:
         os.replace(tmp, path / "feature.json")
     except BaseException:
         os.unlink(tmp)
         raise
-    progress.op = "sync_state"
+    progress.op = f"sync_{name}"
     _sync_dir(path)

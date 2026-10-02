@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import errno
+import hmac
 import json
 import re
 import secrets
@@ -11,7 +12,7 @@ import sys
 from collections.abc import Callable
 from typing import Any, NoReturn
 
-from loopctl import clock, state, store
+from loopctl import clock, decisions, state, store
 
 Envelope = dict[str, Any]
 Handler = Callable[[argparse.Namespace], tuple[int, Envelope]]
@@ -52,6 +53,26 @@ def refusal(code: int, error: str, **fields: Any) -> tuple[int, Envelope]:
     return code, envelope(False, {"error": error, **fields})
 
 
+class NotOwner(Exception):
+    """The token is missing or is not the owner's: exit 4 `not_owner`."""
+
+
+def owner_token(token: str | None) -> Callable[[store.State], None]:
+    """`authorize` for register and decide: `token` must be the owner's claim
+    token. The store runs it before any other check or write (D4 step 2)."""
+
+    def authorize(st: store.State) -> None:
+        owner = st["owner"]
+        if (
+            token is None
+            or owner is None
+            or not hmac.compare_digest(state.token_digest(token), owner["token_digest"])
+        ):
+            raise NotOwner()
+
+    return authorize
+
+
 def guarded(handler: Handler) -> Handler:
     """Turn the refusals of the store and of a state check, and the I/O
     errors of the store, into envelopes."""
@@ -77,6 +98,12 @@ def guarded(handler: Handler) -> Handler:
             )
         except state.AlreadyClaimed as error:
             return refusal(1, "already_claimed", owner=error.owner)
+        except NotOwner:
+            return refusal(4, "not_owner")
+        except decisions.Unsupported as error:
+            return refusal(EXIT_USAGE, "unsupported", kind=error.kind)
+        except decisions.Rejected as error:
+            return refusal(1, error.error, **error.fields)
 
     return run
 
@@ -107,28 +134,40 @@ def unchecked(st: store.State) -> None:
     """`authorize` for claim: its own check (no owner yet) is in mutate."""
 
 
+def commit_latest(
+    key: store.Key,
+    transition_id: str,
+    payload: Any,
+    mutate: Callable[[store.State], store.State],
+    *,
+    authorize: Callable[[store.State], None],
+) -> store.Revision:
+    """Commit at the current revision; when another transition went first,
+    re-read and redo, so every check runs on the latest state (D4)."""
+    while True:
+        expected, _ = store.load(key)
+        try:
+            return store.commit(
+                key, expected, transition_id, payload, mutate, authorize=authorize
+            )
+        except store.RevisionConflict:
+            continue
+
+
 def claim(args: argparse.Namespace) -> tuple[int, Envelope]:
-    key = _key(args)
     token = secrets.token_hex(32)
     owner = {
         "actor": args.actor,
         "token_digest": state.token_digest(token),
         "claimed_at": clock.now(),
     }
-    while True:
-        expected, _ = store.load(key)
-        try:
-            revision = store.commit(
-                key,
-                expected,
-                f"claim:{owner['token_digest']}",
-                {"actor": args.actor},
-                lambda st: state.claim(st, owner),
-                authorize=unchecked,
-            )
-            break
-        except store.RevisionConflict:
-            continue  # another transition went first: re-read and redo
+    revision = commit_latest(
+        _key(args),
+        f"claim:{owner['token_digest']}",
+        {"actor": args.actor},
+        lambda st: state.claim(st, owner),
+        authorize=unchecked,
+    )
     result = {"token": token, "owner": state.owner_view(owner)}
     return 0, envelope(True, result, revision=revision)
 
@@ -147,15 +186,52 @@ def next_step(args: argparse.Namespace) -> tuple[int, Envelope]:
     return 0, envelope(True, result, revision=revision, next=st["next"])
 
 
+def decide(args: argparse.Namespace) -> tuple[int, Envelope]:
+    payload = decisions.request(
+        args.kind,
+        {
+            "id": args.id,
+            "actor": args.actor,
+            "target": args.target,
+            "reason": args.reason,
+            "source": args.source,
+            "impact": args.impact,
+            "version": args.version,
+            "choice": args.choice,
+            "open_questions": args.open_question,
+        },
+    )
+    at = clock.now()
+    revision = commit_latest(
+        _key(args),
+        f"decide:{payload['id']}",
+        payload,
+        lambda st: decisions.decide(st, payload, at),
+        authorize=owner_token(args.token),
+    )
+    # A duplicate answers with the record accepted for this id (D5).
+    st = revision.state
+    result = {
+        "decision": st["decisions"][payload["id"]],
+        "duplicate": revision.duplicate,
+    }
+    return 0, envelope(True, result, revision=int(revision), next=st["next"])
+
+
+def unsupported(args: argparse.Namespace) -> tuple[int, Envelope]:
+    """`adopt` and `delegate`: not in this version; nothing is read or written."""
+    return refusal(EXIT_USAGE, "unsupported", command=args.command)
+
+
 HANDLERS: dict[str, Handler] = {
     "init": guarded(init),
     "claim": guarded(claim),
     "status": guarded(status),
     "next": guarded(next_step),
     "register": stub,
-    "decide": stub,
-    "adopt": stub,
-    "delegate": stub,
+    "decide": guarded(decide),
+    "adopt": unsupported,
+    "delegate": unsupported,
 }
 
 
