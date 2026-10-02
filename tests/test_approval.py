@@ -272,8 +272,8 @@ def test_a_binding_needs_its_role_and_a_plan_its_producer(
     options: dict[str, str],
     missing: list[str],
 ) -> None:
-    """D2, D9: not in the plan's table; the missing fields of a registration
-    are refused before the state is read."""
+    """D2, D9: the missing fields of a registration are refused before the
+    state is read."""
     monkeypatch.chdir(repo)
     token = started_run(REPO, "F-1", "agent:implementer")
     before = snapshot(home)
@@ -588,8 +588,8 @@ def test_next_names_every_blocker_of_the_plan(
     roles: tuple[str, ...],
     blockers: list[str],
 ) -> None:
-    """D7: not in the plan's table; a plan that is not calibrated is a
-    blocker too, listed with the others and with no decision kind."""
+    """D7: a plan that is not calibrated is a blocker too, listed with the
+    others and with no decision kind."""
     monkeypatch.chdir(repo)
     token = started_run(REPO, "F-1", "agent:implementer")
     for role in roles:
@@ -768,3 +768,82 @@ def test_a_conflict_on_an_applied_approve_plan_follows_the_chosen_content(
         if case == "attempted":
             assert dig(x, "replaces", 0, "reason") == "a"
             assert dig(x, "replaces", 0, "voided_by") == "r-1"
+
+
+# Once `register` has read the revision it commits at, and before it takes the
+# run's lock (D4), each command line of `first` runs to its end in a process
+# of its own; their exit codes and stdout go to `record`. The clock first
+# moves to the next second, so what they register is registered later than
+# the delayed registration's own time.
+REGISTER_FIRST = """\
+import fcntl as _rf, json as _rj, subprocess as _rs, sys as _rsys, time as _rt
+_flock, _first = _rf.flock, {first!r}
+
+def _flock_after_first(*args, **kwargs):
+    if _first:
+        _second = int(_rt.time())
+        while int(_rt.time()) == _second:
+            _rt.sleep(0.01)
+    while _first:
+        _run = _rs.run(
+            [_rsys.executable, "-m", "loopctl", *_first.pop(0)],
+            capture_output=True, text=True,
+        )
+        with open({record!r}, "a") as _out:
+            _out.write(_rj.dumps({{"code": _run.returncode, "stdout": _run.stdout}}))
+            _out.write("\\n")
+    return _flock(*args, **kwargs)
+
+_rf.flock = _flock_after_first
+"""
+
+
+@pytest.mark.parametrize("case", ["identical", "replaced"])
+def test_a_registration_that_lost_a_commit_race_is_checked_again(
+    cli: Cli,
+    cli_proc: Cli,
+    home: Path,
+    repo: Path,
+    tmp_path: Path,
+    started_run: StartedRun,
+    monkeypatch: pytest.MonkeyPatch,
+    case: str,
+) -> None:
+    """D4, D5, D9: plan A is registered at revision 2 while, before its
+    commit, the same registration of A (and then B) commits first; A is
+    checked again on the latest state, not answered as their duplicate."""
+    monkeypatch.chdir(repo)
+    token = started_run(REPO, "F-1", "agent:implementer")
+    plan_a = register_args("plan", token, "tasks.md", **CALIBRATED)
+    plan_b = register_args("plan", token, "tasks.md", **CALIBRATED, version="plan-4")
+    first = [plan_a] if case == "identical" else [plan_a, plan_b]
+    record = tmp_path / "first.jsonl"
+    delayed = cli_proc(
+        *plan_a, prelude=REGISTER_FIRST.format(first=first, record=str(record))
+    )
+    runs = [json.loads(line) for line in record.read_text().splitlines()]
+    outs = [json.loads(run["stdout"]) for run in runs]
+    assert [run["code"] for run in runs] == [0] * len(first)
+    assert [out["revision"] for out in outs] == [3, 4][: len(first)]
+    assert delayed.code == 0, delayed
+
+    state = read_state(home)
+    if case == "identical":
+        # The same registration (D9): nothing to commit; the entry is the one
+        # the first registration wrote.
+        assert delayed.get("result", "unchanged") is True
+        assert delayed.get("result") == {**outs[0]["result"], "unchanged": True}
+        assert delayed.get("revision") == 3
+        assert dig(state, "plan", "registered_at") == outs[0]["result"]["registered_at"]
+    else:
+        # B is the plan now, so A replaces it again (D5: A → B → A).
+        assert delayed.get("result", "version") == VERSIONS["tasks.md"]
+        assert delayed.get("result", "unchanged") is False
+        assert delayed.get("revision") == 5
+        assert dig(state, "plan", "version") == VERSIONS["tasks.md"]
+        plan = dig(state, "plan") or {}
+        shown = {name: value for name, value in plan.items() if name != "content"}
+        assert delayed.get("result") == {**shown, "unchanged": False}
+    assert dig(state, "revision") == delayed.get("revision")
+    history = sorted(path.name for path in (run_dir(home) / "history").iterdir())
+    assert len(history) == delayed.get("revision")

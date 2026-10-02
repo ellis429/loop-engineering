@@ -311,7 +311,12 @@ def register(args: argparse.Namespace) -> tuple[int, Envelope]:
             )
         except store.RevisionConflict:
             continue
-        break
+        # A duplicate means another caller committed this registration at
+        # `expected` first; the store answers that before it checks the
+        # revision (D4 step 3), so it is a stale revision too: redo it on
+        # the latest state.
+        if not revision.duplicate:
+            break
     st = revision.state
     entry = decisions.registered(st, payload) or {}
     result = {name: value for name, value in entry.items() if name != "content"}
