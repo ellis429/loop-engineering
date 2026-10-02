@@ -47,3 +47,12 @@ task 4.2 的逐 task 審查找到 T4.2-01（同一 decision id 多個衝突保�
 | 8 | `48b4201` | clean |
 
 重新開工確認以 `48b4201` 為準。
+
+5.1、6.1 開工前，Project Lead 請 Claude Fable 5.1 xhigh 唯讀檢查設計（[4.2](design-checks/fable-4.2-result.md)、[5.1 與 6.1](design-checks/fable-5.1-6.1-result.md)；native model 讀回為 `claude-fable-5-1`），加上 Astra 對 4.2 的複審 T4.2-03。計畫修訂後由同一個 Astra session 確認：
+
+| 輪次 | 審查的 commit | 結果 |
+| --- | --- | --- |
+| 9 | `9bab1ca` | changes_requested：21 條缺口與 T4.2-03 全部 resolved；P9-01 minor（4.2 的 attempt 編號） |
+| 9 補 | `5a0a92f` | clean |
+
+重新開工確認以 `5a0a92f` 為準。
