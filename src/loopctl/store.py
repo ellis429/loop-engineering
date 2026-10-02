@@ -158,14 +158,15 @@ def load(key: Key) -> tuple[int, State]:
     return revision, state
 
 
-def _read(key: Key) -> tuple[int, State, bool]:
+def _read(key: Key, *, locked: bool = False) -> tuple[int, State, bool]:
     """`load`, and whether the state is the committed history record one
-    revision ahead of feature.json."""
+    revision ahead of feature.json. `locked` says the caller holds the
+    run's lock, so no commit can change the files while they are read."""
     with _reporting("read_state"):
-        return _load(key)
+        return _load(key, locked)
 
 
-def _load(key: Key) -> tuple[int, State, bool]:
+def _load(key: Key, locked: bool) -> tuple[int, State, bool]:
     path = run_dir(key)
     if not path.is_dir():
         raise RunNotFound()
@@ -200,6 +201,18 @@ def _load(key: Key) -> tuple[int, State, bool]:
     # feature.json or of its record is a manual edit, never a decision.
     if current is None or current["state_digest"] != digest(state):
         raise untrusted("manual_edit")
+    # A commit leaves history at most one revision ahead (step 8.1); more
+    # means feature.json was put back to an older revision. Never trusted,
+    # never rolled back: that could revive what a later commit revoked.
+    latest = _latest_revision(history)
+    if latest > revision + 1:
+        if not locked:
+            # Read without the lock, a feature.json from before a commit and
+            # the history after it look the same; decide on what is read
+            # again under a shared lock, while no commit is in progress.
+            with _locked(path, fcntl.LOCK_SH):
+                return _load(key, True)
+        raise untrusted(f"history_ahead:{latest}")
     # Committed but not yet in feature.json: the next history record that
     # follows this state is the current one. Reading never writes.
     try:
@@ -211,6 +224,19 @@ def _load(key: Key) -> tuple[int, State, bool]:
     if ahead.get("prev_digest") != digest(state):
         raise untrusted(f"history_fork:{revision + 1}")
     return revision + 1, ahead["state"], True
+
+
+HISTORY_RECORD = re.compile(r"([1-9][0-9]*)\.json")
+
+
+def _latest_revision(history: Path) -> int:
+    """The largest revision with a record in `history`, 0 when none."""
+    revisions = [
+        int(match[1])
+        for name in os.listdir(history)
+        if (match := HISTORY_RECORD.fullmatch(name))
+    ]
+    return max(revisions, default=0)
 
 
 def _intact_record(data: bytes) -> State | None:
@@ -302,7 +328,7 @@ def commit(
     already committed with this payload (a duplicate). An OSError is raised
     as an IOFailure that says whether the history link was already made."""
     with _reporting("read_state") as progress:
-        # A missing or untrusted run fails here, before the lock file is touched.
+        # A missing or untrusted run fails here, before the run is locked.
         load(key)
         progress.op = "lock"
         with _locked(run_dir(key)):
@@ -313,14 +339,16 @@ def commit(
 
 
 @contextlib.contextmanager
-def _locked(path: Path) -> Iterator[None]:
-    """Hold the flock of the run's existing lock file; never create it."""
+def _locked(path: Path, operation: int = fcntl.LOCK_EX) -> Iterator[None]:
+    """Hold the flock of the run's existing lock file; never create it. A
+    shared lock opens the file read-only."""
+    flags = os.O_RDONLY if operation == fcntl.LOCK_SH else os.O_RDWR
     try:
-        fd = os.open(path / "lock", os.O_RDWR)
+        fd = os.open(path / "lock", flags)
     except FileNotFoundError:
         raise UntrustedState("lock_missing", _files(path)) from None
     try:
-        fcntl.flock(fd, fcntl.LOCK_EX)
+        fcntl.flock(fd, operation)
         yield
     finally:
         os.close(fd)
@@ -337,7 +365,7 @@ def _commit(
     progress: _Progress,
 ) -> Revision:
     path = run_dir(key)
-    revision, state, ahead = _read(key)  # step 1
+    revision, state, ahead = _read(key, locked=True)  # step 1
     authorize(state)  # step 2
     accepted = state["transitions"].get(transition_id)  # step 3
     if accepted is not None:

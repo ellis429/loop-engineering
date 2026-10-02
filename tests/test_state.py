@@ -6,6 +6,8 @@ import hashlib
 import json
 import re
 import shutil
+import threading
+import time
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
@@ -527,6 +529,180 @@ def test_untrusted_state_stops_with_reason_and_files(
         assert r.get("result", "reason") == reason, argv[0]
         assert r.get("result", "files") == files, argv[0]
     assert snapshot(home) == before
+
+
+def decide_argv(token: str, kind: str, **fields: str) -> list[str]:
+    """argv of a human decision of `kind`; `fields` add to or override the
+    common ones."""
+    given = {
+        "actor": "human:alice",
+        "target": "F-1",
+        "reason": "a",
+        "source": "#29 comment by alice",
+        "impact": "none",
+        **fields,
+    }
+    argv = ["decide", kind, *RUN, "--token", token]
+    for name, value in given.items():
+        argv += [f"--{name}", value]
+    return argv
+
+
+def decide(cli: Cli, token: str, kind: str, **fields: str) -> None:
+    """A human decision of `kind` that must succeed."""
+    r = cli(*decide_argv(token, kind, **fields))
+    assert r.code == 0, r
+
+
+def register(
+    cli: Cli, token: str, kind: str, locator: str, version: str, *options: str
+) -> None:
+    """A registration of the `repo` fixture's `locator` that must succeed."""
+    r = cli(
+        "register", kind, *RUN, "--token", token, "--locator", locator,
+        "--version", version, "--source", "#29 plan review", *options,
+    )
+    assert r.code == 0, r
+
+
+@pytest.mark.parametrize(
+    ("case", "ahead"),
+    [
+        pytest.param("decisions", 4, id="a-decisions"),
+        pytest.param("approval-revoked", 8, id="b-approval-revoked"),
+        pytest.param("one-behind", None, id="c-one-behind"),
+    ],
+)
+def test_a_restored_older_state_is_never_trusted(
+    cli: Cli,
+    home: Path,
+    repo: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    started_run: StartedRun,
+    case: str,
+    ahead: int | None,
+) -> None:
+    monkeypatch.chdir(repo)
+    token = started_run(REPO, "F-1", "agent:implementer")
+    feature = run_dir(home) / "feature.json"
+    if case == "decisions":
+        saved = feature.read_bytes()  # revision 2
+        decide(cli, token, "revise", id="r-1")
+        decide(cli, token, "revise", id="r-2")  # revision 4
+    else:
+        register(
+            cli, token, "plan", "tasks.md", "plan-3",
+            "--producer", "implementer", "--calibrated-from", "tasks-draft.md",
+        )
+        for role, locator in [
+            ("spec", "specs/durable/spec.md"), ("ac", "ac.md"), ("design", "design.md")
+        ]:
+            register(cli, token, "binding", locator, f"{role}-1", "--role", role)
+        saved = feature.read_bytes()  # revision 6, not approved
+        decide(
+            cli, token, "approve_plan", id="ap-1", target="tasks.md", version="plan-3"
+        )
+        if case == "one-behind":
+            saved = feature.read_bytes()  # revision 7, approved
+        decide(cli, token, "scope_change", id="s-1", target="tasks.md")  # revision 8
+    # Only feature.json goes back; every history record stays as committed.
+    feature.write_bytes(saved)
+    files = files_of(run_dir(home))
+    before = snapshot(run_dir(home))
+
+    if ahead is None:
+        # One revision behind is an interrupted commit: the next record is read.
+        st = cli("status", *RUN)
+        assert st.code == 0, st
+        assert st.get("revision") == 8
+        assert "plan_superseded:s-1" in (st.get("result", "blockers") or [])
+    else:
+        results = {argv[0]: cli(*argv) for argv in EVERY_COMMAND[:3]}
+        seen = {
+            name: (r.code, r.get("revision"), r.get("next", "action"))
+            for name, r in results.items()
+        }
+        for name, r in results.items():
+            assert r.code == 5, (name, seen)
+            assert r.get("result", "error") == "untrusted_state", name
+            assert r.get("result", "reason") == f"history_ahead:{ahead}", name
+            assert r.get("result", "files") == files, name
+            assert r.get("next", "action") != "dispatch", name
+    assert snapshot(run_dir(home)) == before
+
+
+# Prelude of the reader: right after its first read of feature.json it says it
+# arrived and waits for the `go` file (or 30 s), then writes what it saw at
+# release to record.json.
+READ_GATE = """\
+import json as _rj, os as _ro, pathlib as _rp, time as _rt
+_gate_dir, _read_bytes, _gate_done = {gate!r}, _rp.Path.read_bytes, []
+
+def _gated_read_bytes(self):
+    _data = _read_bytes(self)
+    if self.name == "feature.json" and not _gate_done:
+        _gate_done.append(True)
+        open(_ro.path.join(_gate_dir, "arrived"), "w").close()
+        _deadline, _reason = _rt.monotonic() + 30, "timeout"
+        while _rt.monotonic() < _deadline:
+            if _ro.path.exists(_ro.path.join(_gate_dir, "go")):
+                _reason = "released"
+                break
+            _rt.sleep(0.002)
+        with open(_ro.path.join(_gate_dir, "record.json"), "w") as _record:
+            _record.write(_rj.dumps({{"arrived": True, "reason": _reason}}))
+    return _data
+
+_rp.Path.read_bytes = _gated_read_bytes
+"""
+
+
+def test_a_read_racing_a_commit_is_not_mistaken_for_a_restore(
+    cli: Cli, cli_proc: Cli, home: Path, tmp_path: Path, started_run: StartedRun
+) -> None:
+    token = started_run(REPO, "F-1", "agent:implementer")
+    decide(cli, token, "revise", id="r-1")  # revision 3
+    crashed = cli_proc(
+        *decide_argv(token, "revise", id="r-2"), prelude=CRASH_ON_REPLACE
+    )
+    assert crashed.code == 9
+    # Revision 4 is committed but feature.json still holds revision 3.
+    assert dig(read_state(home), "revision") == 3
+    assert history(home) == ["1.json", "2.json", "3.json", "4.json"]
+
+    gate = tmp_path / "gate"
+    gate.mkdir()
+    reads: list[Result] = []
+    reader = threading.Thread(
+        target=lambda: reads.append(
+            cli_proc("status", *RUN, prelude=READ_GATE.format(gate=str(gate)))
+        )
+    )
+    reader.start()
+    deadline = time.monotonic() + 30
+    while not (gate / "arrived").exists() and time.monotonic() < deadline:
+        if not reader.is_alive():
+            break
+        time.sleep(0.002)
+    arrived = (gate / "arrived").exists()
+    # While the reader holds the old feature.json, the writer catches it up
+    # to revision 4 and commits revision 5.
+    written = cli(*decide_argv(token, "revise", id="r-3")) if arrived else None
+    after_writer = snapshot(run_dir(home))
+    (gate / "go").touch()
+    reader.join(60)
+    record = gate / "record.json"
+    print("gate record:", record.read_text() if record.exists() else "(no arrival)")
+
+    assert arrived, reads
+    assert written is not None and written.code == 0, written
+    assert written.get("revision") == 5
+    assert len(reads) == 1
+    read = reads[0]
+    assert read.code == 0, (read.code, read.get("result"))
+    assert read.get("revision") == 5
+    assert "history_ahead" not in read.stdout
+    assert snapshot(run_dir(home)) == after_writer
 
 
 def edit_by_hand(state: dict[str, Any], case: str) -> None:
