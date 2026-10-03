@@ -17,3 +17,4 @@
 - 文中的「S1」「第一片」指 D53 的單一切片；重切後對應 roadmap 的 M1。延後到 S2 的部分列在 roadmap 的「延後到 M2」。
 
 - 依 D76（2026-10-02），第一條實作路徑的 runtime 從 Herdr 改為 Orca；需求原文提到 Herdr 的地方照 D76 與[勘誤 E-5](../../design-candidate/d45-04-errata.md) 讀，原文不改。
+- 依 D79（2026-10-03），DUR-08 的時間上限（4h 主動執行與各角色時限）改為察覺卡住；修正 3 輪與 infra 重試上限不變。原文照[勘誤 E-6](../../design-candidate/d45-04-errata.md) 讀，原文不改。
