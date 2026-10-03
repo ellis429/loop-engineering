@@ -38,7 +38,7 @@
 | 執行環境與工具如何接合 | [Harness 總覽](docs/harness/overview.md) · [Herdr 整合設計與架構圖](docs/harness/herdr-integration.md) |
 | 研究、實驗、審查與驗證紀錄 | [證據與歷史入口](docs/README.md#研究歷史與證據入口) |
 
-[Herdr 整合設計](docs/harness/herdr-integration.md)是早期提案；第一片實際採用的 Herdr profile 以 D53 核准的版本為準。文件整理不改變三 gates 或開工核准狀態。
+[Herdr 整合設計](docs/harness/herdr-integration.md)是早期提案。派工 runtime 已依 D76 從 Herdr 改為 Orca（Implementer：Orca 的 Claude agent；Reviewer：Orca 的 Codex agent＋GPT-6 Astra），D53 的 profile 照 [勘誤 E-5](docs/design-candidate/d45-04-errata.md) 讀。文件整理不改變三 gates 或開工核准狀態。
 
 ## 工作層級
 

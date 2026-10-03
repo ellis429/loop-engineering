@@ -615,7 +615,7 @@ Demo 結束時，觀眾應能沿一條路徑找到：「目標 → Milestone →
 | 單一 Feature 的內圈 | skill [spec-to-plan](../../skills/spec-to-plan/SKILL.md)（B1）、skill [plan-to-code](../../skills/plan-to-code/SKILL.md)（B2）、skill [to-pr](../../skills/to-pr/SKILL.md)（B3）：B1 停在 ◆確認開工，B2 做完直接接 B3，B3 停在 PR Pass 等 ◆驗收（D69）；之後由 skill orchestrate 串起來並呼叫薄 controller，第一片實作中 |
 | TDD | skill [test-driven-development](../../skills/third-party/superpowers/test-driven-development/SKILL.md)（Superpowers）；每個行為 task 保存可追溯證據 |
 | 審查與修正 | 獨立 Reviewer（另一個模型、新 session），依 spec 與工程規則審查；Implementer 修正 |
-| Example 執行環境 | Herdr 管 sessions 與工作區；本機 OpenAI 經 OpenCode，Claude 直接用 Claude Code；Orca 是選配入口 |
+| Example 執行環境 | 依 D76，Orca 管派工與工作區（`engineer`、`reviewer`）：Implementer 是 Orca 的 Claude agent，Reviewer 是 Orca 的 Codex agent＋GPT-6 Astra；只有 OpenCode 的環境由 Orca 開 OpenCode worker（D77）。早期設計用 Herdr，見勘誤 E-5 |
 | 程式與協作紀錄 | Git branches／worktrees、GitHub issues／PRs／CI，以及可讀的執行結果與狀態 |
 
 loop-engineering 自己開發 controller 時，預設 Opus 5.5 實作、GPT 審查；Reviewer 必須使用不同的實際模型與獨立 session。其他專案的 profile 仍需明確設定及驗證。

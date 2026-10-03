@@ -33,3 +33,10 @@ D53 核准的候選檔（`docs/design-candidate/d45-04/`，publication-manifest 
 - 原文：本目錄的 `tasks.md` 等檔案以 `openspec/changes/implement-delivery-loop/` 指稱正式 change 與其中的 specs。
 - 更正：該 change 已退役並刪除。四份 capability 與 source-map 原樣搬到 `docs/requirements/delivery-controller/`（`specs/<capability>/spec.md`、`adoption/source-map.md`），sha256 不變；其餘檔案（proposal、design、tasks、approval、adoption 審查紀錄）以 commit `a1d8906` 的版本為準。
 - 影響：本目錄提到舊路徑的地方，照新位置讀；切法與執行順序改依 [roadmap](../roadmap.md)，本目錄的 tasks 執行表只作參考。
+
+## E-5 派工 runtime 改為 Orca
+
+- 來源：D76，2026-10-02。
+- 原文：design §6 與相關段落以 Herdr 0.9.1 為 transport（`herdr` 工具、D21 handle 欄位 `{herdr_session, pane, agent_name, native_session_id}`），Reviewer profile 為 Herdr＋OpenCode＋`openai/gpt-6-astra`。
+- 更正：transport 改為 Orca（`orca orchestration worker-start`，工作區 `engineer`、`reviewer`）；Reviewer 改為 Orca 的 Codex agent＋`gpt-6-astra`（effort xhigh），Implementer 為 Orca 的 Claude agent＋`claude-opus-5-5`。handle 欄位改以 Orca 的 Run、Task、Dispatch ID 加 native session ID 表示，具體欄位由 Feature 2 的 design 定。協調權仍是 loopctl 的 claim token；Orca gate 不作決策紀錄。
+- 影響：本目錄提到 Herdr 的地方照 Orca 讀；R1 preflight 改對 Orca 的兩個 profile 執行，Orca 版本改變時重跑。
