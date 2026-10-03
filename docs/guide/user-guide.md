@@ -464,8 +464,9 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
 | 1 | Engineer | 開始寫設計與計畫 | skill [spec-to-plan](../../skills/spec-to-plan/SKILL.md)：開一個 Agent session，貼上：`/spec-to-plan 準備〈Feature〉的設計與計畫：讀交接包，寫 design.md 與 tasks.md，交另一個模型審到 clean，停在確認開工。` | — |
 | 2 | Agent | 寫詳細設計 | 指令 `openspec instructions design --change <id>` | design |
 | 3 | Agent | • 垂直切 tasks：每個 task 走完一條完整路徑、能單獨驗證、一個 session 做得完<br>• 先做讓後面好做的整理；需要共用的測試骨架時，排成第一個 task；legacy 路徑沒有測試保護時，第一個 task 補特性測試<br>• 每個 task 選計畫：預設，或 Engineer 指定的加一層程式碼計畫<br>• 每個 task 寫明依賴哪些 task、從它們拿到的介面與不變式<br>• 每個 task 列出要寫的測試，寫明 Red 應該失敗在哪個斷言<br>• 每個 task 標出 Implementer 與 Reviewer 的 effort<br>• 寫每條 AC 的驗法<br>• 交另一個模型審計畫到 clean | • 指令 `openspec instructions tasks --change <id>`<br>• 切法參考 skill [to-tickets](../../skills/third-party/mattpocock/engineering/to-tickets/SKILL.md)（Matt Pocock）的垂直切片規則，不放實作碼 | • tasks<br>• AC 驗法：寫在 validation 文件或 tasks 的明確段落 |
-| 4 | Agent | 帶確認開工的人走過計畫：切法、高風險 task 的測試、AC 對照、計畫自己做的決定、風險 | 同一個 session，一次一段 | — |
-| 5 | 交接時指定的人 | ◆確認開工（兼任時連 spec 一起確認） | 同一個 session，停在這裡；確認記成 ticket 留言 | 開工確認紀錄 |
+| 4 | Agent | 請第三個模型（不是寫計畫的、也不是審計畫的）唯讀檢查設計：找出計畫沒定義的情況，補進計畫，再請審計畫的模型確認 | 例如 `claude -p --model claude-fable-5-1 --effort xhigh`，禁止編輯 | 設計檢查紀錄 |
+| 5 | Agent | 帶確認開工的人走過計畫：切法、高風險 task 的測試、AC 對照、計畫自己做的決定、風險 | 同一個 session，一次一段 | — |
+| 6 | 交接時指定的人 | ◆確認開工（兼任時連 spec 一起確認） | 同一個 session，停在這裡；確認記成 ticket 留言 | 開工確認紀錄 |
 
 **每一步怎麼做、怎樣算完成**
 
@@ -501,7 +502,13 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
      - [ ] 每個 task 標出模式、Implementer 的模型，以及 Implementer 與 Reviewer 的 effort（預設強模型；見參考手冊的[模型怎麼選](reference.md#模型怎麼選)）
      - [ ] scope、必要環境、風險與執行限制都寫明
      - [ ] 另一個模型審過計畫，結果 clean，紀錄在 change 裡
-4. **走過計畫**
+     - [ ] 第三個模型檢查過設計缺口；找到的都已補進計畫並經審計畫的模型確認（D78）
+4. **檢查設計缺口**
+   - 怎麼做：計畫審查 clean 之後，請第三個模型唯讀檢查：計畫沒定義的狀態組合、順序與錯誤路徑；計畫、設計與現有程式的矛盾；每個 Red 走不走得到斷言；擁有路徑夠不夠產生測試斷言的每個結果。找到的缺口補進計畫（要改 spec 就回 feature-to-spec），再請審計畫的模型確認。
+   - 完成：
+     - [ ] 檢查的 prompt 與結果和計畫審查紀錄放在一起
+     - [ ] 每個缺口已補上，或寫明為何不補
+5. **走過計畫**
    - 怎麼做：Agent 先給一頁摘要，再一次帶你看一段；每段先給幾行白話重點（做什麼、可能出什麼錯、要你決定什麼），細節等你問了再展開：
      1. 切法：task 表、依賴、effort，最可能超出一個 session 的 task
      2. 高風險 task（xhigh，或對到最多 AC 的）的測試：每個測試斷言什麼行為、Red 證明什麼、Green 的預期；用來判斷做出來的會不會是你要的
@@ -512,7 +519,7 @@ Project Lead 同時擔任 Engineer 時，◆確認 spec 併入 ◆確認開工�
    - 完成：
      - [ ] 五段都走過，或確認紀錄寫明跳過
      - [ ] 要改的地方都已記下
-5. **◆確認開工**
+6. **◆確認開工**
    - 怎麼做：選一個：批准、只調 effort、改計畫、再多看一些。只調 effort 就更新 `tasks.md` 後直接記錄；改到測試、task、owned paths 或 design，就回到計畫審查，審到 clean 再確認；兼任時連 spec 一起確認。
    - 完成：
      - [ ] ticket 留言記下誰、何時、原話和確認的版本

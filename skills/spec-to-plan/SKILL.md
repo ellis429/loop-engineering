@@ -79,9 +79,20 @@ Run `openspec validate <id>` and commit.
 
 A model different from the plan's author reviews the plan in a fresh session, read-only (D52), for example `codex exec -m gpt-6-sol -s read-only`. Ask it to check: the cut (vertical, one session each, prefactoring first, blocking edges with their interfaces and invariants), the D68 rules above, every acceptance ID covered, owned paths, effort, risks, and whether each listed Red can actually fail on its assertion. Fix and re-review in the same reviewer session until clean, at most three rounds. The start-of-work approval needs a clean review. Not clean after three rounds: set the ticket to `Blocked：plan review not clean`, set 下一步 to the human who decides, post one Blocked comment: the run id (or who ran it by hand), the change id and the commits it applies to, the problem, what was tried with its evidence, the options, and who decides (the open findings and the plan commit among them), and stop. The human decides how the plan (or, through `feature-to-spec`, the spec) changes; then review again. Keep the review result on the branch.
 
+## 4b. Design-gap check
+
+After the plan review is clean, and before the start-of-work approval, a model different from both the plan's author and the plan reviewer checks the design read-only in a fresh session, for example `claude -p --model claude-fable-5-1 --effort xhigh` with edit tools denied. The plan review checks the plan against the rules; this check looks for situations the plan does not define (D78). Ask it for:
+
+1. State combinations, orderings and error paths an implementation must meet that `design.md` and `tasks.md` leave undefined, including how they interact with behaviour already implemented.
+2. Contradictions between the plan, the design and the existing code: interfaces, field names, exit codes, the expected values of tests.
+3. Whether each listed Red can fail on its assertion given the task order and the current code.
+4. Whether each task's owned paths cover every result its tests assert (a response code or error produced only by a file the task does not own).
+
+It reports gaps with a concrete scenario, evidence and the smallest rule that closes each; no new scope. Close the gaps in the plan without changing the spec (a gap that needs a spec change goes to `feature-to-spec`), have the plan reviewer confirm the revision in its session, and keep the check's prompt and result with the plan review records. When the feature's tasks are implemented in stages, run the check again before each later stage whose design was not checked yet.
+
 ## 5. Stop at the start-of-work approval
 
-Show the start approver a one-page summary: tasks in order with what each delivers, its blocking edges and its effort, and whether the granularity looks right (too coarse or too fine); what each Red proves, risks and limits, the plan review result, and any decision they must make. When the Project Lead is also the Engineer, this approval also covers the spec (D59).
+Show the start approver a one-page summary: tasks in order with what each delivers, its blocking edges and its effort, and whether the granularity looks right (too coarse or too fine); what each Red proves, risks and limits, the plan review and design-gap check results, and any decision they must make. When the Project Lead is also the Engineer, this approval also covers the spec (D59).
 
 Then walk the approver through the plan before asking for approval; the summary alone is not enough to judge it. One part at a time, in the approver's language: open each part with a few plain lines (what it does, what could go wrong, anything they must decide), and give the details (tests, line links to `design.md` and `tasks.md`) only when they ask:
 
