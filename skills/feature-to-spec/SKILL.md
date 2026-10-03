@@ -67,9 +67,24 @@ Bring the requirements this feature delivers from the input into `specs/<capabil
 
 Done when validation passes, every requirement has an ID and at least one scenario, the main flow and each exception have a scenario, and no open item would change scope, behaviour, or acceptance.
 
+## 4b. Independent spec review
+
+A model different from the spec's author reviews `proposal.md` and the spec delta in a fresh session, read-only (D52, D82), for example `claude -p --model claude-fable-5-1` with read-only settings, or `codex exec -s read-only`. Ask it to check:
+
+- every SHALL of the input requirements this feature brings in is carried, deferred in the proposal, or changed by a cited decision;
+- every scenario is observable and testable at a public entry point, with no vague verdict word left undefined;
+- nothing contradicts the decisions or `openspec/specs/`; a MODIFIED requirement keeps the whole current text it replaces;
+- new acceptance IDs collide with no existing ID;
+- the main flow and each exception have a scenario;
+- nothing belongs to a later feature or to the design.
+
+Findings are blocking (they change scope, behaviour or acceptance, or leave a scenario unverifiable) or not. Fix them and re-review in the same reviewer session until clean, at most three rounds; a fix that needs a scope decision goes to the human first. Not clean after three rounds: show the open findings to the Project Lead, who decides how to proceed. Keep each round (prompt, result, and how each finding was handled) in `openspec/changes/<id>/reviews/`, commit, and push.
+
+Done when the review is clean or the Project Lead decided on the open findings.
+
 ## 5. Confirm the spec
 
-Show the one-page summary. The Project Lead confirms; record it in a short section of `proposal.md`: who, when, their words, and the commit confirmed; commit and push. When one person holds both roles, record instead that the confirmation is folded into the start-of-work approval. This is not the start-of-work approval.
+Show the one-page summary, naming the spec review result and what it changed. The Project Lead confirms the reviewed version; record it in a short section of `proposal.md`: who, when, their words, and the commit confirmed; commit and push. When one person holds both roles, record instead that the confirmation is folded into the start-of-work approval. This is not the start-of-work approval.
 
 ## 6. Hand off
 
@@ -106,7 +121,7 @@ Anything the summary cannot show (not pushed, no ticket, no confirmation yet) is
 Use this when the change already exists: a requirement changed while the feature was in the loop, the loop returned Blocked on scope, or the acceptor sent it back because the requirement changed.
 
 1. Work in the feature's existing branch and worktree; update the default-branch base only if the Project Lead asks. Never open a second change or ticket.
-2. Update the proposal and the spec delta (the `openspec-update-change` skill keeps them coherent when it is installed; leave `design.md` and `tasks.md` to the Implementer), run `openspec validate <id>`, commit, and name what changed.
+2. Update the proposal and the spec delta (the `openspec-update-change` skill keeps them coherent when it is installed; leave `design.md` and `tasks.md` to the Implementer), run `openspec validate <id>`, commit, and name what changed. Review the changes as in step 4b.
 3. The Project Lead confirms the new spec (or record the fold note); record the confirmed commit in `proposal.md`, then commit and push so the branch holds it.
 4. Post a new handoff comment that carries the complete package of step 2 of the handoff at the new versions, lists what changed, names the pushed commit, and supersedes the earlier one; relink it from the ticket. Rebuild the ticket's 驗收 list from the new spec: add new IDs, remove deleted ones, update renamed titles, and untick every ID whose scenario changed.
 5. A changed spec voids the start-of-work approval for the design and tasks it affects: set the state to `就緒（可設計）` and 下一步 to the Engineer, who revises the plan and gets a new start approval (D11).
