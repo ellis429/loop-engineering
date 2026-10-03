@@ -1,6 +1,6 @@
 # Roadmap：薄 controller（loopctl）
 
-> 2026-09-30 經 Project Lead 確認（D75）。審查紀錄：GPT-6 Astra xhigh 三輪到 clean，見 [`reviews/2026-09-30-roadmap/`](reviews/2026-09-30-roadmap/README.md)。
+> 2026-09-30 經 Project Lead 確認（D75）；2026-10-03 Feature 1 收尾後重切（D79）。審查紀錄：GPT-6 Astra xhigh 三輪到 clean，見 [`reviews/2026-09-30-roadmap/`](reviews/2026-09-30-roadmap/README.md)。
 
 來源（皆為 `main@a1d8906`，另註明者除外）：
 
@@ -17,10 +17,10 @@
 
 | Milestone | 目標日期 | 可以展示的成果 | 完成條件 | 交付能力 |
 | --- | --- | --- | --- | --- |
-| **M1：薄 controller 可用** | 未定（D75） | 一個真實 Feature 由 orchestrate 透過 loopctl，從交接包走到 PR Pass 或 Blocked。過程包含派工、三 gates、finding → fix → re-review，中途中斷一次後接續；狀態與證據都可查。 | 1. M1 的全部 Feature（1、2、2b、3、4、5，D77）都已接受、merge 並 archive。<br>2. 「M1 驗收」四項都完成（見下）。 | 人工決策與可追溯狀態；派工與結果回收；三 gates；finding 迴圈與 PR Pass |
+| **M1：薄 controller 可用** | 未定（D75、D79） | 一個真實 Feature 由 orchestrate 透過 loopctl，從交接包走到 PR Pass 或 Blocked。過程包含派工、三 gates、finding → fix → re-review，中途中斷一次後接續；狀態與證據都可查。 | 1. M1 的全部 Feature（1、2、2b、3、4、5，D77）都已接受、merge 並 archive。<br>2. 「M1 驗收」四項都完成（見下）。 | 人工決策與可追溯狀態；派工與結果回收；三 gates；finding 迴圈與 PR Pass |
 | **M2：example 與延後能力**（暫不切） | M1 完成後定 | cross-node-file-transfer 由 orchestrate＋loopctl 從 Project 跑到多個 Feature（D43、D56） | M1 完成後定 | 見下方「延後到 M2」 |
 
-目標日期依 D75 暫不設：Feature 1 接受後，依它的實際時間再定，屆時記入決策紀錄。原先的估法（約 7 個工作日加一週緩衝）見[重切研究](research/2026-09-30/controller-recut.md#時間估計的依據)。
+目標日期依 D75 暫不設；Feature 1 接受後（D79）仍暫不定，Feature 2 完成後再看。原先的估法（約 7 個工作日加一週緩衝）見[重切研究](research/2026-09-30/controller-recut.md#時間估計的依據)。
 
 ## M1 的 Feature
 
@@ -28,10 +28,10 @@
 
 | # | Feature | 狀態 | 看得到的行為 | 可參考的既有實作（`fcefecc`） | 依賴 | 相關需求輸入 | 勘誤與 issue |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | loopctl：登記 run、記錄人工決策、查詢狀態與下一步 | 近期（D75） | Engineer 登記一個 Feature run，含 spec、design 與 plan 的版本。人用 `decide` 記錄開工確認等決策。`status` 與 `next` 顯示持久狀態，以及唯一允許的下一步；中斷後從檔案接續。包含專案骨架，以及 CI `unit-linux`（D53）。 | T2.1、T2.2；T1.1 的 CLI、測試政策、CI、`workflow.yaml` | — | ORC-01、02、03、07、11、12；GAT-06；DUR-01、02、05、08（範圍見 change `run-decisions`） | #6 |
-| 2 | 派工與結果回收 | 暫定 | orchestrate 從交接包開始：叫 spec-to-plan，把 design 與 plan 登記到 loopctl，停在 ◆確認開工（D55、D69）。人確認後，依 `next` 用 preflight 驗證過的 profile（R1），經 Herdr 派出 Implementer。外部寫入先登記、再讀回，逾時轉成 unknown，由人用 `decide` 處理。結果先保存，再去重匯入。計算 active 預算（4 小時）與 worker 時限（45 分鐘），到期就拒絕派工。建立各接法分開的能力證據矩陣。 | T1.1 的 profiles 與 preflight、T1.2、T2.3；T7.1 的 worker 預算部分 | 1 | ORC-01、03、08；GAT-05、08；DUR-02、03、04、06、08、09 | E-1（#9）、E-2（#11）、#7 |
-| 3 | TDD 證據、PR 與 CI | 暫定 | Implementer 的結果匯入後，orchestrate 依 `next` 讓 loopctl 核對 G1：原始 Red 的資格、乾淨 checkout 的 Green、N/A 紀錄、整合 attempt，以及證據命令的時限。接著 push，建立或更新 PR，等待 CI（30 分鐘），只認 PR head 上 `unit-linux` 的 success 判定 G3。R2：orchestrate 在 probe branch 用 fixture 真實跑到 G1。 | T3.1、T6.1；T7.1 的證據與 CI 預算部分 | 2 | ORC-03；GAT-01、02、03、04、06、07、08；DUR-03、06、07、08、09 | #15 |
-| 4 | 獨立審查與 PR Pass | 暫定 | orchestrate 依 `next` 派獨立 Reviewer：不同模型、新 session，review 時限 30 分鐘。G2 綁定 head、base 與文件版本。finding 流程包含登記、合併成修正批次、覆核、一次爭議覆核、反覆 finding 提前升級，上限三輪。最後發布 review 與 PR Pass 驗收包。 | 無（T4.1、T5.1、T6.2 沒有實作） | 3 | ORC-01、05；GAT-01、03、05、06、07、08；DUR-04、06、07、08、09；FIN-01～07 | E-3（#12） |
+| 1 | loopctl：登記 run、記錄人工決策、查詢狀態與下一步 | 已完成（#29、PR #37，併入規格 PR #38） | Engineer 登記一個 Feature run，含 spec、design 與 plan 的版本。人用 `decide` 記錄開工確認等決策。`status` 與 `next` 顯示持久狀態，以及唯一允許的下一步；中斷後從檔案接續。包含專案骨架，以及 CI `unit-linux`（D53）。 | T2.1、T2.2；T1.1 的 CLI、測試政策、CI、`workflow.yaml` | — | ORC-01、02、03、07、11、12；GAT-06；DUR-01、02、05、08（範圍見 change `run-decisions`） | #6 |
+| 2 | orchestrate 經 Orca 派 Implementer、收回結果，卡住時交給人 | 近期（D79） | orchestrate 從交接包開始：叫 spec-to-plan，把 design 與 plan 登記到 loopctl，停在 ◆確認開工（D55、D69）。人確認後，依 `next` 用 R1 驗證過的 profile，經 Orca 把 Implementer 派進 `engineer` 工作區（D76）。外部寫入先登記、再讀回，沒有回應轉成 unknown，由人用 `decide` 處理。結果先保存，再去重匯入。察覺卡住（session 結束卻沒交結果、API 或 infra 錯誤、長時間沒有新輸出）就停止派工交人（D79）。Claude 與 Codex 兩個 profile 各跑 R1，Orca 換版本時重跑。建立各接法分開的能力證據矩陣；engineer 工作區 clear 時機的實驗。 | T1.1 的 profiles 與 preflight、T1.2、T2.3；T7.1 的 worker 預算部分 | 1 | ORC-01、03、08；GAT-05、08；DUR-02、03、04、06、08、09（含從 Feature 1 移過來的 AC-D13、D16、O02、D17；D17 照 E-6 讀） | E-1（#9）、E-2（#11）、#7 |
+| 3 | TDD 證據、PR 與 CI | 暫定 | Implementer 的結果匯入後，orchestrate 依 `next` 讓 loopctl 核對 G1：原始 Red 的資格、乾淨 checkout 的 Green、N/A 紀錄、整合 attempt，以及證據命令的時限。接著 push，建立或更新 PR，等待 CI（30 分鐘），只認 PR head 上 `unit-linux` 的 success 判定 G3。R2：orchestrate 在 probe branch 用 fixture 真實跑到 G1。 | T3.1、T6.1；T7.1 的證據與 CI 預算部分 | 2 | ORC-03；GAT-01、02、03、04、06、07、08；DUR-03、06、07、08、09（含從 Feature 1 移過來的 AC-G13） | #15 |
+| 4 | 獨立審查與 PR Pass | 暫定 | orchestrate 依 `next` 派獨立 Reviewer：不同模型、新 session，review 時限 30 分鐘。G2 綁定 head、base 與文件版本。finding 流程包含登記、合併成修正批次、覆核、一次爭議覆核、反覆 finding 提前升級，上限三輪。最後發布 review 與 PR Pass 驗收包。 | 無（T4.1、T5.1、T6.2 沒有實作） | 3 | ORC-01、05；GAT-01、03、05、06、07、08；DUR-04、06、07、08、09；FIN-01～07（含從 Feature 1 移過來的 AC-F07、F11、O11） | E-3（#12） |
 
 **D77 新增的 Feature**（排序見「依賴」；與上表合起來是 M1 的全部 Feature）：
 
@@ -39,6 +39,8 @@
 | --- | --- | --- | --- | --- | --- |
 | 2b | 只有 OpenCode 的環境也能派工 | 暫定 | 在只有 OpenCode 的環境（同樣有 Orca），Orca 把 Implementer 與 Reviewer 都開成 OpenCode worker；兩者以 OpenCode 設定檔指定不同的實際模型（D52）；兩個 profile 各跑 R1，effort 讀不回時記為未驗證。 | 2 | DUR-09（AC-D24，原排 M2；AC-D20 要求環境沒有 Orca，仍在 M2） |
 | 5 | 本日目標：互不依賴的多個 Feature 同時跑到 PR Pass | 暫定 | 人在的時候寫一份本日目標（幾個互不依賴的 Feature），協調者先把每個 Feature 的計畫寫好、審到 clean，人一次走過並確認開工；之後無人看守，各 Feature 同時（設上限）跑到 PR Pass，預算、逾時、卡住自動停下交人。merge 一律由人；merge 一個後，其他 PR 自動更新 base 並重跑檢查，衝突才停。不做 stacked。 | 4（與 2b） | ORC-01、DUR-02、DUR-08，以及 D11、D27 |
+
+**時間上限（D79）**：不設主動時間與各角色的時間上限，改為察覺卡住就停下交人；修正 3 輪與 infra 重試上限不變。表中「預算」「時限」「review 時限 30 分鐘」「CI（30 分鐘）」的字樣照 D79 讀。
 
 **Runtime（D76）**：Feature 2 起，派工從 Herdr 改為 Orca。Implementer（Claude＋`claude-opus-5-5`）與 Reviewer（Codex＋`gpt-6-astra` xhigh）分別派進固定名稱的 Orca 工作區 `engineer`、`reviewer`；表中寫 Herdr 的地方照 D76 讀。Orca 版本改變時先重跑 R1；Orca 回 `consumer_fenced` 時停下交人；協調權與人工決策仍在 loopctl。engineer 工作區的 clear 時機在 Feature 2 實驗。
 
