@@ -51,13 +51,20 @@ Done when the branch is pushed, the change folder is on it, and the ticket links
 
 ## 2. Research
 
-Read the feature's roadmap row, the requirement input it points to, the cross-feature constraints in the project intent, `openspec/specs/`, design documents and ADRs, and related tickets; record each source's path and version. Then research the code this feature touches with `research-codebase` (query `graphify-out/` first when it exists). Save the report under the repository's research location on the feature branch, separating facts, assumptions, and unknowns; commit it and note the commit.
+Read the feature's roadmap row, the requirement input it points to, the cross-feature constraints in the project intent, `openspec/specs/`, design documents and ADRs, and related tickets; record each source's path and version. Then research the code this feature touches with `research-codebase` (query `graphify-out/` first when it exists). Save the report under the repository's research location on the feature branch, separating facts, assumptions, and unknowns; commit it and note the commit. Commit research to one branch only: research that backs a project decision (`D<n>`) reaches the default branch with that decision's PR, and another branch that needs it merges the default branch after that PR merges; never cherry-pick it (D83).
 
 Done when the next questions have evidence behind them.
 
 ## 3. Proposal and scope
 
 Draft `proposal.md` first: Why, What Changes, a `不做` list, and a 「待決與依賴」 section (each item: whether it blocks design, owner). Ask about goal and scope before anything else; do not write requirements until the human agrees the scope. A new high-level boundary goes into the project's design documents or an ADR, referenced from the proposal.
+
+Each decision has one home (D83):
+
+- It revises an existing `D<n>`, affects more than this feature, or changes the process: a new `D<n>` in `docs/decisions.md`; the proposal only links to it.
+- It affects only this feature: the proposal's 「待決與依賴」, marked decided with the human's words.
+- A choice among high-level options: an ADR.
+- The Implementer's own design choices: `design.md`, numbered `DD-<n>`.
 
 Done when the human agreed goal, scope and non-scope and the proposal is committed.
 
